@@ -358,14 +358,102 @@
       font-weight: 700;
     }
 
-    /* STEP 4: RESULT */
-    #result-img {
+    /* ANIMASI POLAROID EJECT */
+    .polaroid-container {
+      position: relative;
       width: 100%;
       max-width: 320px;
-      border-radius: 16px;
-      box-shadow: 0 12px 30px rgba(0,0,0,0.18);
-      margin: 16px auto;
+      margin: 10px auto 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* DESAIN BODY KAMERA POLAROID VINTAGE */
+    .polaroid-camera-body {
+      width: 220px;
+      height: 85px;
+      background: linear-gradient(180deg, #FAF7F2 0%, #E8DFD3 100%);
+      border-radius: 20px 20px 10px 10px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.12), inset 0 2px 3px #FFF;
+      border: 2px solid #D6C7BC;
+      position: relative;
+      z-index: 3;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding-top: 10px;
+    }
+
+    /* LENSA KAMERA */
+    .camera-lens {
+      width: 44px;
+      height: 44px;
+      background: radial-gradient(circle, #2B1E1E 35%, #555 60%, #222 100%);
+      border-radius: 50%;
+      border: 3px solid #D8B4B4;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+    }
+
+    /* FLASH & BUTTON ACCENTS */
+    .camera-flash {
+      position: absolute;
+      top: 12px;
+      left: 18px;
+      width: 22px;
+      height: 14px;
+      background: #FFF;
+      border: 2px solid #C5A059;
+      border-radius: 3px;
+      box-shadow: inset 0 0 4px #C5A059;
+    }
+
+    .camera-stripe {
+      position: absolute;
+      top: 38px;
+      right: 18px;
+      width: 35px;
+      height: 5px;
+      background: linear-gradient(90deg, #8C6262, #D8B4B4, #C5A059);
+      border-radius: 2px;
+    }
+
+    /* CELAH / SLOT KELUAR FOTO */
+    .camera-slot {
+      width: 210px;
+      height: 12px;
+      background: #1A1111;
+      border-radius: 6px;
+      margin-top: -6px;
+      z-index: 4;
+      box-shadow: inset 0 3px 5px rgba(0,0,0,0.8), 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    /* WADAH FOTO UNTUK MENGAPLIKASIKAN CLIPPING ANIMASI */
+    .photo-eject-wrapper {
+      width: 100%;
+      overflow: hidden;
+      position: relative;
+      z-index: 1;
+      margin-top: -8px;
+      padding-top: 5px;
+    }
+
+    #result-img {
+      width: 100%;
+      max-width: 300px;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.18);
       display: block;
+      margin: 0 auto;
+      transform: translateY(-100%);
+      transition: transform 2.8s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+
+    /* CLASS KEYFRAME ANIMASI SAAT KELUAR */
+    #result-img.eject-active {
+      transform: translateY(0);
     }
 
     /* FOOTER APPLICATION SANGAT ELEGAN & SIMPEL */
@@ -514,12 +602,24 @@
     </button>
   </div>
 
-  <!-- HALAMAN 4: HASIL FOTO -->
+  <!-- HALAMAN 4: HASIL FOTO DENGAN ANIMASI POLAROID -->
   <div id="step-result" class="hidden">
     <h2 class="font-serif" style="color: var(--dusty-rose); font-size: 1.85rem;">Hasil Photobooth Anda</h2>
     <p style="font-size: 0.82rem; color: #735757;">Terima kasih telah berbagi kebahagiaan!</p>
 
-    <img id="result-img" alt="Hasil Photobooth">
+    <!-- ANATOMI KAMERA POLAROID & SLOT ANIMASI FOTO -->
+    <div class="polaroid-container">
+      <div class="polaroid-camera-body">
+        <div class="camera-flash"></div>
+        <div class="camera-lens"></div>
+        <div class="camera-stripe"></div>
+      </div>
+      <div class="camera-slot"></div>
+
+      <div class="photo-eject-wrapper">
+        <img id="result-img" alt="Hasil Photobooth">
+      </div>
+    </div>
 
     <a id="download-link" download="Wedding-Photobooth-RiyanAmelia.png">
       <button class="btn-primary">
@@ -932,7 +1032,6 @@
             ctx.fillStyle = "#735757";
             ctx.fillText("DECEMBER 06, 2026", 60, footerY + 65);
 
-            // Watermark RAPI DI POJOK KIRI BEBAS DARI BUNGA
             ctx.save();
             ctx.fillStyle = "rgba(115, 87, 87, 0.55)";
             ctx.font = "500 12px 'Plus Jakarta Sans', sans-serif";
@@ -979,10 +1078,18 @@
             ctx.restore();
           }
 
-          // Export Hasil
+          // Export Hasil & Pemicu Animasi Eject Foto
           const dataUrl = canvas.toDataURL('image/png');
-          document.getElementById('result-img').src = dataUrl;
+          const resultImg = document.getElementById('result-img');
+          
+          resultImg.classList.remove('eject-active');
+          resultImg.src = dataUrl;
           document.getElementById('download-link').href = dataUrl;
+
+          // Jeda singkat agar browser siap memainkan animasi slide down
+          setTimeout(() => {
+            resultImg.classList.add('eject-active');
+          }, 100);
         }
       };
       img.src = photoSrc;
