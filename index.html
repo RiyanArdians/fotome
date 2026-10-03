@@ -6,7 +6,7 @@
   <title>Wedding Photobooth - Riyan & Amelia</title>
   
   <!-- Google Fonts & Font Awesome Icons -->
-  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Cormorant+Garamond:ital,wght@0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Cormorant+Garamond:ital,wght@0,600;0,700;1,400;1,600&family=Great+Vibes&family=Courier+Prime:wght@400;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <style>
@@ -217,13 +217,8 @@
       object-fit: contain;
     }
 
-    .preview-box.design2 { border: 1px dashed #8C6262; }
-    .preview-img-cake {
-      width: 14px;
-      height: 14px;
-      object-fit: contain;
-      margin-top: 1px;
-    }
+    .preview-box.design2 { border: 1px dashed #333333; background: #F5F5F5; }
+    .preview-box.design2 .preview-photo { background: #666666; }
 
     .preview-box.design3 { border: 2px solid #A82B2B; }
     .preview-box.design3 .preview-photo {
@@ -403,13 +398,12 @@
         <strong style="font-size:0.8rem; color:var(--text-dark);">1. Calla Lily</strong>
       </div>
 
-      <div class="design-card" onclick="selectDesignStyle('vintage', this)">
+      <div class="design-card" onclick="selectDesignStyle('receipt', this)">
         <div class="preview-box design2">
+          <i class="fa-solid fa-receipt" style="font-size: 1.2rem; color: #333; margin-bottom: 2px;"></i>
           <div class="preview-photo"></div>
-          <div class="preview-photo"></div>
-          <img src="./assets/wedding-cake.png" class="preview-img-cake" alt="Cake">
         </div>
-        <strong style="font-size:0.8rem; color:var(--text-dark);">2. Vintage Cake</strong>
+        <strong style="font-size:0.8rem; color:var(--text-dark);">2. Struk B&W</strong>
       </div>
 
       <div class="design-card" onclick="selectDesignStyle('wavy_red', this)">
@@ -521,9 +515,6 @@
   // LOAD ASSET GAMBAR
   const lilyAsset = new Image();
   lilyAsset.src = './assets/calla-lily-corner.png';
-
-  const cakeAsset = new Image();
-  cakeAsset.src = './assets/wedding-cake.png';
 
   const video = document.getElementById('video');
   const canvas = document.getElementById('canvas');
@@ -684,6 +675,19 @@
     ctx.closePath();
   }
 
+  // FUNGSI CONVERT CANVAS TO GRAYSCALE (HITAM PUTIH FOTO STRUK)
+  function applyGrayscaleToImage(ctx, x, y, width, height) {
+    const imgData = ctx.getImageData(x, y, width, height);
+    const data = imgData.data;
+    for (let i = 0; i < data.length; i += 4) {
+      const avg = 0.3 * data[i] + 0.59 * data[i + 1] + 0.11 * data[i + 2];
+      data[i]     = avg; // red
+      data[i + 1] = avg; // green
+      data[i + 2] = avg; // blue
+    }
+    ctx.putImageData(imgData, x, y);
+  }
+
   function drawMaskedImage(ctx, img, x, y, size, designStyle) {
     ctx.save();
 
@@ -713,6 +717,12 @@
     }
 
     ctx.drawImage(img, offsetX, offsetY, drawW, drawH);
+
+    // BIFILTER HITAM PUTIH JIKA DESAIN ADALAH RECEIPT / STRUK
+    if (designStyle === 'receipt') {
+      applyGrayscaleToImage(ctx, x, y, size, size);
+    }
+
     ctx.restore();
 
     if (designStyle === 'floral') {
@@ -726,7 +736,6 @@
     }
   }
 
-  // FUNGSI MENGGAMBAR BUNGA DARI SUDUT FRAME OUTSIDE BACKGROUND
   function drawCallaLilyOuterCorner(ctx, x, y, width, height, flipX = false, flipY = false) {
     ctx.save();
     ctx.translate(x, y);
@@ -752,29 +761,19 @@
     ctx.restore();
   }
 
-  // GAMBAR KUE VINTAGE BESAR DI TENGAH PRESISI
-  function drawVintageWeddingCake(ctx, centerX, centerY, mainColor) {
+  // FUNGSI MEMBUAT SIMULASI BARCODE / QR DUMMY UNTUK STRUK
+  function drawDummyBarcode(ctx, centerX, centerY, width, height) {
     ctx.save();
-    ctx.translate(centerX, centerY);
+    ctx.fillStyle = "#111111";
+    const startX = centerX - width / 2;
+    let currX = startX;
 
-    if (cakeAsset.complete && cakeAsset.naturalWidth !== 0) {
-      ctx.drawImage(cakeAsset, -85, -85, 170, 170);
-    } else {
-      ctx.fillStyle = mainColor;
-      ctx.beginPath(); ctx.ellipse(0, 50, 58, 12, 0, 0, 2 * Math.PI); ctx.fill();
-      ctx.fillRect(-10, 50, 20, 20);
-
-      ctx.fillStyle = "#FFFFFF"; ctx.strokeStyle = mainColor; ctx.lineWidth = 3;
-      ctx.beginPath(); ctx.roundRect(-45, 10, 90, 42, 6); ctx.fill(); ctx.stroke();
-      ctx.beginPath(); ctx.roundRect(-32, -28, 64, 38, 6); ctx.fill(); ctx.stroke();
-
-      ctx.fillStyle = mainColor;
-      ctx.beginPath(); ctx.arc(0, -35, 7, 0, 2 * Math.PI); ctx.fill(); 
-      ctx.beginPath(); ctx.arc(-22, 30, 4, 0, 2 * Math.PI); ctx.fill();
-      ctx.beginPath(); ctx.arc(0, 30, 4, 0, 2 * Math.PI); ctx.fill();
-      ctx.beginPath(); ctx.arc(22, 30, 4, 0, 2 * Math.PI); ctx.fill();
+    while (currX < startX + width) {
+      const barW = Math.floor(Math.random() * 4) + 2;
+      const spaceW = Math.floor(Math.random() * 3) + 2;
+      ctx.fillRect(currX, centerY - height / 2, barW, height);
+      currX += barW + spaceW;
     }
-
     ctx.restore();
   }
 
@@ -782,9 +781,9 @@
   function renderPhotostrip() {
     const stripWidth = 600;
     const photoBoxSize = 420;
-    const headerHeight = selectedDesignStyle === 'floral' ? 100 : 100;
+    const headerHeight = selectedDesignStyle === 'receipt' ? 260 : 100;
     const gapY = selectedDesignStyle === 'wavy_red' ? 60 : 40;
-    const footerHeight = selectedDesignStyle === 'floral' ? 180 : 290;
+    const footerHeight = selectedDesignStyle === 'receipt' ? 260 : (selectedDesignStyle === 'floral' ? 180 : 220);
 
     const totalPhotoHeight = targetPhotoCount * (photoBoxSize + gapY);
     const stripHeight = headerHeight + totalPhotoHeight + footerHeight;
@@ -793,40 +792,74 @@
     canvas.height = stripHeight;
     const ctx = canvas.getContext('2d');
 
-    let outerColor = "#8C6262";
     let cardInnerColor = "#F9F1F1";
     let textColor = "#8C6262";
 
     if (selectedBgColor === 'mocha') {
-      outerColor = "#B3927A"; cardInnerColor = "#F9F6F0"; textColor = "#8C6D57";
+      cardInnerColor = "#F9F6F0"; textColor = "#8C6D57";
     } else if (selectedBgColor === 'blue') {
-      outerColor = "#83A398"; cardInnerColor = "#F1F6F4"; textColor = "#557367";
+      cardInnerColor = "#F1F6F4"; textColor = "#557367";
     } else if (selectedBgColor === 'lavender') {
-      outerColor = "#A283A2"; cardInnerColor = "#F7F2F7"; textColor = "#755475";
+      cardInnerColor = "#F7F2F7"; textColor = "#755475";
     } else if (selectedBgColor === 'vanilla') {
-      outerColor = "#D6C7BC"; cardInnerColor = "#FFFFFF"; textColor = "#735757";
+      cardInnerColor = "#FFFFFF"; textColor = "#735757";
     } else if (selectedBgColor === 'dark') {
-      outerColor = "#2B1E1E"; cardInnerColor = "#3D2B2B"; textColor = "#D8B4B4";
+      cardInnerColor = "#2B1E1E"; textColor = "#D8B4B4";
     }
 
     if (selectedDesignStyle === 'wavy_red') {
       cardInnerColor = "#FAF6EE";
       textColor = "#A82B2B";
+    } else if (selectedDesignStyle === 'receipt') {
+      cardInnerColor = "#F5F4F0"; // Kertas struk vintage
+      textColor = "#111111";
     }
 
     // 1. Latar Belakang Utama
     ctx.fillStyle = cardInnerColor;
     ctx.fillRect(0, 0, stripWidth, stripHeight);
 
-    // 2. LAYER LATAR BELAKANG BUNGA (DIGAMBAR DARI SUDUT BACKGROUND)
+    // 2. HEADER ORNAMEN
     if (selectedDesignStyle === 'floral') {
       drawCallaLilyOuterCorner(ctx, 0, 0, 420, 320, false, false);
       drawCallaLilyOuterCorner(ctx, stripWidth, stripHeight, 440, 340, true, true);
-    } else if (selectedDesignStyle === 'vintage') {
+    } else if (selectedDesignStyle === 'receipt') {
+      // HEADER STRUK BELANJA (RECEIPT STYLE)
       ctx.fillStyle = textColor;
-      ctx.font = "26px 'Plus Jakarta Sans', sans-serif";
       ctx.textAlign = "center";
-      ctx.fillText("♥   🕊️   ♥", stripWidth / 2, 60);
+      
+      ctx.font = "bold 38px 'Courier Prime', monospace";
+      ctx.fillText("RIYAN & AMELIA", stripWidth / 2, 70);
+
+      ctx.font = "bold 18px 'Courier Prime', monospace";
+      ctx.fillText("TRACK ORDER / WEDDING VIBES", stripWidth / 2, 105);
+      ctx.font = "16px 'Courier Prime', monospace";
+      ctx.fillText("DEC 06, 2026 • 10:00 AM", stripWidth / 2, 130);
+
+      // Garis Putus-putus Struk
+      ctx.strokeStyle = "#111111";
+      ctx.lineWidth = 2;
+      ctx.setLineDash([8, 6]);
+      ctx.beginPath();
+      ctx.moveTo(50, 150); ctx.lineTo(stripWidth - 50, 150);
+      ctx.stroke();
+
+      // List Detail Struk Belanja Track
+      ctx.textAlign = "left";
+      ctx.font = "16px 'Courier Prime', monospace";
+      ctx.fillText("LADY LOVE - THE SACRED SOUL", 60, 180);
+      ctx.fillText("FOREVER & ALWAYS - WAVE TO EARTH", 60, 205);
+      ctx.fillText("TOTAL HAPPINESS", 60, 230);
+
+      ctx.textAlign = "right";
+      ctx.fillText("03:31", stripWidth - 60, 180);
+      ctx.fillText("04:00", stripWidth - 60, 205);
+      ctx.fillText("∞", stripWidth - 60, 230);
+
+      ctx.beginPath();
+      ctx.moveTo(50, 245); ctx.lineTo(stripWidth - 50, 245);
+      ctx.stroke();
+      ctx.setLineDash([]); // Reset Line Dash
     }
 
     // 3. Render Foto-Foto Utama
@@ -845,7 +878,6 @@
           const footerY = startY + targetPhotoCount * (photoBoxSize + gapY) + 20;
 
           if (selectedDesignStyle === 'floral') {
-            // Posisi Teks Dinaikkan Lebih Dekat Ke Bawah Foto
             ctx.fillStyle = textColor;
             ctx.font = "bold 42px 'Cormorant Garamond', serif";
             ctx.textAlign = "left";
@@ -855,25 +887,33 @@
             ctx.fillStyle = "#735757";
             ctx.fillText("DECEMBER 06, 2026", 60, footerY + 65);
 
-          } else if (selectedDesignStyle === 'vintage') {
-            ctx.fillStyle = textColor;
-            ctx.font = "bold 36px 'Cormorant Garamond', serif";
+          } else if (selectedDesignStyle === 'receipt') {
+            // FOOTER STRUK BELANJA (RECEIPT FOOTER & BARCODE)
+            ctx.fillStyle = "#111111";
             ctx.textAlign = "center";
-            ctx.fillText("RIYAN & AMELIA", stripWidth / 2, footerY + 50);
+            ctx.font = "italic 16px 'Courier Prime', monospace";
+            ctx.fillText("Crafted for the moment made for what matters most.", stripWidth / 2, footerY + 40);
+            ctx.fillText("Every detail designed to capture timeless love.", stripWidth / 2, 65 + footerY);
 
-            drawVintageWeddingCake(ctx, stripWidth / 2, footerY + 145, textColor);
+            ctx.font = "bold 16px 'Courier Prime', monospace";
+            ctx.fillText("ALL RIGHTS RESERVED • 2026", stripWidth / 2, footerY + 110);
 
-            ctx.font = "600 20px 'Plus Jakarta Sans', sans-serif";
-            ctx.fillText("06 . 12 . 2026", stripWidth / 2, footerY + 245);
+            // Draw Barcode Dummy
+            drawDummyBarcode(ctx, stripWidth / 2, footerY + 160, 280, 50);
+
+            ctx.font = "14px 'Courier Prime', monospace";
+            ctx.fillText("THE ART OF THE MOMENT", stripWidth / 2, footerY + 225);
 
           } else if (selectedDesignStyle === 'wavy_red') {
+            // TYPOGRAPHY WEDDING SANGAT ELEGAN & ANGGUN
             ctx.fillStyle = "#A82B2B";
-            ctx.font = "bold 52px 'Cormorant Garamond', serif";
+            ctx.font = "700 58px 'Great Vibes', cursive";
             ctx.textAlign = "center";
-            ctx.fillText("RIYAN & AMELIA", stripWidth / 2, footerY + 50);
+            ctx.fillText("Riyan & Amelia", stripWidth / 2, footerY + 50);
 
-            ctx.font = "italic 20px 'Plus Jakarta Sans', sans-serif";
-            ctx.fillText("— 06.12.2026 —", stripWidth / 2, footerY + 95);
+            ctx.font = "600 22px 'Cormorant Garamond', serif";
+            ctx.letterSpacing = "4px";
+            ctx.fillText("— DECEMBER 06, 2026 —", stripWidth / 2, footerY + 95);
           }
 
           // Export Hasil
