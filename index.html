@@ -6,7 +6,7 @@
   <title>Wedding Photobooth - Riyan & Amelia</title>
   
   <!-- Google Fonts & Font Awesome Icons -->
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Cormorant+Garamond:ital,wght@0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <style>
@@ -33,10 +33,10 @@
 
     .app-card {
       width: 100%;
-      max-width: 440px;
+      max-width: 450px;
       background-color: #FFFFFF;
       border-radius: 24px;
-      padding: 30px 20px;
+      padding: 28px 20px;
       box-shadow: 0 10px 35px rgba(140, 98, 98, 0.12);
       border: 1px solid rgba(216, 180, 180, 0.4);
       text-align: center;
@@ -45,6 +45,7 @@
     }
 
     .font-serif { font-family: 'Cormorant Garamond', serif; }
+    .font-hand { font-family: 'Caveat', cursive; }
     .hidden { display: none !important; }
 
     /* TOMBOL STYLING */
@@ -107,45 +108,41 @@
     }
 
     /* STEP 2: TEMPLATE SELECTOR */
-    .template-grid {
+    .option-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--dusty-rose);
+      text-align: left;
+      margin: 15px 0 8px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .option-grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-      margin: 20px 0;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 12px;
     }
 
-    .template-card {
+    .option-card {
       border: 2px solid var(--soft-blush);
-      border-radius: 16px;
-      padding: 15px 10px;
+      border-radius: 12px;
+      padding: 10px 5px;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: all 0.2s ease;
       background-color: var(--bg-cream);
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-dark);
     }
 
-    .template-card.active, .template-card:hover {
+    .option-card.active, .option-card:hover {
       border-color: var(--dusty-rose);
       background-color: #FFFFFF;
-      box-shadow: 0 4px 15px rgba(140, 98, 98, 0.2);
-      transform: translateY(-3px);
+      color: var(--dusty-rose);
+      box-shadow: 0 4px 12px rgba(140, 98, 98, 0.18);
     }
-
-    .template-preview {
-      width: 40px;
-      height: 80px;
-      margin: 0 auto 10px;
-      border-radius: 6px;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      padding: 4px;
-    }
-
-    .tpl-dusty { background-color: #F9F1F1; border: 1px solid #D8B4B4; }
-    .tpl-dusty .box { background-color: #D8B4B4; height: 20px; border-radius: 2px; }
-
-    .tpl-mocha { background-color: #2B1E1E; border: 1px solid #B3927A; }
-    .tpl-mocha .box { background-color: #B3927A; height: 20px; border-radius: 2px; }
 
     /* STEP 3: CAMERA & COUNTDOWN */
     .camera-wrapper {
@@ -163,7 +160,7 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
-      transform: scaleX(-1); /* Efek Cermin */
+      transform: scaleX(-1);
     }
 
     .countdown-overlay {
@@ -198,7 +195,7 @@
     /* STEP 4: RESULT */
     #result-img {
       width: 100%;
-      max-width: 280px;
+      max-width: 290px;
       border-radius: 12px;
       box-shadow: 0 8px 25px rgba(0,0,0,0.15);
       margin: 15px auto;
@@ -217,13 +214,13 @@
   <!-- ========================================== -->
   <div id="step-welcome">
     <p class="welcome-badge">Virtual Photobooth</p>
-    <h1 class="font-serif welcome-title">Capture Your Moment</h1>
+    <h1 class="font-serif welcome-title">Catch Yours Moment</h1>
     <p style="font-size: 0.88rem; color: #735757; line-height: 1.5; margin-bottom: 20px;">
-      Selamat datang di Photobooth Pernikahan Kami! Abadikan momen bahagia Anda dan simpan kenangan manis bersama kami.
+      Selamat datang di Photobooth Pernikahan Kami! Abadikan foto Polaroid spesial Anda bersama Riyan & Amelia.
     </p>
 
     <div style="font-size: 2.2rem; color: var(--soft-blush); margin-bottom: 20px;">
-      🌸 📸 🌸
+      📸 💌 🎟️
     </div>
 
     <button class="btn-primary" onclick="goToStep(2)">
@@ -232,34 +229,48 @@
   </div>
 
   <!-- ========================================== -->
-  <!-- HALAMAN 2: PILIH TEMPLATE & BINGKAI         -->
+  <!-- HALAMAN 2: PILIH STYLE & FORMAT             -->
   <!-- ========================================== -->
   <div id="step-template" class="hidden">
-    <h2 class="font-serif" style="color: var(--dusty-rose); font-size: 1.8rem;">Pilih Style Frame</h2>
-    <p style="font-size: 0.82rem; color: #735757;">Pilih desain bingkai impian Anda</p>
+    <h2 class="font-serif" style="color: var(--dusty-rose); font-size: 1.8rem;">Pilih Style Polaroid</h2>
+    <p style="font-size: 0.82rem; color: #735757;">Kustomisasi jumlah foto dan bentuk frame</p>
 
-    <div class="template-grid">
-      <!-- Option 1 -->
-      <div class="template-card active" onclick="selectTemplate('dusty-strip', this)">
-        <div class="template-preview tpl-dusty">
-          <div class="box"></div><div class="box"></div><div class="box"></div>
-        </div>
-        <p style="font-size: 0.85rem; font-weight:700; color: var(--dusty-rose);">Floral Dusty Rose</p>
-        <p style="font-size: 0.7rem; color: #735757;">3 Foto + Bunga Estetik</p>
+    <!-- Pilihan 1: Jumlah Foto -->
+    <p class="option-title"><i class="fa-solid fa-images"></i> 1. Jumlah Foto</p>
+    <div class="option-grid">
+      <div class="option-card active" onclick="selectPhotoCount(3, this)">
+        <i class="fa-solid fa-layer-group" style="font-size: 1.2rem; display:block; margin-bottom:4px;"></i>
+        3 Foto (Strip)
       </div>
+      <div class="option-card" onclick="selectPhotoCount(2, this)">
+        <i class="fa-solid fa-clone" style="font-size: 1.2rem; display:block; margin-bottom:4px;"></i>
+        2 Foto (Duo)
+      </div>
+      <div class="option-card" onclick="selectPhotoCount(1, this)">
+        <i class="fa-solid fa-square" style="font-size: 1.2rem; display:block; margin-bottom:4px;"></i>
+        1 Foto (Single)
+      </div>
+    </div>
 
-      <!-- Option 2 -->
-      <div class="template-card" onclick="selectTemplate('mocha-strip', this)">
-        <div class="template-preview tpl-mocha">
-          <div class="box"></div><div class="box"></div><div class="box"></div>
-        </div>
-        <p style="font-size: 0.85rem; font-weight:700; color: var(--soft-mocha);">Mocha Floral Gold</p>
-        <p style="font-size: 0.7rem; color: #735757;">3 Foto + Bunga Mewah</p>
+    <!-- Pilihan 2: Bentuk Grid / Frame -->
+    <p class="option-title"><p class="option-title"><i class="fa-solid fa-shapes"></i> 2. Bentuk Frame</p>
+    <div class="option-grid">
+      <div class="option-card active" onclick="selectGridShape('square', this)">
+        <i class="fa-regular fa-square" style="font-size: 1.2rem; display:block; margin-bottom:4px;"></i>
+        Kotak
+      </div>
+      <div class="option-card" onclick="selectGridShape('circle', this)">
+        <i class="fa-regular fa-circle" style="font-size: 1.2rem; display:block; margin-bottom:4px;"></i>
+        Bulat
+      </div>
+      <div class="option-card" onclick="selectGridShape('heart', this)">
+        <i class="fa-regular fa-heart" style="font-size: 1.2rem; display:block; margin-bottom:4px;"></i>
+        Love
       </div>
     </div>
 
     <button class="btn-primary" onclick="startCameraProcess()">
-      <i class="fa-solid fa-camera"></i> Buka Kamera
+      <i class="fa-solid fa-camera"></i> Lanjut Ke Kamera
     </button>
     <button class="btn-secondary" onclick="goToStep(1)">
       <i class="fa-solid fa-arrow-left"></i> Kembali ke Depan
@@ -285,7 +296,7 @@
       <i class="fa-solid fa-camera"></i> Ambil Foto Sekarang
     </button>
     <button class="btn-secondary" onclick="goToStep(2)">
-      <i class="fa-solid fa-arrow-left"></i> Batal / Pilih Style
+      <i class="fa-solid fa-arrow-left"></i> Batal / Ubah Style
     </button>
   </div>
 
@@ -298,13 +309,12 @@
 
     <img id="result-img" alt="Hasil Photobooth">
 
-    <a id="download-link" download="Photobooth-RiyanAmelia.png">
+    <a id="download-link" download="Wedding-Photobooth-RiyanAmelia.png">
       <button class="btn-primary">
         <i class="fa-solid fa-download"></i> Unduh Foto
       </button>
     </a>
     
-    <!-- TOMBOL KEMBALI PILIH STYLE -->
     <button class="btn-secondary" onclick="goToStep(2)">
       <i class="fa-solid fa-palette"></i> Pilih Style Lain
     </button>
@@ -316,12 +326,14 @@
 
 </div>
 
-<!-- Canvas Tersembunyi untuk Merender Hasil Foto -->
+<!-- Canvas Tersembunyi -->
 <canvas id="canvas"></canvas>
 
 <script>
-  let selectedTemplate = 'dusty-strip';
+  let targetPhotoCount = 3;
+  let selectedGridShape = 'square';
   let capturedPhotos = [];
+
   const video = document.getElementById('video');
   const canvas = document.getElementById('canvas');
   const countdownOverlay = document.getElementById('countdown-overlay');
@@ -340,41 +352,43 @@
     if (stepNumber === 4) document.getElementById('step-result').classList.remove('hidden');
   }
 
-  // Pilih Template
-  function selectTemplate(templateName, cardElement) {
-    selectedTemplate = templateName;
-    document.querySelectorAll('.template-card').forEach(el => el.classList.remove('active'));
-    cardElement.classList.add('active');
+  function selectPhotoCount(count, element) {
+    targetPhotoCount = count;
+    element.parentElement.querySelectorAll('.option-card').forEach(el => el.classList.remove('active'));
+    element.classList.add('active');
   }
 
-  // Buka Kamera
+  function selectGridShape(shape, element) {
+    selectedGridShape = shape;
+    element.parentElement.querySelectorAll('.option-card').forEach(el => el.classList.remove('active'));
+    element.classList.add('active');
+  }
+
   function startCameraProcess() {
     goToStep(3);
+    document.getElementById('photo-count-text').innerText = `Foto 1 dari ${targetPhotoCount}`;
+    
     navigator.mediaDevices.getUserMedia({ video: { facingMode: "user", width: { ideal: 1080 }, height: { ideal: 1440 } }, audio: false })
-      .then(stream => {
-        video.srcObject = stream;
-      })
+      .then(stream => { video.srcObject = stream; })
       .catch(err => {
         alert("Tidak dapat mengakses kamera. Pastikan memberikan izin kamera di browser Anda.");
         goToStep(2);
       });
   }
 
-  // Alur Pengambilan 3 Foto Otomatis
   async function startPhotoSequence() {
     document.getElementById('btn-snap').disabled = true;
     document.getElementById('btn-snap').style.opacity = '0.5';
     capturedPhotos = [];
 
-    for (let i = 1; i <= 3; i++) {
-      document.getElementById('photo-count-text').innerText = `Foto ${i} dari 3`;
+    for (let i = 1; i <= targetPhotoCount; i++) {
+      document.getElementById('photo-count-text').innerText = `Foto ${i} dari ${targetPhotoCount}`;
       await runCountdown(3);
       triggerFlash();
       captureSingleFrame();
-      await delay(1000); // Jedah 1 detik antar foto
+      await delay(1000);
     }
 
-    // Gabungkan Foto ke Frame Estetik
     renderPhotostrip();
     goToStep(4);
 
@@ -410,7 +424,6 @@
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
-  // Tangkap 1 Frame Video
   function captureSingleFrame() {
     const tempCanvas = document.createElement('canvas');
     const w = video.videoWidth || 640;
@@ -419,7 +432,6 @@
     tempCanvas.height = h;
     const ctx = tempCanvas.getContext('2d');
 
-    // Flip Horizontal (Mirror Effect)
     ctx.translate(w, 0);
     ctx.scale(-1, 1);
     ctx.drawImage(video, 0, 0, w, h);
@@ -427,132 +439,130 @@
     capturedPhotos.push(tempCanvas.toDataURL('image/png'));
   }
 
-  // Helper untuk Memasang Foto dengan Corner Rounded
-  function drawRoundedImage(ctx, img, x, y, width, height, radius) {
+  // Draw Masking Gambar untuk Kotak, Bulat, atau Love Shape
+  function drawMaskedImage(ctx, img, x, y, size, shape) {
     ctx.save();
     ctx.beginPath();
-    ctx.moveTo(x + radius, y);
-    ctx.lineTo(x + width - radius, y);
-    ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
-    ctx.lineTo(x + width, y + height - radius);
-    ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
-    ctx.lineTo(x + radius, y + height);
-    ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
-    ctx.lineTo(x, y + radius);
-    ctx.quadraticCurveTo(x, y, x + radius, y);
+
+    if (shape === 'circle') {
+      ctx.arc(x + size / 2, y + size / 2, size / 2, 0, Math.PI * 2);
+    } else if (shape === 'heart') {
+      // Path Bentuk Hati (Love)
+      const topCurveHeight = size * 0.3;
+      ctx.moveTo(x + size / 2, y + size);
+      ctx.bezierCurveTo(x, y + size * 0.7, x, y + topCurveHeight, x + size / 2, y + topCurveHeight);
+      ctx.bezierCurveTo(x + size, y + topCurveHeight, x + size, y + size * 0.7, x + size / 2, y + size);
+    } else {
+      // Square / Kotak Polaroid
+      ctx.rect(x, y, size, size);
+    }
+
     ctx.closePath();
     ctx.clip();
-    ctx.drawImage(img, x, y, width, height);
+    
+    // Crop & Center Gambar
+    ctx.drawImage(img, x, y, size, size);
     ctx.restore();
   }
 
-  // Render 3 Foto Menjadi Photostrip Berhiaskan Bunga Lucu & Estetik
+  // Render Hasil Gambar Khas Polaroid & Ticket Retro
   function renderPhotostrip() {
-    const isMocha = selectedTemplate === 'mocha-strip';
-
-    // Dimensi Kanvas Photostrip
     const stripWidth = 600;
-    const stripHeight = 1600;
-    const photoWidth = 520;
-    const photoHeight = 390;
-    const paddingX = 40;
-    const startY = 70;
-    const gapY = 32;
-
+    // Tinggi dinamis menyesuaikan jumlah foto
+    const stripHeight = targetPhotoCount === 3 ? 1550 : (targetPhotoCount === 2 ? 1150 : 850);
+    
     canvas.width = stripWidth;
     canvas.height = stripHeight;
     const ctx = canvas.getContext('2d');
 
-    // 1. Latar Belakang Utama Frame
-    ctx.fillStyle = isMocha ? "#2B1E1E" : "#F9F1F1";
+    // 1. Latar Belakang Luar Dusty Rose / Warm Red-Brown
+    ctx.fillStyle = "#8C6262";
     ctx.fillRect(0, 0, stripWidth, stripHeight);
 
-    // Border Estetik Luar
-    ctx.strokeStyle = isMocha ? "#B3927A" : "#D8B4B4";
-    ctx.lineWidth = 6;
-    ctx.strokeRect(18, 18, stripWidth - 36, stripHeight - 36);
+    // 2. Latar Dalam Kartu Polaroid (Warm Cream)
+    const margin = 20;
+    ctx.fillStyle = "#F4EFEA";
+    ctx.beginPath();
+    ctx.roundRect(margin, margin, stripWidth - (margin * 2), stripHeight - (margin * 2), 16);
+    ctx.fill();
 
-    // 2. ORNAMEN BUNGA & ORNAMEN LUCU (DRAW CANVAS ART)
-    const floralColor = isMocha ? "#D8B4B4" : "#8C6262";
-    const leafColor = isMocha ? "#B3927A" : "#D8B4B4";
+    // 3. Header "Catch Yours" Cursive
+    ctx.fillStyle = "#8C6262";
+    ctx.font = "bold 52px 'Caveat', cursive";
+    ctx.textAlign = "center";
+    ctx.fillText("Catch Yours", stripWidth / 2, 85);
 
-    // Fungsi Menggambar Pucuk Bunga Lucu di Sudut Atas Kiri & Kanan
-    function drawCornerFlowers(x, y, isRight = false) {
-      ctx.save();
-      ctx.translate(x, y);
-      if (isRight) ctx.scale(-1, 1);
+    // Ornamen Love Melayang Atas
+    ctx.font = "24px 'Plus Jakarta Sans', sans-serif";
+    ctx.fillText("♥", stripWidth / 2 - 120, 65);
+    ctx.fillText("♥", stripWidth / 2 + 130, 80);
 
-      // Daun-daun kecil
-      ctx.fillStyle = leafColor;
-      ctx.beginPath(); ctx.ellipse(-15, -10, 12, 6, Math.PI / 4, 0, 2 * Math.PI); ctx.fill();
-      ctx.beginPath(); ctx.ellipse(-22, 5, 10, 5, -Math.PI / 6, 0, 2 * Math.PI); ctx.fill();
+    // 4. Render Foto-Foto dalam Bingkai Polaroid
+    const photoBoxSize = 420;
+    const startY = 120;
+    const gapY = targetPhotoCount === 1 ? 0 : (targetPhotoCount === 2 ? 60 : 40);
 
-      // Kelopak Bunga Utama (5 Kelopak Bunga Lucu)
-      ctx.fillStyle = floralColor;
-      for (let i = 0; i < 5; i++) {
-        ctx.beginPath();
-        const angle = (i * 2 * Math.PI) / 5;
-        ctx.arc(Math.cos(angle) * 12, Math.sin(angle) * 12, 9, 0, 2 * Math.PI);
-        ctx.fill();
-      }
-      // Putik Bunga
-      ctx.fillStyle = "#FFFFFF";
-      ctx.beginPath(); ctx.arc(0, 0, 6, 0, 2 * Math.PI); ctx.fill();
-
-      ctx.restore();
-    }
-
-    // Gambar Bunga di Atas Kiri dan Atas Kanan
-    drawCornerFlowers(55, 42, false);
-    drawCornerFlowers(stripWidth - 55, 42, true);
-
-    // 3. Tempel 3 Foto berturut-turut
     let loadedCount = 0;
     capturedPhotos.forEach((photoSrc, index) => {
       const img = new Image();
       img.onload = () => {
-        const currentY = startY + index * (photoHeight + gapY);
+        const photoY = startY + index * (photoBoxSize + gapY);
 
-        // Bingkai Belakang Foto (Putih / Cream Soft)
-        ctx.fillStyle = isMocha ? "#3D2B2B" : "#FFFFFF";
+        // Frame Polaroid Putih
+        ctx.fillStyle = "#FFFFFF";
+        ctx.shadowColor = "rgba(0,0,0,0.08)";
+        ctx.shadowBlur = 15;
+        ctx.shadowOffsetY = 6;
+        
         ctx.beginPath();
-        ctx.roundRect(paddingX - 6, currentY - 6, photoWidth + 12, photoHeight + 12, 14);
+        ctx.roundRect((stripWidth - photoBoxSize) / 2 - 15, photoY - 15, photoBoxSize + 30, photoBoxSize + 55, 10);
         ctx.fill();
+        ctx.shadowColor = "transparent"; // Reset shadow
 
-        // Foto Utama dengan Sudut Melengkung Halus
-        drawRoundedImage(ctx, img, paddingX, currentY, photoWidth, photoHeight, 10);
+        // Render Gambar dengan Masking (Square / Circle / Heart)
+        drawMaskedImage(ctx, img, (stripWidth - photoBoxSize) / 2, photoY, photoBoxSize, selectedGridShape);
 
-        // Tambahkan Ikon Love / Sparkle Lucu di antara Foto
-        if (index < 2) {
-          const heartY = currentY + photoHeight + (gapY / 2);
-          ctx.fillStyle = isMocha ? "#B3927A" : "#D8B4B4";
-          ctx.font = "18px 'Plus Jakarta Sans', sans-serif";
-          ctx.textAlign = "center";
-          ctx.fillText("✦  🌸  ✦", stripWidth / 2, heartY + 6);
-        }
+        // Tulisan Tangan Khas Polaroid Bawah Foto
+        ctx.fillStyle = "#3D2B2B";
+        ctx.font = "26px 'Caveat', cursive";
+        ctx.textAlign = "center";
+        
+        const labels = ["Sweet Memories ♥", "Chilling out", "Forever & Always"];
+        ctx.fillText(labels[index % labels.length], stripWidth / 2, photoY + photoBoxSize + 28);
 
         loadedCount++;
-        if (loadedCount === 3) {
-          // 4. Tambahkan Teks Watermark Wedding di Bagian Bawah Strip
-          const textY = startY + 3 * (photoHeight + gapY) + 35;
+        if (loadedCount === targetPhotoCount) {
+          // 5. Tambahkan Tiket Pernikahan (Wedding Photo Pass) di Bagian Paling Bawah
+          const ticketY = photoY + photoBoxSize + 75;
 
-          // Hiasan Bunga Bawah
-          drawCornerFlowers(120, textY + 15, false);
-          drawCornerFlowers(stripWidth - 120, textY + 15, true);
+          // Tiket Pink / Dusty Rose Pass
+          ctx.fillStyle = "#E8C8C8";
+          ctx.beginPath();
+          ctx.roundRect(60, ticketY, stripWidth - 120, 110, 8);
+          ctx.fill();
 
-          ctx.fillStyle = isMocha ? "#B3927A" : "#8C6262";
-          ctx.font = "600 28px 'Cormorant Garamond', serif";
-          ctx.textAlign = "center";
-          ctx.fillText("The Wedding of", stripWidth / 2, textY);
+          ctx.strokeStyle = "#8C6262";
+          ctx.lineWidth = 2;
+          ctx.setLineDash([6, 4]);
+          ctx.strokeRect(68, ticketY + 8, stripWidth - 136, 94);
+          ctx.setLineDash([]); // Reset line dash
 
-          ctx.font = "bold 44px 'Cormorant Garamond', serif";
-          ctx.fillText("Riyan & Amelia", stripWidth / 2, textY + 45);
+          // Teks Tiket Pernikahan
+          ctx.fillStyle = "#3D2B2B";
+          ctx.font = "bold 22px 'Plus Jakarta Sans', sans-serif";
+          ctx.textAlign = "left";
+          ctx.fillText("WEDDING PASS", 88, ticketY + 42);
 
-          ctx.fillStyle = isMocha ? "#D8B4B4" : "#735757";
-          ctx.font = "italic 19px 'Plus Jakarta Sans', sans-serif";
-          ctx.fillText("Minggu, 06 Desember 2026", stripWidth / 2, textY + 82);
+          ctx.font = "14px 'Plus Jakarta Sans', sans-serif";
+          ctx.fillText("Riyan & Amelia • 06 Dec 2026", 88, ticketY + 70);
 
-          // Render Hasil ke Image Tag untuk Dtampilkan dan Diunduh
+          ctx.font = "bold 18px 'Plus Jakarta Sans', sans-serif";
+          ctx.textAlign = "right";
+          ctx.fillText("DAY PASS", stripWidth - 88, ticketY + 45);
+          ctx.font = "12px 'Plus Jakarta Sans', sans-serif";
+          ctx.fillText("No. 061226", stripWidth - 88, ticketY + 70);
+
+          // Render Hasil Akhir ke Tampilan & Download Link
           const dataUrl = canvas.toDataURL('image/png');
           document.getElementById('result-img').src = dataUrl;
           document.getElementById('download-link').href = dataUrl;
