@@ -24,9 +24,6 @@
     body {
       font-family: 'Plus Jakarta Sans', sans-serif;
       background-color: var(--bg-cream);
-      background-image: url('./assets/bg-pattern.png');
-      background-repeat: repeat;
-      background-size: 250px;
       color: var(--text-dark);
       min-height: 100vh;
       display: flex;
@@ -38,12 +35,11 @@
     .app-card {
       width: 100%;
       max-width: 440px;
-      background: rgba(255, 255, 255, 0.92);
-      backdrop-filter: blur(10px);
+      background: #FFFFFF;
       border-radius: 28px;
-      padding: 32px 22px;
-      box-shadow: 0 15px 35px rgba(140, 98, 98, 0.12), 0 3px 10px rgba(0,0,0,0.03);
-      border: 1px solid rgba(255, 255, 255, 0.8);
+      padding: 36px 24px;
+      box-shadow: 0 15px 35px rgba(140, 98, 98, 0.08), 0 3px 10px rgba(0,0,0,0.02);
+      border: 1px solid rgba(216, 180, 180, 0.3);
       text-align: center;
       position: relative;
       overflow: hidden;
@@ -58,17 +54,17 @@
       background: linear-gradient(135deg, #A37B7B 0%, var(--dusty-rose) 100%);
       color: #FFFFFF;
       border: none;
-      padding: 15px 28px;
-      font-size: 0.98rem;
+      padding: 16px 28px;
+      font-size: 1rem;
       font-weight: 700;
       border-radius: 30px;
       cursor: pointer;
-      box-shadow: 0 6px 20px rgba(140, 98, 98, 0.28);
+      box-shadow: 0 6px 20px rgba(140, 98, 98, 0.25);
       transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       display: inline-flex;
       align-items: center;
       gap: 10px;
-      margin-top: 14px;
+      margin-top: 20px;
       width: 100%;
       justify-content: center;
       letter-spacing: 0.5px;
@@ -76,14 +72,14 @@
 
     .btn-primary:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(140, 98, 98, 0.38);
+      box-shadow: 0 8px 25px rgba(140, 98, 98, 0.35);
     }
 
     .btn-secondary {
       background-color: transparent;
       color: var(--dusty-rose);
       border: 1px solid var(--soft-blush);
-      padding: 11px 20px;
+      padding: 12px 20px;
       font-size: 0.88rem;
       font-weight: 600;
       border-radius: 30px;
@@ -98,7 +94,7 @@
     }
 
     .btn-secondary:hover {
-      background-color: rgba(216, 180, 180, 0.15);
+      background-color: rgba(216, 180, 180, 0.12);
     }
 
     .btn-switch-cam {
@@ -121,37 +117,22 @@
       transform: scale(1.03);
     }
 
-    /* HALAMAN WELCOME */
+    /* HALAMAN WELCOME CLEAN */
     .welcome-badge {
       font-size: 0.75rem;
       color: var(--gold-accent);
       letter-spacing: 3px;
       text-transform: uppercase;
       font-weight: 700;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
     }
 
     .welcome-title {
-      font-size: 2.5rem;
+      font-size: 2.6rem;
       color: var(--dusty-rose);
       line-height: 1.15;
-      margin-bottom: 14px;
+      margin-bottom: 18px;
       font-weight: 700;
-    }
-
-    .icon-hero-group {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 16px;
-      margin: 18px 0;
-    }
-
-    .icon-hero-group img {
-      height: 48px;
-      width: auto;
-      object-fit: contain;
-      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.08));
     }
 
     /* STEP 2: TEMPLATE SELECTOR */
@@ -185,7 +166,7 @@
     .design-card {
       border: 2px solid var(--soft-blush);
       border-radius: 16px;
-      padding: 12px 6px;
+      padding: 14px 6px 12px;
       cursor: pointer;
       transition: all 0.25s ease;
       background-color: #FFFFFF;
@@ -375,23 +356,16 @@
 
 <div class="app-card">
 
-  <!-- HALAMAN 1: WELCOME SCREEN -->
+  <!-- HALAMAN 1: WELCOME SCREEN CLEAN & PROFESSIONAL -->
   <div id="step-welcome">
     <p class="welcome-badge">Virtual Photobooth</p>
     <h1 class="font-serif welcome-title">Capture Your Moment</h1>
-    <p style="font-size: 0.88rem; color: #735757; line-height: 1.6; margin-bottom: 10px;">
-      Selamat datang di Photobooth Pernikahan Kami! Abadikan foto spesial Anda bersama Riyan & Amelia.
+    <p style="font-size: 0.92rem; color: #735757; line-height: 1.6; margin-bottom: 10px;">
+      Selamat datang di Photobooth Pernikahan Kami.<br>Abadikan momen indah Anda bersama Riyan & Amelia.
     </p>
 
-    <!-- Hiasan Gambar Aset Asli yang Mewah -->
-    <div class="icon-hero-group">
-      <img src="./assets/calla-lily-corner.png" alt="Calla Lily" style="height: 42px;">
-      <img src="./assets/wedding-cake.png" alt="Wedding Cake" style="height: 48px;">
-      <img src="./assets/calla-lily-corner.png" alt="Calla Lily" style="height: 42px; transform: scaleX(-1);">
-    </div>
-
     <button class="btn-primary" onclick="goToStep(2)">
-      Mulai Photobooth <i class="fa-solid fa-arrow-right"></i>
+      Ambil Foto Kenangan <i class="fa-solid fa-arrow-right"></i>
     </button>
   </div>
 
@@ -417,7 +391,7 @@
       </div>
     </div>
 
-    <!-- Pilihan 2: Visual Card Desain Menggunakan Aset Asli -->
+    <!-- Pilihan 2: Visual Card Desain (Hanya Judul Tanpa Deskripsi) -->
     <p class="option-title"><i class="fa-solid fa-wand-magic-sparkles"></i> 2. Pilihan Desain Wedding</p>
     <div class="design-grid">
       <!-- Card 1 -->
@@ -427,8 +401,7 @@
           <div class="preview-photo"></div>
           <div class="preview-photo"></div>
         </div>
-        <strong style="font-size:0.75rem; color:var(--text-dark);">1. Calla Lily</strong>
-        <span style="font-size:0.65rem; color:#735757;">Calla Lily & Gold</span>
+        <strong style="font-size:0.8rem; color:var(--text-dark);">1. Calla Lily</strong>
       </div>
 
       <!-- Card 2 -->
@@ -438,8 +411,7 @@
           <div class="preview-photo"></div>
           <img src="./assets/wedding-cake.png" class="preview-img-cake" alt="Cake">
         </div>
-        <strong style="font-size:0.75rem; color:var(--text-dark);">2. Vintage Cake</strong>
-        <span style="font-size:0.65rem; color:#735757;">Kue Nikah & Curved</span>
+        <strong style="font-size:0.8rem; color:var(--text-dark);">2. Vintage Cake</strong>
       </div>
 
       <!-- Card 3 -->
@@ -448,8 +420,7 @@
           <div class="preview-photo"></div>
           <div class="preview-photo"></div>
         </div>
-        <strong style="font-size:0.75rem; color:var(--text-dark);">3. Wavy Red</strong>
-        <span style="font-size:0.65rem; color:#735757;">Kotak Gelombang</span>
+        <strong style="font-size:0.8rem; color:var(--text-dark);">3. Wavy Red</strong>
       </div>
     </div>
 
@@ -758,6 +729,7 @@
     }
   }
 
+  // MENGGAMBAR TEKS MELENGKUNG (PROPORSIONAL SPREAD UNTUK NAMA)
   function drawCurvedText(ctx, text, centerX, centerY, radius, startAngle, endAngle, font, color) {
     ctx.save();
     ctx.font = font;
@@ -783,6 +755,7 @@
     ctx.restore();
   }
 
+  // GAMBAR ORNAMEN CALLA LILY DIBERESKAN (UKURAN LEBIH BESAR & MEWAH)
   function drawCallaLilyAsset(ctx, x, y, width, height, flipX = false, flipY = false) {
     ctx.save();
     ctx.translate(x, y);
@@ -792,53 +765,55 @@
     if (lilyAsset.complete && lilyAsset.naturalWidth !== 0) {
       ctx.drawImage(lilyAsset, -width / 2, -height / 2, width, height);
     } else {
-      ctx.strokeStyle = "#C5A059"; ctx.lineWidth = 1.8;
-      ctx.beginPath(); ctx.moveTo(-60, 60); ctx.lineTo(100, -50); ctx.stroke();
+      ctx.strokeStyle = "#C5A059"; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(-70, 70); ctx.lineTo(120, -60); ctx.stroke();
 
       ctx.fillStyle = "#3F5E4D";
-      ctx.beginPath(); ctx.ellipse(-20, 10, 45, 25, Math.PI / 4, 0, 2 * Math.PI); ctx.fill();
+      ctx.beginPath(); ctx.ellipse(-25, 12, 55, 30, Math.PI / 4, 0, 2 * Math.PI); ctx.fill();
 
-      ctx.fillStyle = "#FFFFFF"; ctx.strokeStyle = "#D2C9BD"; ctx.lineWidth = 1.5;
-      ctx.beginPath(); ctx.ellipse(0, -10, 20, 30, Math.PI / 6, 0, 2 * Math.PI); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = "#FFFFFF"; ctx.strokeStyle = "#D2C9BD"; ctx.lineWidth = 1.8;
+      ctx.beginPath(); ctx.ellipse(0, -12, 25, 38, Math.PI / 6, 0, 2 * Math.PI); ctx.fill(); ctx.stroke();
       
       ctx.fillStyle = "#D4AF37";
-      ctx.beginPath(); ctx.ellipse(0, -10, 3, 14, 0, 0, 2 * Math.PI); ctx.fill();
+      ctx.beginPath(); ctx.ellipse(0, -12, 4, 18, 0, 0, 2 * Math.PI); ctx.fill();
     }
 
     ctx.restore();
   }
 
+  // GAMBAR KUE VINTAGE DIBERESKAN (UKURAN LEBIH BESAR & DITENGAHKAN)
   function drawVintageWeddingCake(ctx, centerX, centerY, mainColor) {
     ctx.save();
     ctx.translate(centerX, centerY);
 
     if (cakeAsset.complete && cakeAsset.naturalWidth !== 0) {
-      ctx.drawImage(cakeAsset, -45, -45, 90, 90);
+      ctx.drawImage(cakeAsset, -65, -65, 130, 130);
     } else {
       ctx.fillStyle = mainColor;
-      ctx.beginPath(); ctx.ellipse(0, 32, 36, 8, 0, 0, 2 * Math.PI); ctx.fill();
-      ctx.fillRect(-6, 32, 12, 12);
+      ctx.beginPath(); ctx.ellipse(0, 42, 48, 10, 0, 0, 2 * Math.PI); ctx.fill();
+      ctx.fillRect(-8, 42, 16, 16);
 
-      ctx.fillStyle = "#FFFFFF"; ctx.strokeStyle = mainColor; ctx.lineWidth = 2;
-      ctx.beginPath(); ctx.roundRect(-28, 6, 56, 26, 4); ctx.fill(); ctx.stroke();
-      ctx.beginPath(); ctx.roundRect(-20, -18, 40, 24, 4); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = "#FFFFFF"; ctx.strokeStyle = mainColor; ctx.lineWidth = 2.5;
+      ctx.beginPath(); ctx.roundRect(-38, 8, 76, 34, 5); ctx.fill(); ctx.stroke();
+      ctx.beginPath(); ctx.roundRect(-26, -24, 52, 32, 5); ctx.fill(); ctx.stroke();
 
       ctx.fillStyle = mainColor;
-      ctx.beginPath(); ctx.arc(0, -22, 4, 0, 2 * Math.PI); ctx.fill(); 
-      ctx.beginPath(); ctx.arc(-14, 20, 2.5, 0, 2 * Math.PI); ctx.fill();
-      ctx.beginPath(); ctx.arc(0, 20, 2.5, 0, 2 * Math.PI); ctx.fill();
-      ctx.beginPath(); ctx.arc(14, 20, 2.5, 0, 2 * Math.PI); ctx.fill();
+      ctx.beginPath(); ctx.arc(0, -30, 6, 0, 2 * Math.PI); ctx.fill(); 
+      ctx.beginPath(); ctx.arc(-18, 25, 3.5, 0, 2 * Math.PI); ctx.fill();
+      ctx.beginPath(); ctx.arc(0, 25, 3.5, 0, 2 * Math.PI); ctx.fill();
+      ctx.beginPath(); ctx.arc(18, 25, 3.5, 0, 2 * Math.PI); ctx.fill();
     }
 
     ctx.restore();
   }
 
+  // RENDER CANVAS UTAMA PHOTOSTRIP WEDDING
   function renderPhotostrip() {
     const stripWidth = 600;
     const photoBoxSize = 420;
-    const headerHeight = selectedDesignStyle === 'floral' ? 100 : 110;
-    const gapY = selectedDesignStyle === 'wavy_red' ? 60 : 35;
-    const footerHeight = selectedDesignStyle === 'floral' ? 160 : 220;
+    const headerHeight = selectedDesignStyle === 'floral' ? 120 : 110;
+    const gapY = selectedDesignStyle === 'wavy_red' ? 60 : 38;
+    const footerHeight = selectedDesignStyle === 'floral' ? 180 : 250;
 
     const totalPhotoHeight = targetPhotoCount * (photoBoxSize + gapY);
     const stripHeight = headerHeight + totalPhotoHeight + footerHeight;
@@ -874,12 +849,12 @@
 
     // Header Ornamen
     if (selectedDesignStyle === 'floral') {
-      drawCallaLilyAsset(ctx, 110, 80, 220, 160, false, false);
+      drawCallaLilyAsset(ctx, 140, 95, 280, 200, false, false);
     } else if (selectedDesignStyle === 'vintage') {
       ctx.fillStyle = textColor;
-      ctx.font = "22px 'Plus Jakarta Sans', sans-serif";
+      ctx.font = "24px 'Plus Jakarta Sans', sans-serif";
       ctx.textAlign = "center";
-      ctx.fillText("♥   🕊️   ♥", stripWidth / 2, 60);
+      ctx.fillText("♥   🕊️   ♥", stripWidth / 2, 65);
     }
 
     // Render Foto
@@ -898,45 +873,49 @@
           const footerY = startY + targetPhotoCount * (photoBoxSize + gapY) + 20;
 
           if (selectedDesignStyle === 'floral') {
-            drawCallaLilyAsset(ctx, stripWidth - 110, stripHeight - 90, 240, 180, true, true);
+            // Calla Lily Bawah Kanan (Ukuran Lebih Besar)
+            drawCallaLilyAsset(ctx, stripWidth - 140, stripHeight - 110, 300, 220, true, true);
 
             ctx.fillStyle = textColor;
-            ctx.font = "bold 28px 'Cormorant Garamond', serif";
+            ctx.font = "bold 34px 'Cormorant Garamond', serif";
             ctx.textAlign = "left";
-            ctx.fillText("RIYAN & AMELIA", 60, footerY + 50);
+            ctx.fillText("RIYAN & AMELIA", 60, footerY + 60);
 
-            ctx.font = "14px 'Plus Jakarta Sans', sans-serif";
+            ctx.font = "600 16px 'Plus Jakarta Sans', sans-serif";
             ctx.fillStyle = "#735757";
-            ctx.fillText("DECEMBER 06, 2026", 60, footerY + 78);
+            ctx.fillText("DECEMBER 06, 2026", 60, footerY + 92);
 
           } else if (selectedDesignStyle === 'vintage') {
+            // Curved Text Diberi Jarak Radius Lebih Luas Agar Tidak Menumpuk
             drawCurvedText(
               ctx, 
-              "RIYAN  &  AMELIA", 
+              "RIYAN   &   AMELIA", 
               stripWidth / 2, 
-              footerY + 280, 
-              220, 
-              -Math.PI * 0.68, 
-              -Math.PI * 0.32, 
-              "bold 34px 'Cormorant Garamond', serif", 
+              footerY + 310, 
+              250, 
+              -Math.PI * 0.65, 
+              -Math.PI * 0.35, 
+              "bold 36px 'Cormorant Garamond', serif", 
               textColor
             );
 
-            drawVintageWeddingCake(ctx, stripWidth / 2, footerY + 105, textColor);
+            // Gambar Kue Vintage Besar
+            drawVintageWeddingCake(ctx, stripWidth / 2, footerY + 115, textColor);
 
+            // Tanggal
             ctx.fillStyle = textColor;
             ctx.font = "600 18px 'Plus Jakarta Sans', sans-serif";
             ctx.textAlign = "center";
-            ctx.fillText("06 . 12 . 2026", stripWidth / 2, footerY + 165);
+            ctx.fillText("06 . 12 . 2026", stripWidth / 2, footerY + 195);
 
           } else if (selectedDesignStyle === 'wavy_red') {
             ctx.fillStyle = "#A82B2B";
-            ctx.font = "bold 46px 'Cormorant Garamond', serif";
+            ctx.font = "bold 48px 'Cormorant Garamond', serif";
             ctx.textAlign = "center";
-            ctx.fillText("RIYAN & AMELIA", stripWidth / 2, footerY + 50);
+            ctx.fillText("RIYAN & AMELIA", stripWidth / 2, footerY + 60);
 
-            ctx.font = "italic 16px 'Plus Jakarta Sans', sans-serif";
-            ctx.fillText("— 06.12.2026 —", stripWidth / 2, footerY + 85);
+            ctx.font = "italic 18px 'Plus Jakarta Sans', sans-serif";
+            ctx.fillText("— 06.12.2026 —", stripWidth / 2, footerY + 100);
           }
 
           // Export Hasil
