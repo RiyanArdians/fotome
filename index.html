@@ -6,7 +6,7 @@
   <title>Wedding Photobooth - Riyan & Amelia</title>
   
   <!-- Google Fonts & Font Awesome Icons -->
-  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Cormorant+Garamond:ital,wght@0,600;0,700;1,400;1,600&family=Great+Vibes&family=Courier+Prime:wght@400;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Great+Vibes&family=Courier+Prime:wght@400;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <style>
@@ -37,7 +37,7 @@
       max-width: 440px;
       background: #FFFFFF;
       border-radius: 28px;
-      padding: 36px 24px;
+      padding: 40px 28px;
       box-shadow: 0 15px 35px rgba(140, 98, 98, 0.08), 0 3px 10px rgba(0,0,0,0.02);
       border: 1px solid rgba(216, 180, 180, 0.3);
       text-align: center;
@@ -46,7 +46,7 @@
     }
 
     .font-serif { font-family: 'Cormorant Garamond', serif; }
-    .font-hand { font-family: 'Caveat', cursive; }
+    .font-hand { font-family: 'Great Vibes', cursive; }
     .hidden { display: none !important; }
 
     /* STYLING TOMBOL UTAMA & SEKUNDER */
@@ -64,7 +64,7 @@
       display: inline-flex;
       align-items: center;
       gap: 10px;
-      margin-top: 20px;
+      margin-top: 24px;
       width: 100%;
       justify-content: center;
       letter-spacing: 0.5px;
@@ -117,22 +117,45 @@
       transform: scale(1.03);
     }
 
-    /* HALAMAN WELCOME CLEAN */
+    /* HALAMAN WELCOME DENGAN LAYOUT PROPORSIONAL */
+    .welcome-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 10px 0 5px;
+    }
+
     .welcome-badge {
-      font-size: 0.75rem;
+      font-size: 0.78rem;
       color: var(--gold-accent);
-      letter-spacing: 3px;
+      letter-spacing: 3.5px;
       text-transform: uppercase;
       font-weight: 700;
-      margin-bottom: 12px;
+      margin-bottom: 14px;
     }
 
     .welcome-title {
-      font-size: 2.6rem;
+      font-size: 2.5rem;
       color: var(--dusty-rose);
       line-height: 1.15;
-      margin-bottom: 18px;
-      font-weight: 700;
+      margin-bottom: 20px;
+      font-weight: 600;
+      letter-spacing: -0.5px;
+    }
+
+    .welcome-subtitle {
+      font-size: 0.92rem;
+      color: #6E5353;
+      line-height: 1.65;
+      margin-bottom: 6px;
+      font-weight: 400;
+    }
+
+    .welcome-names {
+      font-family: 'Great Vibes', cursive;
+      font-size: 1.8rem;
+      color: var(--dusty-rose);
+      margin-top: 6px;
     }
 
     /* STEP 2: TEMPLATE SELECTOR */
@@ -351,17 +374,21 @@
 
 <div class="app-card">
 
-  <!-- HALAMAN 1: WELCOME SCREEN CLEAN & PROFESSIONAL -->
+  <!-- HALAMAN 1: WELCOME SCREEN (RAPI & PROPORSIONAL) -->
   <div id="step-welcome">
-    <p class="welcome-badge">Virtual Photobooth</p>
-    <h1 class="font-serif welcome-title">Capture Your Moment</h1>
-    <p style="font-size: 0.92rem; color: #735757; line-height: 1.6; margin-bottom: 10px;">
-      Selamat datang di Photobooth Pernikahan Kami.<br>Abadikan momen indah Anda bersama Riyan & Amelia.
-    </p>
+    <div class="welcome-container">
+      <p class="welcome-badge">Virtual Photobooth</p>
+      <h1 class="font-serif welcome-title">Capture Your Moment</h1>
+      
+      <p class="welcome-subtitle">
+        Selamat datang di Photobooth Pernikahan Kami.<br>Abadikan momen indah Anda bersama
+      </p>
+      <div class="welcome-names">Riyan & Amelia</div>
 
-    <button class="btn-primary" onclick="goToStep(2)">
-      Ambil Foto Kenangan <i class="fa-solid fa-arrow-right"></i>
-    </button>
+      <button class="btn-primary" onclick="goToStep(2)">
+        Ambil Foto Kenangan <i class="fa-solid fa-arrow-right"></i>
+      </button>
+    </div>
   </div>
 
   <!-- HALAMAN 2: PILIH STYLE -->
@@ -675,15 +702,14 @@
     ctx.closePath();
   }
 
-  // FUNGSI CONVERT CANVAS TO GRAYSCALE (HITAM PUTIH FOTO STRUK)
   function applyGrayscaleToImage(ctx, x, y, width, height) {
     const imgData = ctx.getImageData(x, y, width, height);
     const data = imgData.data;
     for (let i = 0; i < data.length; i += 4) {
       const avg = 0.3 * data[i] + 0.59 * data[i + 1] + 0.11 * data[i + 2];
-      data[i]     = avg; // red
-      data[i + 1] = avg; // green
-      data[i + 2] = avg; // blue
+      data[i]     = avg;
+      data[i + 1] = avg;
+      data[i + 2] = avg;
     }
     ctx.putImageData(imgData, x, y);
   }
@@ -718,7 +744,6 @@
 
     ctx.drawImage(img, offsetX, offsetY, drawW, drawH);
 
-    // BIFILTER HITAM PUTIH JIKA DESAIN ADALAH RECEIPT / STRUK
     if (designStyle === 'receipt') {
       applyGrayscaleToImage(ctx, x, y, size, size);
     }
@@ -761,7 +786,6 @@
     ctx.restore();
   }
 
-  // FUNGSI MEMBUAT SIMULASI BARCODE / QR DUMMY UNTUK STRUK
   function drawDummyBarcode(ctx, centerX, centerY, width, height) {
     ctx.save();
     ctx.fillStyle = "#111111";
@@ -781,7 +805,7 @@
   function renderPhotostrip() {
     const stripWidth = 600;
     const photoBoxSize = 420;
-    const headerHeight = selectedDesignStyle === 'receipt' ? 260 : 100;
+    const headerHeight = selectedDesignStyle === 'receipt' ? 260 : (selectedDesignStyle === 'wavy_red' ? 140 : 100);
     const gapY = selectedDesignStyle === 'wavy_red' ? 60 : 40;
     const footerHeight = selectedDesignStyle === 'receipt' ? 260 : (selectedDesignStyle === 'floral' ? 180 : 220);
 
@@ -811,7 +835,7 @@
       cardInnerColor = "#FAF6EE";
       textColor = "#A82B2B";
     } else if (selectedDesignStyle === 'receipt') {
-      cardInnerColor = "#F5F4F0"; // Kertas struk vintage
+      cardInnerColor = "#F5F4F0";
       textColor = "#111111";
     }
 
@@ -824,7 +848,6 @@
       drawCallaLilyOuterCorner(ctx, 0, 0, 420, 320, false, false);
       drawCallaLilyOuterCorner(ctx, stripWidth, stripHeight, 440, 340, true, true);
     } else if (selectedDesignStyle === 'receipt') {
-      // HEADER STRUK BELANJA (RECEIPT STYLE)
       ctx.fillStyle = textColor;
       ctx.textAlign = "center";
       
@@ -836,7 +859,6 @@
       ctx.font = "16px 'Courier Prime', monospace";
       ctx.fillText("DEC 06, 2026 • 10:00 AM", stripWidth / 2, 130);
 
-      // Garis Putus-putus Struk
       ctx.strokeStyle = "#111111";
       ctx.lineWidth = 2;
       ctx.setLineDash([8, 6]);
@@ -844,7 +866,6 @@
       ctx.moveTo(50, 150); ctx.lineTo(stripWidth - 50, 150);
       ctx.stroke();
 
-      // List Detail Struk Belanja Track
       ctx.textAlign = "left";
       ctx.font = "16px 'Courier Prime', monospace";
       ctx.fillText("LADY LOVE - THE SACRED SOUL", 60, 180);
@@ -859,7 +880,16 @@
       ctx.beginPath();
       ctx.moveTo(50, 245); ctx.lineTo(stripWidth - 50, 245);
       ctx.stroke();
-      ctx.setLineDash([]); // Reset Line Dash
+      ctx.setLineDash([]);
+    } else if (selectedDesignStyle === 'wavy_red') {
+      // HEADER WEDDING ANGGUN UNTUK DESAIN WAVY RED (AGAR TIDAK SEPI)
+      ctx.fillStyle = "#A82B2B";
+      ctx.textAlign = "center";
+      ctx.font = "30px 'Great Vibes', cursive";
+      ctx.fillText("The Wedding of", stripWidth / 2, 60);
+
+      ctx.font = "16px 'Cormorant Garamond', serif";
+      ctx.fillText("— ♡ —", stripWidth / 2, 90);
     }
 
     // 3. Render Foto-Foto Utama
@@ -888,7 +918,6 @@
             ctx.fillText("DECEMBER 06, 2026", 60, footerY + 65);
 
           } else if (selectedDesignStyle === 'receipt') {
-            // FOOTER STRUK BELANJA (RECEIPT FOOTER & BARCODE)
             ctx.fillStyle = "#111111";
             ctx.textAlign = "center";
             ctx.font = "italic 16px 'Courier Prime', monospace";
@@ -898,21 +927,18 @@
             ctx.font = "bold 16px 'Courier Prime', monospace";
             ctx.fillText("ALL RIGHTS RESERVED • 2026", stripWidth / 2, footerY + 110);
 
-            // Draw Barcode Dummy
             drawDummyBarcode(ctx, stripWidth / 2, footerY + 160, 280, 50);
 
             ctx.font = "14px 'Courier Prime', monospace";
             ctx.fillText("THE ART OF THE MOMENT", stripWidth / 2, footerY + 225);
 
           } else if (selectedDesignStyle === 'wavy_red') {
-            // TYPOGRAPHY WEDDING SANGAT ELEGAN & ANGGUN
             ctx.fillStyle = "#A82B2B";
             ctx.font = "700 58px 'Great Vibes', cursive";
             ctx.textAlign = "center";
             ctx.fillText("Riyan & Amelia", stripWidth / 2, footerY + 50);
 
             ctx.font = "600 22px 'Cormorant Garamond', serif";
-            ctx.letterSpacing = "4px";
             ctx.fillText("— DECEMBER 06, 2026 —", stripWidth / 2, footerY + 95);
           }
 
