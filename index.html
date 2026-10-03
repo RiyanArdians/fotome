@@ -253,7 +253,7 @@
     </p>
 
     <div style="font-size: 2.2rem; color: var(--soft-blush); margin-bottom: 20px;">
-      📸 💌 🎟️
+      📸 💌 🎟️️
     </div>
 
     <button class="btn-primary" onclick="goToStep(2)">
@@ -312,15 +312,15 @@
         Soft Mocha
       </div>
       <div class="color-card" onclick="selectBgColor('blue', this)">
-        <div class="color-dot" style="background-color: #92B4A7;"></div>
+        <div class="color-dot" style="background-color: #83A398;"></div>
         Soft Sage/Blue
       </div>
       <div class="color-card" onclick="selectBgColor('lavender', this)">
-        <div class="color-dot" style="background-color: #B392B3;"></div>
+        <div class="color-dot" style="background-color: #A283A2;"></div>
         Soft Lavender
       </div>
       <div class="color-card" onclick="selectBgColor('vanilla', this)">
-        <div class="color-dot" style="background-color: #E8DFD8;"></div>
+        <div class="color-dot" style="background-color: #D6C7BC;"></div>
         Vanilla Cream
       </div>
       <div class="color-card" onclick="selectBgColor('dark', this)">
@@ -501,16 +501,12 @@
     capturedPhotos.push(tempCanvas.toDataURL('image/png'));
   }
 
-  // MASKING & CROP DENGAN BENTUK LOVE PERFECT DAN BULAT FRAMELESS
-  function drawMaskedImage(ctx, img, x, y, size, shape) {
-    ctx.save();
+  // HELPER UNTUK MENGGAMBAR PATH BENTUK (LOVE / CIRCLE / RECT)
+  function buildShapePath(ctx, x, y, size, shape) {
     ctx.beginPath();
-
     if (shape === 'circle') {
       ctx.arc(x + size / 2, y + size / 2, size / 2, 0, Math.PI * 2);
     } else if (shape === 'heart') {
-      // Formulasi Matematika Heart (Love Perfect Curve)
-      const topCurveHeight = size * 0.3;
       ctx.moveTo(x + size / 2, y + size * 0.9);
       ctx.bezierCurveTo(x + size * 0.02, y + size * 0.58, x - size * 0.05, y + size * 0.22, x + size * 0.25, y + size * 0.08);
       ctx.bezierCurveTo(x + size * 0.42, y + size * 0.0, x + size * 0.5, y + size * 0.22, x + size * 0.5, y + size * 0.22);
@@ -519,8 +515,42 @@
     } else {
       ctx.rect(x, y, size, size);
     }
-
     ctx.closePath();
+  }
+
+  // MASKING & BORDER PINGGIRAN PUTIH UNTUK SETIAP SHAPE
+  function drawMaskedImage(ctx, img, x, y, size, shape, borderColor) {
+    ctx.save();
+
+    // 1. LUKIS BINGKAI LINGKIRAN/LOVE PUTIH TEBAL + BAYANGAN (SHADOW)
+    if (shape !== 'square') {
+      ctx.save();
+      ctx.shadowColor = "rgba(0,0,0,0.12)";
+      ctx.shadowBlur = 12;
+      ctx.shadowOffsetY = 5;
+
+      // Lukis latar belakang putih bingkai
+      ctx.fillStyle = "#FFFFFF";
+      ctx.beginPath();
+      if (shape === 'circle') {
+        ctx.arc(x + size / 2, y + size / 2, (size / 2) + 12, 0, Math.PI * 2);
+      } else if (shape === 'heart') {
+        // Skala sedikit lebih besar untuk bingkai luar putih
+        const pad = 12;
+        const bx = x - pad, by = y - pad, bs = size + (pad * 2);
+        ctx.moveTo(bx + bs / 2, by + bs * 0.9);
+        ctx.bezierCurveTo(bx + bs * 0.02, by + bs * 0.58, bx - bs * 0.05, by + bs * 0.22, bx + bs * 0.25, by + bs * 0.08);
+        ctx.bezierCurveTo(bx + bs * 0.42, by + bs * 0.0, bx + bs * 0.5, by + bs * 0.22, bx + bs * 0.5, by + bs * 0.22);
+        ctx.bezierCurveTo(bx + bs * 0.5, by + bs * 0.22, bx + bs * 0.58, by + bs * 0.0, bx + bs * 0.75, by + bs * 0.08);
+        ctx.bezierCurveTo(bx + bs * 1.05, by + bs * 0.22, bx + bs * 0.98, by + bs * 0.58, bx + bs / 2, by + bs * 0.9);
+      }
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+    }
+
+    // 2. MASKING DAN GAMBAR FOTO
+    buildShapePath(ctx, x, y, size, shape);
     ctx.clip();
 
     // Object-Fit Cover Calculation (Preserve Aspect Ratio)
@@ -541,6 +571,16 @@
 
     ctx.drawImage(img, offsetX, offsetY, drawW, drawH);
     ctx.restore();
+
+    // 3. GARIS TEPI (STROKE BORDER) KEMAS
+    if (shape !== 'square') {
+      ctx.save();
+      buildShapePath(ctx, x, y, size, shape);
+      ctx.strokeStyle = "#FFFFFF";
+      ctx.lineWidth = 6;
+      ctx.stroke();
+      ctx.restore();
+    }
   }
 
   // RENDER CANVAS AKURAT & ESTETIK
@@ -548,7 +588,7 @@
     const stripWidth = 600;
     const photoBoxSize = 420;
     const headerHeight = 120;
-    const gapY = 60;
+    const gapY = selectedGridShape === 'square' ? 60 : 75;
     const ticketHeight = 130;
     const marginBottom = 60;
 
@@ -607,7 +647,7 @@
       img.onload = () => {
         const photoY = startY + index * (photoBoxSize + gapY);
 
-        // HANYA GAMBAR KOTAK PUTIH JIKA MODE MENTAN SQUARE POLAROID
+        // KOTAK PUTIH POLAROID HANYA UNTUK MODE SQUARE
         if (selectedGridShape === 'square') {
           ctx.fillStyle = "#FFFFFF";
           ctx.shadowColor = "rgba(0,0,0,0.08)";
@@ -620,8 +660,8 @@
           ctx.shadowColor = "transparent";
         }
 
-        // Render Gambar Proporsional (Love / Circle / Square)
-        drawMaskedImage(ctx, img, (stripWidth - photoBoxSize) / 2, photoY, photoBoxSize, selectedGridShape);
+        // Render Gambar + Bingkai Putih Kemas (Love / Circle / Square)
+        drawMaskedImage(ctx, img, (stripWidth - photoBoxSize) / 2, photoY, photoBoxSize, selectedGridShape, outerColor);
 
         // Tulisan Tangan Bawah Foto
         ctx.fillStyle = selectedBgColor === 'dark' ? "#D8B4B4" : "#3D2B2B";
@@ -629,7 +669,7 @@
         ctx.textAlign = "center";
         
         const labels = ["Sweet Memories ♥", "Chilling out", "Forever & Always"];
-        const labelY = selectedGridShape === 'square' ? photoY + photoBoxSize + 28 : photoY + photoBoxSize + 20;
+        const labelY = selectedGridShape === 'square' ? photoY + photoBoxSize + 28 : photoY + photoBoxSize + 32;
         ctx.fillText(labels[index % labels.length], stripWidth / 2, labelY);
 
         loadedCount++;
