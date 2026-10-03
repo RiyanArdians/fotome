@@ -446,12 +446,13 @@
       display: block;
       margin: 0 auto;
       transform: translateY(-100%);
-      /* ANIMASI DIBUAT LEBIH LAMBAT (4.5 DETIK) & EFFORTLESS SLOW CRAWL */
-      transition: transform 4.5s cubic-bezier(0.15, 0.85, 0.35, 1);
+      /* TRANSITION DINAMIS */
+      transition: none;
     }
 
     #result-img.eject-active {
       transform: translateY(0);
+      transition: transform 4.5s cubic-bezier(0.15, 0.85, 0.35, 1);
     }
 
     /* FOOTER APPLICATION SANGAT ELEGAN & SIMPEL */
@@ -662,7 +663,16 @@
   const countdownOverlay = document.getElementById('countdown-overlay');
   const flashOverlay = document.getElementById('flash-overlay');
 
+  function resetEjectAnimation() {
+    const resultImg = document.getElementById('result-img');
+    if (resultImg) {
+      resultImg.classList.remove('eject-active');
+    }
+  }
+
   function goToStep(stepNumber) {
+    resetEjectAnimation();
+
     document.getElementById('step-welcome').classList.add('hidden');
     document.getElementById('step-template').classList.add('hidden');
     document.getElementById('step-camera').classList.add('hidden');
@@ -1076,17 +1086,22 @@
             ctx.restore();
           }
 
-          // Export Hasil & Pemicu Animasi Eject Foto Slow Crawl
+          // Export Hasil & Trigger Animasi Polaroid
           const dataUrl = canvas.toDataURL('image/png');
           const resultImg = document.getElementById('result-img');
           
+          // Reset posisi foto ke atas slot kamera tanpa efek transisi
           resultImg.classList.remove('eject-active');
           resultImg.src = dataUrl;
           document.getElementById('download-link').href = dataUrl;
 
+          // Force Reflow untuk memastikan posisi awal terdaftar oleh browser
+          void resultImg.offsetWidth;
+
+          // Trigger animasi pencetakan foto keluar secara mulus
           setTimeout(() => {
             resultImg.classList.add('eject-active');
-          }, 150);
+          }, 100);
         }
       };
       img.src = photoSrc;
