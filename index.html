@@ -932,12 +932,12 @@
             ctx.fillStyle = "#735757";
             ctx.fillText("DECEMBER 06, 2026", 60, footerY + 65);
 
-            // Watermark posisi khusus Calla Lily agar tidak tertimpa bunga
+            // Watermark RAPI DI POJOK KIRI BEBAS DARI BUNGA
             ctx.save();
             ctx.fillStyle = "rgba(115, 87, 87, 0.55)";
             ctx.font = "500 12px 'Plus Jakarta Sans', sans-serif";
-            ctx.textAlign = "center";
-            ctx.fillText("FOTOME by Riyan Ardiansyah", stripWidth / 2, footerY + 125);
+            ctx.textAlign = "left";
+            ctx.fillText("FOTOME by Riyan Ardiansyah", 60, footerY + 105);
             ctx.restore();
 
           } else if (selectedDesignStyle === 'receipt') {
@@ -955,7 +955,6 @@
             ctx.font = "14px 'Courier Prime', monospace";
             ctx.fillText("THE ART OF THE MOMENT", stripWidth / 2, footerY + 225);
 
-            // Watermark posisi khusus Struk di bawah teks THE ART OF THE MOMENT
             ctx.save();
             ctx.fillStyle = "rgba(0, 0, 0, 0.45)";
             ctx.font = "500 12px 'Plus Jakarta Sans', sans-serif";
@@ -972,7 +971,6 @@
             ctx.font = "600 22px 'Cormorant Garamond', serif";
             ctx.fillText("— DECEMBER 06, 2026 —", stripWidth / 2, footerY + 95);
 
-            // Watermark posisi khusus Wavy Red
             ctx.save();
             ctx.fillStyle = "rgba(168, 43, 43, 0.55)";
             ctx.font = "500 12px 'Plus Jakarta Sans', sans-serif";
