@@ -125,10 +125,10 @@
       margin-bottom: 8px;
     }
 
-    .option-grid-2 {
+    .option-grid-3 {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 8px;
+      grid-template-columns: repeat(1, 1fr);
+      gap: 10px;
       margin-bottom: 8px;
     }
 
@@ -142,6 +142,8 @@
       font-size: 0.8rem;
       font-weight: 600;
       color: var(--text-dark);
+      text-align: left;
+      padding-left: 12px;
     }
 
     .option-card.active, .option-card:hover {
@@ -271,35 +273,39 @@
   <!-- HALAMAN 2: PILIH STYLE & COLOR -->
   <div id="step-template" class="hidden">
     <h2 class="font-serif" style="color: var(--dusty-rose); font-size: 1.8rem;">Pilih Style Photobooth</h2>
-    <p style="font-size: 0.82rem; color: #735757;">Kustomisasi jumlah foto, bentuk frame, dan warna</p>
+    <p style="font-size: 0.82rem; color: #735757;">Kustomisasi jumlah foto, desain layout, dan warna</p>
 
     <!-- Pilihan 1: Jumlah Foto -->
     <p class="option-title"><i class="fa-solid fa-images"></i> 1. Jumlah Foto</p>
     <div class="option-grid">
-      <div class="option-card active" onclick="selectPhotoCount(3, this)">
+      <div class="option-card active" style="text-align:center; padding-left:0;" onclick="selectPhotoCount(3, this)">
         <i class="fa-solid fa-layer-group" style="font-size: 1.1rem; display:block; margin-bottom:2px;"></i>
         3 Foto (Strip)
       </div>
-      <div class="option-card" onclick="selectPhotoCount(2, this)">
+      <div class="option-card" style="text-align:center; padding-left:0;" onclick="selectPhotoCount(2, this)">
         <i class="fa-solid fa-clone" style="font-size: 1.1rem; display:block; margin-bottom:2px;"></i>
         2 Foto (Duo)
       </div>
-      <div class="option-card" onclick="selectPhotoCount(1, this)">
+      <div class="option-card" style="text-align:center; padding-left:0;" onclick="selectPhotoCount(1, this)">
         <i class="fa-solid fa-square" style="font-size: 1.1rem; display:block; margin-bottom:2px;"></i>
         1 Foto (Single)
       </div>
     </div>
 
-    <!-- Pilihan 2: Bentuk Grid / Frame (Kotak Biasa vs Bergelombang) -->
-    <p class="option-title"><i class="fa-solid fa-shapes"></i> 2. Desain Bingkai Kotak</p>
-    <div class="option-grid-2">
-      <div class="option-card active" onclick="selectGridShape('square', this)">
-        <i class="fa-regular fa-square" style="font-size: 1.1rem; display:block; margin-bottom:2px;"></i>
-        Kotak Minimalis
+    <!-- Pilihan 2: 3 Desain Spesifik Sesuai Gambar -->
+    <p class="option-title"><i class="fa-solid fa-wand-magic-sparkles"></i> 2. Pilihan Desain Wedding</p>
+    <div class="option-grid-3">
+      <div class="option-card active" onclick="selectDesignStyle('floral', this)">
+        <strong>🌿 Desain 1: Floral Lily</strong>
+        <span style="font-size:0.7rem; display:block; color:#735757; font-weight:normal;">Elegan Bunga Lili Putih + Frame Clean</span>
       </div>
-      <div class="option-card" onclick="selectGridShape('wavy', this)">
-        <i class="fa-solid fa-water" style="font-size: 1.1rem; display:block; margin-bottom:2px;"></i>
-        Kotak Gelombang
+      <div class="option-card" onclick="selectDesignStyle('vintage', this)">
+        <strong>🎂 Desain 2: Curved Vintage</strong>
+        <span style="font-size:0.7rem; display:block; color:#735757; font-weight:normal;">Teks Melengkung + Doodle Kue Nikah</span>
+      </div>
+      <div class="option-card" onclick="selectDesignStyle('wavy_red', this)">
+        <strong>🔴 Desain 3: Wavy Scallop Red</strong>
+        <span style="font-size:0.7rem; display:block; color:#735757; font-weight:normal;">Bingkai Kotak Bergelombang Merah</span>
       </div>
     </div>
 
@@ -390,7 +396,7 @@
 
 <script>
   let targetPhotoCount = 3;
-  let selectedGridShape = 'square'; // 'square' atau 'wavy'
+  let selectedDesignStyle = 'floral'; // 'floral', 'vintage', 'wavy_red'
   let selectedBgColor = 'dusty';
   let capturedPhotos = [];
 
@@ -417,8 +423,8 @@
     element.classList.add('active');
   }
 
-  function selectGridShape(shape, element) {
-    selectedGridShape = shape;
+  function selectDesignStyle(styleName, element) {
+    selectedDesignStyle = styleName;
     element.parentElement.querySelectorAll('.option-card').forEach(el => el.classList.remove('active'));
     element.classList.add('active');
   }
@@ -504,85 +510,76 @@
     capturedPhotos.push(tempCanvas.toDataURL('image/png'));
   }
 
-  // FUNGSI MENGGAMBAR PATH KOTAK BERGELOMBANG (WAVY / SCALLOP BORDER)
+  // FUNGSI BINGKAI BERGELOMBANG (DESAIN 3 - WAVY SCALLOP)
   function drawWavyRect(ctx, x, y, width, height, waveCountX, waveCountY, waveDepth) {
     ctx.beginPath();
     const stepX = width / waveCountX;
     const stepY = height / waveCountY;
 
-    // Sisi Atas
     ctx.moveTo(x, y);
     for (let i = 0; i < waveCountX; i++) {
       ctx.quadraticCurveTo(x + (i + 0.5) * stepX, y - waveDepth, x + (i + 1) * stepX, y);
     }
-    // Sisi Kanan
     for (let i = 0; i < waveCountY; i++) {
       ctx.quadraticCurveTo(x + width + waveDepth, y + (i + 0.5) * stepY, x + width, y + (i + 1) * stepY);
     }
-    // Sisi Bawah
     for (let i = waveCountX; i > 0; i--) {
       ctx.quadraticCurveTo(x + (i - 0.5) * stepX, y + height + waveDepth, x + (i - 1) * stepX, y + height);
     }
-    // Sisi Kiri
     for (let i = waveCountY; i > 0; i--) {
       ctx.quadraticCurveTo(x - waveDepth, y + (i - 0.5) * stepY, x, y + (i - 1) * stepY);
     }
     ctx.closePath();
   }
 
-  // MASKING FOTO DENGAN BENTUK KOTAK BIASA ATAU GELOMBANG
-  function drawMaskedImage(ctx, img, x, y, size, shape, accentColor) {
+  // MASKING FOTO
+  function drawMaskedImage(ctx, img, x, y, size, designStyle) {
     ctx.save();
 
-    if (shape === 'wavy') {
-      // Gambarkan Bingkai Luar Gelombang Berwarna Akses Tema
-      ctx.fillStyle = accentColor;
-      drawWavyRect(ctx, x - 10, y - 10, size + 20, size + 20, 8, 8, 12);
+    if (designStyle === 'wavy_red') {
+      // BINGKAI MERAH BERGELOMBANG PERSIS GAMBAR 1
+      ctx.fillStyle = "#A82B2B";
+      drawWavyRect(ctx, x - 12, y - 12, size + 24, size + 24, 8, 8, 12);
       ctx.fill();
 
-      // Masking Foto Dalam
       ctx.beginPath();
       drawWavyRect(ctx, x, y, size, size, 8, 8, 10);
       ctx.clip();
     } else {
-      // Mode Kotak Minimalis (Rounded Rectangle)
+      // KOTAK MINIMALIS SERPIHAN CLEAN (DESAIN 1 & 2)
       ctx.beginPath();
-      ctx.roundRect(x, y, size, size, 12);
+      ctx.roundRect(x, y, size, size, 6);
       ctx.clip();
     }
 
-    // Object-Fit Cover Calculation
+    // Object-Fit Cover
     const imgAspect = img.width / img.height;
     let drawW, drawH, offsetX, offsetY;
 
     if (imgAspect > 1) { 
-      drawH = size;
-      drawW = size * imgAspect;
-      offsetX = x - (drawW - size) / 2;
-      offsetY = y;
+      drawH = size; drawW = size * imgAspect;
+      offsetX = x - (drawW - size) / 2; offsetY = y;
     } else { 
-      drawW = size;
-      drawH = size / imgAspect;
-      offsetX = x;
-      offsetY = y - (drawH - size) / 2;
+      drawW = size; drawH = size / imgAspect;
+      offsetX = x; offsetY = y - (drawH - size) / 2;
     }
 
     ctx.drawImage(img, offsetX, offsetY, drawW, drawH);
     ctx.restore();
 
-    // Border halus untuk kotak biasa
-    if (shape === 'square') {
+    // Border Khas Desain 1 (Garis Halus Hitam / Dark)
+    if (designStyle === 'floral') {
       ctx.save();
-      ctx.strokeStyle = "rgba(0,0,0,0.1)";
-      ctx.lineWidth = 2;
+      ctx.strokeStyle = "rgba(0,0,0,0.2)";
+      ctx.lineWidth = 1.5;
       ctx.beginPath();
-      ctx.roundRect(x, y, size, size, 12);
+      ctx.roundRect(x, y, size, size, 6);
       ctx.stroke();
       ctx.restore();
     }
   }
 
-  // FUNGSINYA MENGGAMBAR TEKS MELENGKUNG (CURVED TEXT)
+  // FUNGSINYA TEKS MELENGKUNG (DESAIN 2 CURVED TEXT)
   function drawCurvedText(ctx, text, centerX, centerY, radius, startAngle, endAngle, font, color) {
     ctx.save();
     ctx.font = font;
@@ -608,13 +605,45 @@
     ctx.restore();
   }
 
+  // ILUSTRASI BUNGA LILI PUTIH UNTUK DESAIN 1 (DRAWING CANVAS)
+  function drawWhiteLilyCorner(ctx, x, y, scale = 1, flipX = false) {
+    ctx.save();
+    ctx.translate(x, y);
+    if (flipX) ctx.scale(-1, 1);
+    ctx.scale(scale, scale);
+
+    // Daun Hijau
+    ctx.fillStyle = "#4B6858";
+    ctx.beginPath(); ctx.ellipse(-20, 10, 35, 12, Math.PI / 3, 0, 2 * Math.PI); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(10, 25, 30, 10, -Math.PI / 4, 0, 2 * Math.PI); ctx.fill();
+
+    // Bunga Lili Putih
+    ctx.fillStyle = "#FFFFFF";
+    ctx.strokeStyle = "#D2C4B4";
+    ctx.lineWidth = 1.5;
+
+    for (let i = 0; i < 6; i++) {
+      ctx.beginPath();
+      const angle = (i * Math.PI) / 3;
+      ctx.ellipse(Math.cos(angle) * 16, Math.sin(angle) * 16, 22, 9, angle, 0, 2 * Math.PI);
+      ctx.fill();
+      ctx.stroke();
+    }
+
+    // Putik Kuning
+    ctx.fillStyle = "#E0C068";
+    ctx.beginPath(); ctx.arc(0, 0, 5, 0, 2 * Math.PI); ctx.fill();
+
+    ctx.restore();
+  }
+
   // RENDER CANVAS UTAMA PHOTOSTRIP WEDDING
   function renderPhotostrip() {
     const stripWidth = 600;
     const photoBoxSize = 420;
-    const headerHeight = 110;
-    const gapY = selectedGridShape === 'wavy' ? 65 : 45;
-    const footerHeight = 220;
+    const headerHeight = selectedDesignStyle === 'floral' ? 80 : 110;
+    const gapY = selectedDesignStyle === 'wavy_red' ? 60 : 35;
+    const footerHeight = selectedDesignStyle === 'floral' ? 140 : 220;
 
     const totalPhotoHeight = targetPhotoCount * (photoBoxSize + gapY);
     const stripHeight = headerHeight + totalPhotoHeight + footerHeight;
@@ -623,7 +652,7 @@
     canvas.height = stripHeight;
     const ctx = canvas.getContext('2d');
 
-    // PALET WARNA THEME
+    // MAPPING WARNA PALETTE TEMA
     let outerColor = "#8C6262";
     let cardInnerColor = "#F9F1F1";
     let textColor = "#8C6262";
@@ -640,15 +669,27 @@
       outerColor = "#2B1E1E"; cardInnerColor = "#3D2B2B"; textColor = "#D8B4B4";
     }
 
-    // 1. Latar Belakang Kartu Utama (Cream Soft)
+    // OVERRIDE WARNA UNTUK DESAIN 3 (WAVY RED) DIBUAT PLEK KETIPLEK TEMA MERAH GELOMBANG
+    if (selectedDesignStyle === 'wavy_red') {
+      cardInnerColor = "#FAF6EE";
+      textColor = "#A82B2B";
+    }
+
+    // 1. Latar Belakang Kartu Utama
     ctx.fillStyle = cardInnerColor;
     ctx.fillRect(0, 0, stripWidth, stripHeight);
 
-    // 2. Header Ornamen Atas Khas Wedding
-    ctx.fillStyle = textColor;
-    ctx.font = "20px 'Plus Jakarta Sans', sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillText("♥   🕊️   ♥", stripWidth / 2, 55);
+    // 2. ORNAMEN HEADER ATAS SESUAI TIPE DESAIN
+    if (selectedDesignStyle === 'floral') {
+      // Gambar Bunga Lili Putih Atas Kiri (Gambar 2)
+      drawWhiteLilyCorner(ctx, 40, 40, 1.2, false);
+    } else if (selectedDesignStyle === 'vintage') {
+      // Doodle Love Melayang (Gambar 3)
+      ctx.fillStyle = textColor;
+      ctx.font = "24px 'Plus Jakarta Sans', sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText("♥   🕊️   ♥", stripWidth / 2, 60);
+    }
 
     // 3. Render Foto-Foto
     const startY = headerHeight;
@@ -659,36 +700,60 @@
       img.onload = () => {
         const photoY = startY + index * (photoBoxSize + gapY);
 
-        // Render Gambar (Square / Wavy)
-        drawMaskedImage(ctx, img, (stripWidth - photoBoxSize) / 2, photoY, photoBoxSize, selectedGridShape, outerColor);
+        // Render Gambar
+        drawMaskedImage(ctx, img, (stripWidth - photoBoxSize) / 2, photoY, photoBoxSize, selectedDesignStyle);
 
         loadedCount++;
         if (loadedCount === targetPhotoCount) {
-          // 4. FOOTER WEDDING ESTETIK KELAS DENGAN CURVED TEXT
-          const footerY = startY + targetPhotoCount * (photoBoxSize + gapY) + 15;
+          // 4. FOOTER SETIAP DESAIN DIPROSES SESUAI GAMBAR REFERENSI
 
-          // Nama Mempelai Melengkung (Curved Text RIYAN & AMELIA)
-          drawCurvedText(
-            ctx, 
-            "RIYAN  &  AMELIA", 
-            stripWidth / 2, 
-            footerY + 280, 
-            220, 
-            -Math.PI * 0.68, 
-            -Math.PI * 0.32, 
-            "bold 34px 'Cormorant Garamond', serif", 
-            textColor
-          );
+          const footerY = startY + targetPhotoCount * (photoBoxSize + gapY) + 20;
 
-          // Ilustrasi Kue Pernikahan / Pita Manis di Tengah
-          ctx.fillStyle = textColor;
-          ctx.font = "32px 'Plus Jakarta Sans', sans-serif";
-          ctx.textAlign = "center";
-          ctx.fillText("🎂", stripWidth / 2, footerY + 115);
+          if (selectedDesignStyle === 'floral') {
+            // FOOTER DESAIN 1 (LILY WHITE - GAMBAR 2)
+            drawWhiteLilyCorner(ctx, stripWidth - 40, stripHeight - 40, 1.3, true);
 
-          // Tanggal Pernikahan
-          ctx.font = "600 18px 'Plus Jakarta Sans', sans-serif";
-          ctx.fillText("06 . 12 . 2026", stripWidth / 2, footerY + 160);
+            ctx.fillStyle = textColor;
+            ctx.font = "bold 28px 'Cormorant Garamond', serif";
+            ctx.textAlign = "left";
+            ctx.fillText("RIYAN & AMELIA", 60, footerY + 40);
+
+            ctx.font = "14px 'Plus Jakarta Sans', sans-serif";
+            ctx.fillStyle = "#735757";
+            ctx.fillText("DECEMBER 06, 2026", 60, footerY + 68);
+
+          } else if (selectedDesignStyle === 'vintage') {
+            // FOOTER DESAIN 2 (CURVED VINTAGE - GAMBAR 3)
+            drawCurvedText(
+              ctx, 
+              "RIYAN  &  AMELIA", 
+              stripWidth / 2, 
+              footerY + 280, 
+              220, 
+              -Math.PI * 0.68, 
+              -Math.PI * 0.32, 
+              "bold 34px 'Cormorant Garamond', serif", 
+              textColor
+            );
+
+            ctx.fillStyle = textColor;
+            ctx.font = "32px 'Plus Jakarta Sans', sans-serif";
+            ctx.textAlign = "center";
+            ctx.fillText("🎂", stripWidth / 2, footerY + 115);
+
+            ctx.font = "600 18px 'Plus Jakarta Sans', sans-serif";
+            ctx.fillText("06 . 12 . 2026", stripWidth / 2, footerY + 160);
+
+          } else if (selectedDesignStyle === 'wavy_red') {
+            // FOOTER DESAIN 3 (CIAO STYLE - GAMBAR 1)
+            ctx.fillStyle = "#A82B2B";
+            ctx.font = "bold 46px 'Cormorant Garamond', serif";
+            ctx.textAlign = "center";
+            ctx.fillText("RIYAN & AMELIA", stripWidth / 2, footerY + 50);
+
+            ctx.font = "italic 16px 'Plus Jakarta Sans', sans-serif";
+            ctx.fillText("— 06.12.2026 —", stripWidth / 2, footerY + 85);
+          }
 
           // Render Hasil Foto ke Tampilan & Download Link
           const dataUrl = canvas.toDataURL('image/png');
