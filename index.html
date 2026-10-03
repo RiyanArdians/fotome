@@ -540,13 +540,13 @@
         <strong style="font-size:0.75rem; color:var(--text-dark);">1. Calla Lily</strong>
       </div>
 
-      <!-- 2. Struk B&W -->
+      <!-- 2. Recipe -->
       <div class="design-card" onclick="selectDesignStyle('receipt', this)">
         <div class="preview-box design2">
           <i class="fa-solid fa-receipt" style="font-size: 1.1rem; color: #333;"></i>
           <div class="preview-photo"></div>
         </div>
-        <strong style="font-size:0.75rem; color:var(--text-dark);">2. Struk B&W</strong>
+        <strong style="font-size:0.75rem; color:var(--text-dark);">2. Recipe</strong>
       </div>
 
       <!-- 3. Wavy Red -->
@@ -1212,6 +1212,9 @@
       ctx.textAlign = "right";
       ctx.fillText("03:31", stripWidth - 60, 180);
       ctx.fillText("04:00", stripWidth - 60, 205);
+
+      // SIMBOL INFINITY (∞) DIPERBESAR SUPAYA SEIMBANG DENGAN ANGKA DI ATASNYA
+      ctx.font = "bold 20px 'Courier Prime', monospace";
       ctx.fillText("∞", stripWidth - 60, 230);
 
       ctx.beginPath();
@@ -1253,21 +1256,17 @@
           const footerY = startY + targetPhotoCount * (photoBoxSize + gapY) + 20;
 
           if (selectedDesignStyle === 'floral') {
+            // DESAIN 1: WARNA FONT TANGGAL & FOOTER DISAMAKAN DENGAN JUDUL RIYAN & AMELIA
             ctx.fillStyle = textColor;
             ctx.font = "bold 42px 'Cormorant Garamond', serif";
             ctx.textAlign = "left";
             ctx.fillText("RIYAN & AMELIA", 60, footerY + 30);
 
             ctx.font = "600 20px 'Plus Jakarta Sans', sans-serif";
-            ctx.fillStyle = "#735757";
-            ctx.fillText("DECEMBER 06, 2026", 60, footerY + 65);
+            ctx.fillText("06 Desember 2026", 60, footerY + 65);
 
-            ctx.save();
-            ctx.fillStyle = "rgba(115, 87, 87, 0.55)";
             ctx.font = "500 12px 'Plus Jakarta Sans', sans-serif";
-            ctx.textAlign = "left";
             ctx.fillText("FOTOME by Riyan Ardiansyah", 60, footerY + 105);
-            ctx.restore();
 
           } else if (selectedDesignStyle === 'receipt') {
             ctx.fillStyle = "#111111";
@@ -1292,13 +1291,14 @@
             ctx.restore();
 
           } else if (selectedDesignStyle === 'wavy_red') {
+            // DESAIN 3: FORMAT TANGGAL INDONESIA 06 DESEMBER 2026
             ctx.fillStyle = "#A82B2B";
             ctx.font = "700 58px 'Great Vibes', cursive";
             ctx.textAlign = "center";
             ctx.fillText("Riyan & Amelia", stripWidth / 2, footerY + 50);
 
             ctx.font = "600 22px 'Cormorant Garamond', serif";
-            ctx.fillText("— DECEMBER 06, 2026 —", stripWidth / 2, footerY + 95);
+            ctx.fillText("— 06 Desember 2026 —", stripWidth / 2, footerY + 95);
 
             ctx.save();
             ctx.fillStyle = "rgba(168, 43, 43, 0.55)";
@@ -1321,7 +1321,7 @@
             drawChatMenuBox(ctx, 310, footerY + 15, 230, 160);
 
           } else if (selectedDesignStyle === 'engagement') {
-            // FOOTER DESAIN 5: FOTOME KAPITAL & BY RIYAN ARDIANSYAH TITLE CASE (FONT KECIL)
+            // FOOTER DESAIN 5: FOTOME KAPITAL & BY RIYAN ARDIANSYAH TITLE CASE
             ctx.save();
             ctx.fillStyle = textColor;
             ctx.textAlign = "center";
@@ -1341,7 +1341,7 @@
             ctx.letterSpacing = "2px";
             ctx.fillText("04 OKTOBER 2026", stripWidth / 2, footerY + 138);
 
-            // Watermark Footer Paling Bawah (Perkecil & Title Case)
+            // Watermark Footer Paling Bawah (Title Case & Size Subtle)
             ctx.font = "500 10.5px 'Plus Jakarta Sans', sans-serif";
             ctx.letterSpacing = "1.5px";
             ctx.globalAlpha = 0.75;
