@@ -3,135 +3,485 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Photobooth - Riyan & Amelia</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=Plus+Jakarta+Sans:wght@500&display=swap" rel="stylesheet">
+  <title>Wedding Photobooth - Riyan & Amelia</title>
+  
+  <!-- Google Fonts & Font Awesome Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
   <style>
+    :root {
+      --dusty-rose: #8C6262;
+      --soft-blush: #D8B4B4;
+      --bg-cream: #F9F1F1;
+      --soft-mocha: #B3927A;
+      --text-dark: #3D2B2B;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
     body {
       font-family: 'Plus Jakarta Sans', sans-serif;
-      background-color: #F9F1F1;
-      color: #3D2B2B;
-      text-align: center;
-      margin: 0;
-      padding: 20px;
+      background-color: var(--bg-cream);
+      color: var(--text-dark);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 15px;
     }
-    h2 { font-family: 'Cormorant Garamond', serif; color: #8C6262; font-size: 2rem; margin-bottom: 10px; }
-    .camera-container {
-      position: relative;
+
+    .app-card {
       width: 100%;
-      max-width: 400px;
-      margin: 0 auto;
-      border-radius: 16px;
+      max-width: 440px;
+      background-color: #FFFFFF;
+      border-radius: 24px;
+      padding: 30px 20px;
+      box-shadow: 0 10px 35px rgba(140, 98, 98, 0.12);
+      border: 1px solid rgba(216, 180, 180, 0.4);
+      text-align: center;
+      position: relative;
       overflow: hidden;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-      background-color: #000;
     }
-    video { width: 100%; display: block; transform: scaleX(-1); /* Efek Cermin */ }
-    .btn {
-      background: linear-gradient(135deg, #B3927A, #8C6D57);
-      color: #fff;
+
+    .font-serif { font-family: 'Cormorant Garamond', serif; }
+    .hidden { display: none !important; }
+
+    /* TOMBOL STYLING */
+    .btn-primary {
+      background: linear-gradient(135deg, var(--soft-mocha) 0%, var(--dusty-rose) 100%);
+      color: #FFFFFF;
       border: none;
-      padding: 12px 24px;
+      padding: 14px 28px;
       font-size: 1rem;
-      font-weight: bold;
+      font-weight: 700;
       border-radius: 30px;
       cursor: pointer;
+      box-shadow: 0 4px 18px rgba(140, 98, 98, 0.3);
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
       margin-top: 15px;
-      box-shadow: 0 4px 15px rgba(140, 109, 87, 0.3);
+      width: 100%;
+      justify-content: center;
     }
-    canvas { display: none; }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 22px rgba(140, 98, 98, 0.4);
+    }
+
+    .btn-secondary {
+      background-color: transparent;
+      color: var(--dusty-rose);
+      border: 1px solid var(--dusty-rose);
+      padding: 10px 20px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      border-radius: 30px;
+      cursor: pointer;
+      margin-top: 10px;
+      width: 100%;
+    }
+
+    /* STEP 1: WELCOME SCREEN */
+    .welcome-badge {
+      font-size: 0.8rem;
+      color: var(--soft-mocha);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .welcome-title {
+      font-size: 2.3rem;
+      color: var(--dusty-rose);
+      line-height: 1.2;
+      margin-bottom: 12px;
+    }
+
+    /* STEP 2: TEMPLATE SELECTOR */
+    .template-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin: 20px 0;
+    }
+
+    .template-card {
+      border: 2px solid var(--soft-blush);
+      border-radius: 16px;
+      padding: 15px 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background-color: var(--bg-cream);
+    }
+
+    .template-card.active, .template-card:hover {
+      border-color: var(--dusty-rose);
+      background-color: #FFFFFF;
+      box-shadow: 0 4px 15px rgba(140, 98, 98, 0.2);
+      transform: translateY(-3px);
+    }
+
+    .template-preview {
+      width: 40px;
+      height: 80px;
+      margin: 0 auto 10px;
+      border-radius: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 4px;
+    }
+
+    .tpl-dusty { background-color: #F9F1F1; border: 1px solid #D8B4B4; }
+    .tpl-dusty .box { background-color: #D8B4B4; height: 20px; border-radius: 2px; }
+
+    .tpl-mocha { background-color: #3D2B2B; border: 1px solid #B3927A; }
+    .tpl-mocha .box { background-color: #B3927A; height: 20px; border-radius: 2px; }
+
+    /* STEP 3: CAMERA & COUNTDOWN */
+    .camera-wrapper {
+      position: relative;
+      width: 100%;
+      height: 380px;
+      border-radius: 18px;
+      overflow: hidden;
+      background-color: #000;
+      margin: 15px 0;
+      box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+    }
+
+    video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: scaleX(-1); /* Efek Cermin */
+    }
+
+    .countdown-overlay {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #FFFFFF;
+      font-size: 5rem;
+      font-weight: bold;
+      z-index: 10;
+    }
+
+    .flash-overlay {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: #FFFFFF;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.1s ease;
+      z-index: 11;
+    }
+
+    .photo-progress {
+      font-size: 0.9rem;
+      color: var(--dusty-rose);
+      font-weight: 600;
+    }
+
+    /* STEP 4: RESULT */
     #result-img {
       width: 100%;
-      max-width: 400px;
-      border-radius: 16px;
-      margin-top: 15px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+      max-width: 280px;
+      border-radius: 12px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+      margin: 15px auto;
+      display: block;
     }
+
+    canvas { display: none; }
   </style>
 </head>
 <body>
 
-  <h2>Photobooth Wedding</h2>
-  <p style="font-size: 0.85rem; color: #735757;">Riyan & Amelia</p>
+<div class="app-card">
 
-  <!-- Area Kamera -->
-  <div class="camera-container" id="camera-box">
-    <video id="video" autoplay playsinline></video>
+  <!-- ========================================== -->
+  <!-- HALAMAN 1: WELCOME SCREEN                  -->
+  <!-- ========================================== -->
+  <div id="step-welcome">
+    <p class="welcome-badge">Virtual Photobooth</p>
+    <h1 class="font-serif welcome-title">Capture Your Moment</h1>
+    <p style="font-size: 0.88rem; color: #735757; line-height: 1.5; margin-bottom: 20px;">
+      Selamat datang di Photobooth Pernikahan Kami! Abadikan momen bahagia Anda dan simpan kenangan manis bersama kami.
+    </p>
+
+    <div style="font-size: 2.2rem; color: var(--soft-blush); margin-bottom: 20px;">
+      📸 ✨ 💖
+    </div>
+
+    <button class="btn-primary" onclick="goToStep(2)">
+      Mulai Photobooth <i class="fa-solid fa-arrow-right"></i>
+    </button>
   </div>
 
-  <button class="btn" id="snap-btn" onclick="takePhoto()">📷 Ambil Foto</button>
+  <!-- ========================================== -->
+  <!-- HALAMAN 2: PILIH TEMPLATE & BINGKAI         -->
+  <!-- ========================================== -->
+  <div id="step-template" class="hidden">
+    <h2 class="font-serif" style="color: var(--dusty-rose); font-size: 1.8rem;">Pilih Template Foto</h2>
+    <p style="font-size: 0.82rem; color: #735757;">Pilih desain bingkai impian Anda</p>
 
-  <!-- Canvas Tersembunyi untuk Olah Gambar -->
-  <canvas id="canvas"></canvas>
+    <div class="template-grid">
+      <!-- Option 1 -->
+      <div class="template-card active" onclick="selectTemplate('dusty-strip', this)">
+        <div class="template-preview tpl-dusty">
+          <div class="box"></div><div class="box"></div><div class="box"></div>
+        </div>
+        <p style="font-size: 0.85rem; font-weight:700; color: var(--dusty-rose);">Dusty Photostrip</p>
+        <p style="font-size: 0.7rem; color: #735757;">3 Foto Vertical</p>
+      </div>
 
-  <!-- Hasil Foto -->
-  <div id="result-box" style="display:none;">
-    <h3 style="margin-top:20px; font-size:1.1rem;">Hasil Foto Anda:</h3>
-    <img id="result-img" alt="Hasil Foto">
-    <br>
-    <a id="download-link" download="wedding-riyan-amelia.png">
-      <button class="btn" style="background: #8C6262;">💾 Simpan Foto</button>
+      <!-- Option 2 -->
+      <div class="template-card" onclick="selectTemplate('mocha-strip', this)">
+        <div class="template-preview tpl-mocha">
+          <div class="box"></div><div class="box"></div><div class="box"></div>
+        </div>
+        <p style="font-size: 0.85rem; font-weight:700; color: var(--soft-mocha);">Mocha Elegant</p>
+        <p style="font-size: 0.7rem; color: #735757;">3 Foto Vertical</p>
+      </div>
+    </div>
+
+    <button class="btn-primary" onclick="startCameraProcess()">
+      <i class="fa-solid fa-camera"></i> Buka Kamera
+    </button>
+    <button class="btn-secondary" onclick="goToStep(1)">Kembali</button>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- HALAMAN 3: AREA KAMERA & TAKING PHOTO      -->
+  <!-- ========================================== -->
+  <div id="step-camera" class="hidden">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <span class="photo-progress" id="photo-count-text">Foto 1 dari 3</span>
+      <span style="font-size: 0.8rem; color: var(--soft-mocha);"><i class="fa-solid fa-bolt"></i> Otomatis</span>
+    </div>
+
+    <div class="camera-wrapper">
+      <video id="video" autoplay playsinline></video>
+      <div id="countdown-overlay" class="countdown-overlay hidden">3</div>
+      <div id="flash-overlay" class="flash-overlay"></div>
+    </div>
+
+    <button id="btn-snap" class="btn-primary" onclick="startPhotoSequence()">
+      <i class="fa-solid fa-circle-dot"></i> Ambil Foto Now
+    </button>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- HALAMAN 4: HASIL FOTO & SIMPAN             -->
+  <!-- ========================================== -->
+  <div id="step-result" class="hidden">
+    <h2 class="font-serif" style="color: var(--dusty-rose); font-size: 1.8rem;">Hasil Photobooth Anda</h2>
+    <p style="font-size: 0.82rem; color: #735757;">Terima kasih telah berbagi kebahagiaan!</p>
+
+    <img id="result-img" alt="Hasil Photobooth">
+
+    <a id="download-link" download="Photobooth-RiyanAmelia.png">
+      <button class="btn-primary">
+        <i class="fa-solid fa-download"></i> Unduh Foto
+      </button>
     </a>
-    <br>
-    <button class="btn" style="background: #735757; font-size:0.85rem;" onclick="resetCamera()">🔄 Foto Ulang</button>
+    
+    <button class="btn-secondary" onclick="resetPhotobooth()">
+      <i class="fa-solid fa-rotate-right"></i> Foto Ulang
+    </button>
   </div>
+
+</div>
+
+<!-- Canvas Tersembunyi untuk Merender Hasil Foto -->
+<canvas id="canvas"></canvas>
 
 <script>
+  let selectedTemplate = 'dusty-strip';
+  let capturedPhotos = [];
   const video = document.getElementById('video');
   const canvas = document.getElementById('canvas');
-  const resultImg = document.getElementById('result-img');
-  const downloadLink = document.getElementById('download-link');
-  const resultBox = document.getElementById('result-box');
-  const cameraBox = document.getElementById('camera-box');
-  const snapBtn = document.getElementById('snap-btn');
+  const countdownOverlay = document.getElementById('countdown-overlay');
+  const flashOverlay = document.getElementById('flash-overlay');
 
-  // Akses Kamera Depan HP / Laptop
-  navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: false })
-    .then(stream => { video.srcObject = stream; })
-    .catch(err => { alert("Gagal mengakses kamera. Pastikan memberikan izin kamera."); });
+  // Navigasi Antar Halaman
+  function goToStep(stepNumber) {
+    document.getElementById('step-welcome').classList.add('hidden');
+    document.getElementById('step-template').classList.add('hidden');
+    document.getElementById('step-camera').classList.add('hidden');
+    document.getElementById('step-result').classList.add('hidden');
 
-  function takePhoto() {
-    const width = video.videoWidth || 640;
-    const height = video.videoHeight || 480;
-
-    canvas.width = width;
-    canvas.height = height;
-    const ctx = canvas.getContext('2d');
-
-    // 1. Gambar Foto dari Video (Efek Cermin Di-flip Balik agar Normal)
-    ctx.translate(width, 0);
-    ctx.scale(-1, 1);
-    ctx.drawImage(video, 0, 0, width, height);
-    ctx.setTransform(1, 0, 0, 1, 0, 0); // Reset Transform
-
-    // 2. Tambahkan Overlay Pita / Gradasi Bawah
-    ctx.fillStyle = "rgba(61, 43, 43, 0.65)";
-    ctx.fillRect(0, height - 70, width, 70);
-
-    // 3. Tuliskan Teks Watermark / Bingkai
-    ctx.fillStyle = "#FFFFFF";
-    ctx.font = "bold 22px 'Plus Jakarta Sans', sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillText("The Wedding of Riyan & Amelia", width / 2, height - 38);
-
-    ctx.fillStyle = "#D8B4B4";
-    ctx.font = "italic 14px 'Plus Jakarta Sans', sans-serif";
-    ctx.fillText("06 Desember 2026 • #RiyanAmelia", width / 2, height - 16);
-
-    // 4. Export Hasil ke Gambar
-    const dataUrl = canvas.toDataURL('image/png');
-    resultImg.src = dataUrl;
-    downloadLink.href = dataUrl;
-
-    // Tampilkan Hasil & Sembunyikan Kamera
-    cameraBox.style.display = "none";
-    snapBtn.style.display = "none";
-    resultBox.style.display = "block";
+    if (stepNumber === 1) document.getElementById('step-welcome').classList.remove('hidden');
+    if (stepNumber === 2) document.getElementById('step-template').classList.remove('hidden');
+    if (stepNumber === 3) document.getElementById('step-camera').classList.remove('hidden');
+    if (stepNumber === 4) document.getElementById('step-result').classList.remove('hidden');
   }
 
-  function resetCamera() {
-    cameraBox.style.display = "block";
-    snapBtn.style.display = "inline-block";
-    resultBox.style.display = "none";
+  // Pilih Template
+  function selectTemplate(templateName, cardElement) {
+    selectedTemplate = templateName;
+    document.querySelectorAll('.template-card').forEach(el => el.classList.remove('active'));
+    cardElement.classList.add('active');
+  }
+
+  // Buka Kamera
+  function startCameraProcess() {
+    goToStep(3);
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: "user", width: { ideal: 1080 }, height: { ideal: 1440 } }, audio: false })
+      .then(stream => {
+        video.srcObject = stream;
+      })
+      .catch(err => {
+        alert("Tidak dapat mengakses kamera. Pastikan memberikan izin kamera di browser Anda.");
+        goToStep(2);
+      });
+  }
+
+  // Alur Pengambilan 3 Foto Otomatis
+  async function startPhotoSequence() {
+    document.getElementById('btn-snap').disabled = true;
+    document.getElementById('btn-snap').style.opacity = '0.5';
+    capturedPhotos = [];
+
+    for (let i = 1; i <= 3; i++) {
+      document.getElementById('photo-count-text').innerText = `Foto ${i} dari 3`;
+      await runCountdown(3);
+      triggerFlash();
+      captureSingleFrame();
+      await delay(1000); // Jedah 1 detik antar foto
+    }
+
+    // Gabungkan Foto ke Frame
+    renderPhotostrip();
+    goToStep(4);
+
+    document.getElementById('btn-snap').disabled = false;
+    document.getElementById('btn-snap').style.opacity = '1';
+  }
+
+  function runCountdown(seconds) {
+    return new Promise(resolve => {
+      countdownOverlay.classList.remove('hidden');
+      let count = seconds;
+      countdownOverlay.innerText = count;
+
+      const timer = setInterval(() => {
+        count--;
+        if (count > 0) {
+          countdownOverlay.innerText = count;
+        } else {
+          clearInterval(timer);
+          countdownOverlay.classList.add('hidden');
+          resolve();
+        }
+      }, 1000);
+    });
+  }
+
+  function triggerFlash() {
+    flashOverlay.style.opacity = '0.9';
+    setTimeout(() => { flashOverlay.style.opacity = '0'; }, 150);
+  }
+
+  function delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  // Tangkap 1 Frame Video
+  function captureSingleFrame() {
+    const tempCanvas = document.createElement('canvas');
+    const w = video.videoWidth || 640;
+    const h = video.videoHeight || 480;
+    tempCanvas.width = w;
+    tempCanvas.height = h;
+    const ctx = tempCanvas.getContext('2d');
+
+    // Flip Horizontal (Mirror Effect)
+    ctx.translate(w, 0);
+    ctx.scale(-1, 1);
+    ctx.drawImage(video, 0, 0, w, h);
+
+    capturedPhotos.push(tempCanvas.toDataURL('image/png'));
+  }
+
+  // Render 3 Foto Menjadi Photostrip
+  function renderPhotostrip() {
+    const isMocha = selectedTemplate === 'mocha-strip';
+
+    // Dimensi Kanvas Photostrip
+    const stripWidth = 600;
+    const stripHeight = 1600;
+    const photoWidth = 520;
+    const photoHeight = 390;
+    const paddingX = 40;
+    const startY = 50;
+    const gapY = 30;
+
+    canvas.width = stripWidth;
+    canvas.height = stripHeight;
+    const ctx = canvas.getContext('2d');
+
+    // 1. Latar Belakang Frame
+    ctx.fillStyle = isMocha ? "#2B1E1E" : "#F9F1F1";
+    ctx.fillRect(0, 0, stripWidth, stripHeight);
+
+    // Border Estetik Luar
+    ctx.strokeStyle = isMocha ? "#B3927A" : "#D8B4B4";
+    ctx.lineWidth = 6;
+    ctx.strokeRect(15, 15, stripWidth - 30, stripHeight - 30);
+
+    // 2. Tempel 3 Foto berturut-turut
+    let loadedCount = 0;
+    capturedPhotos.forEach((photoSrc, index) => {
+      const img = new Image();
+      img.onload = () => {
+        const currentY = startY + index * (photoHeight + gapY);
+        
+        // Bingkai Foto Putih/Cream
+        ctx.fillStyle = "#FFFFFF";
+        ctx.fillRect(paddingX - 6, currentY - 6, photoWidth + 12, photoHeight + 12);
+
+        // Foto Utama
+        ctx.drawImage(img, paddingX, currentY, photoWidth, photoHeight);
+
+        loadedCount++;
+        if (loadedCount === 3) {
+          // 3. Tambahkan Teks Watermark Wedding di Bagian Bawah Strip
+          const textY = startY + 3 * (photoHeight + gapY) + 40;
+
+          ctx.fillStyle = isMocha ? "#B3927A" : "#8C6262";
+          ctx.font = "bold 32px 'Cormorant Garamond', serif";
+          ctx.textAlign = "center";
+          ctx.fillText("The Wedding of", stripWidth / 2, textY);
+
+          ctx.font = "bold 42px 'Cormorant Garamond', serif";
+          ctx.fillText("Riyan & Amelia", stripWidth / 2, textY + 45);
+
+          ctx.fillStyle = isMocha ? "#D8B4B4" : "#735757";
+          ctx.font = "italic 20px 'Plus Jakarta Sans', sans-serif";
+          ctx.fillText("Minggu, 06 Desember 2026", stripWidth / 2, textY + 85);
+
+          // Render Hasil ke Image Tag
+          const dataUrl = canvas.toDataURL('image/png');
+          document.getElementById('result-img').src = dataUrl;
+          document.getElementById('download-link').href = dataUrl;
+        }
+      };
+      img.src = photoSrc;
+    });
+  }
+
+  function resetPhotobooth() {
+    goToStep(2);
   }
 </script>
 
