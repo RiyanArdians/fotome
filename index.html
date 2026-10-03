@@ -6,7 +6,7 @@
   <title>Virtual Photobooth - FOTOME</title>
   
   <!-- Google Fonts & Font Awesome Icons -->
-  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Great+Vibes&family=Courier+Prime:wght@400;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,500;1,600&family=Bodoni+Moda:ital,opsz,wght@1,6..96,600;1,6..96,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Great+Vibes&family=Courier+Prime:wght@400;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,500;1,600;1,700&family=Bodoni+Moda:ital,opsz,wght@1,6..96,600;1,6..96,700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <style>
@@ -877,11 +877,11 @@
       drawWavyRect(ctx, x, y, size, size, 8, 8, 10);
       ctx.clip();
     } else if (designStyle === 'engagement') {
-      // POLAROID BORDER LEBIH TEBAL (42px) AGAR TEKS VERTIKAL PERFEKTIF TERMASUK DI DALAM AREA PUTIH
-      const topPad = 18;
-      const sidePadLeft = (index % 2 === 0) ? 42 : 18;
-      const sidePadRight = (index % 2 === 0) ? 18 : 42;
-      const bottomPad = 26;
+      // BORDER DIBUAT CUKUP LEBAR TERMASUK AREA SISI KIRI & KANAN AGAR TEKS VERTIKAL BISA DITARUH BEBAS DAN MURNI DI DALAM
+      const topPad = 22;
+      const sidePadLeft = (index % 2 === 0) ? 55 : 22;
+      const sidePadRight = (index % 2 === 0) ? 22 : 55;
+      const bottomPad = 28;
 
       const frameX = x - sidePadLeft;
       const frameY = y - topPad;
@@ -892,17 +892,19 @@
       ctx.fillStyle = "#FFFFFF";
       ctx.fillRect(frameX, frameY, frameW, frameH);
 
-      // Draw Sub-Teks Vertikal Samping Frame (Jelas & Besar Di Dalam Border Putih)
+      // Draw Sub-Teks Vertikal Samping Frame - DIPOSISIKAN PRESISI 100% DI DALAM BORDER PUTIH
       ctx.save();
-      ctx.fillStyle = "#333333";
-      ctx.font = "600 14px 'Plus Jakarta Sans', sans-serif";
+      ctx.fillStyle = "rgba(0, 0, 0, 0.65)";
+      ctx.font = "600 15px 'Plus Jakarta Sans', sans-serif";
       
       if (index % 2 === 0) {
-        ctx.translate(frameX + 22, frameY + frameH - 20);
+        // Teks di Sisi Kiri Frame (Posisi X dibuat safe di tengah pad putih)
+        ctx.translate(frameX + 32, frameY + frameH - 30);
         ctx.rotate(-Math.PI / 2);
         ctx.fillText("#picturememories", 0, 0);
       } else {
-        ctx.translate(frameX + frameW - 20, frameY + 25);
+        // Teks di Sisi Kanan Frame (Posisi X dibuat safe di tengah pad putih)
+        ctx.translate(frameX + frameW - 30, frameY + 35);
         ctx.rotate(Math.PI / 2);
         ctx.fillText("pictme", 0, 0);
       }
@@ -987,25 +989,14 @@
     ctx.restore();
   }
 
-  // HEADER CHAT UI DENGAN TEKS "CATCH THE MOMENT" + FONT PLAYFAIR DISPLAY UNTUK DESAIN 4
+  // HEADER CHAT UI TANPA BORDER PUTIH DENGAN FONT BESAR "CATCH THE MOMENT" UNTUK DESAIN 4
   function drawChatHeaderBar(ctx, width, textColor) {
     ctx.save();
-    ctx.fillStyle = "rgba(255,255,255,0.85)";
-    ctx.strokeStyle = "rgba(0,0,0,0.08)";
-    ctx.lineWidth = 1;
-    
-    ctx.beginPath();
-    ctx.roundRect((width - 400) / 2, 30, 400, 46, 23);
-    ctx.fill();
-    ctx.stroke();
-
-    // Font Playfair Display Seragam Dengan Sub-Footer
     ctx.fillStyle = "#8C2B38";
-    ctx.font = "italic 600 20px 'Playfair Display', serif";
+    ctx.font = "italic 700 28px 'Playfair Display', serif";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillText("Catch The Moment", width / 2, 53);
-
+    ctx.fillText("Catch The Moment", width / 2, 55);
     ctx.restore();
   }
 
