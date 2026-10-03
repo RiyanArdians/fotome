@@ -6,7 +6,7 @@
   <title>Virtual Photobooth - FOTOME</title>
   
   <!-- Google Fonts & Font Awesome Icons -->
-  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Great+Vibes&family=Courier+Prime:wght@400;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,500;1,600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Great+Vibes&family=Courier+Prime:wght@400;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,500;1,600&family=Bodoni+Moda:ital,opsz,wght@1,6..96,600;1,6..96,700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <style>
@@ -180,7 +180,7 @@
       margin-bottom: 8px;
     }
 
-    /* GRID DESAIN 5 OPSI (3 DILATAS, 2 DIBAWAN) */
+    /* GRID DESAIN 5 OPSI */
     .design-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -252,11 +252,13 @@
       background: #E8C8C8;
     }
 
-    .preview-box.design4 { border: 2px solid #2B1E1E; background: #3D2B2B; }
-    .preview-box.design4 .preview-photo { background: #D8B4B4; }
+    /* PREVIEW DESIGN 4: CHAT UI STYLE */
+    .preview-box.design4 { border: 1px solid #DDD; background: #FAFAFA; }
+    .preview-box.design4 .preview-photo { background: #E2D0D0; border-radius: 3px; }
 
-    .preview-box.design5 { border: 2px solid #8C6262; background: #FDFBF7; }
-    .preview-box.design5 .preview-photo { background: #B3927A; }
+    /* PREVIEW DESIGN 5: MAROON WHITE BORDER STYLE */
+    .preview-box.design5 { border: 2px solid #5A121A; background: #5A121A; }
+    .preview-box.design5 .preview-photo { background: #FFF; border: 1px solid #FFF; }
 
     .option-card {
       border: 2px solid var(--soft-blush);
@@ -495,7 +497,7 @@
     </div>
   </div>
 
-  <!-- HALAMAN 2: PILIH STYLE (DENGAN 5 PILIHAN DESAIN) -->
+  <!-- HALAMAN 2: PILIH STYLE (5 PILIHAN DESAIN) -->
   <div id="step-template" class="hidden">
     <h2 class="font-serif" style="color: var(--dusty-rose); font-size: 1.85rem;">Pilih Style Photobooth</h2>
     <p style="font-size: 0.82rem; color: #735757;">Lihat contoh gambar dan pilih style favorit Anda</p>
@@ -517,7 +519,7 @@
       </div>
     </div>
 
-    <!-- Pilihan 2: Visual Card Desain (5 OPSI) -->
+    <!-- Pilihan 2: Visual Card Desain -->
     <p class="option-title"><i class="fa-solid fa-wand-magic-sparkles"></i> 2. Pilihan Desain Wedding & Events</p>
     <div class="design-grid">
       <!-- 1. Calla Lily -->
@@ -548,16 +550,16 @@
         <strong style="font-size:0.75rem; color:var(--text-dark);">3. Wavy Red</strong>
       </div>
 
-      <!-- 4. FOTOME Showcase (DESAIN BARU 1) -->
+      <!-- 4. FOTOME Brand (SESUAI GAMBAR 1 - CHAT UI) -->
       <div class="design-card" onclick="selectDesignStyle('fotome_brand', this)">
         <div class="preview-box design4">
           <div class="preview-photo"></div>
           <div class="preview-photo"></div>
         </div>
-        <strong style="font-size:0.75rem; color:var(--text-dark);">4. FOTOME Brand</strong>
+        <strong style="font-size:0.75rem; color:var(--text-dark);">4. FOTOME UI</strong>
       </div>
 
-      <!-- 5. Vira & Wahyu Engagement (DESAIN BARU 2) -->
+      <!-- 5. Engagement Vira & Wahyu (SESUAI GAMBAR 2 - MAROON BORDER) -->
       <div class="design-card" onclick="selectDesignStyle('engagement', this)">
         <div class="preview-box design5">
           <div class="preview-photo"></div>
@@ -876,6 +878,14 @@
       ctx.beginPath();
       drawWavyRect(ctx, x, y, size, size, 8, 8, 10);
       ctx.clip();
+    } else if (designStyle === 'engagement') {
+      // FRAME BORDING PUTIH TEGAS UNTUK ENGAGEMENT GAMBAR 2
+      ctx.fillStyle = "#FFFFFF";
+      ctx.fillRect(x - 16, y - 16, size + 32, size + 32);
+
+      ctx.beginPath();
+      ctx.rect(x, y, size, size);
+      ctx.clip();
     } else {
       ctx.beginPath();
       ctx.roundRect(x, y, size, size, 6);
@@ -901,7 +911,7 @@
 
     ctx.restore();
 
-    if (designStyle === 'floral' || designStyle === 'fotome_brand' || designStyle === 'engagement') {
+    if (designStyle === 'floral' || designStyle === 'fotome_brand') {
       ctx.save();
       ctx.strokeStyle = "rgba(0,0,0,0.18)";
       ctx.lineWidth = 1.5;
@@ -952,21 +962,93 @@
     ctx.restore();
   }
 
+  // DRAWING CHAT UI EMOJI BAR UNTUK DESAIN 4
+  function drawChatHeaderBar(ctx, width, textColor) {
+    ctx.save();
+    ctx.fillStyle = "rgba(255,255,255,0.85)";
+    ctx.strokeStyle = "rgba(0,0,0,0.08)";
+    ctx.lineWidth = 1;
+    
+    // Capsule bar background
+    ctx.beginPath();
+    ctx.roundRect((width - 380) / 2, 25, 380, 50, 25);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.font = "20px sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("Tap and hold to super react", width / 2, 12);
+
+    const emojis = ["🤍", "🫧", "🎀", "🎯", "💿", "🍢", "➕"];
+    const startX = (width - 320) / 2;
+    emojis.forEach((emoji, idx) => {
+      ctx.fillText(emoji, startX + idx * 52, 50);
+    });
+
+    ctx.restore();
+  }
+
+  // DRAWING CHAT MENU BOX UNTUK DESAIN 4 (FOOTER)
+  function drawChatMenuBox(ctx, x, y, width, height) {
+    ctx.save();
+    ctx.fillStyle = "rgba(255, 255, 255, 0.92)";
+    ctx.strokeStyle = "rgba(0, 0, 0, 0.06)";
+    ctx.lineWidth = 1;
+
+    ctx.beginPath();
+    ctx.roundRect(x, y, width, height, 16);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.fillStyle = "#111111";
+    ctx.font = "500 16px 'Plus Jakarta Sans', sans-serif";
+    ctx.textAlign = "left";
+
+    const items = [
+      { text: "Reply", icon: "↩" },
+      { text: "Save", icon: "↓" },
+      { text: "Forward", icon: "➢" }
+    ];
+
+    items.forEach((item, idx) => {
+      const itemY = y + 26 + idx * 36;
+      ctx.fillText(item.text, x + 20, itemY);
+      ctx.textAlign = "right";
+      ctx.fillText(item.icon, x + width - 20, itemY);
+      ctx.textAlign = "left";
+
+      ctx.strokeStyle = "rgba(0, 0, 0, 0.05)";
+      ctx.beginPath();
+      ctx.moveTo(x + 15, itemY + 12);
+      ctx.lineTo(x + width - 15, itemY + 12);
+      ctx.stroke();
+    });
+
+    // Unsend Red Item
+    ctx.fillStyle = "#D93838";
+    ctx.fillText("Unsend", x + 20, y + 134);
+    ctx.textAlign = "right";
+    ctx.fillText("⊘", x + width - 20, y + 134);
+
+    ctx.restore();
+  }
+
   // RENDER CANVAS UTAMA PHOTOSTRIP
   function renderPhotostrip() {
     const stripWidth = 600;
     const photoBoxSize = 420;
     
-    // Penyesuaian Tinggi Header & Footer Berdasarkan Desain
+    // Penyesuaian Tinggi Header & Footer
     let headerHeight = 100;
     let footerHeight = 220;
 
     if (selectedDesignStyle === 'receipt') { headerHeight = 260; footerHeight = 310; }
     else if (selectedDesignStyle === 'wavy_red') { headerHeight = 150; footerHeight = 250; }
-    else if (selectedDesignStyle === 'fotome_brand') { headerHeight = 110; footerHeight = 230; }
-    else if (selectedDesignStyle === 'engagement') { headerHeight = 130; footerHeight = 240; }
+    else if (selectedDesignStyle === 'fotome_brand') { headerHeight = 100; footerHeight = 260; }
+    else if (selectedDesignStyle === 'engagement') { headerHeight = 110; footerHeight = 280; }
 
-    const gapY = selectedDesignStyle === 'wavy_red' ? 60 : 40;
+    const gapY = selectedDesignStyle === 'wavy_red' ? 60 : (selectedDesignStyle === 'engagement' ? 50 : 40);
     const totalPhotoHeight = targetPhotoCount * (photoBoxSize + gapY);
     const stripHeight = headerHeight + totalPhotoHeight + footerHeight;
 
@@ -986,6 +1068,8 @@
 
     if (selectedDesignStyle === 'wavy_red') { cardInnerColor = "#FAF6EE"; textColor = "#A82B2B"; }
     else if (selectedDesignStyle === 'receipt') { cardInnerColor = "#F5F4F0"; textColor = "#111111"; }
+    else if (selectedDesignStyle === 'fotome_brand') { cardInnerColor = "#FAFAFA"; textColor = "#111111"; }
+    else if (selectedDesignStyle === 'engagement') { cardInnerColor = "#5A121A"; textColor = "#FFFFFF"; } // MAROON RED (GAMBAR 2)
 
     // 1. Latar Belakang Utama
     ctx.fillStyle = cardInnerColor;
@@ -1037,18 +1121,20 @@
       ctx.font = "18px 'Cormorant Garamond', serif";
       ctx.fillText("— ♡ —", stripWidth / 2, 105);
     } else if (selectedDesignStyle === 'fotome_brand') {
-      // HEADER DESAIN BARU 1: FOTOME BRANDING
-      ctx.fillStyle = textColor;
-      ctx.textAlign = "center";
-      ctx.font = "bold 20px 'Plus Jakarta Sans', sans-serif";
-      ctx.letterSpacing = "4px";
-      ctx.fillText("F O T O M E  P H O T O B O O T H", stripWidth / 2, 65);
+      // HEADER DESAIN 4: CHAT REACTION BAR (GAMBAR 1)
+      drawChatHeaderBar(ctx, stripWidth, textColor);
     } else if (selectedDesignStyle === 'engagement') {
-      // HEADER DESAIN BARU 2: ENGAGEMENT SPECIAL
-      ctx.fillStyle = textColor;
+      // HEADER DESAIN 5: MAROON BADGE (GAMBAR 2)
+      ctx.fillStyle = "#FFFFFF";
+      ctx.beginPath();
+      ctx.roundRect((stripWidth - 280) / 2, 35, 280, 36, 6);
+      ctx.fill();
+
+      ctx.fillStyle = "#5A121A";
       ctx.textAlign = "center";
-      ctx.font = "44px 'Great Vibes', cursive";
-      ctx.fillText("The Engagement of", stripWidth / 2, 70);
+      ctx.font = "bold 15px 'Plus Jakarta Sans', sans-serif";
+      ctx.letterSpacing = "2px";
+      ctx.fillText("F O T O M E  S T U D I O", stripWidth / 2, 58);
     }
 
     // 3. Render Foto-Foto Utama
@@ -1122,37 +1208,45 @@
             ctx.restore();
 
           } else if (selectedDesignStyle === 'fotome_brand') {
-            // FOOTER DESAIN BARU 1: FOTOME BRANDING GEDE & ELEGAN
-            ctx.fillStyle = textColor;
-            ctx.textAlign = "center";
+            // FOOTER DESAIN 4: FOTOME BRANDING + CHAT MENU (GAMBAR 1)
+            ctx.fillStyle = "#8C2B38";
+            ctx.textAlign = "left";
             
-            ctx.font = "italic 600 68px 'Playfair Display', serif";
-            ctx.fillText("FOTOME", stripWidth / 2, footerY + 65);
+            ctx.font = "italic 700 56px 'Playfair Display', serif";
+            ctx.fillText("FOTOME", 60, footerY + 65);
 
             ctx.font = "600 22px 'Plus Jakarta Sans', sans-serif";
-            ctx.letterSpacing = "2px";
-            ctx.fillText("by Riyan Ardiansyah", stripWidth / 2, footerY + 110);
+            ctx.fillStyle = "#333333";
+            ctx.fillText("by Riyan Ardiansyah", 60, footerY + 105);
+
+            // Chat Menu Box di Sisi Kanan Footer (Gambar 1)
+            drawChatMenuBox(ctx, 310, footerY + 15, 230, 160);
 
           } else if (selectedDesignStyle === 'engagement') {
-            // FOOTER DESAIN BARU 2: ENGAGEMENT VIRA & WAHYU
-            ctx.fillStyle = textColor;
+            // FOOTER DESAIN 5: ENGAGEMENT VIRA & WAHYU (GAMBAR 2)
+            ctx.fillStyle = "#FFFFFF";
             ctx.textAlign = "center";
             
-            ctx.font = "700 62px 'Great Vibes', cursive";
-            ctx.fillText("Vira & Wahyu", stripWidth / 2, footerY + 55);
+            ctx.font = "italic 700 70px 'Bodoni Moda', serif";
+            ctx.fillText("Vira & Wahyu", stripWidth / 2, footerY + 65);
 
-            ctx.font = "600 20px 'Cormorant Garamond', serif";
-            ctx.fillText("— ENGAGEMENT DAY • 2026 —", stripWidth / 2, footerY + 100);
+            ctx.font = "600 24px 'Plus Jakarta Sans', sans-serif";
+            ctx.letterSpacing = "3px";
+            ctx.fillText("THE ENGAGEMENT DAY", stripWidth / 2, footerY + 115);
 
-            ctx.save();
-            ctx.fillStyle = "rgba(115, 87, 87, 0.55)";
-            ctx.font = "500 12px 'Plus Jakarta Sans', sans-serif";
-            ctx.textAlign = "center";
-            ctx.fillText("FOTOME by Riyan Ardiansyah", stripWidth / 2, footerY + 140);
-            ctx.restore();
+            // Bottom Signature Badge (Gambar 2)
+            ctx.fillStyle = "#FFFFFF";
+            ctx.beginPath();
+            ctx.roundRect((stripWidth - 300) / 2, footerY + 150, 300, 34, 6);
+            ctx.fill();
+
+            ctx.fillStyle = "#5A121A";
+            ctx.font = "bold 13px 'Plus Jakarta Sans', sans-serif";
+            ctx.letterSpacing = "2px";
+            ctx.fillText("F O T O M E  B Y  R I Y A N  A R D I A N S Y A H", stripWidth / 2, footerY + 172);
           }
 
-          // Export Hasil & Trigger Animasi Polaroid dengan Double Frame Request
+          // Export Hasil & Trigger Animasi Polaroid
           const dataUrl = canvas.toDataURL('image/png');
           const resultImg = document.getElementById('result-img');
           
