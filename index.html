@@ -508,6 +508,13 @@
   let currentFacingMode = "user"; 
   let currentStream = null;
 
+  // LOAD ASSET GAMBAR DARI FOLDER ASSSETS GITHUB
+  const lilyAsset = new Image();
+  lilyAsset.src = './assets/calla-lily-corner.png'; // Path Gambar Calla Lily
+
+  const cakeAsset = new Image();
+  cakeAsset.src = './assets/wedding-cake.png'; // Path Gambar Cake (Opsional)
+
   const video = document.getElementById('video');
   const canvas = document.getElementById('canvas');
   const countdownOverlay = document.getElementById('countdown-overlay');
@@ -734,69 +741,30 @@
     ctx.restore();
   }
 
-  // LUKIS BUKET CALLA LILY & EUCALYPTUS DENGAN FRAME GEOMETRI EMAS (DESAIN 1 ACCORDING TO USER PHOTO)
-  function drawCallaLilyCorner(ctx, x, y, scale = 1, flipX = false, flipY = false) {
+  // FUNGSI MEMUAT & MENGGAMBAR ASSET ASLI CALLA LILY JIKA GAMBAR TERSEDIA
+  function drawCallaLilyAsset(ctx, x, y, width, height, flipX = false, flipY = false) {
     ctx.save();
     ctx.translate(x, y);
     if (flipX) ctx.scale(-1, 1);
     if (flipY) ctx.scale(1, -1);
-    ctx.scale(scale, scale);
 
-    // 1. Garis Geometri Emas (Gold Geometric Line Background)
-    ctx.strokeStyle = "#C5A059";
-    ctx.lineWidth = 1.8;
-    ctx.beginPath();
-    ctx.moveTo(-100, 120); ctx.lineTo(180, -90); ctx.lineTo(-40, -130);
-    ctx.stroke();
+    if (lilyAsset.complete && lilyAsset.naturalWidth !== 0) {
+      // Gambar Menggunakan Asset PNG Asli jika sudah ter-upload
+      ctx.drawImage(lilyAsset, -width / 2, -height / 2, width, height);
+    } else {
+      // Fallback Kanvas Art jika asset belum ada
+      ctx.strokeStyle = "#C5A059"; ctx.lineWidth = 1.8;
+      ctx.beginPath(); ctx.moveTo(-60, 60); ctx.lineTo(100, -50); ctx.stroke();
 
-    // 2. Daun Tropical Monstera Hijau Besar
-    ctx.fillStyle = "#3F5E4D";
-    ctx.beginPath();
-    ctx.ellipse(-30, 20, 55, 30, Math.PI / 4, 0, 2 * Math.PI);
-    ctx.fill();
+      ctx.fillStyle = "#3F5E4D";
+      ctx.beginPath(); ctx.ellipse(-20, 10, 45, 25, Math.PI / 4, 0, 2 * Math.PI); ctx.fill();
 
-    // 3. Ranting Daun Eucalyptus Hijau Soft
-    ctx.fillStyle = "#5E8270";
-    for (let i = 0; i < 6; i++) {
-      ctx.beginPath();
-      ctx.ellipse(-70 + (i * 18), -30 + (i * 12), 16, 9, Math.PI / 3, 0, 2 * Math.PI);
-      ctx.fill();
-    }
-
-    // 4. Bunga Calla Lily Putih Elegan
-    function drawSingleCallaLily(cx, cy, angleRot) {
-      ctx.save();
-      ctx.translate(cx, cy);
-      ctx.rotate(angleRot);
-
-      // Kelopak Putih Calla Lily
-      ctx.fillStyle = "#FFFFFF";
-      ctx.strokeStyle = "#D2C9BD";
-      ctx.lineWidth = 1.5;
-      ctx.beginPath();
-      ctx.moveTo(0, -35);
-      ctx.bezierCurveTo(22, -15, 25, 20, 0, 28);
-      ctx.bezierCurveTo(-25, 20, -22, -15, 0, -35);
-      ctx.fill(); ctx.stroke();
-
-      // Putik Emas Tengah Calla Lily
+      ctx.fillStyle = "#FFFFFF"; ctx.strokeStyle = "#D2C9BD"; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.ellipse(0, -10, 20, 30, Math.PI / 6, 0, 2 * Math.PI); ctx.fill(); ctx.stroke();
+      
       ctx.fillStyle = "#D4AF37";
-      ctx.beginPath();
-      ctx.ellipse(0, 2, 4, 18, 0, 0, 2 * Math.PI);
-      ctx.fill();
-
-      ctx.restore();
+      ctx.beginPath(); ctx.ellipse(0, -10, 3, 14, 0, 0, 2 * Math.PI); ctx.fill();
     }
-
-    drawSingleCallaLily(10, -20, Math.PI / 6);
-    drawSingleCallaLily(-35, 10, -Math.PI / 8);
-
-    // 5. Mawar Putih Rimbun
-    ctx.fillStyle = "#FDFBF7";
-    ctx.strokeStyle = "#E2D9CD";
-    ctx.lineWidth = 1.2;
-    ctx.beginPath(); ctx.arc(35, 25, 24, 0, 2 * Math.PI); ctx.fill(); ctx.stroke();
-    ctx.beginPath(); ctx.arc(35, 25, 15, 0, 2 * Math.PI); ctx.stroke();
 
     ctx.restore();
   }
@@ -806,19 +774,23 @@
     ctx.save();
     ctx.translate(centerX, centerY);
 
-    ctx.fillStyle = mainColor;
-    ctx.beginPath(); ctx.ellipse(0, 32, 36, 8, 0, 0, 2 * Math.PI); ctx.fill();
-    ctx.fillRect(-6, 32, 12, 12);
+    if (cakeAsset.complete && cakeAsset.naturalWidth !== 0) {
+      ctx.drawImage(cakeAsset, -40, -40, 80, 80);
+    } else {
+      ctx.fillStyle = mainColor;
+      ctx.beginPath(); ctx.ellipse(0, 32, 36, 8, 0, 0, 2 * Math.PI); ctx.fill();
+      ctx.fillRect(-6, 32, 12, 12);
 
-    ctx.fillStyle = "#FFFFFF"; ctx.strokeStyle = mainColor; ctx.lineWidth = 2;
-    ctx.beginPath(); ctx.roundRect(-28, 6, 56, 26, 4); ctx.fill(); ctx.stroke();
-    ctx.beginPath(); ctx.roundRect(-20, -18, 40, 24, 4); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = "#FFFFFF"; ctx.strokeStyle = mainColor; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.roundRect(-28, 6, 56, 26, 4); ctx.fill(); ctx.stroke();
+      ctx.beginPath(); ctx.roundRect(-20, -18, 40, 24, 4); ctx.fill(); ctx.stroke();
 
-    ctx.fillStyle = mainColor;
-    ctx.beginPath(); ctx.arc(0, -22, 4, 0, 2 * Math.PI); ctx.fill(); 
-    ctx.beginPath(); ctx.arc(-14, 20, 2.5, 0, 2 * Math.PI); ctx.fill();
-    ctx.beginPath(); ctx.arc(0, 20, 2.5, 0, 2 * Math.PI); ctx.fill();
-    ctx.beginPath(); ctx.arc(14, 20, 2.5, 0, 2 * Math.PI); ctx.fill();
+      ctx.fillStyle = mainColor;
+      ctx.beginPath(); ctx.arc(0, -22, 4, 0, 2 * Math.PI); ctx.fill(); 
+      ctx.beginPath(); ctx.arc(-14, 20, 2.5, 0, 2 * Math.PI); ctx.fill();
+      ctx.beginPath(); ctx.arc(0, 20, 2.5, 0, 2 * Math.PI); ctx.fill();
+      ctx.beginPath(); ctx.arc(14, 20, 2.5, 0, 2 * Math.PI); ctx.fill();
+    }
 
     ctx.restore();
   }
@@ -865,8 +837,8 @@
 
     // 2. ORNAMEN HEADER ATAS
     if (selectedDesignStyle === 'floral') {
-      // Buket Calla Lily Atas Kiri
-      drawCallaLilyCorner(ctx, 60, 60, 1.1, false, false);
+      // Gambar Bunga Calla Lily Atas Kiri
+      drawCallaLilyAsset(ctx, 110, 80, 220, 160, false, false);
     } else if (selectedDesignStyle === 'vintage') {
       ctx.fillStyle = textColor;
       ctx.font = "22px 'Plus Jakarta Sans', sans-serif";
@@ -887,12 +859,12 @@
 
         loadedCount++;
         if (loadedCount === targetPhotoCount) {
-          // 4. FOOTER DENGAN ORNAMEN GAMBAR CALLA LILY
+          // 4. FOOTER DENGAN ORNAMEN CALLA LILY
           const footerY = startY + targetPhotoCount * (photoBoxSize + gapY) + 20;
 
           if (selectedDesignStyle === 'floral') {
-            // Buket Calla Lily Bawah Kanan
-            drawCallaLilyCorner(ctx, stripWidth - 60, stripHeight - 60, 1.15, true, true);
+            // Gambar Bunga Calla Lily Bawah Kanan
+            drawCallaLilyAsset(ctx, stripWidth - 110, stripHeight - 90, 240, 180, true, true);
 
             ctx.fillStyle = textColor;
             ctx.font = "bold 28px 'Cormorant Garamond', serif";
@@ -933,7 +905,7 @@
             ctx.fillText("— 06.12.2026 —", stripWidth / 2, footerY + 85);
           }
 
-          // Export Hasil
+          // Export Hasil Foto
           const dataUrl = canvas.toDataURL('image/png');
           document.getElementById('result-img').src = dataUrl;
           document.getElementById('download-link').href = dataUrl;
