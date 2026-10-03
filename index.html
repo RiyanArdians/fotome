@@ -27,6 +27,7 @@
       color: var(--text-dark);
       min-height: 100vh;
       display: flex;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
       padding: 20px 15px;
@@ -37,7 +38,7 @@
       max-width: 440px;
       background: #FFFFFF;
       border-radius: 28px;
-      padding: 40px 28px;
+      padding: 40px 28px 30px;
       box-shadow: 0 15px 35px rgba(140, 98, 98, 0.08), 0 3px 10px rgba(0,0,0,0.02);
       border: 1px solid rgba(216, 180, 180, 0.3);
       text-align: center;
@@ -117,7 +118,7 @@
       transform: scale(1.03);
     }
 
-    /* HALAMAN WELCOME DENGAN LAYOUT PROPORSIONAL */
+    /* HALAMAN WELCOME */
     .welcome-container {
       display: flex;
       flex-direction: column;
@@ -367,6 +368,16 @@
       display: block;
     }
 
+    /* FOOTER APPLICATION */
+    .app-footer {
+      margin-top: 18px;
+      font-size: 0.72rem;
+      color: #A38585;
+      font-weight: 600;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+    }
+
     canvas { display: none; }
   </style>
 </head>
@@ -374,7 +385,7 @@
 
 <div class="app-card">
 
-  <!-- HALAMAN 1: WELCOME SCREEN (RAPI & PROPORSIONAL) -->
+  <!-- HALAMAN 1: WELCOME SCREEN -->
   <div id="step-welcome">
     <div class="welcome-container">
       <p class="welcome-badge">Virtual Photobooth</p>
@@ -525,6 +536,11 @@
     </button>
   </div>
 
+</div>
+
+<!-- FOOTER WEB -->
+<div class="app-footer">
+  FOTOME by Riyan Ardiansyah
 </div>
 
 <!-- Canvas Tersembunyi -->
@@ -805,9 +821,9 @@
   function renderPhotostrip() {
     const stripWidth = 600;
     const photoBoxSize = 420;
-    const headerHeight = selectedDesignStyle === 'receipt' ? 260 : (selectedDesignStyle === 'wavy_red' ? 140 : 100);
+    const headerHeight = selectedDesignStyle === 'receipt' ? 260 : (selectedDesignStyle === 'wavy_red' ? 150 : 100);
     const gapY = selectedDesignStyle === 'wavy_red' ? 60 : 40;
-    const footerHeight = selectedDesignStyle === 'receipt' ? 260 : (selectedDesignStyle === 'floral' ? 180 : 220);
+    const footerHeight = selectedDesignStyle === 'receipt' ? 280 : (selectedDesignStyle === 'floral' ? 210 : 240);
 
     const totalPhotoHeight = targetPhotoCount * (photoBoxSize + gapY);
     const stripHeight = headerHeight + totalPhotoHeight + footerHeight;
@@ -882,14 +898,14 @@
       ctx.stroke();
       ctx.setLineDash([]);
     } else if (selectedDesignStyle === 'wavy_red') {
-      // HEADER WEDDING ANGGUN UNTUK DESAIN WAVY RED (AGAR TIDAK SEPI)
+      // HEADER "The Wedding of" DIPERBESAR SIGNIFICANTLY
       ctx.fillStyle = "#A82B2B";
       ctx.textAlign = "center";
-      ctx.font = "30px 'Great Vibes', cursive";
-      ctx.fillText("The Wedding of", stripWidth / 2, 60);
+      ctx.font = "46px 'Great Vibes', cursive";
+      ctx.fillText("The Wedding of", stripWidth / 2, 70);
 
-      ctx.font = "16px 'Cormorant Garamond', serif";
-      ctx.fillText("— ♡ —", stripWidth / 2, 90);
+      ctx.font = "18px 'Cormorant Garamond', serif";
+      ctx.fillText("— ♡ —", stripWidth / 2, 105);
     }
 
     // 3. Render Foto-Foto Utama
@@ -941,6 +957,15 @@
             ctx.font = "600 22px 'Cormorant Garamond', serif";
             ctx.fillText("— DECEMBER 06, 2026 —", stripWidth / 2, footerY + 95);
           }
+
+          // BRANDING WATERMARK DI SETIAP HASIL FOTO HASIL UNDUHAN
+          ctx.save();
+          ctx.fillStyle = (selectedDesignStyle === 'receipt') ? "rgba(0, 0, 0, 0.45)" : (selectedDesignStyle === 'wavy_red' ? "rgba(168, 43, 43, 0.55)" : "rgba(115, 87, 87, 0.55)");
+          ctx.font = "600 13px 'Plus Jakarta Sans', sans-serif";
+          ctx.textAlign = "center";
+          ctx.letterSpacing = "1.5px";
+          ctx.fillText("FOTOME BY RIYAN ARDIANSYAH", stripWidth / 2, stripHeight - 25);
+          ctx.restore();
 
           // Export Hasil
           const dataUrl = canvas.toDataURL('image/png');
