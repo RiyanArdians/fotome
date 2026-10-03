@@ -548,22 +548,22 @@
         <strong style="font-size:0.75rem; color:var(--text-dark);">3. Wavy Red</strong>
       </div>
 
-      <!-- 4. FOTOME Brand -->
+      <!-- 4. Basic -->
       <div class="design-card" onclick="selectDesignStyle('fotome_brand', this)">
         <div class="preview-box design4">
           <div class="preview-photo"></div>
           <div class="preview-photo"></div>
         </div>
-        <strong style="font-size:0.75rem; color:var(--text-dark);">4. FOTOME UI</strong>
+        <strong style="font-size:0.75rem; color:var(--text-dark);">4. Basic</strong>
       </div>
 
-      <!-- 5. Engagement Vira & Wahyu -->
+      <!-- 5. Engagement -->
       <div class="design-card" onclick="selectDesignStyle('engagement', this)">
         <div class="preview-box design5">
           <div class="preview-photo"></div>
           <div class="preview-photo"></div>
         </div>
-        <strong style="font-size:0.75rem; color:var(--text-dark);">5. Vira & Wahyu</strong>
+        <strong style="font-size:0.75rem; color:var(--text-dark);">5. Engagement</strong>
       </div>
     </div>
 
@@ -938,12 +938,12 @@
       drawWavyRect(ctx, x, y, size, size, 8, 8, 10);
       ctx.clip();
     } else if (designStyle === 'engagement') {
-      // PERHITUNGAN BORDER PUTIH LENGKAP & PRESISI (60px SISI TEKS VERTIKAL DENGAN UKURAN FOTO 380px)
-      const photoDisplaySize = 380;
-      const topPad = 24;
-      const sidePadLeft = (index % 2 === 0) ? 60 : 20;
-      const sidePadRight = (index % 2 === 0) ? 20 : 60;
-      const bottomPad = 28;
+      // HANYA MENGGUNAKAN VARIASI BORDER POLAROID BERBEDA-BEDA TANPA TEKS VERTIKAL
+      const photoDisplaySize = 400;
+      const topPad = 22;
+      const sidePadLeft = (index % 2 === 0) ? 35 : 18;
+      const sidePadRight = (index % 2 === 0) ? 18 : 35;
+      const bottomPad = 26;
 
       const customX = (600 - photoDisplaySize) / 2;
       const frameX = customX - sidePadLeft;
@@ -951,33 +951,14 @@
       const frameW = photoDisplaySize + sidePadLeft + sidePadRight;
       const frameH = photoDisplaySize + topPad + bottomPad;
 
-      // Draw Background Frame Putih Presisi
+      // Draw Background Frame Putih Asimetris Bersih
       ctx.fillStyle = "#FFFFFF";
       ctx.fillRect(frameX, frameY, frameW, frameH);
-
-      // Draw Sub-Teks Vertikal Samping Frame - EXACTLY 100% DI TENGAH MARGIN BORDER PUTIH (SISI KIRI ATAU KANAN)
-      ctx.save();
-      ctx.fillStyle = "rgba(0, 0, 0, 0.70)";
-      ctx.font = "600 15px 'Plus Jakarta Sans', sans-serif";
-      
-      if (index % 2 === 0) {
-        // Sisi Kiri (Tepat di tengah margin 60px -> 30px dari x frame)
-        ctx.translate(frameX + 32, frameY + frameH - 35);
-        ctx.rotate(-Math.PI / 2);
-        ctx.fillText("#picturememories", 0, 0);
-      } else {
-        // Sisi Kanan (Tepat di tengah margin 60px -> 30px dari kanan frame)
-        ctx.translate(frameX + frameW - 32, frameY + 35);
-        ctx.rotate(Math.PI / 2);
-        ctx.fillText("pictme", 0, 0);
-      }
-      ctx.restore();
 
       ctx.beginPath();
       ctx.rect(customX, y, photoDisplaySize, photoDisplaySize);
       ctx.clip();
 
-      // Overwrite posisi gambar
       x = customX;
       size = photoDisplaySize;
     } else {
@@ -1056,14 +1037,13 @@
     ctx.restore();
   }
 
-  // HEADER CHAT UI - TEKS "CATCH THE MOMENT" DIPERBESAR DAN DIMAKSIMALKAN DARI UJUNG FRAME KIRI KE KANAN
+  // HEADER DESAIN 4: BASIC (TEKS "CATCH THE MOMENT")
   function drawChatHeaderBar(ctx, width, textColor) {
     ctx.save();
     ctx.fillStyle = "#8C2B38";
     ctx.font = "italic 700 42px 'Playfair Display', serif";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    // Teks dibesarkan & menempati area atas persis dari ujung ke ujung frame foto
     ctx.fillText("Catch The Moment", width / 2, 58);
     ctx.restore();
   }
@@ -1202,16 +1182,12 @@
     } else if (selectedDesignStyle === 'fotome_brand') {
       drawChatHeaderBar(ctx, stripWidth, textColor);
     } else if (selectedDesignStyle === 'engagement') {
-      ctx.fillStyle = badgeBgColor;
-      ctx.beginPath();
-      ctx.roundRect((stripWidth - 280) / 2, 35, 280, 38, 8);
-      ctx.fill();
-
-      ctx.fillStyle = (selectedBgColor === 'vanilla') ? "#3D2B2B" : (selectedBgColor === 'dusty' ? "#8C6262" : "#2B1E1E");
+      // HEADER DESAIN 5: FOTOME DIBESARKAN DARI UJUNG FRAME KIRI KE UJUNG FRAME KANAN (420px)
+      ctx.fillStyle = textColor;
       ctx.textAlign = "center";
-      ctx.font = "bold 15px 'Plus Jakarta Sans', sans-serif";
-      ctx.letterSpacing = "2px";
-      ctx.fillText("F O T O M E  S T U D I O", stripWidth / 2, 59);
+      ctx.font = "bold 32px 'Plus Jakarta Sans', sans-serif";
+      ctx.letterSpacing = "18px";
+      ctx.fillText("F O T O M E", stripWidth / 2, 60);
     }
 
     // 3. Render Foto-Foto Utama
