@@ -1210,12 +1210,15 @@
       ctx.fillText("TOTAL HAPPINESS", 60, 230);
 
       ctx.textAlign = "right";
+      ctx.font = "16px 'Courier Prime', monospace";
       ctx.fillText("03:31", stripWidth - 60, 180);
       ctx.fillText("04:00", stripWidth - 60, 205);
 
-      // SIMBOL INFINITY (∞) DIPERBESAR SUPAYA SEIMBANG DENGAN ANGKA DI ATASNYA
-      ctx.font = "bold 20px 'Courier Prime', monospace";
-      ctx.fillText("∞", stripWidth - 60, 230);
+      // SIMBOL INFINITY (∞) DIPERBESAR MENJADI 32px
+      ctx.font = "bold 32px 'Courier Prime', monospace";
+      ctx.textBaseline = "middle";
+      ctx.fillText("∞", stripWidth - 60, 228);
+      ctx.textBaseline = "alphabetic"; // Reset baseline
 
       ctx.beginPath();
       ctx.moveTo(50, 245); ctx.lineTo(stripWidth - 50, 245);
@@ -1256,7 +1259,6 @@
           const footerY = startY + targetPhotoCount * (photoBoxSize + gapY) + 20;
 
           if (selectedDesignStyle === 'floral') {
-            // DESAIN 1: WARNA FONT TANGGAL & FOOTER DISAMAKAN DENGAN JUDUL RIYAN & AMELIA
             ctx.fillStyle = textColor;
             ctx.font = "bold 42px 'Cormorant Garamond', serif";
             ctx.textAlign = "left";
@@ -1291,7 +1293,6 @@
             ctx.restore();
 
           } else if (selectedDesignStyle === 'wavy_red') {
-            // DESAIN 3: FORMAT TANGGAL INDONESIA 06 DESEMBER 2026
             ctx.fillStyle = "#A82B2B";
             ctx.font = "700 58px 'Great Vibes', cursive";
             ctx.textAlign = "center";
@@ -1321,7 +1322,6 @@
             drawChatMenuBox(ctx, 310, footerY + 15, 230, 160);
 
           } else if (selectedDesignStyle === 'engagement') {
-            // FOOTER DESAIN 5: FOTOME KAPITAL & BY RIYAN ARDIANSYAH TITLE CASE
             ctx.save();
             ctx.fillStyle = textColor;
             ctx.textAlign = "center";
@@ -1341,7 +1341,7 @@
             ctx.letterSpacing = "2px";
             ctx.fillText("04 OKTOBER 2026", stripWidth / 2, footerY + 138);
 
-            // Watermark Footer Paling Bawah (Title Case & Size Subtle)
+            // Watermark Footer Paling Bawah
             ctx.font = "500 10.5px 'Plus Jakarta Sans', sans-serif";
             ctx.letterSpacing = "1.5px";
             ctx.globalAlpha = 0.75;
