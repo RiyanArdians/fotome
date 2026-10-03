@@ -252,11 +252,9 @@
       background: #E8C8C8;
     }
 
-    /* PREVIEW DESIGN 4: CHAT UI STYLE */
     .preview-box.design4 { border: 1px solid #DDD; background: #FAFAFA; }
     .preview-box.design4 .preview-photo { background: #E2D0D0; border-radius: 3px; }
 
-    /* PREVIEW DESIGN 5: POLAROID BORDER STYLE */
     .preview-box.design5 { border: 2px solid #5A121A; background: #5A121A; }
     .preview-box.design5 .preview-photo { background: #FFF; border: 1px solid #FFF; }
 
@@ -879,10 +877,10 @@
       drawWavyRect(ctx, x, y, size, size, 8, 8, 10);
       ctx.clip();
     } else if (designStyle === 'engagement') {
-      // POLAROID FRAME STYLE DENGAN BORDER ASIMETRIS (SESUAI GAMBAR 1)
+      // POLAROID BORDER LEBIH TEBAL (42px) AGAR TEKS VERTIKAL PERFEKTIF TERMASUK DI DALAM AREA PUTIH
       const topPad = 18;
-      const sidePadLeft = (index % 2 === 0) ? 32 : 18;
-      const sidePadRight = (index % 2 === 0) ? 18 : 32;
+      const sidePadLeft = (index % 2 === 0) ? 42 : 18;
+      const sidePadRight = (index % 2 === 0) ? 18 : 42;
       const bottomPad = 26;
 
       const frameX = x - sidePadLeft;
@@ -894,17 +892,17 @@
       ctx.fillStyle = "#FFFFFF";
       ctx.fillRect(frameX, frameY, frameW, frameH);
 
-      // Draw Sub-Teks Vertikal Samping Frame (seperti #picturememories & pictme)
+      // Draw Sub-Teks Vertikal Samping Frame (Jelas & Besar Di Dalam Border Putih)
       ctx.save();
-      ctx.fillStyle = "rgba(0,0,0,0.45)";
-      ctx.font = "600 11px 'Plus Jakarta Sans', sans-serif";
+      ctx.fillStyle = "#333333";
+      ctx.font = "600 14px 'Plus Jakarta Sans', sans-serif";
       
       if (index % 2 === 0) {
-        ctx.translate(frameX + 12, frameY + frameH - 15);
+        ctx.translate(frameX + 22, frameY + frameH - 20);
         ctx.rotate(-Math.PI / 2);
         ctx.fillText("#picturememories", 0, 0);
       } else {
-        ctx.translate(frameX + frameW - 10, frameY + 20);
+        ctx.translate(frameX + frameW - 20, frameY + 25);
         ctx.rotate(Math.PI / 2);
         ctx.fillText("pictme", 0, 0);
       }
@@ -989,7 +987,7 @@
     ctx.restore();
   }
 
-  // DRAWING CHAT UI EMOJI BAR UNTUK DESAIN 4
+  // HEADER CHAT UI DENGAN TEKS "CATCH THE MOMENT" + FONT PLAYFAIR DISPLAY UNTUK DESAIN 4
   function drawChatHeaderBar(ctx, width, textColor) {
     ctx.save();
     ctx.fillStyle = "rgba(255,255,255,0.85)";
@@ -997,20 +995,16 @@
     ctx.lineWidth = 1;
     
     ctx.beginPath();
-    ctx.roundRect((width - 380) / 2, 25, 380, 50, 25);
+    ctx.roundRect((width - 400) / 2, 30, 400, 46, 23);
     ctx.fill();
     ctx.stroke();
 
-    ctx.font = "20px sans-serif";
+    // Font Playfair Display Seragam Dengan Sub-Footer
+    ctx.fillStyle = "#8C2B38";
+    ctx.font = "italic 600 20px 'Playfair Display', serif";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillText("Tap and hold to super react", width / 2, 12);
-
-    const emojis = ["🤍", "🫧", "🎀", "🎯", "💿", "🍢", "➕"];
-    const startX = (width - 320) / 2;
-    emojis.forEach((emoji, idx) => {
-      ctx.fillText(emoji, startX + idx * 52, 50);
-    });
+    ctx.fillText("Catch The Moment", width / 2, 53);
 
     ctx.restore();
   }
@@ -1149,7 +1143,6 @@
     } else if (selectedDesignStyle === 'fotome_brand') {
       drawChatHeaderBar(ctx, stripWidth, textColor);
     } else if (selectedDesignStyle === 'engagement') {
-      // HEADER DESAIN 5: BADGES PROPOSIONAL
       ctx.fillStyle = badgeBgColor;
       ctx.beginPath();
       ctx.roundRect((stripWidth - 280) / 2, 35, 280, 38, 8);
@@ -1246,7 +1239,6 @@
             drawChatMenuBox(ctx, 310, footerY + 15, 230, 160);
 
           } else if (selectedDesignStyle === 'engagement') {
-            // FOOTER DESAIN 5: PERBAIKAN LEBAR BADGE FULL COVER TEKS
             ctx.fillStyle = textColor;
             ctx.textAlign = "center";
             
@@ -1257,7 +1249,6 @@
             ctx.letterSpacing = "3px";
             ctx.fillText("THE ENGAGEMENT DAY", stripWidth / 2, footerY + 115);
 
-            // Perlebar Badge dari 300px menjadi 420px Agar Teks "FOTOME BY RIYAN ARDIANSYAH" Murni Tercover
             const badgeW = 420;
             const badgeH = 42;
             const badgeX = (stripWidth - badgeW) / 2;
@@ -1268,7 +1259,6 @@
             ctx.roundRect(badgeX, badgeY, badgeW, badgeH, 10);
             ctx.fill();
 
-            // Teks Dalam Badge
             ctx.fillStyle = (selectedBgColor === 'vanilla') ? "#3D2B2B" : (selectedBgColor === 'dusty' ? "#8C6262" : "#2B1E1E");
             ctx.font = "bold 15px 'Plus Jakarta Sans', sans-serif";
             ctx.letterSpacing = "2px";
