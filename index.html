@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Wedding Photobooth - Riyan & Amelia</title>
+  <title>Virtual Photobooth - FOTOME</title>
   
   <!-- Google Fonts & Font Awesome Icons -->
-  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Great+Vibes&family=Courier+Prime:wght@400;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Great+Vibes&family=Courier+Prime:wght@400;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,500;1,600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <style>
@@ -38,7 +38,7 @@
       max-width: 440px;
       background: #FFFFFF;
       border-radius: 28px;
-      padding: 40px 28px 30px;
+      padding: 35px 24px 30px;
       box-shadow: 0 15px 35px rgba(140, 98, 98, 0.08), 0 3px 10px rgba(0,0,0,0.02);
       border: 1px solid rgba(216, 180, 180, 0.3);
       text-align: center;
@@ -180,17 +180,18 @@
       margin-bottom: 8px;
     }
 
+    /* GRID DESAIN 5 OPSI (3 DILATAS, 2 DIBAWAN) */
     .design-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
+      gap: 8px;
       margin-bottom: 12px;
     }
 
     .design-card {
       border: 2px solid var(--soft-blush);
-      border-radius: 16px;
-      padding: 14px 6px 12px;
+      border-radius: 14px;
+      padding: 10px 4px 8px;
       cursor: pointer;
       transition: all 0.25s ease;
       background-color: #FFFFFF;
@@ -203,16 +204,16 @@
     .design-card.active, .design-card:hover {
       border-color: var(--dusty-rose);
       background-color: #FFFFFF;
-      box-shadow: 0 8px 20px rgba(140, 98, 98, 0.18);
-      transform: translateY(-3px);
+      box-shadow: 0 6px 16px rgba(140, 98, 98, 0.18);
+      transform: translateY(-2px);
     }
 
     .preview-box {
-      width: 52px;
-      height: 72px;
+      width: 46px;
+      height: 64px;
       background: #FAF6EE;
       border-radius: 6px;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
       position: relative;
       display: flex;
       flex-direction: column;
@@ -225,8 +226,8 @@
     }
 
     .preview-photo {
-      width: 38px;
-      height: 14px;
+      width: 34px;
+      height: 12px;
       background: #E0C8C8;
       border-radius: 2px;
     }
@@ -236,8 +237,8 @@
       position: absolute;
       top: -2px;
       left: -2px;
-      width: 22px;
-      height: 22px;
+      width: 20px;
+      height: 20px;
       object-fit: contain;
     }
 
@@ -250,6 +251,12 @@
       border-radius: 3px;
       background: #E8C8C8;
     }
+
+    .preview-box.design4 { border: 2px solid #2B1E1E; background: #3D2B2B; }
+    .preview-box.design4 .preview-photo { background: #D8B4B4; }
+
+    .preview-box.design5 { border: 2px solid #8C6262; background: #FDFBF7; }
+    .preview-box.design5 .preview-photo { background: #B3927A; }
 
     .option-card {
       border: 2px solid var(--soft-blush);
@@ -446,7 +453,6 @@
       display: block;
       margin: 0 auto;
       transform: translateY(-100%);
-      /* TRANSITION DINAMIS */
       transition: none;
     }
 
@@ -489,7 +495,7 @@
     </div>
   </div>
 
-  <!-- HALAMAN 2: PILIH STYLE -->
+  <!-- HALAMAN 2: PILIH STYLE (DENGAN 5 PILIHAN DESAIN) -->
   <div id="step-template" class="hidden">
     <h2 class="font-serif" style="color: var(--dusty-rose); font-size: 1.85rem;">Pilih Style Photobooth</h2>
     <p style="font-size: 0.82rem; color: #735757;">Lihat contoh gambar dan pilih style favorit Anda</p>
@@ -511,32 +517,53 @@
       </div>
     </div>
 
-    <!-- Pilihan 2: Visual Card Desain -->
-    <p class="option-title"><i class="fa-solid fa-wand-magic-sparkles"></i> 2. Pilihan Desain Wedding</p>
+    <!-- Pilihan 2: Visual Card Desain (5 OPSI) -->
+    <p class="option-title"><i class="fa-solid fa-wand-magic-sparkles"></i> 2. Pilihan Desain Wedding & Events</p>
     <div class="design-grid">
+      <!-- 1. Calla Lily -->
       <div class="design-card active" onclick="selectDesignStyle('floral', this)">
         <div class="preview-box design1">
           <img src="./assets/calla-lily-corner.png" class="preview-img-corner" alt="Lily">
           <div class="preview-photo"></div>
           <div class="preview-photo"></div>
         </div>
-        <strong style="font-size:0.8rem; color:var(--text-dark);">1. Calla Lily</strong>
+        <strong style="font-size:0.75rem; color:var(--text-dark);">1. Calla Lily</strong>
       </div>
 
+      <!-- 2. Struk B&W -->
       <div class="design-card" onclick="selectDesignStyle('receipt', this)">
         <div class="preview-box design2">
-          <i class="fa-solid fa-receipt" style="font-size: 1.2rem; color: #333; margin-bottom: 2px;"></i>
+          <i class="fa-solid fa-receipt" style="font-size: 1.1rem; color: #333;"></i>
           <div class="preview-photo"></div>
         </div>
-        <strong style="font-size:0.8rem; color:var(--text-dark);">2. Struk B&W</strong>
+        <strong style="font-size:0.75rem; color:var(--text-dark);">2. Struk B&W</strong>
       </div>
 
+      <!-- 3. Wavy Red -->
       <div class="design-card" onclick="selectDesignStyle('wavy_red', this)">
         <div class="preview-box design3">
           <div class="preview-photo"></div>
           <div class="preview-photo"></div>
         </div>
-        <strong style="font-size:0.8rem; color:var(--text-dark);">3. Wavy Red</strong>
+        <strong style="font-size:0.75rem; color:var(--text-dark);">3. Wavy Red</strong>
+      </div>
+
+      <!-- 4. FOTOME Showcase (DESAIN BARU 1) -->
+      <div class="design-card" onclick="selectDesignStyle('fotome_brand', this)">
+        <div class="preview-box design4">
+          <div class="preview-photo"></div>
+          <div class="preview-photo"></div>
+        </div>
+        <strong style="font-size:0.75rem; color:var(--text-dark);">4. FOTOME Brand</strong>
+      </div>
+
+      <!-- 5. Vira & Wahyu Engagement (DESAIN BARU 2) -->
+      <div class="design-card" onclick="selectDesignStyle('engagement', this)">
+        <div class="preview-box design5">
+          <div class="preview-photo"></div>
+          <div class="preview-photo"></div>
+        </div>
+        <strong style="font-size:0.75rem; color:var(--text-dark);">5. Vira & Wahyu</strong>
       </div>
     </div>
 
@@ -620,7 +647,7 @@
       </div>
     </div>
 
-    <a id="download-link" download="Wedding-Photobooth-RiyanAmelia.png">
+    <a id="download-link" download="Photobooth-FOTOME.png">
       <button class="btn-primary">
         <i class="fa-solid fa-download"></i> Unduh Foto
       </button>
@@ -874,7 +901,7 @@
 
     ctx.restore();
 
-    if (designStyle === 'floral') {
+    if (designStyle === 'floral' || designStyle === 'fotome_brand' || designStyle === 'engagement') {
       ctx.save();
       ctx.strokeStyle = "rgba(0,0,0,0.18)";
       ctx.lineWidth = 1.5;
@@ -925,14 +952,21 @@
     ctx.restore();
   }
 
-  // RENDER CANVAS UTAMA PHOTOSTRIP WEDDING
+  // RENDER CANVAS UTAMA PHOTOSTRIP
   function renderPhotostrip() {
     const stripWidth = 600;
     const photoBoxSize = 420;
-    const headerHeight = selectedDesignStyle === 'receipt' ? 260 : (selectedDesignStyle === 'wavy_red' ? 150 : 100);
-    const gapY = selectedDesignStyle === 'wavy_red' ? 60 : 40;
-    const footerHeight = selectedDesignStyle === 'receipt' ? 310 : (selectedDesignStyle === 'floral' ? 220 : 250);
+    
+    // Penyesuaian Tinggi Header & Footer Berdasarkan Desain
+    let headerHeight = 100;
+    let footerHeight = 220;
 
+    if (selectedDesignStyle === 'receipt') { headerHeight = 260; footerHeight = 310; }
+    else if (selectedDesignStyle === 'wavy_red') { headerHeight = 150; footerHeight = 250; }
+    else if (selectedDesignStyle === 'fotome_brand') { headerHeight = 110; footerHeight = 230; }
+    else if (selectedDesignStyle === 'engagement') { headerHeight = 130; footerHeight = 240; }
+
+    const gapY = selectedDesignStyle === 'wavy_red' ? 60 : 40;
     const totalPhotoHeight = targetPhotoCount * (photoBoxSize + gapY);
     const stripHeight = headerHeight + totalPhotoHeight + footerHeight;
 
@@ -940,41 +974,30 @@
     canvas.height = stripHeight;
     const ctx = canvas.getContext('2d');
 
+    // Tema Warna Background
     let cardInnerColor = "#F9F1F1";
     let textColor = "#8C6262";
 
-    if (selectedBgColor === 'mocha') {
-      cardInnerColor = "#F9F6F0"; textColor = "#8C6D57";
-    } else if (selectedBgColor === 'blue') {
-      cardInnerColor = "#F1F6F4"; textColor = "#557367";
-    } else if (selectedBgColor === 'lavender') {
-      cardInnerColor = "#F7F2F7"; textColor = "#755475";
-    } else if (selectedBgColor === 'vanilla') {
-      cardInnerColor = "#FFFFFF"; textColor = "#735757";
-    } else if (selectedBgColor === 'dark') {
-      cardInnerColor = "#2B1E1E"; textColor = "#D8B4B4";
-    }
+    if (selectedBgColor === 'mocha') { cardInnerColor = "#F9F6F0"; textColor = "#8C6D57"; }
+    else if (selectedBgColor === 'blue') { cardInnerColor = "#F1F6F4"; textColor = "#557367"; }
+    else if (selectedBgColor === 'lavender') { cardInnerColor = "#F7F2F7"; textColor = "#755475"; }
+    else if (selectedBgColor === 'vanilla') { cardInnerColor = "#FFFFFF"; textColor = "#735757"; }
+    else if (selectedBgColor === 'dark') { cardInnerColor = "#2B1E1E"; textColor = "#D8B4B4"; }
 
-    if (selectedDesignStyle === 'wavy_red') {
-      cardInnerColor = "#FAF6EE";
-      textColor = "#A82B2B";
-    } else if (selectedDesignStyle === 'receipt') {
-      cardInnerColor = "#F5F4F0";
-      textColor = "#111111";
-    }
+    if (selectedDesignStyle === 'wavy_red') { cardInnerColor = "#FAF6EE"; textColor = "#A82B2B"; }
+    else if (selectedDesignStyle === 'receipt') { cardInnerColor = "#F5F4F0"; textColor = "#111111"; }
 
     // 1. Latar Belakang Utama
     ctx.fillStyle = cardInnerColor;
     ctx.fillRect(0, 0, stripWidth, stripHeight);
 
-    // 2. HEADER ORNAMEN
+    // 2. HEADER ORNAMEN BERDASARKAN DESAIN
     if (selectedDesignStyle === 'floral') {
       drawCallaLilyOuterCorner(ctx, 0, 0, 420, 320, false, false);
       drawCallaLilyOuterCorner(ctx, stripWidth, stripHeight, 440, 340, true, true);
     } else if (selectedDesignStyle === 'receipt') {
       ctx.fillStyle = textColor;
       ctx.textAlign = "center";
-      
       ctx.font = "bold 38px 'Courier Prime', monospace";
       ctx.fillText("RIYAN & AMELIA", stripWidth / 2, 70);
 
@@ -1013,6 +1036,19 @@
 
       ctx.font = "18px 'Cormorant Garamond', serif";
       ctx.fillText("— ♡ —", stripWidth / 2, 105);
+    } else if (selectedDesignStyle === 'fotome_brand') {
+      // HEADER DESAIN BARU 1: FOTOME BRANDING
+      ctx.fillStyle = textColor;
+      ctx.textAlign = "center";
+      ctx.font = "bold 20px 'Plus Jakarta Sans', sans-serif";
+      ctx.letterSpacing = "4px";
+      ctx.fillText("F O T O M E  P H O T O B O O T H", stripWidth / 2, 65);
+    } else if (selectedDesignStyle === 'engagement') {
+      // HEADER DESAIN BARU 2: ENGAGEMENT SPECIAL
+      ctx.fillStyle = textColor;
+      ctx.textAlign = "center";
+      ctx.font = "44px 'Great Vibes', cursive";
+      ctx.fillText("The Engagement of", stripWidth / 2, 70);
     }
 
     // 3. Render Foto-Foto Utama
@@ -1084,24 +1120,51 @@
             ctx.textAlign = "center";
             ctx.fillText("FOTOME by Riyan Ardiansyah", stripWidth / 2, footerY + 150);
             ctx.restore();
+
+          } else if (selectedDesignStyle === 'fotome_brand') {
+            // FOOTER DESAIN BARU 1: FOTOME BRANDING GEDE & ELEGAN
+            ctx.fillStyle = textColor;
+            ctx.textAlign = "center";
+            
+            ctx.font = "italic 600 68px 'Playfair Display', serif";
+            ctx.fillText("FOTOME", stripWidth / 2, footerY + 65);
+
+            ctx.font = "600 22px 'Plus Jakarta Sans', sans-serif";
+            ctx.letterSpacing = "2px";
+            ctx.fillText("by Riyan Ardiansyah", stripWidth / 2, footerY + 110);
+
+          } else if (selectedDesignStyle === 'engagement') {
+            // FOOTER DESAIN BARU 2: ENGAGEMENT VIRA & WAHYU
+            ctx.fillStyle = textColor;
+            ctx.textAlign = "center";
+            
+            ctx.font = "700 62px 'Great Vibes', cursive";
+            ctx.fillText("Vira & Wahyu", stripWidth / 2, footerY + 55);
+
+            ctx.font = "600 20px 'Cormorant Garamond', serif";
+            ctx.fillText("— ENGAGEMENT DAY • 2026 —", stripWidth / 2, footerY + 100);
+
+            ctx.save();
+            ctx.fillStyle = "rgba(115, 87, 87, 0.55)";
+            ctx.font = "500 12px 'Plus Jakarta Sans', sans-serif";
+            ctx.textAlign = "center";
+            ctx.fillText("FOTOME by Riyan Ardiansyah", stripWidth / 2, footerY + 140);
+            ctx.restore();
           }
 
-          // Export Hasil & Trigger Animasi Polaroid
+          // Export Hasil & Trigger Animasi Polaroid dengan Double Frame Request
           const dataUrl = canvas.toDataURL('image/png');
           const resultImg = document.getElementById('result-img');
           
-          // Reset posisi foto ke atas slot kamera tanpa efek transisi
           resultImg.classList.remove('eject-active');
           resultImg.src = dataUrl;
           document.getElementById('download-link').href = dataUrl;
 
-          // Force Reflow untuk memastikan posisi awal terdaftar oleh browser
-          void resultImg.offsetWidth;
-
-          // Trigger animasi pencetakan foto keluar secara mulus
-          setTimeout(() => {
-            resultImg.classList.add('eject-active');
-          }, 100);
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              resultImg.classList.add('eject-active');
+            });
+          });
         }
       };
       img.src = photoSrc;
