@@ -147,7 +147,7 @@
     /* COLOR PALETTE PICKER */
     .color-grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(3, 1fr);
       gap: 8px;
       margin-bottom: 10px;
     }
@@ -163,11 +163,12 @@
       flex-direction: column;
       align-items: center;
       gap: 4px;
+      background-color: var(--bg-cream);
     }
 
     .color-dot {
-      width: 22px;
-      height: 22px;
+      width: 20px;
+      height: 20px;
       border-radius: 50%;
       border: 1px solid rgba(0,0,0,0.15);
     }
@@ -248,7 +249,7 @@
     <p class="welcome-badge">Virtual Photobooth</p>
     <h1 class="font-serif welcome-title">Catch Yours Moment</h1>
     <p style="font-size: 0.88rem; color: #735757; line-height: 1.5; margin-bottom: 20px;">
-      Selamat datang di Photobooth Pernikahan Kami! Abadikan foto Polaroid spesial Anda bersama Riyan & Amelia.
+      Selamat datang di Photobooth Pernikahan Kami! Abadikan foto spesial Anda bersama Riyan & Amelia.
     </p>
 
     <div style="font-size: 2.2rem; color: var(--soft-blush); margin-bottom: 20px;">
@@ -262,7 +263,7 @@
 
   <!-- HALAMAN 2: PILIH STYLE & COLOR -->
   <div id="step-template" class="hidden">
-    <h2 class="font-serif" style="color: var(--dusty-rose); font-size: 1.8rem;">Pilih Style Polaroid</h2>
+    <h2 class="font-serif" style="color: var(--dusty-rose); font-size: 1.8rem;">Pilih Style Photobooth</h2>
     <p style="font-size: 0.82rem; color: #735757;">Kustomisasi jumlah foto, bentuk frame, dan warna</p>
 
     <!-- Pilihan 1: Jumlah Foto -->
@@ -299,24 +300,32 @@
       </div>
     </div>
 
-    <!-- Pilihan 3: Warna Background -->
-    <p class="option-title"><i class="fa-solid fa-palette"></i> 3. Warna Frame</p>
+    <!-- Pilihan 3: Warna Background Soft -->
+    <p class="option-title"><i class="fa-solid fa-palette"></i> 3. Warna Frame Soft</p>
     <div class="color-grid">
       <div class="color-card active" onclick="selectBgColor('dusty', this)">
         <div class="color-dot" style="background-color: #8C6262;"></div>
-        Dusty
+        Dusty Rose
       </div>
       <div class="color-card" onclick="selectBgColor('mocha', this)">
         <div class="color-dot" style="background-color: #B3927A;"></div>
-        Mocha
+        Soft Mocha
+      </div>
+      <div class="color-card" onclick="selectBgColor('blue', this)">
+        <div class="color-dot" style="background-color: #92B4A7;"></div>
+        Soft Sage/Blue
+      </div>
+      <div class="color-card" onclick="selectBgColor('lavender', this)">
+        <div class="color-dot" style="background-color: #B392B3;"></div>
+        Soft Lavender
       </div>
       <div class="color-card" onclick="selectBgColor('vanilla', this)">
         <div class="color-dot" style="background-color: #E8DFD8;"></div>
-        Vanilla
+        Vanilla Cream
       </div>
       <div class="color-card" onclick="selectBgColor('dark', this)">
         <div class="color-dot" style="background-color: #2B1E1E;"></div>
-        Charcoal
+        Charcoal Dark
       </div>
     </div>
 
@@ -492,7 +501,7 @@
     capturedPhotos.push(tempCanvas.toDataURL('image/png'));
   }
 
-  // FUNGSI MASKING & CROP PROPORSI (PREVENT PROP TERTARIK / GEPENG)
+  // MASKING & CROP DENGAN BENTUK LOVE PERFECT DAN BULAT FRAMELESS
   function drawMaskedImage(ctx, img, x, y, size, shape) {
     ctx.save();
     ctx.beginPath();
@@ -500,10 +509,13 @@
     if (shape === 'circle') {
       ctx.arc(x + size / 2, y + size / 2, size / 2, 0, Math.PI * 2);
     } else if (shape === 'heart') {
+      // Formulasi Matematika Heart (Love Perfect Curve)
       const topCurveHeight = size * 0.3;
-      ctx.moveTo(x + size / 2, y + size);
-      ctx.bezierCurveTo(x, y + size * 0.7, x, y + topCurveHeight, x + size / 2, y + topCurveHeight);
-      ctx.bezierCurveTo(x + size, y + topCurveHeight, x + size, y + size * 0.7, x + size / 2, y + size);
+      ctx.moveTo(x + size / 2, y + size * 0.9);
+      ctx.bezierCurveTo(x + size * 0.02, y + size * 0.58, x - size * 0.05, y + size * 0.22, x + size * 0.25, y + size * 0.08);
+      ctx.bezierCurveTo(x + size * 0.42, y + size * 0.0, x + size * 0.5, y + size * 0.22, x + size * 0.5, y + size * 0.22);
+      ctx.bezierCurveTo(x + size * 0.5, y + size * 0.22, x + size * 0.58, y + size * 0.0, x + size * 0.75, y + size * 0.08);
+      ctx.bezierCurveTo(x + size * 1.05, y + size * 0.22, x + size * 0.98, y + size * 0.58, x + size / 2, y + size * 0.9);
     } else {
       ctx.rect(x, y, size, size);
     }
@@ -511,16 +523,16 @@
     ctx.closePath();
     ctx.clip();
 
-    // Kalkulasi Object-Fit Cover agar Foto Tetap Proporsional
+    // Object-Fit Cover Calculation (Preserve Aspect Ratio)
     const imgAspect = img.width / img.height;
     let drawW, drawH, offsetX, offsetY;
 
-    if (imgAspect > 1) { // Foto Lanskap
+    if (imgAspect > 1) { 
       drawH = size;
       drawW = size * imgAspect;
       offsetX = x - (drawW - size) / 2;
       offsetY = y;
-    } else { // Foto Potret
+    } else { 
       drawW = size;
       drawH = size / imgAspect;
       offsetX = x;
@@ -531,14 +543,12 @@
     ctx.restore();
   }
 
-  // RENDER CANVAS DENGAN UKURAN PROPORSIONAL & AKURAT
+  // RENDER CANVAS AKURAT & ESTETIK
   function renderPhotostrip() {
     const stripWidth = 600;
-    
-    // Kalkulasi Tinggi Canvas Akurat (Foto + Tiket + Spasi Lengkap)
     const photoBoxSize = 420;
     const headerHeight = 120;
-    const gapY = 65;
+    const gapY = 60;
     const ticketHeight = 130;
     const marginBottom = 60;
 
@@ -549,14 +559,18 @@
     canvas.height = stripHeight;
     const ctx = canvas.getContext('2d');
 
-    // MAPPING WARNA THEME
+    // PALET WARNA SOFT TERLENGKAP
     let outerColor = "#8C6262";
-    let cardInnerColor = "#F4EFEA";
+    let cardInnerColor = "#F9F1F1";
     let textColor = "#8C6262";
     let ticketBg = "#E8C8C8";
 
     if (selectedBgColor === 'mocha') {
       outerColor = "#B3927A"; cardInnerColor = "#F9F6F0"; textColor = "#8C6D57"; ticketBg = "#E5D4C0";
+    } else if (selectedBgColor === 'blue') {
+      outerColor = "#83A398"; cardInnerColor = "#F1F6F4"; textColor = "#557367"; ticketBg = "#C8DAD3";
+    } else if (selectedBgColor === 'lavender') {
+      outerColor = "#A283A2"; cardInnerColor = "#F7F2F7"; textColor = "#755475"; ticketBg = "#DDCBDD";
     } else if (selectedBgColor === 'vanilla') {
       outerColor = "#D6C7BC"; cardInnerColor = "#FFFFFF"; textColor = "#735757"; ticketBg = "#EFE8E2";
     } else if (selectedBgColor === 'dark') {
@@ -567,7 +581,7 @@
     ctx.fillStyle = outerColor;
     ctx.fillRect(0, 0, stripWidth, stripHeight);
 
-    // 2. Latar Kartu Dalam Polaroid
+    // 2. Latar Kartu Dalam
     const margin = 20;
     ctx.fillStyle = cardInnerColor;
     ctx.beginPath();
@@ -593,31 +607,34 @@
       img.onload = () => {
         const photoY = startY + index * (photoBoxSize + gapY);
 
-        // Frame Belakang Foto
-        ctx.fillStyle = "#FFFFFF";
-        ctx.shadowColor = "rgba(0,0,0,0.08)";
-        ctx.shadowBlur = 15;
-        ctx.shadowOffsetY = 6;
-        
-        ctx.beginPath();
-        ctx.roundRect((stripWidth - photoBoxSize) / 2 - 15, photoY - 15, photoBoxSize + 30, photoBoxSize + 55, 10);
-        ctx.fill();
-        ctx.shadowColor = "transparent";
+        // HANYA GAMBAR KOTAK PUTIH JIKA MODE MENTAN SQUARE POLAROID
+        if (selectedGridShape === 'square') {
+          ctx.fillStyle = "#FFFFFF";
+          ctx.shadowColor = "rgba(0,0,0,0.08)";
+          ctx.shadowBlur = 15;
+          ctx.shadowOffsetY = 6;
+          
+          ctx.beginPath();
+          ctx.roundRect((stripWidth - photoBoxSize) / 2 - 15, photoY - 15, photoBoxSize + 30, photoBoxSize + 55, 10);
+          ctx.fill();
+          ctx.shadowColor = "transparent";
+        }
 
-        // Render Gambar Proporsional
+        // Render Gambar Proporsional (Love / Circle / Square)
         drawMaskedImage(ctx, img, (stripWidth - photoBoxSize) / 2, photoY, photoBoxSize, selectedGridShape);
 
         // Tulisan Tangan Bawah Foto
-        ctx.fillStyle = "#3D2B2B";
+        ctx.fillStyle = selectedBgColor === 'dark' ? "#D8B4B4" : "#3D2B2B";
         ctx.font = "26px 'Caveat', cursive";
         ctx.textAlign = "center";
         
         const labels = ["Sweet Memories ♥", "Chilling out", "Forever & Always"];
-        ctx.fillText(labels[index % labels.length], stripWidth / 2, photoY + photoBoxSize + 28);
+        const labelY = selectedGridShape === 'square' ? photoY + photoBoxSize + 28 : photoY + photoBoxSize + 20;
+        ctx.fillText(labels[index % labels.length], stripWidth / 2, labelY);
 
         loadedCount++;
         if (loadedCount === targetPhotoCount) {
-          // 5. Render Tiket Pernikahan (Sesuai Posisi Presisi)
+          // 5. Render Tiket Pernikahan
           const ticketY = startY + targetPhotoCount * (photoBoxSize + gapY) + 10;
 
           ctx.fillStyle = ticketBg;
