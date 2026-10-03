@@ -125,6 +125,13 @@
       margin-bottom: 8px;
     }
 
+    .option-grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
     .option-card {
       border: 2px solid var(--soft-blush);
       border-radius: 12px;
@@ -247,13 +254,13 @@
   <!-- HALAMAN 1: WELCOME SCREEN -->
   <div id="step-welcome">
     <p class="welcome-badge">Virtual Photobooth</p>
-    <h1 class="font-serif welcome-title">Catch Yours Moment</h1>
+    <h1 class="font-serif welcome-title">Capture Your Moment</h1>
     <p style="font-size: 0.88rem; color: #735757; line-height: 1.5; margin-bottom: 20px;">
       Selamat datang di Photobooth Pernikahan Kami! Abadikan foto spesial Anda bersama Riyan & Amelia.
     </p>
 
     <div style="font-size: 2.2rem; color: var(--soft-blush); margin-bottom: 20px;">
-      📸 💌 🎟️️
+      📸 💌 💍
     </div>
 
     <button class="btn-primary" onclick="goToStep(2)">
@@ -283,20 +290,16 @@
       </div>
     </div>
 
-    <!-- Pilihan 2: Bentuk Grid / Frame -->
-    <p class="option-title"><i class="fa-solid fa-shapes"></i> 2. Bentuk Frame</p>
-    <div class="option-grid">
+    <!-- Pilihan 2: Bentuk Grid / Frame (Kotak Biasa vs Bergelombang) -->
+    <p class="option-title"><i class="fa-solid fa-shapes"></i> 2. Desain Bingkai Kotak</p>
+    <div class="option-grid-2">
       <div class="option-card active" onclick="selectGridShape('square', this)">
         <i class="fa-regular fa-square" style="font-size: 1.1rem; display:block; margin-bottom:2px;"></i>
-        Kotak
+        Kotak Minimalis
       </div>
-      <div class="option-card" onclick="selectGridShape('circle', this)">
-        <i class="fa-regular fa-circle" style="font-size: 1.1rem; display:block; margin-bottom:2px;"></i>
-        Bulat
-      </div>
-      <div class="option-card" onclick="selectGridShape('heart', this)">
-        <i class="fa-regular fa-heart" style="font-size: 1.1rem; display:block; margin-bottom:2px;"></i>
-        Love
+      <div class="option-card" onclick="selectGridShape('wavy', this)">
+        <i class="fa-solid fa-water" style="font-size: 1.1rem; display:block; margin-bottom:2px;"></i>
+        Kotak Gelombang
       </div>
     </div>
 
@@ -387,7 +390,7 @@
 
 <script>
   let targetPhotoCount = 3;
-  let selectedGridShape = 'square';
+  let selectedGridShape = 'square'; // 'square' atau 'wavy'
   let selectedBgColor = 'dusty';
   let capturedPhotos = [];
 
@@ -501,59 +504,54 @@
     capturedPhotos.push(tempCanvas.toDataURL('image/png'));
   }
 
-  // HELPER UNTUK MENGGAMBAR PATH BENTUK (LOVE / CIRCLE / RECT)
-  function buildShapePath(ctx, x, y, size, shape) {
+  // FUNGSI MENGGAMBAR PATH KOTAK BERGELOMBANG (WAVY / SCALLOP BORDER)
+  function drawWavyRect(ctx, x, y, width, height, waveCountX, waveCountY, waveDepth) {
     ctx.beginPath();
-    if (shape === 'circle') {
-      ctx.arc(x + size / 2, y + size / 2, size / 2, 0, Math.PI * 2);
-    } else if (shape === 'heart') {
-      ctx.moveTo(x + size / 2, y + size * 0.9);
-      ctx.bezierCurveTo(x + size * 0.02, y + size * 0.58, x - size * 0.05, y + size * 0.22, x + size * 0.25, y + size * 0.08);
-      ctx.bezierCurveTo(x + size * 0.42, y + size * 0.0, x + size * 0.5, y + size * 0.22, x + size * 0.5, y + size * 0.22);
-      ctx.bezierCurveTo(x + size * 0.5, y + size * 0.22, x + size * 0.58, y + size * 0.0, x + size * 0.75, y + size * 0.08);
-      ctx.bezierCurveTo(x + size * 1.05, y + size * 0.22, x + size * 0.98, y + size * 0.58, x + size / 2, y + size * 0.9);
-    } else {
-      ctx.rect(x, y, size, size);
+    const stepX = width / waveCountX;
+    const stepY = height / waveCountY;
+
+    // Sisi Atas
+    ctx.moveTo(x, y);
+    for (let i = 0; i < waveCountX; i++) {
+      ctx.quadraticCurveTo(x + (i + 0.5) * stepX, y - waveDepth, x + (i + 1) * stepX, y);
+    }
+    // Sisi Kanan
+    for (let i = 0; i < waveCountY; i++) {
+      ctx.quadraticCurveTo(x + width + waveDepth, y + (i + 0.5) * stepY, x + width, y + (i + 1) * stepY);
+    }
+    // Sisi Bawah
+    for (let i = waveCountX; i > 0; i--) {
+      ctx.quadraticCurveTo(x + (i - 0.5) * stepX, y + height + waveDepth, x + (i - 1) * stepX, y + height);
+    }
+    // Sisi Kiri
+    for (let i = waveCountY; i > 0; i--) {
+      ctx.quadraticCurveTo(x - waveDepth, y + (i - 0.5) * stepY, x, y + (i - 1) * stepY);
     }
     ctx.closePath();
   }
 
-  // MASKING & BORDER PINGGIRAN PUTIH UNTUK SETIAP SHAPE
-  function drawMaskedImage(ctx, img, x, y, size, shape, borderColor) {
+  // MASKING FOTO DENGAN BENTUK KOTAK BIASA ATAU GELOMBANG
+  function drawMaskedImage(ctx, img, x, y, size, shape, accentColor) {
     ctx.save();
 
-    // 1. LUKIS BINGKAI LINGKIRAN/LOVE PUTIH TEBAL + BAYANGAN (SHADOW)
-    if (shape !== 'square') {
-      ctx.save();
-      ctx.shadowColor = "rgba(0,0,0,0.12)";
-      ctx.shadowBlur = 12;
-      ctx.shadowOffsetY = 5;
-
-      // Lukis latar belakang putih bingkai
-      ctx.fillStyle = "#FFFFFF";
-      ctx.beginPath();
-      if (shape === 'circle') {
-        ctx.arc(x + size / 2, y + size / 2, (size / 2) + 12, 0, Math.PI * 2);
-      } else if (shape === 'heart') {
-        // Skala sedikit lebih besar untuk bingkai luar putih
-        const pad = 12;
-        const bx = x - pad, by = y - pad, bs = size + (pad * 2);
-        ctx.moveTo(bx + bs / 2, by + bs * 0.9);
-        ctx.bezierCurveTo(bx + bs * 0.02, by + bs * 0.58, bx - bs * 0.05, by + bs * 0.22, bx + bs * 0.25, by + bs * 0.08);
-        ctx.bezierCurveTo(bx + bs * 0.42, by + bs * 0.0, bx + bs * 0.5, by + bs * 0.22, bx + bs * 0.5, by + bs * 0.22);
-        ctx.bezierCurveTo(bx + bs * 0.5, by + bs * 0.22, bx + bs * 0.58, by + bs * 0.0, bx + bs * 0.75, by + bs * 0.08);
-        ctx.bezierCurveTo(bx + bs * 1.05, by + bs * 0.22, bx + bs * 0.98, by + bs * 0.58, bx + bs / 2, by + bs * 0.9);
-      }
-      ctx.closePath();
+    if (shape === 'wavy') {
+      // Gambarkan Bingkai Luar Gelombang Berwarna Akses Tema
+      ctx.fillStyle = accentColor;
+      drawWavyRect(ctx, x - 10, y - 10, size + 20, size + 20, 8, 8, 12);
       ctx.fill();
-      ctx.restore();
+
+      // Masking Foto Dalam
+      ctx.beginPath();
+      drawWavyRect(ctx, x, y, size, size, 8, 8, 10);
+      ctx.clip();
+    } else {
+      // Mode Kotak Minimalis (Rounded Rectangle)
+      ctx.beginPath();
+      ctx.roundRect(x, y, size, size, 12);
+      ctx.clip();
     }
 
-    // 2. MASKING DAN GAMBAR FOTO
-    buildShapePath(ctx, x, y, size, shape);
-    ctx.clip();
-
-    // Object-Fit Cover Calculation (Preserve Aspect Ratio)
+    // Object-Fit Cover Calculation
     const imgAspect = img.width / img.height;
     let drawW, drawH, offsetX, offsetY;
 
@@ -572,73 +570,87 @@
     ctx.drawImage(img, offsetX, offsetY, drawW, drawH);
     ctx.restore();
 
-    // 3. GARIS TEPI (STROKE BORDER) KEMAS
-    if (shape !== 'square') {
+    // Border halus untuk kotak biasa
+    if (shape === 'square') {
       ctx.save();
-      buildShapePath(ctx, x, y, size, shape);
-      ctx.strokeStyle = "#FFFFFF";
-      ctx.lineWidth = 6;
+      ctx.strokeStyle = "rgba(0,0,0,0.1)";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.roundRect(x, y, size, size, 12);
       ctx.stroke();
       ctx.restore();
     }
   }
 
-  // RENDER CANVAS AKURAT & ESTETIK
+  // FUNGSINYA MENGGAMBAR TEKS MELENGKUNG (CURVED TEXT)
+  function drawCurvedText(ctx, text, centerX, centerY, radius, startAngle, endAngle, font, color) {
+    ctx.save();
+    ctx.font = font;
+    ctx.fillStyle = color;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+
+    const totalAngle = endAngle - startAngle;
+    const numChars = text.length;
+    const angleStep = totalAngle / (numChars - 1);
+
+    for (let i = 0; i < numChars; i++) {
+      const charAngle = startAngle + (i * angleStep);
+      const x = centerX + radius * Math.cos(charAngle);
+      const y = centerY + radius * Math.sin(charAngle);
+
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.rotate(charAngle + Math.PI / 2);
+      ctx.fillText(text[i], 0, 0);
+      ctx.restore();
+    }
+    ctx.restore();
+  }
+
+  // RENDER CANVAS UTAMA PHOTOSTRIP WEDDING
   function renderPhotostrip() {
     const stripWidth = 600;
     const photoBoxSize = 420;
-    const headerHeight = 120;
-    const gapY = selectedGridShape === 'square' ? 60 : 75;
-    const ticketHeight = 130;
-    const marginBottom = 60;
+    const headerHeight = 110;
+    const gapY = selectedGridShape === 'wavy' ? 65 : 45;
+    const footerHeight = 220;
 
     const totalPhotoHeight = targetPhotoCount * (photoBoxSize + gapY);
-    const stripHeight = headerHeight + totalPhotoHeight + ticketHeight + marginBottom;
+    const stripHeight = headerHeight + totalPhotoHeight + footerHeight;
 
     canvas.width = stripWidth;
     canvas.height = stripHeight;
     const ctx = canvas.getContext('2d');
 
-    // PALET WARNA SOFT TERLENGKAP
+    // PALET WARNA THEME
     let outerColor = "#8C6262";
     let cardInnerColor = "#F9F1F1";
     let textColor = "#8C6262";
-    let ticketBg = "#E8C8C8";
 
     if (selectedBgColor === 'mocha') {
-      outerColor = "#B3927A"; cardInnerColor = "#F9F6F0"; textColor = "#8C6D57"; ticketBg = "#E5D4C0";
+      outerColor = "#B3927A"; cardInnerColor = "#F9F6F0"; textColor = "#8C6D57";
     } else if (selectedBgColor === 'blue') {
-      outerColor = "#83A398"; cardInnerColor = "#F1F6F4"; textColor = "#557367"; ticketBg = "#C8DAD3";
+      outerColor = "#83A398"; cardInnerColor = "#F1F6F4"; textColor = "#557367";
     } else if (selectedBgColor === 'lavender') {
-      outerColor = "#A283A2"; cardInnerColor = "#F7F2F7"; textColor = "#755475"; ticketBg = "#DDCBDD";
+      outerColor = "#A283A2"; cardInnerColor = "#F7F2F7"; textColor = "#755475";
     } else if (selectedBgColor === 'vanilla') {
-      outerColor = "#D6C7BC"; cardInnerColor = "#FFFFFF"; textColor = "#735757"; ticketBg = "#EFE8E2";
+      outerColor = "#D6C7BC"; cardInnerColor = "#FFFFFF"; textColor = "#735757";
     } else if (selectedBgColor === 'dark') {
-      outerColor = "#2B1E1E"; cardInnerColor = "#3D2B2B"; textColor = "#D8B4B4"; ticketBg = "#523B3B";
+      outerColor = "#2B1E1E"; cardInnerColor = "#3D2B2B"; textColor = "#D8B4B4";
     }
 
-    // 1. Latar Luar Frame
-    ctx.fillStyle = outerColor;
+    // 1. Latar Belakang Kartu Utama (Cream Soft)
+    ctx.fillStyle = cardInnerColor;
     ctx.fillRect(0, 0, stripWidth, stripHeight);
 
-    // 2. Latar Kartu Dalam
-    const margin = 20;
-    ctx.fillStyle = cardInnerColor;
-    ctx.beginPath();
-    ctx.roundRect(margin, margin, stripWidth - (margin * 2), stripHeight - (margin * 2), 16);
-    ctx.fill();
-
-    // 3. Header "Catch Yours"
+    // 2. Header Ornamen Atas Khas Wedding
     ctx.fillStyle = textColor;
-    ctx.font = "bold 52px 'Caveat', cursive";
+    ctx.font = "20px 'Plus Jakarta Sans', sans-serif";
     ctx.textAlign = "center";
-    ctx.fillText("Catch Yours", stripWidth / 2, 85);
+    ctx.fillText("♥   🕊️   ♥", stripWidth / 2, 55);
 
-    ctx.font = "24px 'Plus Jakarta Sans', sans-serif";
-    ctx.fillText("♥", stripWidth / 2 - 120, 65);
-    ctx.fillText("♥", stripWidth / 2 + 130, 80);
-
-    // 4. Render Foto-Foto
+    // 3. Render Foto-Foto
     const startY = headerHeight;
 
     let loadedCount = 0;
@@ -647,63 +659,38 @@
       img.onload = () => {
         const photoY = startY + index * (photoBoxSize + gapY);
 
-        // KOTAK PUTIH POLAROID HANYA UNTUK MODE SQUARE
-        if (selectedGridShape === 'square') {
-          ctx.fillStyle = "#FFFFFF";
-          ctx.shadowColor = "rgba(0,0,0,0.08)";
-          ctx.shadowBlur = 15;
-          ctx.shadowOffsetY = 6;
-          
-          ctx.beginPath();
-          ctx.roundRect((stripWidth - photoBoxSize) / 2 - 15, photoY - 15, photoBoxSize + 30, photoBoxSize + 55, 10);
-          ctx.fill();
-          ctx.shadowColor = "transparent";
-        }
-
-        // Render Gambar + Bingkai Putih Kemas (Love / Circle / Square)
+        // Render Gambar (Square / Wavy)
         drawMaskedImage(ctx, img, (stripWidth - photoBoxSize) / 2, photoY, photoBoxSize, selectedGridShape, outerColor);
-
-        // Tulisan Tangan Bawah Foto
-        ctx.fillStyle = selectedBgColor === 'dark' ? "#D8B4B4" : "#3D2B2B";
-        ctx.font = "26px 'Caveat', cursive";
-        ctx.textAlign = "center";
-        
-        const labels = ["Sweet Memories ♥", "Chilling out", "Forever & Always"];
-        const labelY = selectedGridShape === 'square' ? photoY + photoBoxSize + 28 : photoY + photoBoxSize + 32;
-        ctx.fillText(labels[index % labels.length], stripWidth / 2, labelY);
 
         loadedCount++;
         if (loadedCount === targetPhotoCount) {
-          // 5. Render Tiket Pernikahan
-          const ticketY = startY + targetPhotoCount * (photoBoxSize + gapY) + 10;
+          // 4. FOOTER WEDDING ESTETIK KELAS DENGAN CURVED TEXT
+          const footerY = startY + targetPhotoCount * (photoBoxSize + gapY) + 15;
 
-          ctx.fillStyle = ticketBg;
-          ctx.beginPath();
-          ctx.roundRect(50, ticketY, stripWidth - 100, 110, 10);
-          ctx.fill();
+          // Nama Mempelai Melengkung (Curved Text RIYAN & AMELIA)
+          drawCurvedText(
+            ctx, 
+            "RIYAN  &  AMELIA", 
+            stripWidth / 2, 
+            footerY + 280, 
+            220, 
+            -Math.PI * 0.68, 
+            -Math.PI * 0.32, 
+            "bold 34px 'Cormorant Garamond', serif", 
+            textColor
+          );
 
-          ctx.strokeStyle = textColor;
-          ctx.lineWidth = 2;
-          ctx.setLineDash([6, 4]);
-          ctx.strokeRect(58, ticketY + 8, stripWidth - 116, 94);
-          ctx.setLineDash([]);
+          // Ilustrasi Kue Pernikahan / Pita Manis di Tengah
+          ctx.fillStyle = textColor;
+          ctx.font = "32px 'Plus Jakarta Sans', sans-serif";
+          ctx.textAlign = "center";
+          ctx.fillText("🎂", stripWidth / 2, footerY + 115);
 
-          // Teks Tiket
-          ctx.fillStyle = selectedBgColor === 'dark' ? "#FFFFFF" : "#3D2B2B";
-          ctx.font = "bold 22px 'Plus Jakarta Sans', sans-serif";
-          ctx.textAlign = "left";
-          ctx.fillText("WEDDING PASS", 78, ticketY + 42);
+          // Tanggal Pernikahan
+          ctx.font = "600 18px 'Plus Jakarta Sans', sans-serif";
+          ctx.fillText("06 . 12 . 2026", stripWidth / 2, footerY + 160);
 
-          ctx.font = "14px 'Plus Jakarta Sans', sans-serif";
-          ctx.fillText("Riyan & Amelia • 06 Dec 2026", 78, ticketY + 70);
-
-          ctx.font = "bold 18px 'Plus Jakarta Sans', sans-serif";
-          ctx.textAlign = "right";
-          ctx.fillText("DAY PASS", stripWidth - 78, ticketY + 45);
-          ctx.font = "12px 'Plus Jakarta Sans', sans-serif";
-          ctx.fillText("No. 061226", stripWidth - 78, ticketY + 70);
-
-          // Export Hasil Foto
+          // Render Hasil Foto ke Tampilan & Download Link
           const dataUrl = canvas.toDataURL('image/png');
           document.getElementById('result-img').src = dataUrl;
           document.getElementById('download-link').href = dataUrl;
