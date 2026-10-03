@@ -6,16 +6,17 @@
   <title>Wedding Photobooth - Riyan & Amelia</title>
   
   <!-- Google Fonts & Font Awesome Icons -->
-  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Cormorant+Garamond:ital,wght@0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Cormorant+Garamond:ital,wght@0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <style>
     :root {
       --dusty-rose: #8C6262;
       --soft-blush: #D8B4B4;
-      --bg-cream: #F9F1F1;
+      --bg-cream: #FDFBF7;
       --soft-mocha: #B3927A;
       --text-dark: #3D2B2B;
+      --gold-accent: #C5A059;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -23,22 +24,26 @@
     body {
       font-family: 'Plus Jakarta Sans', sans-serif;
       background-color: var(--bg-cream);
+      background-image: url('./assets/bg-pattern.png');
+      background-repeat: repeat;
+      background-size: 250px;
       color: var(--text-dark);
       min-height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      padding: 15px;
+      padding: 20px 15px;
     }
 
     .app-card {
       width: 100%;
-      max-width: 450px;
-      background-color: #FFFFFF;
-      border-radius: 24px;
-      padding: 28px 20px;
-      box-shadow: 0 10px 35px rgba(140, 98, 98, 0.12);
-      border: 1px solid rgba(216, 180, 180, 0.4);
+      max-width: 440px;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(10px);
+      border-radius: 28px;
+      padding: 32px 22px;
+      box-shadow: 0 15px 35px rgba(140, 98, 98, 0.12), 0 3px 10px rgba(0,0,0,0.03);
+      border: 1px solid rgba(255, 255, 255, 0.8);
       text-align: center;
       position: relative;
       overflow: hidden;
@@ -48,35 +53,36 @@
     .font-hand { font-family: 'Caveat', cursive; }
     .hidden { display: none !important; }
 
-    /* TOMBOL STYLING */
+    /* STYLING TOMBOL UTAMA & SEKUNDER */
     .btn-primary {
-      background: linear-gradient(135deg, var(--soft-mocha) 0%, var(--dusty-rose) 100%);
+      background: linear-gradient(135deg, #A37B7B 0%, var(--dusty-rose) 100%);
       color: #FFFFFF;
       border: none;
-      padding: 14px 28px;
-      font-size: 1rem;
+      padding: 15px 28px;
+      font-size: 0.98rem;
       font-weight: 700;
       border-radius: 30px;
       cursor: pointer;
-      box-shadow: 0 4px 18px rgba(140, 98, 98, 0.3);
-      transition: all 0.3s ease;
+      box-shadow: 0 6px 20px rgba(140, 98, 98, 0.28);
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       display: inline-flex;
       align-items: center;
       gap: 10px;
-      margin-top: 12px;
+      margin-top: 14px;
       width: 100%;
       justify-content: center;
+      letter-spacing: 0.5px;
     }
 
     .btn-primary:hover {
       transform: translateY(-2px);
-      box-shadow: 0 6px 22px rgba(140, 98, 98, 0.4);
+      box-shadow: 0 8px 25px rgba(140, 98, 98, 0.38);
     }
 
     .btn-secondary {
       background-color: transparent;
       color: var(--dusty-rose);
-      border: 1px solid var(--dusty-rose);
+      border: 1px solid var(--soft-blush);
       padding: 11px 20px;
       font-size: 0.88rem;
       font-weight: 600;
@@ -88,13 +94,18 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-secondary:hover {
+      background-color: rgba(216, 180, 180, 0.15);
     }
 
     .btn-switch-cam {
-      background-color: rgba(255, 255, 255, 0.85);
+      background-color: #FFFFFF;
       color: var(--dusty-rose);
       border: 1px solid var(--soft-blush);
-      padding: 6px 14px;
+      padding: 7px 15px;
       font-size: 0.78rem;
       font-weight: 700;
       border-radius: 20px;
@@ -102,40 +113,59 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
       transition: all 0.2s ease;
     }
 
     .btn-switch-cam:hover {
-      background-color: #FFFFFF;
       transform: scale(1.03);
     }
 
-    /* STEP 1: WELCOME SCREEN */
+    /* HALAMAN WELCOME */
     .welcome-badge {
-      font-size: 0.8rem;
-      color: var(--soft-mocha);
-      letter-spacing: 2px;
+      font-size: 0.75rem;
+      color: var(--gold-accent);
+      letter-spacing: 3px;
       text-transform: uppercase;
       font-weight: 700;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
     }
 
     .welcome-title {
-      font-size: 2.3rem;
+      font-size: 2.5rem;
       color: var(--dusty-rose);
-      line-height: 1.2;
-      margin-bottom: 12px;
+      line-height: 1.15;
+      margin-bottom: 14px;
+      font-weight: 700;
+    }
+
+    .icon-hero-group {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 16px;
+      margin: 18px 0;
+    }
+
+    .icon-hero-group img {
+      height: 48px;
+      width: auto;
+      object-fit: contain;
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.08));
     }
 
     /* STEP 2: TEMPLATE SELECTOR */
     .option-title {
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       font-weight: 700;
       color: var(--dusty-rose);
       text-align: left;
-      margin: 14px 0 6px;
+      margin: 16px 0 8px;
       text-transform: uppercase;
       letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
     .option-grid {
@@ -154,11 +184,11 @@
 
     .design-card {
       border: 2px solid var(--soft-blush);
-      border-radius: 14px;
-      padding: 10px 6px;
+      border-radius: 16px;
+      padding: 12px 6px;
       cursor: pointer;
       transition: all 0.25s ease;
-      background-color: var(--bg-cream);
+      background-color: #FFFFFF;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -168,13 +198,13 @@
     .design-card.active, .design-card:hover {
       border-color: var(--dusty-rose);
       background-color: #FFFFFF;
-      box-shadow: 0 5px 15px rgba(140, 98, 98, 0.2);
-      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(140, 98, 98, 0.18);
+      transform: translateY(-3px);
     }
 
     .preview-box {
-      width: 50px;
-      height: 70px;
+      width: 52px;
+      height: 72px;
       background: #FAF6EE;
       border-radius: 6px;
       margin-bottom: 8px;
@@ -185,29 +215,32 @@
       justify-content: center;
       gap: 3px;
       padding: 4px;
-      box-shadow: inset 0 0 4px rgba(0,0,0,0.08);
+      box-shadow: inset 0 0 5px rgba(0,0,0,0.06);
+      overflow: hidden;
     }
 
     .preview-photo {
-      width: 36px;
+      width: 38px;
       height: 14px;
-      background: #D8B4B4;
+      background: #E0C8C8;
       border-radius: 2px;
     }
 
     .preview-box.design1 { border: 1px solid #3B5E4C; }
-    .preview-box.design1::before {
-      content: "🌿";
+    .preview-img-corner {
       position: absolute;
       top: -2px;
       left: -2px;
-      font-size: 8px;
+      width: 22px;
+      height: 22px;
+      object-fit: contain;
     }
 
     .preview-box.design2 { border: 1px dashed #8C6262; }
-    .preview-box.design2::after {
-      content: "🎂";
-      font-size: 9px;
+    .preview-img-cake {
+      width: 14px;
+      height: 14px;
+      object-fit: contain;
       margin-top: 1px;
     }
 
@@ -220,11 +253,11 @@
 
     .option-card {
       border: 2px solid var(--soft-blush);
-      border-radius: 12px;
+      border-radius: 14px;
       padding: 10px 5px;
       cursor: pointer;
       transition: all 0.2s ease;
-      background-color: var(--bg-cream);
+      background-color: #FFFFFF;
       font-size: 0.8rem;
       font-weight: 600;
       color: var(--text-dark);
@@ -235,7 +268,7 @@
       border-color: var(--dusty-rose);
       background-color: #FFFFFF;
       color: var(--dusty-rose);
-      box-shadow: 0 4px 12px rgba(140, 98, 98, 0.18);
+      box-shadow: 0 4px 12px rgba(140, 98, 98, 0.15);
     }
 
     /* COLOR PALETTE PICKER */
@@ -248,7 +281,7 @@
 
     .color-card {
       border: 2px solid transparent;
-      border-radius: 10px;
+      border-radius: 12px;
       padding: 8px 4px;
       cursor: pointer;
       font-size: 0.72rem;
@@ -257,7 +290,8 @@
       flex-direction: column;
       align-items: center;
       gap: 4px;
-      background-color: var(--bg-cream);
+      background-color: #FFFFFF;
+      border: 1px solid rgba(216, 180, 180, 0.3);
     }
 
     .color-dot {
@@ -269,20 +303,19 @@
 
     .color-card.active {
       border-color: var(--dusty-rose);
-      background-color: #FFFFFF;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      box-shadow: 0 3px 10px rgba(140, 98, 98, 0.18);
     }
 
-    /* STEP 3: CAMERA & COUNTDOWN */
+    /* STEP 3: CAMERA */
     .camera-wrapper {
       position: relative;
       width: 100%;
       height: 380px;
-      border-radius: 18px;
+      border-radius: 20px;
       overflow: hidden;
       background-color: #000;
       margin: 12px 0 15px;
-      box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
     }
 
     video {
@@ -298,12 +331,13 @@
     .countdown-overlay {
       position: absolute;
       top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.4);
+      background: rgba(0, 0, 0, 0.45);
+      backdrop-filter: blur(2px);
       display: flex;
       justify-content: center;
       align-items: center;
       color: #FFFFFF;
-      font-size: 5rem;
+      font-size: 5.5rem;
       font-weight: bold;
       z-index: 10;
     }
@@ -321,16 +355,16 @@
     .photo-progress {
       font-size: 0.9rem;
       color: var(--dusty-rose);
-      font-weight: 600;
+      font-weight: 700;
     }
 
     /* STEP 4: RESULT */
     #result-img {
       width: 100%;
       max-width: 300px;
-      border-radius: 12px;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-      margin: 15px auto;
+      border-radius: 16px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.18);
+      margin: 16px auto;
       display: block;
     }
 
@@ -345,12 +379,15 @@
   <div id="step-welcome">
     <p class="welcome-badge">Virtual Photobooth</p>
     <h1 class="font-serif welcome-title">Capture Your Moment</h1>
-    <p style="font-size: 0.88rem; color: #735757; line-height: 1.5; margin-bottom: 20px;">
+    <p style="font-size: 0.88rem; color: #735757; line-height: 1.6; margin-bottom: 10px;">
       Selamat datang di Photobooth Pernikahan Kami! Abadikan foto spesial Anda bersama Riyan & Amelia.
     </p>
 
-    <div style="font-size: 2.2rem; color: var(--soft-blush); margin-bottom: 20px;">
-      📸 💌 💍
+    <!-- Hiasan Gambar Aset Asli yang Mewah -->
+    <div class="icon-hero-group">
+      <img src="./assets/calla-lily-corner.png" alt="Calla Lily" style="height: 42px;">
+      <img src="./assets/wedding-cake.png" alt="Wedding Cake" style="height: 48px;">
+      <img src="./assets/calla-lily-corner.png" alt="Calla Lily" style="height: 42px; transform: scaleX(-1);">
     </div>
 
     <button class="btn-primary" onclick="goToStep(2)">
@@ -360,7 +397,7 @@
 
   <!-- HALAMAN 2: PILIH STYLE -->
   <div id="step-template" class="hidden">
-    <h2 class="font-serif" style="color: var(--dusty-rose); font-size: 1.8rem;">Pilih Style Photobooth</h2>
+    <h2 class="font-serif" style="color: var(--dusty-rose); font-size: 1.85rem;">Pilih Style Photobooth</h2>
     <p style="font-size: 0.82rem; color: #735757;">Lihat contoh gambar dan pilih style favorit Anda</p>
 
     <!-- Pilihan 1: Jumlah Foto -->
@@ -380,11 +417,13 @@
       </div>
     </div>
 
-    <!-- Pilihan 2: Visual Card Desain -->
+    <!-- Pilihan 2: Visual Card Desain Menggunakan Aset Asli -->
     <p class="option-title"><i class="fa-solid fa-wand-magic-sparkles"></i> 2. Pilihan Desain Wedding</p>
     <div class="design-grid">
+      <!-- Card 1 -->
       <div class="design-card active" onclick="selectDesignStyle('floral', this)">
         <div class="preview-box design1">
+          <img src="./assets/calla-lily-corner.png" class="preview-img-corner" alt="Lily">
           <div class="preview-photo"></div>
           <div class="preview-photo"></div>
         </div>
@@ -392,15 +431,18 @@
         <span style="font-size:0.65rem; color:#735757;">Calla Lily & Gold</span>
       </div>
 
+      <!-- Card 2 -->
       <div class="design-card" onclick="selectDesignStyle('vintage', this)">
         <div class="preview-box design2">
           <div class="preview-photo"></div>
           <div class="preview-photo"></div>
+          <img src="./assets/wedding-cake.png" class="preview-img-cake" alt="Cake">
         </div>
         <strong style="font-size:0.75rem; color:var(--text-dark);">2. Vintage Cake</strong>
         <span style="font-size:0.65rem; color:#735757;">Kue Nikah & Curved</span>
       </div>
 
+      <!-- Card 3 -->
       <div class="design-card" onclick="selectDesignStyle('wavy_red', this)">
         <div class="preview-box design3">
           <div class="preview-photo"></div>
@@ -448,7 +490,7 @@
     </button>
   </div>
 
-  <!-- HALAMAN 3: AREA KAMERA & TAKING PHOTO -->
+  <!-- HALAMAN 3: AREA KAMERA -->
   <div id="step-camera" class="hidden">
     <div style="display: flex; justify-content: space-between; align-items: center;">
       <span class="photo-progress" id="photo-count-text">Foto 1 dari 3</span>
@@ -472,9 +514,9 @@
     </button>
   </div>
 
-  <!-- HALAMAN 4: HASIL FOTO & SIMPAN -->
+  <!-- HALAMAN 4: HASIL FOTO -->
   <div id="step-result" class="hidden">
-    <h2 class="font-serif" style="color: var(--dusty-rose); font-size: 1.8rem;">Hasil Photobooth Anda</h2>
+    <h2 class="font-serif" style="color: var(--dusty-rose); font-size: 1.85rem;">Hasil Photobooth Anda</h2>
     <p style="font-size: 0.82rem; color: #735757;">Terima kasih telah berbagi kebahagiaan!</p>
 
     <img id="result-img" alt="Hasil Photobooth">
@@ -508,12 +550,12 @@
   let currentFacingMode = "user"; 
   let currentStream = null;
 
-  // LOAD ASSET GAMBAR DARI FOLDER ASSSETS GITHUB
+  // LOAD ASSET GAMBAR
   const lilyAsset = new Image();
-  lilyAsset.src = './assets/calla-lily-corner.png'; // Path Gambar Calla Lily
+  lilyAsset.src = './assets/calla-lily-corner.png';
 
   const cakeAsset = new Image();
-  cakeAsset.src = './assets/wedding-cake.png'; // Path Gambar Cake (Opsional)
+  cakeAsset.src = './assets/wedding-cake.png';
 
   const video = document.getElementById('video');
   const canvas = document.getElementById('canvas');
@@ -741,7 +783,6 @@
     ctx.restore();
   }
 
-  // FUNGSI MEMUAT & MENGGAMBAR ASSET ASLI CALLA LILY JIKA GAMBAR TERSEDIA
   function drawCallaLilyAsset(ctx, x, y, width, height, flipX = false, flipY = false) {
     ctx.save();
     ctx.translate(x, y);
@@ -749,10 +790,8 @@
     if (flipY) ctx.scale(1, -1);
 
     if (lilyAsset.complete && lilyAsset.naturalWidth !== 0) {
-      // Gambar Menggunakan Asset PNG Asli jika sudah ter-upload
       ctx.drawImage(lilyAsset, -width / 2, -height / 2, width, height);
     } else {
-      // Fallback Kanvas Art jika asset belum ada
       ctx.strokeStyle = "#C5A059"; ctx.lineWidth = 1.8;
       ctx.beginPath(); ctx.moveTo(-60, 60); ctx.lineTo(100, -50); ctx.stroke();
 
@@ -769,13 +808,12 @@
     ctx.restore();
   }
 
-  // SENI ILUSTRASI KUE PERNIKAHAN VINTAGE KLASIK (DESAIN 2)
   function drawVintageWeddingCake(ctx, centerX, centerY, mainColor) {
     ctx.save();
     ctx.translate(centerX, centerY);
 
     if (cakeAsset.complete && cakeAsset.naturalWidth !== 0) {
-      ctx.drawImage(cakeAsset, -40, -40, 80, 80);
+      ctx.drawImage(cakeAsset, -45, -45, 90, 90);
     } else {
       ctx.fillStyle = mainColor;
       ctx.beginPath(); ctx.ellipse(0, 32, 36, 8, 0, 0, 2 * Math.PI); ctx.fill();
@@ -795,7 +833,6 @@
     ctx.restore();
   }
 
-  // RENDER CANVAS UTAMA PHOTOSTRIP WEDDING
   function renderPhotostrip() {
     const stripWidth = 600;
     const photoBoxSize = 420;
@@ -831,13 +868,12 @@
       textColor = "#A82B2B";
     }
 
-    // 1. Latar Belakang Utama
+    // Latar Belakang Utama
     ctx.fillStyle = cardInnerColor;
     ctx.fillRect(0, 0, stripWidth, stripHeight);
 
-    // 2. ORNAMEN HEADER ATAS
+    // Header Ornamen
     if (selectedDesignStyle === 'floral') {
-      // Gambar Bunga Calla Lily Atas Kiri
       drawCallaLilyAsset(ctx, 110, 80, 220, 160, false, false);
     } else if (selectedDesignStyle === 'vintage') {
       ctx.fillStyle = textColor;
@@ -846,7 +882,7 @@
       ctx.fillText("♥   🕊️   ♥", stripWidth / 2, 60);
     }
 
-    // 3. Render Foto-Foto
+    // Render Foto
     const startY = headerHeight;
 
     let loadedCount = 0;
@@ -859,11 +895,9 @@
 
         loadedCount++;
         if (loadedCount === targetPhotoCount) {
-          // 4. FOOTER DENGAN ORNAMEN CALLA LILY
           const footerY = startY + targetPhotoCount * (photoBoxSize + gapY) + 20;
 
           if (selectedDesignStyle === 'floral') {
-            // Gambar Bunga Calla Lily Bawah Kanan
             drawCallaLilyAsset(ctx, stripWidth - 110, stripHeight - 90, 240, 180, true, true);
 
             ctx.fillStyle = textColor;
@@ -905,7 +939,7 @@
             ctx.fillText("— 06.12.2026 —", stripWidth / 2, footerY + 85);
           }
 
-          // Export Hasil Foto
+          // Export Hasil
           const dataUrl = canvas.toDataURL('image/png');
           document.getElementById('result-img').src = dataUrl;
           document.getElementById('download-link').href = dataUrl;
