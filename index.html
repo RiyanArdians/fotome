@@ -195,12 +195,12 @@
       border-radius: 2px;
     }
 
-    .preview-box.design1 { border: 1px solid #4B6858; }
+    .preview-box.design1 { border: 1px solid #3B5E4C; }
     .preview-box.design1::before {
-      content: "🌸";
+      content: "🌿";
       position: absolute;
       top: -2px;
-      left: 0;
+      left: -2px;
       font-size: 8px;
     }
 
@@ -292,7 +292,7 @@
     }
 
     video.mirror {
-      transform: scaleX(-1); /* Efek Cermin untuk Kamera Depan */
+      transform: scaleX(-1);
     }
 
     .countdown-overlay {
@@ -388,8 +388,8 @@
           <div class="preview-photo"></div>
           <div class="preview-photo"></div>
         </div>
-        <strong style="font-size:0.75rem; color:var(--text-dark);">1. Floral Lily</strong>
-        <span style="font-size:0.65rem; color:#735757;">Bunga Lili Anggun</span>
+        <strong style="font-size:0.75rem; color:var(--text-dark);">1. Calla Lily</strong>
+        <span style="font-size:0.65rem; color:#735757;">Calla Lily & Gold</span>
       </div>
 
       <div class="design-card" onclick="selectDesignStyle('vintage', this)">
@@ -453,7 +453,6 @@
     <div style="display: flex; justify-content: space-between; align-items: center;">
       <span class="photo-progress" id="photo-count-text">Foto 1 dari 3</span>
       
-      <!-- TOMBOL PINDAH KAMERA DEPAN/BELAKANG -->
       <button class="btn-switch-cam" onclick="toggleCamera()">
         <i class="fa-solid fa-arrows-rotate"></i> <span id="cam-mode-text">Kamera Depan</span>
       </button>
@@ -506,7 +505,6 @@
   let selectedBgColor = 'dusty';
   let capturedPhotos = [];
   
-  // LOGIKA SWITCH KAMERA (USER / ENVIRONMENT)
   let currentFacingMode = "user"; 
   let currentStream = null;
 
@@ -545,7 +543,6 @@
     element.classList.add('active');
   }
 
-  // FUNGSI MEMBUKA STREAM KAMERA
   function startCameraProcess() {
     goToStep(3);
     document.getElementById('photo-count-text').innerText = `Foto 1 dari ${targetPhotoCount}`;
@@ -565,7 +562,6 @@
       currentStream = stream;
       video.srcObject = stream;
 
-      // Atur Mirroring (Cermin) hanya untuk Kamera Depan
       if (currentFacingMode === "user") {
         video.classList.add('mirror');
         document.getElementById('cam-mode-text').innerText = "Kamera Depan";
@@ -580,7 +576,6 @@
     });
   }
 
-  // FUNGSI GANTI KAMERA DEPAN/BELAKANG
   function toggleCamera() {
     currentFacingMode = (currentFacingMode === "user") ? "environment" : "user";
     openCameraStream();
@@ -642,7 +637,6 @@
     tempCanvas.height = h;
     const ctx = tempCanvas.getContext('2d');
 
-    // Hanya balik horizontal jika kamera depan
     if (currentFacingMode === "user") {
       ctx.translate(w, 0);
       ctx.scale(-1, 1);
@@ -652,7 +646,6 @@
     capturedPhotos.push(tempCanvas.toDataURL('image/png'));
   }
 
-  // BINGKAI BERGELOMBANG (DESAIN 3 - WAVY SCALLOP)
   function drawWavyRect(ctx, x, y, width, height, waveCountX, waveCountY, waveDepth) {
     ctx.beginPath();
     const stepX = width / waveCountX;
@@ -674,7 +667,6 @@
     ctx.closePath();
   }
 
-  // MASKING FOTO
   function drawMaskedImage(ctx, img, x, y, size, designStyle) {
     ctx.save();
 
@@ -717,7 +709,6 @@
     }
   }
 
-  // TEKS MELENGKUNG (DESAIN 2 CURVED TEXT)
   function drawCurvedText(ctx, text, centerX, centerY, radius, startAngle, endAngle, font, color) {
     ctx.save();
     ctx.font = font;
@@ -743,31 +734,69 @@
     ctx.restore();
   }
 
-  // SENI ILUSTRASI BUNGA LILI PUTIH WATERCOLOR (DESAIN 1)
-  function drawWhiteLilyCorner(ctx, x, y, scale = 1, flipX = false) {
+  // LUKIS BUKET CALLA LILY & EUCALYPTUS DENGAN FRAME GEOMETRI EMAS (DESAIN 1 ACCORDING TO USER PHOTO)
+  function drawCallaLilyCorner(ctx, x, y, scale = 1, flipX = false, flipY = false) {
     ctx.save();
     ctx.translate(x, y);
     if (flipX) ctx.scale(-1, 1);
+    if (flipY) ctx.scale(1, -1);
     ctx.scale(scale, scale);
 
-    ctx.fillStyle = "#4A6B5B";
-    ctx.beginPath(); ctx.ellipse(-25, 12, 38, 14, Math.PI / 3, 0, 2 * Math.PI); ctx.fill();
-    ctx.beginPath(); ctx.ellipse(12, 28, 32, 11, -Math.PI / 4, 0, 2 * Math.PI); ctx.fill();
+    // 1. Garis Geometri Emas (Gold Geometric Line Background)
+    ctx.strokeStyle = "#C5A059";
+    ctx.lineWidth = 1.8;
+    ctx.beginPath();
+    ctx.moveTo(-100, 120); ctx.lineTo(180, -90); ctx.lineTo(-40, -130);
+    ctx.stroke();
 
-    ctx.fillStyle = "#FFFFFF";
-    ctx.strokeStyle = "#D6C7BC";
-    ctx.lineWidth = 1.5;
+    // 2. Daun Tropical Monstera Hijau Besar
+    ctx.fillStyle = "#3F5E4D";
+    ctx.beginPath();
+    ctx.ellipse(-30, 20, 55, 30, Math.PI / 4, 0, 2 * Math.PI);
+    ctx.fill();
 
+    // 3. Ranting Daun Eucalyptus Hijau Soft
+    ctx.fillStyle = "#5E8270";
     for (let i = 0; i < 6; i++) {
       ctx.beginPath();
-      const angle = (i * Math.PI) / 3;
-      ctx.ellipse(Math.cos(angle) * 18, Math.sin(angle) * 18, 24, 10, angle, 0, 2 * Math.PI);
+      ctx.ellipse(-70 + (i * 18), -30 + (i * 12), 16, 9, Math.PI / 3, 0, 2 * Math.PI);
       ctx.fill();
-      ctx.stroke();
     }
 
-    ctx.fillStyle = "#D4AF37";
-    ctx.beginPath(); ctx.arc(0, 0, 6, 0, 2 * Math.PI); ctx.fill();
+    // 4. Bunga Calla Lily Putih Elegan
+    function drawSingleCallaLily(cx, cy, angleRot) {
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.rotate(angleRot);
+
+      // Kelopak Putih Calla Lily
+      ctx.fillStyle = "#FFFFFF";
+      ctx.strokeStyle = "#D2C9BD";
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(0, -35);
+      ctx.bezierCurveTo(22, -15, 25, 20, 0, 28);
+      ctx.bezierCurveTo(-25, 20, -22, -15, 0, -35);
+      ctx.fill(); ctx.stroke();
+
+      // Putik Emas Tengah Calla Lily
+      ctx.fillStyle = "#D4AF37";
+      ctx.beginPath();
+      ctx.ellipse(0, 2, 4, 18, 0, 0, 2 * Math.PI);
+      ctx.fill();
+
+      ctx.restore();
+    }
+
+    drawSingleCallaLily(10, -20, Math.PI / 6);
+    drawSingleCallaLily(-35, 10, -Math.PI / 8);
+
+    // 5. Mawar Putih Rimbun
+    ctx.fillStyle = "#FDFBF7";
+    ctx.strokeStyle = "#E2D9CD";
+    ctx.lineWidth = 1.2;
+    ctx.beginPath(); ctx.arc(35, 25, 24, 0, 2 * Math.PI); ctx.fill(); ctx.stroke();
+    ctx.beginPath(); ctx.arc(35, 25, 15, 0, 2 * Math.PI); ctx.stroke();
 
     ctx.restore();
   }
@@ -778,21 +807,15 @@
     ctx.translate(centerX, centerY);
 
     ctx.fillStyle = mainColor;
-    ctx.beginPath();
-    ctx.ellipse(0, 32, 36, 8, 0, 0, 2 * Math.PI);
-    ctx.fill();
+    ctx.beginPath(); ctx.ellipse(0, 32, 36, 8, 0, 0, 2 * Math.PI); ctx.fill();
     ctx.fillRect(-6, 32, 12, 12);
 
-    ctx.fillStyle = "#FFFFFF";
-    ctx.strokeStyle = mainColor;
-    ctx.lineWidth = 2;
+    ctx.fillStyle = "#FFFFFF"; ctx.strokeStyle = mainColor; ctx.lineWidth = 2;
     ctx.beginPath(); ctx.roundRect(-28, 6, 56, 26, 4); ctx.fill(); ctx.stroke();
-
     ctx.beginPath(); ctx.roundRect(-20, -18, 40, 24, 4); ctx.fill(); ctx.stroke();
 
     ctx.fillStyle = mainColor;
     ctx.beginPath(); ctx.arc(0, -22, 4, 0, 2 * Math.PI); ctx.fill(); 
-    
     ctx.beginPath(); ctx.arc(-14, 20, 2.5, 0, 2 * Math.PI); ctx.fill();
     ctx.beginPath(); ctx.arc(0, 20, 2.5, 0, 2 * Math.PI); ctx.fill();
     ctx.beginPath(); ctx.arc(14, 20, 2.5, 0, 2 * Math.PI); ctx.fill();
@@ -804,9 +827,9 @@
   function renderPhotostrip() {
     const stripWidth = 600;
     const photoBoxSize = 420;
-    const headerHeight = selectedDesignStyle === 'floral' ? 80 : 110;
+    const headerHeight = selectedDesignStyle === 'floral' ? 100 : 110;
     const gapY = selectedDesignStyle === 'wavy_red' ? 60 : 35;
-    const footerHeight = selectedDesignStyle === 'floral' ? 140 : 220;
+    const footerHeight = selectedDesignStyle === 'floral' ? 160 : 220;
 
     const totalPhotoHeight = targetPhotoCount * (photoBoxSize + gapY);
     const stripHeight = headerHeight + totalPhotoHeight + footerHeight;
@@ -815,7 +838,6 @@
     canvas.height = stripHeight;
     const ctx = canvas.getContext('2d');
 
-    // PALET WARNA THEME
     let outerColor = "#8C6262";
     let cardInnerColor = "#F9F1F1";
     let textColor = "#8C6262";
@@ -843,7 +865,8 @@
 
     // 2. ORNAMEN HEADER ATAS
     if (selectedDesignStyle === 'floral') {
-      drawWhiteLilyCorner(ctx, 45, 45, 1.25, false);
+      // Buket Calla Lily Atas Kiri
+      drawCallaLilyCorner(ctx, 60, 60, 1.1, false, false);
     } else if (selectedDesignStyle === 'vintage') {
       ctx.fillStyle = textColor;
       ctx.font = "22px 'Plus Jakarta Sans', sans-serif";
@@ -864,20 +887,21 @@
 
         loadedCount++;
         if (loadedCount === targetPhotoCount) {
-          // 4. FOOTER DENGAN ORNAMEN GAMBAR LUKISAN CANVAS
+          // 4. FOOTER DENGAN ORNAMEN GAMBAR CALLA LILY
           const footerY = startY + targetPhotoCount * (photoBoxSize + gapY) + 20;
 
           if (selectedDesignStyle === 'floral') {
-            drawWhiteLilyCorner(ctx, stripWidth - 45, stripHeight - 45, 1.35, true);
+            // Buket Calla Lily Bawah Kanan
+            drawCallaLilyCorner(ctx, stripWidth - 60, stripHeight - 60, 1.15, true, true);
 
             ctx.fillStyle = textColor;
             ctx.font = "bold 28px 'Cormorant Garamond', serif";
             ctx.textAlign = "left";
-            ctx.fillText("RIYAN & AMELIA", 60, footerY + 40);
+            ctx.fillText("RIYAN & AMELIA", 60, footerY + 50);
 
             ctx.font = "14px 'Plus Jakarta Sans', sans-serif";
             ctx.fillStyle = "#735757";
-            ctx.fillText("DECEMBER 06, 2026", 60, footerY + 68);
+            ctx.fillText("DECEMBER 06, 2026", 60, footerY + 78);
 
           } else if (selectedDesignStyle === 'vintage') {
             drawCurvedText(
