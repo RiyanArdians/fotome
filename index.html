@@ -726,28 +726,28 @@
     }
   }
 
-  // FUNGSI MENGGAMBAR BUNGA DENGAN TITIK PUSAT TEPAT DI POJOK FOTO
-  function drawCallaLilyCornerOverlay(ctx, x, y, width, height, flipX = false, flipY = false) {
+  // FUNGSI MENGGAMBAR BUNGA DARI SUDUT FRAME PALING OUTSIDE BACKGROUND
+  function drawCallaLilyOuterCorner(ctx, x, y, width, height, flipX = false, flipY = false) {
     ctx.save();
     ctx.translate(x, y);
     if (flipX) ctx.scale(-1, 1);
     if (flipY) ctx.scale(1, -1);
 
     if (lilyAsset.complete && lilyAsset.naturalWidth !== 0) {
-      // Menggambar aset agar pojok atas-kiri bunga pas berada di titik (0,0) sudut foto
-      ctx.drawImage(lilyAsset, -width * 0.25, -height * 0.25, width, height);
+      // Menempatkan titik pangkal bunga tepat di ujung paling pojok background
+      ctx.drawImage(lilyAsset, 0, 0, width, height);
     } else {
       ctx.strokeStyle = "#C5A059"; ctx.lineWidth = 3;
-      ctx.beginPath(); ctx.moveTo(-50, 50); ctx.lineTo(150, -50); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(200, 200); ctx.stroke();
 
       ctx.fillStyle = "#3F5E4D";
-      ctx.beginPath(); ctx.ellipse(20, 20, 80, 45, Math.PI / 4, 0, 2 * Math.PI); ctx.fill();
+      ctx.beginPath(); ctx.ellipse(80, 80, 100, 55, Math.PI / 4, 0, 2 * Math.PI); ctx.fill();
 
       ctx.fillStyle = "#FFFFFF"; ctx.strokeStyle = "#D2C9BD"; ctx.lineWidth = 2.5;
-      ctx.beginPath(); ctx.ellipse(10, 10, 40, 60, Math.PI / 6, 0, 2 * Math.PI); ctx.fill(); ctx.stroke();
+      ctx.beginPath(); ctx.ellipse(50, 50, 50, 75, Math.PI / 6, 0, 2 * Math.PI); ctx.fill(); ctx.stroke();
       
       ctx.fillStyle = "#D4AF37";
-      ctx.beginPath(); ctx.ellipse(10, 10, 7, 28, 0, 0, 2 * Math.PI); ctx.fill();
+      ctx.beginPath(); ctx.ellipse(50, 50, 9, 32, 0, 0, 2 * Math.PI); ctx.fill();
     }
 
     ctx.restore();
@@ -819,8 +819,14 @@
     ctx.fillStyle = cardInnerColor;
     ctx.fillRect(0, 0, stripWidth, stripHeight);
 
-    // 2. Header Ornaments Sederhana
-    if (selectedDesignStyle === 'vintage') {
+    // 2. LAYER LATAR BELAKANG BUNGA (DIGAMBAR DARI SUDUT BACKGROUND)
+    if (selectedDesignStyle === 'floral') {
+      // Bunga Atas Kiri: Menempel dari Ujung Pojok (0,0) Background & Menjuntai Masuk Membelah Foto
+      drawCallaLilyOuterCorner(ctx, 0, 0, 420, 320, false, false);
+
+      // Bunga Bawah Kanan: Menempel dari Ujung Pojok Bawah Background
+      drawCallaLilyOuterCorner(ctx, stripWidth, stripHeight, 440, 340, true, true);
+    } else if (selectedDesignStyle === 'vintage') {
       ctx.fillStyle = textColor;
       ctx.font = "26px 'Plus Jakarta Sans', sans-serif";
       ctx.textAlign = "center";
@@ -842,18 +848,7 @@
         if (loadedCount === targetPhotoCount) {
           const footerY = startY + targetPhotoCount * (photoBoxSize + gapY) + 20;
 
-          // 4. OVERLAY BUNGA DENGAN KOORDINAT TEPAT DI POJOK FOTO
           if (selectedDesignStyle === 'floral') {
-            const photoX = (stripWidth - photoBoxSize) / 2;
-            const topPhotoY = startY;
-            const bottomPhotoY = startY + (targetPhotoCount - 1) * (photoBoxSize + gapY) + photoBoxSize;
-
-            // Bunga Atas-Kiri: Pangkal Tepat Di Sudut Atas-Kiri Foto Pertama (Besar & Menutupi Sudut Foto)
-            drawCallaLilyCornerOverlay(ctx, photoX, topPhotoY, 320, 240, false, false);
-
-            // Bunga Bawah-Kanan: Pangkal Tepat Di Sudut Bawah-Kanan Foto Terakhir
-            drawCallaLilyCornerOverlay(ctx, photoX + photoBoxSize, bottomPhotoY, 340, 260, true, true);
-
             // Teks Footer Calla Lily
             ctx.fillStyle = textColor;
             ctx.font = "bold 42px 'Cormorant Garamond', serif";
