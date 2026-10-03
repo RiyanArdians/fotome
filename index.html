@@ -256,7 +256,7 @@
     .preview-box.design4 { border: 1px solid #DDD; background: #FAFAFA; }
     .preview-box.design4 .preview-photo { background: #E2D0D0; border-radius: 3px; }
 
-    /* PREVIEW DESIGN 5: MAROON WHITE BORDER STYLE */
+    /* PREVIEW DESIGN 5: POLAROID BORDER STYLE */
     .preview-box.design5 { border: 2px solid #5A121A; background: #5A121A; }
     .preview-box.design5 .preview-photo { background: #FFF; border: 1px solid #FFF; }
 
@@ -497,7 +497,7 @@
     </div>
   </div>
 
-  <!-- HALAMAN 2: PILIH STYLE (5 PILIHAN DESAIN) -->
+  <!-- HALAMAN 2: PILIH STYLE -->
   <div id="step-template" class="hidden">
     <h2 class="font-serif" style="color: var(--dusty-rose); font-size: 1.85rem;">Pilih Style Photobooth</h2>
     <p style="font-size: 0.82rem; color: #735757;">Lihat contoh gambar dan pilih style favorit Anda</p>
@@ -550,7 +550,7 @@
         <strong style="font-size:0.75rem; color:var(--text-dark);">3. Wavy Red</strong>
       </div>
 
-      <!-- 4. FOTOME Brand (SESUAI GAMBAR 1 - CHAT UI) -->
+      <!-- 4. FOTOME Brand -->
       <div class="design-card" onclick="selectDesignStyle('fotome_brand', this)">
         <div class="preview-box design4">
           <div class="preview-photo"></div>
@@ -559,7 +559,7 @@
         <strong style="font-size:0.75rem; color:var(--text-dark);">4. FOTOME UI</strong>
       </div>
 
-      <!-- 5. Engagement Vira & Wahyu (SESUAI GAMBAR 2 - MAROON BORDER) -->
+      <!-- 5. Engagement Vira & Wahyu -->
       <div class="design-card" onclick="selectDesignStyle('engagement', this)">
         <div class="preview-box design5">
           <div class="preview-photo"></div>
@@ -867,7 +867,7 @@
     ctx.putImageData(imgData, x, y);
   }
 
-  function drawMaskedImage(ctx, img, x, y, size, designStyle) {
+  function drawMaskedImage(ctx, img, x, y, size, designStyle, index = 0) {
     ctx.save();
 
     if (designStyle === 'wavy_red') {
@@ -879,9 +879,36 @@
       drawWavyRect(ctx, x, y, size, size, 8, 8, 10);
       ctx.clip();
     } else if (designStyle === 'engagement') {
-      // FRAME BORDING PUTIH TEGAS UNTUK ENGAGEMENT GAMBAR 2
+      // POLAROID FRAME STYLE DENGAN BORDER ASIMETRIS (SESUAI GAMBAR 1)
+      const topPad = 18;
+      const sidePadLeft = (index % 2 === 0) ? 32 : 18;
+      const sidePadRight = (index % 2 === 0) ? 18 : 32;
+      const bottomPad = 26;
+
+      const frameX = x - sidePadLeft;
+      const frameY = y - topPad;
+      const frameW = size + sidePadLeft + sidePadRight;
+      const frameH = size + topPad + bottomPad;
+
+      // Draw Background Frame Putih
       ctx.fillStyle = "#FFFFFF";
-      ctx.fillRect(x - 16, y - 16, size + 32, size + 32);
+      ctx.fillRect(frameX, frameY, frameW, frameH);
+
+      // Draw Sub-Teks Vertikal Samping Frame (seperti #picturememories & pictme)
+      ctx.save();
+      ctx.fillStyle = "rgba(0,0,0,0.45)";
+      ctx.font = "600 11px 'Plus Jakarta Sans', sans-serif";
+      
+      if (index % 2 === 0) {
+        ctx.translate(frameX + 12, frameY + frameH - 15);
+        ctx.rotate(-Math.PI / 2);
+        ctx.fillText("#picturememories", 0, 0);
+      } else {
+        ctx.translate(frameX + frameW - 10, frameY + 20);
+        ctx.rotate(Math.PI / 2);
+        ctx.fillText("pictme", 0, 0);
+      }
+      ctx.restore();
 
       ctx.beginPath();
       ctx.rect(x, y, size, size);
@@ -969,7 +996,6 @@
     ctx.strokeStyle = "rgba(0,0,0,0.08)";
     ctx.lineWidth = 1;
     
-    // Capsule bar background
     ctx.beginPath();
     ctx.roundRect((width - 380) / 2, 25, 380, 50, 25);
     ctx.fill();
@@ -989,7 +1015,7 @@
     ctx.restore();
   }
 
-  // DRAWING CHAT MENU BOX UNTUK DESAIN 4 (FOOTER)
+  // DRAWING CHAT MENU BOX UNTUK DESAIN 4
   function drawChatMenuBox(ctx, x, y, width, height) {
     ctx.save();
     ctx.fillStyle = "rgba(255, 255, 255, 0.92)";
@@ -1025,7 +1051,6 @@
       ctx.stroke();
     });
 
-    // Unsend Red Item
     ctx.fillStyle = "#D93838";
     ctx.fillText("Unsend", x + 20, y + 134);
     ctx.textAlign = "right";
@@ -1046,9 +1071,9 @@
     if (selectedDesignStyle === 'receipt') { headerHeight = 260; footerHeight = 310; }
     else if (selectedDesignStyle === 'wavy_red') { headerHeight = 150; footerHeight = 250; }
     else if (selectedDesignStyle === 'fotome_brand') { headerHeight = 100; footerHeight = 260; }
-    else if (selectedDesignStyle === 'engagement') { headerHeight = 110; footerHeight = 280; }
+    else if (selectedDesignStyle === 'engagement') { headerHeight = 110; footerHeight = 300; }
 
-    const gapY = selectedDesignStyle === 'wavy_red' ? 60 : (selectedDesignStyle === 'engagement' ? 50 : 40);
+    const gapY = selectedDesignStyle === 'wavy_red' ? 60 : (selectedDesignStyle === 'engagement' ? 55 : 40);
     const totalPhotoHeight = targetPhotoCount * (photoBoxSize + gapY);
     const stripHeight = headerHeight + totalPhotoHeight + footerHeight;
 
@@ -1056,20 +1081,21 @@
     canvas.height = stripHeight;
     const ctx = canvas.getContext('2d');
 
-    // Tema Warna Background
+    // TEMA WARNA DYNAMIC BACKGROUND BISA DIPILIH UNTUK DESAIN 5 & LAINNYA
     let cardInnerColor = "#F9F1F1";
     let textColor = "#8C6262";
+    let badgeBgColor = "#FFFFFF";
 
-    if (selectedBgColor === 'mocha') { cardInnerColor = "#F9F6F0"; textColor = "#8C6D57"; }
-    else if (selectedBgColor === 'blue') { cardInnerColor = "#F1F6F4"; textColor = "#557367"; }
-    else if (selectedBgColor === 'lavender') { cardInnerColor = "#F7F2F7"; textColor = "#755475"; }
-    else if (selectedBgColor === 'vanilla') { cardInnerColor = "#FFFFFF"; textColor = "#735757"; }
-    else if (selectedBgColor === 'dark') { cardInnerColor = "#2B1E1E"; textColor = "#D8B4B4"; }
+    if (selectedBgColor === 'mocha') { cardInnerColor = "#B3927A"; textColor = "#FFFFFF"; badgeBgColor = "#FFFFFF"; }
+    else if (selectedBgColor === 'blue') { cardInnerColor = "#83A398"; textColor = "#FFFFFF"; badgeBgColor = "#FFFFFF"; }
+    else if (selectedBgColor === 'lavender') { cardInnerColor = "#A283A2"; textColor = "#FFFFFF"; badgeBgColor = "#FFFFFF"; }
+    else if (selectedBgColor === 'vanilla') { cardInnerColor = "#D6C7BC"; textColor = "#3D2B2B"; badgeBgColor = "#FFFFFF"; }
+    else if (selectedBgColor === 'dark') { cardInnerColor = "#2B1E1E"; textColor = "#D8B4B4"; badgeBgColor = "#FFFFFF"; }
+    else if (selectedBgColor === 'dusty') { cardInnerColor = "#8C6262"; textColor = "#FFFFFF"; badgeBgColor = "#FFFFFF"; }
 
     if (selectedDesignStyle === 'wavy_red') { cardInnerColor = "#FAF6EE"; textColor = "#A82B2B"; }
     else if (selectedDesignStyle === 'receipt') { cardInnerColor = "#F5F4F0"; textColor = "#111111"; }
     else if (selectedDesignStyle === 'fotome_brand') { cardInnerColor = "#FAFAFA"; textColor = "#111111"; }
-    else if (selectedDesignStyle === 'engagement') { cardInnerColor = "#5A121A"; textColor = "#FFFFFF"; } // MAROON RED (GAMBAR 2)
 
     // 1. Latar Belakang Utama
     ctx.fillStyle = cardInnerColor;
@@ -1121,20 +1147,19 @@
       ctx.font = "18px 'Cormorant Garamond', serif";
       ctx.fillText("— ♡ —", stripWidth / 2, 105);
     } else if (selectedDesignStyle === 'fotome_brand') {
-      // HEADER DESAIN 4: CHAT REACTION BAR (GAMBAR 1)
       drawChatHeaderBar(ctx, stripWidth, textColor);
     } else if (selectedDesignStyle === 'engagement') {
-      // HEADER DESAIN 5: MAROON BADGE (GAMBAR 2)
-      ctx.fillStyle = "#FFFFFF";
+      // HEADER DESAIN 5: BADGES PROPOSIONAL
+      ctx.fillStyle = badgeBgColor;
       ctx.beginPath();
-      ctx.roundRect((stripWidth - 280) / 2, 35, 280, 36, 6);
+      ctx.roundRect((stripWidth - 280) / 2, 35, 280, 38, 8);
       ctx.fill();
 
-      ctx.fillStyle = "#5A121A";
+      ctx.fillStyle = (selectedBgColor === 'vanilla') ? "#3D2B2B" : (selectedBgColor === 'dusty' ? "#8C6262" : "#2B1E1E");
       ctx.textAlign = "center";
       ctx.font = "bold 15px 'Plus Jakarta Sans', sans-serif";
       ctx.letterSpacing = "2px";
-      ctx.fillText("F O T O M E  S T U D I O", stripWidth / 2, 58);
+      ctx.fillText("F O T O M E  S T U D I O", stripWidth / 2, 59);
     }
 
     // 3. Render Foto-Foto Utama
@@ -1146,7 +1171,7 @@
       img.onload = () => {
         const photoY = startY + index * (photoBoxSize + gapY);
 
-        drawMaskedImage(ctx, img, (stripWidth - photoBoxSize) / 2, photoY, photoBoxSize, selectedDesignStyle);
+        drawMaskedImage(ctx, img, (stripWidth - photoBoxSize) / 2, photoY, photoBoxSize, selectedDesignStyle, index);
 
         loadedCount++;
         if (loadedCount === targetPhotoCount) {
@@ -1208,7 +1233,6 @@
             ctx.restore();
 
           } else if (selectedDesignStyle === 'fotome_brand') {
-            // FOOTER DESAIN 4: FOTOME BRANDING + CHAT MENU (GAMBAR 1)
             ctx.fillStyle = "#8C2B38";
             ctx.textAlign = "left";
             
@@ -1219,12 +1243,11 @@
             ctx.fillStyle = "#333333";
             ctx.fillText("by Riyan Ardiansyah", 60, footerY + 105);
 
-            // Chat Menu Box di Sisi Kanan Footer (Gambar 1)
             drawChatMenuBox(ctx, 310, footerY + 15, 230, 160);
 
           } else if (selectedDesignStyle === 'engagement') {
-            // FOOTER DESAIN 5: ENGAGEMENT VIRA & WAHYU (GAMBAR 2)
-            ctx.fillStyle = "#FFFFFF";
+            // FOOTER DESAIN 5: PERBAIKAN LEBAR BADGE FULL COVER TEKS
+            ctx.fillStyle = textColor;
             ctx.textAlign = "center";
             
             ctx.font = "italic 700 70px 'Bodoni Moda', serif";
@@ -1234,16 +1257,22 @@
             ctx.letterSpacing = "3px";
             ctx.fillText("THE ENGAGEMENT DAY", stripWidth / 2, footerY + 115);
 
-            // Bottom Signature Badge (Gambar 2)
-            ctx.fillStyle = "#FFFFFF";
+            // Perlebar Badge dari 300px menjadi 420px Agar Teks "FOTOME BY RIYAN ARDIANSYAH" Murni Tercover
+            const badgeW = 420;
+            const badgeH = 42;
+            const badgeX = (stripWidth - badgeW) / 2;
+            const badgeY = footerY + 150;
+
+            ctx.fillStyle = badgeBgColor;
             ctx.beginPath();
-            ctx.roundRect((stripWidth - 300) / 2, footerY + 150, 300, 34, 6);
+            ctx.roundRect(badgeX, badgeY, badgeW, badgeH, 10);
             ctx.fill();
 
-            ctx.fillStyle = "#5A121A";
-            ctx.font = "bold 13px 'Plus Jakarta Sans', sans-serif";
+            // Teks Dalam Badge
+            ctx.fillStyle = (selectedBgColor === 'vanilla') ? "#3D2B2B" : (selectedBgColor === 'dusty' ? "#8C6262" : "#2B1E1E");
+            ctx.font = "bold 15px 'Plus Jakarta Sans', sans-serif";
             ctx.letterSpacing = "2px";
-            ctx.fillText("F O T O M E  B Y  R I Y A N  A R D I A N S Y A H", stripWidth / 2, footerY + 172);
+            ctx.fillText("F O T O M E  B Y  R I Y A N  A R D I A N S Y A H", stripWidth / 2, badgeY + 26);
           }
 
           // Export Hasil & Trigger Animasi Polaroid
