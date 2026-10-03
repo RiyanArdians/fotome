@@ -938,7 +938,7 @@
       drawWavyRect(ctx, x, y, size, size, 8, 8, 10);
       ctx.clip();
     } else if (designStyle === 'engagement') {
-      // HANYA MENGGUNAKAN VARIASI BORDER POLAROID BERBEDA-BEDA TANPA TEKS VERTIKAL
+      // VARIASI BORDER POLAROID ASIMETRIS BERSIH
       const photoDisplaySize = 400;
       const topPad = 22;
       const sidePadLeft = (index % 2 === 0) ? 35 : 18;
@@ -951,7 +951,7 @@
       const frameW = photoDisplaySize + sidePadLeft + sidePadRight;
       const frameH = photoDisplaySize + topPad + bottomPad;
 
-      // Draw Background Frame Putih Asimetris Bersih
+      // Draw Background Frame Putih
       ctx.fillStyle = "#FFFFFF";
       ctx.fillRect(frameX, frameY, frameW, frameH);
 
@@ -1182,7 +1182,7 @@
     } else if (selectedDesignStyle === 'fotome_brand') {
       drawChatHeaderBar(ctx, stripWidth, textColor);
     } else if (selectedDesignStyle === 'engagement') {
-      // HEADER DESAIN 5: FOTOME DIBESARKAN DARI UJUNG FRAME KIRI KE UJUNG FRAME KANAN (420px)
+      // HEADER DESAIN 5: FOTOME
       ctx.fillStyle = textColor;
       ctx.textAlign = "center";
       ctx.font = "bold 32px 'Plus Jakarta Sans', sans-serif";
@@ -1274,10 +1274,11 @@
             drawChatMenuBox(ctx, 310, footerY + 15, 230, 160);
 
           } else if (selectedDesignStyle === 'engagement') {
+            // FOOTER DESAIN 5: NAMA VIRA & WAHYU DIBUAT DENGAN UKURAN PROPORSIONAL (52px)
             ctx.fillStyle = textColor;
             ctx.textAlign = "center";
             
-            ctx.font = "italic 700 70px 'Bodoni Moda', serif";
+            ctx.font = "italic 700 52px 'Bodoni Moda', serif";
             ctx.fillText("Vira & Wahyu", stripWidth / 2, footerY + 65);
 
             ctx.font = "600 24px 'Plus Jakarta Sans', sans-serif";
