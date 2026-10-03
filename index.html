@@ -342,7 +342,7 @@
     /* STEP 4: RESULT */
     #result-img {
       width: 100%;
-      max-width: 300px;
+      max-width: 320px;
       border-radius: 16px;
       box-shadow: 0 12px 30px rgba(0,0,0,0.18);
       margin: 16px auto;
@@ -391,10 +391,9 @@
       </div>
     </div>
 
-    <!-- Pilihan 2: Visual Card Desain (Hanya Judul Tanpa Deskripsi) -->
+    <!-- Pilihan 2: Visual Card Desain -->
     <p class="option-title"><i class="fa-solid fa-wand-magic-sparkles"></i> 2. Pilihan Desain Wedding</p>
     <div class="design-grid">
-      <!-- Card 1 -->
       <div class="design-card active" onclick="selectDesignStyle('floral', this)">
         <div class="preview-box design1">
           <img src="./assets/calla-lily-corner.png" class="preview-img-corner" alt="Lily">
@@ -404,7 +403,6 @@
         <strong style="font-size:0.8rem; color:var(--text-dark);">1. Calla Lily</strong>
       </div>
 
-      <!-- Card 2 -->
       <div class="design-card" onclick="selectDesignStyle('vintage', this)">
         <div class="preview-box design2">
           <div class="preview-photo"></div>
@@ -414,7 +412,6 @@
         <strong style="font-size:0.8rem; color:var(--text-dark);">2. Vintage Cake</strong>
       </div>
 
-      <!-- Card 3 -->
       <div class="design-card" onclick="selectDesignStyle('wavy_red', this)">
         <div class="preview-box design3">
           <div class="preview-photo"></div>
@@ -729,7 +726,7 @@
     }
   }
 
-  // MENGGAMBAR TEKS MELENGKUNG (PROPORSIONAL SPREAD UNTUK NAMA)
+  // TEKS MELENGKUNG DENGAN JARAK LENGKUNG LEBIH TINGGI DI ATAS KUE
   function drawCurvedText(ctx, text, centerX, centerY, radius, startAngle, endAngle, font, color) {
     ctx.save();
     ctx.font = font;
@@ -755,7 +752,7 @@
     ctx.restore();
   }
 
-  // GAMBAR ORNAMEN CALLA LILY DIBERESKAN (UKURAN LEBIH BESAR & MEWAH)
+  // GAMBAR ORNAMEN CALLA LILY DIBERESKAN (UKURAN SANGAT BESAR & SIGNIFIKAN)
   function drawCallaLilyAsset(ctx, x, y, width, height, flipX = false, flipY = false) {
     ctx.save();
     ctx.translate(x, y);
@@ -765,43 +762,43 @@
     if (lilyAsset.complete && lilyAsset.naturalWidth !== 0) {
       ctx.drawImage(lilyAsset, -width / 2, -height / 2, width, height);
     } else {
-      ctx.strokeStyle = "#C5A059"; ctx.lineWidth = 2;
-      ctx.beginPath(); ctx.moveTo(-70, 70); ctx.lineTo(120, -60); ctx.stroke();
+      ctx.strokeStyle = "#C5A059"; ctx.lineWidth = 2.5;
+      ctx.beginPath(); ctx.moveTo(-90, 90); ctx.lineTo(150, -80); ctx.stroke();
 
       ctx.fillStyle = "#3F5E4D";
-      ctx.beginPath(); ctx.ellipse(-25, 12, 55, 30, Math.PI / 4, 0, 2 * Math.PI); ctx.fill();
+      ctx.beginPath(); ctx.ellipse(-35, 18, 75, 40, Math.PI / 4, 0, 2 * Math.PI); ctx.fill();
 
-      ctx.fillStyle = "#FFFFFF"; ctx.strokeStyle = "#D2C9BD"; ctx.lineWidth = 1.8;
-      ctx.beginPath(); ctx.ellipse(0, -12, 25, 38, Math.PI / 6, 0, 2 * Math.PI); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = "#FFFFFF"; ctx.strokeStyle = "#D2C9BD"; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.ellipse(0, -18, 35, 52, Math.PI / 6, 0, 2 * Math.PI); ctx.fill(); ctx.stroke();
       
       ctx.fillStyle = "#D4AF37";
-      ctx.beginPath(); ctx.ellipse(0, -12, 4, 18, 0, 0, 2 * Math.PI); ctx.fill();
+      ctx.beginPath(); ctx.ellipse(0, -18, 6, 25, 0, 0, 2 * Math.PI); ctx.fill();
     }
 
     ctx.restore();
   }
 
-  // GAMBAR KUE VINTAGE DIBERESKAN (UKURAN LEBIH BESAR & DITENGAHKAN)
+  // GAMBAR KUE VINTAGE BESAR & PROPORSIONAL
   function drawVintageWeddingCake(ctx, centerX, centerY, mainColor) {
     ctx.save();
     ctx.translate(centerX, centerY);
 
     if (cakeAsset.complete && cakeAsset.naturalWidth !== 0) {
-      ctx.drawImage(cakeAsset, -65, -65, 130, 130);
+      ctx.drawImage(cakeAsset, -75, -75, 150, 150);
     } else {
       ctx.fillStyle = mainColor;
-      ctx.beginPath(); ctx.ellipse(0, 42, 48, 10, 0, 0, 2 * Math.PI); ctx.fill();
-      ctx.fillRect(-8, 42, 16, 16);
+      ctx.beginPath(); ctx.ellipse(0, 50, 58, 12, 0, 0, 2 * Math.PI); ctx.fill();
+      ctx.fillRect(-10, 50, 20, 20);
 
-      ctx.fillStyle = "#FFFFFF"; ctx.strokeStyle = mainColor; ctx.lineWidth = 2.5;
-      ctx.beginPath(); ctx.roundRect(-38, 8, 76, 34, 5); ctx.fill(); ctx.stroke();
-      ctx.beginPath(); ctx.roundRect(-26, -24, 52, 32, 5); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = "#FFFFFF"; ctx.strokeStyle = mainColor; ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.roundRect(-45, 10, 90, 42, 6); ctx.fill(); ctx.stroke();
+      ctx.beginPath(); ctx.roundRect(-32, -28, 64, 38, 6); ctx.fill(); ctx.stroke();
 
       ctx.fillStyle = mainColor;
-      ctx.beginPath(); ctx.arc(0, -30, 6, 0, 2 * Math.PI); ctx.fill(); 
-      ctx.beginPath(); ctx.arc(-18, 25, 3.5, 0, 2 * Math.PI); ctx.fill();
-      ctx.beginPath(); ctx.arc(0, 25, 3.5, 0, 2 * Math.PI); ctx.fill();
-      ctx.beginPath(); ctx.arc(18, 25, 3.5, 0, 2 * Math.PI); ctx.fill();
+      ctx.beginPath(); ctx.arc(0, -35, 7, 0, 2 * Math.PI); ctx.fill(); 
+      ctx.beginPath(); ctx.arc(-22, 30, 4, 0, 2 * Math.PI); ctx.fill();
+      ctx.beginPath(); ctx.arc(0, 30, 4, 0, 2 * Math.PI); ctx.fill();
+      ctx.beginPath(); ctx.arc(22, 30, 4, 0, 2 * Math.PI); ctx.fill();
     }
 
     ctx.restore();
@@ -811,9 +808,9 @@
   function renderPhotostrip() {
     const stripWidth = 600;
     const photoBoxSize = 420;
-    const headerHeight = selectedDesignStyle === 'floral' ? 120 : 110;
-    const gapY = selectedDesignStyle === 'wavy_red' ? 60 : 38;
-    const footerHeight = selectedDesignStyle === 'floral' ? 180 : 250;
+    const headerHeight = selectedDesignStyle === 'floral' ? 140 : 120;
+    const gapY = selectedDesignStyle === 'wavy_red' ? 60 : 40;
+    const footerHeight = selectedDesignStyle === 'floral' ? 220 : 280;
 
     const totalPhotoHeight = targetPhotoCount * (photoBoxSize + gapY);
     const stripHeight = headerHeight + totalPhotoHeight + footerHeight;
@@ -847,14 +844,14 @@
     ctx.fillStyle = cardInnerColor;
     ctx.fillRect(0, 0, stripWidth, stripHeight);
 
-    // Header Ornamen
+    // Header Ornamen Calla Lily Atas Kiri (Diperbesar)
     if (selectedDesignStyle === 'floral') {
-      drawCallaLilyAsset(ctx, 140, 95, 280, 200, false, false);
+      drawCallaLilyAsset(ctx, 160, 110, 360, 260, false, false);
     } else if (selectedDesignStyle === 'vintage') {
       ctx.fillStyle = textColor;
-      ctx.font = "24px 'Plus Jakarta Sans', sans-serif";
+      ctx.font = "26px 'Plus Jakarta Sans', sans-serif";
       ctx.textAlign = "center";
-      ctx.fillText("♥   🕊️   ♥", stripWidth / 2, 65);
+      ctx.fillText("♥   🕊️   ♥", stripWidth / 2, 70);
     }
 
     // Render Foto
@@ -873,49 +870,49 @@
           const footerY = startY + targetPhotoCount * (photoBoxSize + gapY) + 20;
 
           if (selectedDesignStyle === 'floral') {
-            // Calla Lily Bawah Kanan (Ukuran Lebih Besar)
-            drawCallaLilyAsset(ctx, stripWidth - 140, stripHeight - 110, 300, 220, true, true);
+            // Calla Lily Bawah Kanan (Ukuran Sangat Besar & Elegan)
+            drawCallaLilyAsset(ctx, stripWidth - 160, stripHeight - 130, 380, 280, true, true);
 
             ctx.fillStyle = textColor;
-            ctx.font = "bold 34px 'Cormorant Garamond', serif";
+            ctx.font = "bold 42px 'Cormorant Garamond', serif";
             ctx.textAlign = "left";
-            ctx.fillText("RIYAN & AMELIA", 60, footerY + 60);
+            ctx.fillText("RIYAN & AMELIA", 60, footerY + 70);
 
-            ctx.font = "600 16px 'Plus Jakarta Sans', sans-serif";
+            ctx.font = "600 20px 'Plus Jakarta Sans', sans-serif";
             ctx.fillStyle = "#735757";
-            ctx.fillText("DECEMBER 06, 2026", 60, footerY + 92);
+            ctx.fillText("DECEMBER 06, 2026", 60, footerY + 105);
 
           } else if (selectedDesignStyle === 'vintage') {
-            // Curved Text Diberi Jarak Radius Lebih Luas Agar Tidak Menumpuk
+            // Busur Melengkung Nama Dibuat Tinggi dan Luas Supaya Tidak Menyentuh Kue
             drawCurvedText(
               ctx, 
               "RIYAN   &   AMELIA", 
               stripWidth / 2, 
-              footerY + 310, 
-              250, 
-              -Math.PI * 0.65, 
-              -Math.PI * 0.35, 
-              "bold 36px 'Cormorant Garamond', serif", 
+              footerY + 380, 
+              320, 
+              -Math.PI * 0.62, 
+              -Math.PI * 0.38, 
+              "bold 38px 'Cormorant Garamond', serif", 
               textColor
             );
 
-            // Gambar Kue Vintage Besar
-            drawVintageWeddingCake(ctx, stripWidth / 2, footerY + 115, textColor);
+            // Gambar Kue Vintage
+            drawVintageWeddingCake(ctx, stripWidth / 2, footerY + 130, textColor);
 
-            // Tanggal
+            // Tanggal di Bawah Kue
             ctx.fillStyle = textColor;
-            ctx.font = "600 18px 'Plus Jakarta Sans', sans-serif";
+            ctx.font = "600 20px 'Plus Jakarta Sans', sans-serif";
             ctx.textAlign = "center";
-            ctx.fillText("06 . 12 . 2026", stripWidth / 2, footerY + 195);
+            ctx.fillText("06 . 12 . 2026", stripWidth / 2, footerY + 225);
 
           } else if (selectedDesignStyle === 'wavy_red') {
             ctx.fillStyle = "#A82B2B";
-            ctx.font = "bold 48px 'Cormorant Garamond', serif";
+            ctx.font = "bold 52px 'Cormorant Garamond', serif";
             ctx.textAlign = "center";
-            ctx.fillText("RIYAN & AMELIA", stripWidth / 2, footerY + 60);
+            ctx.fillText("RIYAN & AMELIA", stripWidth / 2, footerY + 70);
 
-            ctx.font = "italic 18px 'Plus Jakarta Sans', sans-serif";
-            ctx.fillText("— 06.12.2026 —", stripWidth / 2, footerY + 100);
+            ctx.font = "italic 20px 'Plus Jakarta Sans', sans-serif";
+            ctx.fillText("— 06.12.2026 —", stripWidth / 2, footerY + 115);
           }
 
           // Export Hasil
