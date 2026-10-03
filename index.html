@@ -90,6 +90,26 @@
       gap: 8px;
     }
 
+    .btn-switch-cam {
+      background-color: rgba(255, 255, 255, 0.85);
+      color: var(--dusty-rose);
+      border: 1px solid var(--soft-blush);
+      padding: 6px 14px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      border-radius: 20px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-switch-cam:hover {
+      background-color: #FFFFFF;
+      transform: scale(1.03);
+    }
+
     /* STEP 1: WELCOME SCREEN */
     .welcome-badge {
       font-size: 0.8rem;
@@ -107,7 +127,7 @@
       margin-bottom: 12px;
     }
 
-    /* STEP 2: TEMPLATE SELECTOR WITH VISUAL PREVIEW CARDS */
+    /* STEP 2: TEMPLATE SELECTOR */
     .option-title {
       font-size: 0.85rem;
       font-weight: 700;
@@ -152,7 +172,6 @@
       transform: translateY(-2px);
     }
 
-    /* MINI PREVIEW BOXES FOR DESIGNS */
     .preview-box {
       width: 50px;
       height: 70px;
@@ -262,7 +281,7 @@
       border-radius: 18px;
       overflow: hidden;
       background-color: #000;
-      margin: 15px 0;
+      margin: 12px 0 15px;
       box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
     }
 
@@ -270,7 +289,10 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
-      transform: scaleX(-1);
+    }
+
+    video.mirror {
+      transform: scaleX(-1); /* Efek Cermin untuk Kamera Depan */
     }
 
     .countdown-overlay {
@@ -336,7 +358,7 @@
     </button>
   </div>
 
-  <!-- HALAMAN 2: PILIH STYLE DENGAN GAMBAR PREVIEW VISUAL -->
+  <!-- HALAMAN 2: PILIH STYLE -->
   <div id="step-template" class="hidden">
     <h2 class="font-serif" style="color: var(--dusty-rose); font-size: 1.8rem;">Pilih Style Photobooth</h2>
     <p style="font-size: 0.82rem; color: #735757;">Lihat contoh gambar dan pilih style favorit Anda</p>
@@ -358,10 +380,9 @@
       </div>
     </div>
 
-    <!-- Pilihan 2: Visual Card Desain dengan Preview Gambar Miniatur -->
+    <!-- Pilihan 2: Visual Card Desain -->
     <p class="option-title"><i class="fa-solid fa-wand-magic-sparkles"></i> 2. Pilihan Desain Wedding</p>
     <div class="design-grid">
-      <!-- Desain 1 Card -->
       <div class="design-card active" onclick="selectDesignStyle('floral', this)">
         <div class="preview-box design1">
           <div class="preview-photo"></div>
@@ -371,7 +392,6 @@
         <span style="font-size:0.65rem; color:#735757;">Bunga Lili Anggun</span>
       </div>
 
-      <!-- Desain 2 Card -->
       <div class="design-card" onclick="selectDesignStyle('vintage', this)">
         <div class="preview-box design2">
           <div class="preview-photo"></div>
@@ -381,7 +401,6 @@
         <span style="font-size:0.65rem; color:#735757;">Kue Nikah & Curved</span>
       </div>
 
-      <!-- Desain 3 Card -->
       <div class="design-card" onclick="selectDesignStyle('wavy_red', this)">
         <div class="preview-box design3">
           <div class="preview-photo"></div>
@@ -433,11 +452,15 @@
   <div id="step-camera" class="hidden">
     <div style="display: flex; justify-content: space-between; align-items: center;">
       <span class="photo-progress" id="photo-count-text">Foto 1 dari 3</span>
-      <span style="font-size: 0.8rem; color: var(--soft-mocha);"><i class="fa-solid fa-bolt"></i> Otomatis</span>
+      
+      <!-- TOMBOL PINDAH KAMERA DEPAN/BELAKANG -->
+      <button class="btn-switch-cam" onclick="toggleCamera()">
+        <i class="fa-solid fa-arrows-rotate"></i> <span id="cam-mode-text">Kamera Depan</span>
+      </button>
     </div>
 
     <div class="camera-wrapper">
-      <video id="video" autoplay playsinline></video>
+      <video id="video" class="mirror" autoplay playsinline></video>
       <div id="countdown-overlay" class="countdown-overlay hidden">3</div>
       <div id="flash-overlay" class="flash-overlay"></div>
     </div>
@@ -482,6 +505,10 @@
   let selectedDesignStyle = 'floral'; 
   let selectedBgColor = 'dusty';
   let capturedPhotos = [];
+  
+  // LOGIKA SWITCH KAMERA (USER / ENVIRONMENT)
+  let currentFacingMode = "user"; 
+  let currentStream = null;
 
   const video = document.getElementById('video');
   const canvas = document.getElementById('canvas');
@@ -518,16 +545,45 @@
     element.classList.add('active');
   }
 
+  // FUNGSI MEMBUKA STREAM KAMERA
   function startCameraProcess() {
     goToStep(3);
     document.getElementById('photo-count-text').innerText = `Foto 1 dari ${targetPhotoCount}`;
-    
-    navigator.mediaDevices.getUserMedia({ video: { facingMode: "user", width: { ideal: 1080 }, height: { ideal: 1440 } }, audio: false })
-      .then(stream => { video.srcObject = stream; })
-      .catch(err => {
-        alert("Tidak dapat mengakses kamera. Pastikan memberikan izin kamera di browser Anda.");
-        goToStep(2);
-      });
+    openCameraStream();
+  }
+
+  function openCameraStream() {
+    if (currentStream) {
+      currentStream.getTracks().forEach(track => track.stop());
+    }
+
+    navigator.mediaDevices.getUserMedia({ 
+      video: { facingMode: currentFacingMode, width: { ideal: 1080 }, height: { ideal: 1440 } }, 
+      audio: false 
+    })
+    .then(stream => { 
+      currentStream = stream;
+      video.srcObject = stream;
+
+      // Atur Mirroring (Cermin) hanya untuk Kamera Depan
+      if (currentFacingMode === "user") {
+        video.classList.add('mirror');
+        document.getElementById('cam-mode-text').innerText = "Kamera Depan";
+      } else {
+        video.classList.remove('mirror');
+        document.getElementById('cam-mode-text').innerText = "Kamera Belakang";
+      }
+    })
+    .catch(err => {
+      alert("Tidak dapat mengakses kamera. Pastikan memberikan izin kamera di browser Anda.");
+      goToStep(2);
+    });
+  }
+
+  // FUNGSI GANTI KAMERA DEPAN/BELAKANG
+  function toggleCamera() {
+    currentFacingMode = (currentFacingMode === "user") ? "environment" : "user";
+    openCameraStream();
   }
 
   async function startPhotoSequence() {
@@ -586,14 +642,17 @@
     tempCanvas.height = h;
     const ctx = tempCanvas.getContext('2d');
 
-    ctx.translate(w, 0);
-    ctx.scale(-1, 1);
+    // Hanya balik horizontal jika kamera depan
+    if (currentFacingMode === "user") {
+      ctx.translate(w, 0);
+      ctx.scale(-1, 1);
+    }
     ctx.drawImage(video, 0, 0, w, h);
 
     capturedPhotos.push(tempCanvas.toDataURL('image/png'));
   }
 
-  // FUNGSI BINGKAI BERGELOMBANG (DESAIN 3 - WAVY SCALLOP)
+  // BINGKAI BERGELOMBANG (DESAIN 3 - WAVY SCALLOP)
   function drawWavyRect(ctx, x, y, width, height, waveCountX, waveCountY, waveDepth) {
     ctx.beginPath();
     const stepX = width / waveCountX;
@@ -691,12 +750,10 @@
     if (flipX) ctx.scale(-1, 1);
     ctx.scale(scale, scale);
 
-    // Daun Hijau Fresh
     ctx.fillStyle = "#4A6B5B";
     ctx.beginPath(); ctx.ellipse(-25, 12, 38, 14, Math.PI / 3, 0, 2 * Math.PI); ctx.fill();
     ctx.beginPath(); ctx.ellipse(12, 28, 32, 11, -Math.PI / 4, 0, 2 * Math.PI); ctx.fill();
 
-    // Helai Kelopak Bunga Lili Putih Anggun
     ctx.fillStyle = "#FFFFFF";
     ctx.strokeStyle = "#D6C7BC";
     ctx.lineWidth = 1.5;
@@ -709,7 +766,6 @@
       ctx.stroke();
     }
 
-    // Putik Bunga Emas
     ctx.fillStyle = "#D4AF37";
     ctx.beginPath(); ctx.arc(0, 0, 6, 0, 2 * Math.PI); ctx.fill();
 
@@ -721,27 +777,22 @@
     ctx.save();
     ctx.translate(centerX, centerY);
 
-    // 1. Piring Stand Cake
     ctx.fillStyle = mainColor;
     ctx.beginPath();
     ctx.ellipse(0, 32, 36, 8, 0, 0, 2 * Math.PI);
     ctx.fill();
     ctx.fillRect(-6, 32, 12, 12);
 
-    // 2. Trik Tingkat 1 (Bawah)
     ctx.fillStyle = "#FFFFFF";
     ctx.strokeStyle = mainColor;
     ctx.lineWidth = 2;
     ctx.beginPath(); ctx.roundRect(-28, 6, 56, 26, 4); ctx.fill(); ctx.stroke();
 
-    // 3. Trik Tingkat 2 (Atas)
     ctx.beginPath(); ctx.roundRect(-20, -18, 40, 24, 4); ctx.fill(); ctx.stroke();
 
-    // 4. Cherry & Hiasan Krim
     ctx.fillStyle = mainColor;
-    ctx.beginPath(); ctx.arc(0, -22, 4, 0, 2 * Math.PI); ctx.fill(); // Cherry Topper
+    ctx.beginPath(); ctx.arc(0, -22, 4, 0, 2 * Math.PI); ctx.fill(); 
     
-    // Bintik Krim
     ctx.beginPath(); ctx.arc(-14, 20, 2.5, 0, 2 * Math.PI); ctx.fill();
     ctx.beginPath(); ctx.arc(0, 20, 2.5, 0, 2 * Math.PI); ctx.fill();
     ctx.beginPath(); ctx.arc(14, 20, 2.5, 0, 2 * Math.PI); ctx.fill();
@@ -829,7 +880,6 @@
             ctx.fillText("DECEMBER 06, 2026", 60, footerY + 68);
 
           } else if (selectedDesignStyle === 'vintage') {
-            // Teks Melengkung
             drawCurvedText(
               ctx, 
               "RIYAN  &  AMELIA", 
@@ -842,10 +892,8 @@
               textColor
             );
 
-            // Gambar Kue Nikah Vintage
             drawVintageWeddingCake(ctx, stripWidth / 2, footerY + 105, textColor);
 
-            // Tanggal Pernikahan
             ctx.fillStyle = textColor;
             ctx.font = "600 18px 'Plus Jakarta Sans', sans-serif";
             ctx.textAlign = "center";
