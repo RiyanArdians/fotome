@@ -606,12 +606,19 @@
 
   <!-- HALAMAN 3: AREA KAMERA -->
   <div id="step-camera" class="hidden">
-    <div style="display: flex; justify-content: space-between; align-items: center;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
       <span class="photo-progress" id="photo-count-text">Foto 1 dari 3</span>
       
-      <button class="btn-switch-cam" onclick="toggleCamera()">
-        <i class="fa-solid fa-arrows-rotate"></i> <span id="cam-mode-text">Kamera Depan</span>
-      </button>
+      <div style="display: flex; gap: 8px; align-items: center;">
+        <!-- TOGGLE TIMER ON/OFF -->
+        <button id="btn-toggle-timer" class="btn-switch-cam" onclick="toggleTimerMode()">
+          <i class="fa-solid fa-stopwatch"></i> <span id="timer-toggle-text">Timer: ON</span>
+        </button>
+
+        <button class="btn-switch-cam" onclick="toggleCamera()">
+          <i class="fa-solid fa-arrows-rotate"></i> <span id="cam-mode-text">Kamera Depan</span>
+        </button>
+      </div>
     </div>
 
     <div class="camera-wrapper">
@@ -620,8 +627,8 @@
       <div id="flash-overlay" class="flash-overlay"></div>
     </div>
 
-    <button id="btn-snap" class="btn-primary" onclick="startPhotoSequence()">
-      <i class="fa-solid fa-camera"></i> Ambil Foto Sekarang
+    <button id="btn-snap" class="btn-primary" onclick="handleSnapButtonClick()">
+      <i class="fa-solid fa-camera"></i> <span id="btn-snap-label">Ambil Foto Sekarang</span>
     </button>
     <button class="btn-secondary" onclick="goToStep(2)">
       <i class="fa-solid fa-arrow-left"></i> Batal / Ubah Style
@@ -681,6 +688,11 @@
   let currentFacingMode = "user"; 
   let currentStream = null;
 
+  // SYSTEM TIMER CONFIGURATION (ON/OFF TOGGLE)
+  let isTimerEnabled = true;
+  let manualPhotoIndex = 0;
+  let isCapturingSession = false;
+
   // LOAD ASSET GAMBAR
   const lilyAsset = new Image();
   lilyAsset.src = './assets/calla-lily-corner.png';
@@ -729,10 +741,35 @@
     element.classList.add('active');
   }
 
+  function toggleTimerMode() {
+    isTimerEnabled = !isTimerEnabled;
+    const label = document.getElementById('timer-toggle-text');
+    label.innerText = isTimerEnabled ? "Timer: ON" : "Timer: OFF";
+
+    updateSnapButtonUI();
+  }
+
   function startCameraProcess() {
     goToStep(3);
-    document.getElementById('photo-count-text').innerText = `Foto 1 dari ${targetPhotoCount}`;
+    capturedPhotos = [];
+    manualPhotoIndex = 0;
+    isCapturingSession = false;
+
+    updateSnapButtonUI();
     openCameraStream();
+  }
+
+  function updateSnapButtonUI() {
+    const snapLabel = document.getElementById('btn-snap-label');
+    const photoCountText = document.getElementById('photo-count-text');
+
+    if (isTimerEnabled) {
+      photoCountText.innerText = `Foto 1 dari ${targetPhotoCount}`;
+      snapLabel.innerText = "Mulai Foto Otomatis (3s)";
+    } else {
+      photoCountText.innerText = `Foto ${manualPhotoIndex + 1} dari ${targetPhotoCount}`;
+      snapLabel.innerText = `Jepret Foto (${manualPhotoIndex + 1}/${targetPhotoCount})`;
+    }
   }
 
   function openCameraStream() {
@@ -767,7 +804,17 @@
     openCameraStream();
   }
 
-  async function startPhotoSequence() {
+  // LOGIKA PEMILIHAN OTOMATIS / MANUAL PRESS SNAP
+  async function handleSnapButtonClick() {
+    if (isTimerEnabled) {
+      startAutoPhotoSequence();
+    } else {
+      captureManualSinglePhoto();
+    }
+  }
+
+  // 1. OTOMATIS DENGAN TIMER (3 Detik)
+  async function startAutoPhotoSequence() {
     document.getElementById('btn-snap').disabled = true;
     document.getElementById('btn-snap').style.opacity = '0.5';
     capturedPhotos = [];
@@ -785,6 +832,20 @@
 
     document.getElementById('btn-snap').disabled = false;
     document.getElementById('btn-snap').style.opacity = '1';
+  }
+
+  // 2. MANUAL PENCET SESUAI KEINGINAN (Timer OFF)
+  function captureManualSinglePhoto() {
+    triggerFlash();
+    captureSingleFrame();
+    manualPhotoIndex++;
+
+    if (manualPhotoIndex < targetPhotoCount) {
+      updateSnapButtonUI();
+    } else {
+      renderPhotostrip();
+      goToStep(4);
+    }
   }
 
   function runCountdown(seconds) {
@@ -877,42 +938,48 @@
       drawWavyRect(ctx, x, y, size, size, 8, 8, 10);
       ctx.clip();
     } else if (designStyle === 'engagement') {
-      // BORDER DIBUAT CUKUP LEBAR TERMASUK AREA SISI KIRI & KANAN AGAR TEKS VERTIKAL BISA DITARUH BEBAS DAN MURNI DI DALAM
-      const topPad = 22;
-      const sidePadLeft = (index % 2 === 0) ? 55 : 22;
-      const sidePadRight = (index % 2 === 0) ? 22 : 55;
+      // PERHITUNGAN BORDER PUTIH LENGKAP & PRESISI (60px SISI TEKS VERTIKAL DENGAN UKURAN FOTO 380px)
+      const photoDisplaySize = 380;
+      const topPad = 24;
+      const sidePadLeft = (index % 2 === 0) ? 60 : 20;
+      const sidePadRight = (index % 2 === 0) ? 20 : 60;
       const bottomPad = 28;
 
-      const frameX = x - sidePadLeft;
+      const customX = (600 - photoDisplaySize) / 2;
+      const frameX = customX - sidePadLeft;
       const frameY = y - topPad;
-      const frameW = size + sidePadLeft + sidePadRight;
-      const frameH = size + topPad + bottomPad;
+      const frameW = photoDisplaySize + sidePadLeft + sidePadRight;
+      const frameH = photoDisplaySize + topPad + bottomPad;
 
-      // Draw Background Frame Putih
+      // Draw Background Frame Putih Presisi
       ctx.fillStyle = "#FFFFFF";
       ctx.fillRect(frameX, frameY, frameW, frameH);
 
-      // Draw Sub-Teks Vertikal Samping Frame - DIPOSISIKAN PRESISI 100% DI DALAM BORDER PUTIH
+      // Draw Sub-Teks Vertikal Samping Frame - EXACTLY 100% DI TENGAH MARGIN BORDER PUTIH (SISI KIRI ATAU KANAN)
       ctx.save();
-      ctx.fillStyle = "rgba(0, 0, 0, 0.65)";
+      ctx.fillStyle = "rgba(0, 0, 0, 0.70)";
       ctx.font = "600 15px 'Plus Jakarta Sans', sans-serif";
       
       if (index % 2 === 0) {
-        // Teks di Sisi Kiri Frame (Posisi X dibuat safe di tengah pad putih)
-        ctx.translate(frameX + 32, frameY + frameH - 30);
+        // Sisi Kiri (Tepat di tengah margin 60px -> 30px dari x frame)
+        ctx.translate(frameX + 32, frameY + frameH - 35);
         ctx.rotate(-Math.PI / 2);
         ctx.fillText("#picturememories", 0, 0);
       } else {
-        // Teks di Sisi Kanan Frame (Posisi X dibuat safe di tengah pad putih)
-        ctx.translate(frameX + frameW - 30, frameY + 35);
+        // Sisi Kanan (Tepat di tengah margin 60px -> 30px dari kanan frame)
+        ctx.translate(frameX + frameW - 32, frameY + 35);
         ctx.rotate(Math.PI / 2);
         ctx.fillText("pictme", 0, 0);
       }
       ctx.restore();
 
       ctx.beginPath();
-      ctx.rect(x, y, size, size);
+      ctx.rect(customX, y, photoDisplaySize, photoDisplaySize);
       ctx.clip();
+
+      // Overwrite posisi gambar
+      x = customX;
+      size = photoDisplaySize;
     } else {
       ctx.beginPath();
       ctx.roundRect(x, y, size, size, 6);
@@ -989,14 +1056,15 @@
     ctx.restore();
   }
 
-  // HEADER CHAT UI TANPA BORDER PUTIH DENGAN FONT BESAR "CATCH THE MOMENT" UNTUK DESAIN 4
+  // HEADER CHAT UI - TEKS "CATCH THE MOMENT" DIPERBESAR DAN DIMAKSIMALKAN DARI UJUNG FRAME KIRI KE KANAN
   function drawChatHeaderBar(ctx, width, textColor) {
     ctx.save();
     ctx.fillStyle = "#8C2B38";
-    ctx.font = "italic 700 28px 'Playfair Display', serif";
+    ctx.font = "italic 700 42px 'Playfair Display', serif";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillText("Catch The Moment", width / 2, 55);
+    // Teks dibesarkan & menempati area atas persis dari ujung ke ujung frame foto
+    ctx.fillText("Catch The Moment", width / 2, 58);
     ctx.restore();
   }
 
@@ -1055,7 +1123,7 @@
 
     if (selectedDesignStyle === 'receipt') { headerHeight = 260; footerHeight = 310; }
     else if (selectedDesignStyle === 'wavy_red') { headerHeight = 150; footerHeight = 250; }
-    else if (selectedDesignStyle === 'fotome_brand') { headerHeight = 100; footerHeight = 260; }
+    else if (selectedDesignStyle === 'fotome_brand') { headerHeight = 110; footerHeight = 260; }
     else if (selectedDesignStyle === 'engagement') { headerHeight = 110; footerHeight = 300; }
 
     const gapY = selectedDesignStyle === 'wavy_red' ? 60 : (selectedDesignStyle === 'engagement' ? 55 : 40);
