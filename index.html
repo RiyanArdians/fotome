@@ -1301,33 +1301,33 @@
             drawChatMenuBox(ctx, 310, footerY + 15, 230, 160);
 
           } else if (selectedDesignStyle === 'engagement') {
-            // FOOTER DESAIN 5: TEKS VIRA & WAHYU DENGAN SPASING NORMAL / Rapat (0px)
+            // FOOTER DESAIN 5: TANPA GRID PUTIH, DENGAN TANGGAL 04 OKTOBER 2026 & WATERMARK KECIL DI PALING BATA
             ctx.save();
             ctx.fillStyle = textColor;
             ctx.textAlign = "center";
+            
+            // Nama Pasangan
             ctx.letterSpacing = "0px";
             ctx.font = "italic 700 60px 'Bodoni Moda', serif";
-            ctx.fillText("Vira & Wahyu", stripWidth / 2, footerY + 65);
-            ctx.restore();
+            ctx.fillText("Vira & Wahyu", stripWidth / 2, footerY + 60);
 
-            ctx.font = "600 24px 'Plus Jakarta Sans', sans-serif";
+            // Subtitle Event
+            ctx.font = "600 22px 'Plus Jakarta Sans', sans-serif";
             ctx.letterSpacing = "3px";
-            ctx.fillText("THE ENGAGEMENT DAY", stripWidth / 2, footerY + 115);
+            ctx.fillText("THE ENGAGEMENT DAY", stripWidth / 2, footerY + 105);
 
-            const badgeW = 420;
-            const badgeH = 42;
-            const badgeX = (stripWidth - badgeW) / 2;
-            const badgeY = footerY + 150;
-
-            ctx.fillStyle = badgeBgColor;
-            ctx.beginPath();
-            ctx.roundRect(badgeX, badgeY, badgeW, badgeH, 10);
-            ctx.fill();
-
-            ctx.fillStyle = (selectedBgColor === 'vanilla') ? "#3D2B2B" : (selectedBgColor === 'dusty' ? "#8C6262" : "#2B1E1E");
-            ctx.font = "bold 15px 'Plus Jakarta Sans', sans-serif";
+            // Tanggal Acara
+            ctx.font = "500 18px 'Plus Jakarta Sans', sans-serif";
             ctx.letterSpacing = "2px";
-            ctx.fillText("F O T O M E  B Y  R I Y A N  A R D I A N S Y A H", stripWidth / 2, badgeY + 26);
+            ctx.fillText("04 OKTOBER 2026", stripWidth / 2, footerY + 138);
+
+            // Watermark Footer Paling Bawah (Kecil)
+            ctx.font = "500 12px 'Plus Jakarta Sans', sans-serif";
+            ctx.letterSpacing = "2px";
+            ctx.globalAlpha = 0.75;
+            ctx.fillText("FOTOME BY RIYAN ARDIANSYAH", stripWidth / 2, footerY + 182);
+
+            ctx.restore();
           }
 
           // Export Hasil & Trigger Animasi Polaroid
