@@ -961,6 +961,24 @@
 
       x = customX;
       size = photoDisplaySize;
+    } else if (designStyle === 'fotome_brand') {
+      // DESAIN 4 (BASIC) - BINGKAI FOTO MODERN DENGAN EFEK BAYANGAN (DROP SHADOW)
+      ctx.shadowColor = "rgba(140, 43, 56, 0.25)";
+      ctx.shadowBlur = 24;
+      ctx.shadowOffsetX = 0;
+      ctx.shadowOffsetY = 10;
+
+      ctx.fillStyle = "#FFFFFF";
+      ctx.beginPath();
+      ctx.roundRect(x - 10, y - 10, size + 20, size + 20, 16);
+      ctx.fill();
+
+      // Reset shadow untuk kliping foto
+      ctx.shadowColor = "transparent";
+
+      ctx.beginPath();
+      ctx.roundRect(x, y, size, size, 12);
+      ctx.clip();
     } else {
       ctx.beginPath();
       ctx.roundRect(x, y, size, size, 6);
@@ -986,12 +1004,21 @@
 
     ctx.restore();
 
-    if (designStyle === 'floral' || designStyle === 'fotome_brand') {
+    if (designStyle === 'floral') {
       ctx.save();
       ctx.strokeStyle = "rgba(0,0,0,0.18)";
       ctx.lineWidth = 1.5;
       ctx.beginPath();
       ctx.roundRect(x, y, size, size, 6);
+      ctx.stroke();
+      ctx.restore();
+    } else if (designStyle === 'fotome_brand') {
+      // GARIS TEPI ELEGANT SANGAT HALUS
+      ctx.save();
+      ctx.strokeStyle = "rgba(140, 43, 56, 0.35)";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.roundRect(x - 10, y - 10, size + 20, size + 20, 16);
       ctx.stroke();
       ctx.restore();
     }
@@ -1106,7 +1133,7 @@
     else if (selectedDesignStyle === 'fotome_brand') { headerHeight = 110; footerHeight = 260; }
     else if (selectedDesignStyle === 'engagement') { headerHeight = 110; footerHeight = 300; }
 
-    const gapY = selectedDesignStyle === 'wavy_red' ? 60 : (selectedDesignStyle === 'engagement' ? 55 : 40);
+    const gapY = selectedDesignStyle === 'wavy_red' ? 60 : (selectedDesignStyle === 'engagement' ? 55 : 45);
     const totalPhotoHeight = targetPhotoCount * (photoBoxSize + gapY);
     const stripHeight = headerHeight + totalPhotoHeight + footerHeight;
 
@@ -1274,12 +1301,14 @@
             drawChatMenuBox(ctx, 310, footerY + 15, 230, 160);
 
           } else if (selectedDesignStyle === 'engagement') {
-            // FOOTER DESAIN 5: NAMA VIRA & WAHYU DIBUAT DENGAN UKURAN PROPORSIONAL (52px)
+            // FOOTER DESAIN 5: TEKS VIRA & WAHYU DENGAN SPASING NORMAL / Rapat (0px)
+            ctx.save();
             ctx.fillStyle = textColor;
             ctx.textAlign = "center";
-            
-            ctx.font = "italic 700 52px 'Bodoni Moda', serif";
+            ctx.letterSpacing = "0px";
+            ctx.font = "italic 700 60px 'Bodoni Moda', serif";
             ctx.fillText("Vira & Wahyu", stripWidth / 2, footerY + 65);
+            ctx.restore();
 
             ctx.font = "600 24px 'Plus Jakarta Sans', sans-serif";
             ctx.letterSpacing = "3px";
