@@ -62,7 +62,7 @@
       display: inline-flex;
       align-items: center;
       gap: 10px;
-      margin-top: 15px;
+      margin-top: 12px;
       width: 100%;
       justify-content: center;
     }
@@ -76,13 +76,17 @@
       background-color: transparent;
       color: var(--dusty-rose);
       border: 1px solid var(--dusty-rose);
-      padding: 10px 20px;
-      font-size: 0.9rem;
+      padding: 11px 20px;
+      font-size: 0.88rem;
       font-weight: 600;
       border-radius: 30px;
       cursor: pointer;
       margin-top: 10px;
       width: 100%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
     }
 
     /* STEP 1: WELCOME SCREEN */
@@ -140,7 +144,7 @@
     .tpl-dusty { background-color: #F9F1F1; border: 1px solid #D8B4B4; }
     .tpl-dusty .box { background-color: #D8B4B4; height: 20px; border-radius: 2px; }
 
-    .tpl-mocha { background-color: #3D2B2B; border: 1px solid #B3927A; }
+    .tpl-mocha { background-color: #2B1E1E; border: 1px solid #B3927A; }
     .tpl-mocha .box { background-color: #B3927A; height: 20px; border-radius: 2px; }
 
     /* STEP 3: CAMERA & COUNTDOWN */
@@ -219,7 +223,7 @@
     </p>
 
     <div style="font-size: 2.2rem; color: var(--soft-blush); margin-bottom: 20px;">
-      📸 ✨ 💖
+      🌸 📸 🌸
     </div>
 
     <button class="btn-primary" onclick="goToStep(2)">
@@ -231,7 +235,7 @@
   <!-- HALAMAN 2: PILIH TEMPLATE & BINGKAI         -->
   <!-- ========================================== -->
   <div id="step-template" class="hidden">
-    <h2 class="font-serif" style="color: var(--dusty-rose); font-size: 1.8rem;">Pilih Template Foto</h2>
+    <h2 class="font-serif" style="color: var(--dusty-rose); font-size: 1.8rem;">Pilih Style Frame</h2>
     <p style="font-size: 0.82rem; color: #735757;">Pilih desain bingkai impian Anda</p>
 
     <div class="template-grid">
@@ -240,8 +244,8 @@
         <div class="template-preview tpl-dusty">
           <div class="box"></div><div class="box"></div><div class="box"></div>
         </div>
-        <p style="font-size: 0.85rem; font-weight:700; color: var(--dusty-rose);">Dusty Photostrip</p>
-        <p style="font-size: 0.7rem; color: #735757;">3 Foto Vertical</p>
+        <p style="font-size: 0.85rem; font-weight:700; color: var(--dusty-rose);">Floral Dusty Rose</p>
+        <p style="font-size: 0.7rem; color: #735757;">3 Foto + Bunga Estetik</p>
       </div>
 
       <!-- Option 2 -->
@@ -249,15 +253,17 @@
         <div class="template-preview tpl-mocha">
           <div class="box"></div><div class="box"></div><div class="box"></div>
         </div>
-        <p style="font-size: 0.85rem; font-weight:700; color: var(--soft-mocha);">Mocha Elegant</p>
-        <p style="font-size: 0.7rem; color: #735757;">3 Foto Vertical</p>
+        <p style="font-size: 0.85rem; font-weight:700; color: var(--soft-mocha);">Mocha Floral Gold</p>
+        <p style="font-size: 0.7rem; color: #735757;">3 Foto + Bunga Mewah</p>
       </div>
     </div>
 
     <button class="btn-primary" onclick="startCameraProcess()">
       <i class="fa-solid fa-camera"></i> Buka Kamera
     </button>
-    <button class="btn-secondary" onclick="goToStep(1)">Kembali</button>
+    <button class="btn-secondary" onclick="goToStep(1)">
+      <i class="fa-solid fa-arrow-left"></i> Kembali ke Depan
+    </button>
   </div>
 
   <!-- ========================================== -->
@@ -276,7 +282,10 @@
     </div>
 
     <button id="btn-snap" class="btn-primary" onclick="startPhotoSequence()">
-      <i class="fa-solid fa-circle-dot"></i> Ambil Foto Now
+      <i class="fa-solid fa-camera"></i> Ambil Foto Sekarang
+    </button>
+    <button class="btn-secondary" onclick="goToStep(2)">
+      <i class="fa-solid fa-arrow-left"></i> Batal / Pilih Style
     </button>
   </div>
 
@@ -295,8 +304,13 @@
       </button>
     </a>
     
-    <button class="btn-secondary" onclick="resetPhotobooth()">
-      <i class="fa-solid fa-rotate-right"></i> Foto Ulang
+    <!-- TOMBOL KEMBALI PILIH STYLE -->
+    <button class="btn-secondary" onclick="goToStep(2)">
+      <i class="fa-solid fa-palette"></i> Pilih Style Lain
+    </button>
+
+    <button class="btn-secondary" style="border:none; color: #735757; font-size:0.8rem;" onclick="startCameraProcess()">
+      <i class="fa-solid fa-rotate-right"></i> Foto Ulang (Style Sama)
     </button>
   </div>
 
@@ -360,7 +374,7 @@
       await delay(1000); // Jedah 1 detik antar foto
     }
 
-    // Gabungkan Foto ke Frame
+    // Gabungkan Foto ke Frame Estetik
     renderPhotostrip();
     goToStep(4);
 
@@ -413,7 +427,26 @@
     capturedPhotos.push(tempCanvas.toDataURL('image/png'));
   }
 
-  // Render 3 Foto Menjadi Photostrip
+  // Helper untuk Memasang Foto dengan Corner Rounded
+  function drawRoundedImage(ctx, img, x, y, width, height, radius) {
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(x + radius, y);
+    ctx.lineTo(x + width - radius, y);
+    ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+    ctx.lineTo(x + width, y + height - radius);
+    ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+    ctx.lineTo(x + radius, y + height);
+    ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+    ctx.lineTo(x, y + radius);
+    ctx.quadraticCurveTo(x, y, x + radius, y);
+    ctx.closePath();
+    ctx.clip();
+    ctx.drawImage(img, x, y, width, height);
+    ctx.restore();
+  }
+
+  // Render 3 Foto Menjadi Photostrip Berhiaskan Bunga Lucu & Estetik
   function renderPhotostrip() {
     const isMocha = selectedTemplate === 'mocha-strip';
 
@@ -423,54 +456,103 @@
     const photoWidth = 520;
     const photoHeight = 390;
     const paddingX = 40;
-    const startY = 50;
-    const gapY = 30;
+    const startY = 70;
+    const gapY = 32;
 
     canvas.width = stripWidth;
     canvas.height = stripHeight;
     const ctx = canvas.getContext('2d');
 
-    // 1. Latar Belakang Frame
+    // 1. Latar Belakang Utama Frame
     ctx.fillStyle = isMocha ? "#2B1E1E" : "#F9F1F1";
     ctx.fillRect(0, 0, stripWidth, stripHeight);
 
     // Border Estetik Luar
     ctx.strokeStyle = isMocha ? "#B3927A" : "#D8B4B4";
     ctx.lineWidth = 6;
-    ctx.strokeRect(15, 15, stripWidth - 30, stripHeight - 30);
+    ctx.strokeRect(18, 18, stripWidth - 36, stripHeight - 36);
 
-    // 2. Tempel 3 Foto berturut-turut
+    // 2. ORNAMEN BUNGA & ORNAMEN LUCU (DRAW CANVAS ART)
+    const floralColor = isMocha ? "#D8B4B4" : "#8C6262";
+    const leafColor = isMocha ? "#B3927A" : "#D8B4B4";
+
+    // Fungsi Menggambar Pucuk Bunga Lucu di Sudut Atas Kiri & Kanan
+    function drawCornerFlowers(x, y, isRight = false) {
+      ctx.save();
+      ctx.translate(x, y);
+      if (isRight) ctx.scale(-1, 1);
+
+      // Daun-daun kecil
+      ctx.fillStyle = leafColor;
+      ctx.beginPath(); ctx.ellipse(-15, -10, 12, 6, Math.PI / 4, 0, 2 * Math.PI); ctx.fill();
+      ctx.beginPath(); ctx.ellipse(-22, 5, 10, 5, -Math.PI / 6, 0, 2 * Math.PI); ctx.fill();
+
+      // Kelopak Bunga Utama (5 Kelopak Bunga Lucu)
+      ctx.fillStyle = floralColor;
+      for (let i = 0; i < 5; i++) {
+        ctx.beginPath();
+        const angle = (i * 2 * Math.PI) / 5;
+        ctx.arc(Math.cos(angle) * 12, Math.sin(angle) * 12, 9, 0, 2 * Math.PI);
+        ctx.fill();
+      }
+      // Putik Bunga
+      ctx.fillStyle = "#FFFFFF";
+      ctx.beginPath(); ctx.arc(0, 0, 6, 0, 2 * Math.PI); ctx.fill();
+
+      ctx.restore();
+    }
+
+    // Gambar Bunga di Atas Kiri dan Atas Kanan
+    drawCornerFlowers(55, 42, false);
+    drawCornerFlowers(stripWidth - 55, 42, true);
+
+    // 3. Tempel 3 Foto berturut-turut
     let loadedCount = 0;
     capturedPhotos.forEach((photoSrc, index) => {
       const img = new Image();
       img.onload = () => {
         const currentY = startY + index * (photoHeight + gapY);
-        
-        // Bingkai Foto Putih/Cream
-        ctx.fillStyle = "#FFFFFF";
-        ctx.fillRect(paddingX - 6, currentY - 6, photoWidth + 12, photoHeight + 12);
 
-        // Foto Utama
-        ctx.drawImage(img, paddingX, currentY, photoWidth, photoHeight);
+        // Bingkai Belakang Foto (Putih / Cream Soft)
+        ctx.fillStyle = isMocha ? "#3D2B2B" : "#FFFFFF";
+        ctx.beginPath();
+        ctx.roundRect(paddingX - 6, currentY - 6, photoWidth + 12, photoHeight + 12, 14);
+        ctx.fill();
+
+        // Foto Utama dengan Sudut Melengkung Halus
+        drawRoundedImage(ctx, img, paddingX, currentY, photoWidth, photoHeight, 10);
+
+        // Tambahkan Ikon Love / Sparkle Lucu di antara Foto
+        if (index < 2) {
+          const heartY = currentY + photoHeight + (gapY / 2);
+          ctx.fillStyle = isMocha ? "#B3927A" : "#D8B4B4";
+          ctx.font = "18px 'Plus Jakarta Sans', sans-serif";
+          ctx.textAlign = "center";
+          ctx.fillText("✦  🌸  ✦", stripWidth / 2, heartY + 6);
+        }
 
         loadedCount++;
         if (loadedCount === 3) {
-          // 3. Tambahkan Teks Watermark Wedding di Bagian Bawah Strip
-          const textY = startY + 3 * (photoHeight + gapY) + 40;
+          // 4. Tambahkan Teks Watermark Wedding di Bagian Bawah Strip
+          const textY = startY + 3 * (photoHeight + gapY) + 35;
+
+          // Hiasan Bunga Bawah
+          drawCornerFlowers(120, textY + 15, false);
+          drawCornerFlowers(stripWidth - 120, textY + 15, true);
 
           ctx.fillStyle = isMocha ? "#B3927A" : "#8C6262";
-          ctx.font = "bold 32px 'Cormorant Garamond', serif";
+          ctx.font = "600 28px 'Cormorant Garamond', serif";
           ctx.textAlign = "center";
           ctx.fillText("The Wedding of", stripWidth / 2, textY);
 
-          ctx.font = "bold 42px 'Cormorant Garamond', serif";
+          ctx.font = "bold 44px 'Cormorant Garamond', serif";
           ctx.fillText("Riyan & Amelia", stripWidth / 2, textY + 45);
 
           ctx.fillStyle = isMocha ? "#D8B4B4" : "#735757";
-          ctx.font = "italic 20px 'Plus Jakarta Sans', sans-serif";
-          ctx.fillText("Minggu, 06 Desember 2026", stripWidth / 2, textY + 85);
+          ctx.font = "italic 19px 'Plus Jakarta Sans', sans-serif";
+          ctx.fillText("Minggu, 06 Desember 2026", stripWidth / 2, textY + 82);
 
-          // Render Hasil ke Image Tag
+          // Render Hasil ke Image Tag untuk Dtampilkan dan Diunduh
           const dataUrl = canvas.toDataURL('image/png');
           document.getElementById('result-img').src = dataUrl;
           document.getElementById('download-link').href = dataUrl;
@@ -478,10 +560,6 @@
       };
       img.src = photoSrc;
     });
-  }
-
-  function resetPhotobooth() {
-    goToStep(2);
   }
 </script>
 
