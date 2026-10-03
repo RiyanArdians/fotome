@@ -279,6 +279,16 @@
     }
 
     /* COLOR PALETTE PICKER */
+    .color-section-wrapper {
+      transition: all 0.3s ease;
+    }
+
+    .color-section-wrapper.disabled {
+      opacity: 0.4;
+      pointer-events: none;
+      filter: grayscale(0.5);
+    }
+
     .color-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -568,31 +578,33 @@
     </div>
 
     <!-- Pilihan 3: Warna Background Soft -->
-    <p class="option-title"><i class="fa-solid fa-palette"></i> 3. Warna Frame Soft</p>
-    <div class="color-grid">
-      <div class="color-card active" onclick="selectBgColor('dusty', this)">
-        <div class="color-dot" style="background-color: #8C6262;"></div>
-        Dusty Rose
-      </div>
-      <div class="color-card" onclick="selectBgColor('mocha', this)">
-        <div class="color-dot" style="background-color: #B3927A;"></div>
-        Soft Mocha
-      </div>
-      <div class="color-card" onclick="selectBgColor('blue', this)">
-        <div class="color-dot" style="background-color: #83A398;"></div>
-        Soft Sage/Blue
-      </div>
-      <div class="color-card" onclick="selectBgColor('lavender', this)">
-        <div class="color-dot" style="background-color: #A283A2;"></div>
-        Soft Lavender
-      </div>
-      <div class="color-card" onclick="selectBgColor('vanilla', this)">
-        <div class="color-dot" style="background-color: #D6C7BC;"></div>
-        Vanilla Cream
-      </div>
-      <div class="color-card" onclick="selectBgColor('dark', this)">
-        <div class="color-dot" style="background-color: #2B1E1E;"></div>
-        Charcoal Dark
+    <div id="color-section-wrapper" class="color-section-wrapper">
+      <p class="option-title"><i class="fa-solid fa-palette"></i> 3. Warna Frame Soft</p>
+      <div class="color-grid">
+        <div class="color-card active" onclick="selectBgColor('dusty', this)">
+          <div class="color-dot" style="background-color: #8C6262;"></div>
+          Dusty Rose
+        </div>
+        <div class="color-card" onclick="selectBgColor('mocha', this)">
+          <div class="color-dot" style="background-color: #B3927A;"></div>
+          Soft Mocha
+        </div>
+        <div class="color-card" onclick="selectBgColor('blue', this)">
+          <div class="color-dot" style="background-color: #83A398;"></div>
+          Soft Sage/Blue
+        </div>
+        <div class="color-card" onclick="selectBgColor('lavender', this)">
+          <div class="color-dot" style="background-color: #A283A2;"></div>
+          Soft Lavender
+        </div>
+        <div class="color-card" onclick="selectBgColor('vanilla', this)">
+          <div class="color-dot" style="background-color: #D6C7BC;"></div>
+          Vanilla Cream
+        </div>
+        <div class="color-card" onclick="selectBgColor('dark', this)">
+          <div class="color-dot" style="background-color: #2B1E1E;"></div>
+          Charcoal Dark
+        </div>
       </div>
     </div>
 
@@ -733,6 +745,14 @@
     selectedDesignStyle = styleName;
     document.querySelectorAll('.design-card').forEach(el => el.classList.remove('active'));
     element.classList.add('active');
+
+    // MENGATUR SISTEM DYNAMIC DISABLE UNTUK PILIHAN WARNA
+    const colorWrapper = document.getElementById('color-section-wrapper');
+    if (styleName === 'receipt' || styleName === 'wavy_red' || styleName === 'fotome_brand') {
+      colorWrapper.classList.add('disabled');
+    } else {
+      colorWrapper.classList.remove('disabled');
+    }
   }
 
   function selectBgColor(colorTheme, element) {
@@ -1301,7 +1321,7 @@
             drawChatMenuBox(ctx, 310, footerY + 15, 230, 160);
 
           } else if (selectedDesignStyle === 'engagement') {
-            // FOOTER DESAIN 5: TANPA GRID PUTIH, DENGAN TANGGAL 04 OKTOBER 2026 & WATERMARK KECIL DI PALING BATA
+            // FOOTER DESAIN 5: FOTOME KAPITAL & BY RIYAN ARDIANSYAH TITLE CASE (FONT KECIL)
             ctx.save();
             ctx.fillStyle = textColor;
             ctx.textAlign = "center";
@@ -1321,11 +1341,11 @@
             ctx.letterSpacing = "2px";
             ctx.fillText("04 OKTOBER 2026", stripWidth / 2, footerY + 138);
 
-            // Watermark Footer Paling Bawah (Kecil)
-            ctx.font = "500 12px 'Plus Jakarta Sans', sans-serif";
-            ctx.letterSpacing = "2px";
+            // Watermark Footer Paling Bawah (Perkecil & Title Case)
+            ctx.font = "500 10.5px 'Plus Jakarta Sans', sans-serif";
+            ctx.letterSpacing = "1.5px";
             ctx.globalAlpha = 0.75;
-            ctx.fillText("FOTOME BY RIYAN ARDIANSYAH", stripWidth / 2, footerY + 182);
+            ctx.fillText("FOTOME by Riyan Ardiansyah", stripWidth / 2, footerY + 182);
 
             ctx.restore();
           }
