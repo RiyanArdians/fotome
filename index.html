@@ -726,7 +726,7 @@
     }
   }
 
-  // FUNGSI MENGGAMBAR BUNGA DARI SUDUT FRAME PALING OUTSIDE BACKGROUND
+  // FUNGSI MENGGAMBAR BUNGA DARI SUDUT FRAME OUTSIDE BACKGROUND
   function drawCallaLilyOuterCorner(ctx, x, y, width, height, flipX = false, flipY = false) {
     ctx.save();
     ctx.translate(x, y);
@@ -734,7 +734,6 @@
     if (flipY) ctx.scale(1, -1);
 
     if (lilyAsset.complete && lilyAsset.naturalWidth !== 0) {
-      // Menempatkan titik pangkal bunga tepat di ujung paling pojok background
       ctx.drawImage(lilyAsset, 0, 0, width, height);
     } else {
       ctx.strokeStyle = "#C5A059"; ctx.lineWidth = 3;
@@ -821,10 +820,7 @@
 
     // 2. LAYER LATAR BELAKANG BUNGA (DIGAMBAR DARI SUDUT BACKGROUND)
     if (selectedDesignStyle === 'floral') {
-      // Bunga Atas Kiri: Menempel dari Ujung Pojok (0,0) Background & Menjuntai Masuk Membelah Foto
       drawCallaLilyOuterCorner(ctx, 0, 0, 420, 320, false, false);
-
-      // Bunga Bawah Kanan: Menempel dari Ujung Pojok Bawah Background
       drawCallaLilyOuterCorner(ctx, stripWidth, stripHeight, 440, 340, true, true);
     } else if (selectedDesignStyle === 'vintage') {
       ctx.fillStyle = textColor;
@@ -849,27 +845,24 @@
           const footerY = startY + targetPhotoCount * (photoBoxSize + gapY) + 20;
 
           if (selectedDesignStyle === 'floral') {
-            // Teks Footer Calla Lily
+            // Posisi Teks Dinaikkan Lebih Dekat Ke Bawah Foto
             ctx.fillStyle = textColor;
             ctx.font = "bold 42px 'Cormorant Garamond', serif";
             ctx.textAlign = "left";
-            ctx.fillText("RIYAN & AMELIA", 60, footerY + 60);
+            ctx.fillText("RIYAN & AMELIA", 60, footerY + 30);
 
             ctx.font = "600 20px 'Plus Jakarta Sans', sans-serif";
             ctx.fillStyle = "#735757";
-            ctx.fillText("DECEMBER 06, 2026", 60, footerY + 95);
+            ctx.fillText("DECEMBER 06, 2026", 60, footerY + 65);
 
           } else if (selectedDesignStyle === 'vintage') {
-            // Teks Lurus Rapi Di Atas Kue
             ctx.fillStyle = textColor;
             ctx.font = "bold 36px 'Cormorant Garamond', serif";
             ctx.textAlign = "center";
             ctx.fillText("RIYAN & AMELIA", stripWidth / 2, footerY + 50);
 
-            // Gambar Kue Tepat Di Tengah
             drawVintageWeddingCake(ctx, stripWidth / 2, footerY + 145, textColor);
 
-            // Tanggal Di Bawah Kue
             ctx.font = "600 20px 'Plus Jakarta Sans', sans-serif";
             ctx.fillText("06 . 12 . 2026", stripWidth / 2, footerY + 245);
 
@@ -877,10 +870,10 @@
             ctx.fillStyle = "#A82B2B";
             ctx.font = "bold 52px 'Cormorant Garamond', serif";
             ctx.textAlign = "center";
-            ctx.fillText("RIYAN & AMELIA", stripWidth / 2, footerY + 70);
+            ctx.fillText("RIYAN & AMELIA", stripWidth / 2, footerY + 50);
 
             ctx.font = "italic 20px 'Plus Jakarta Sans', sans-serif";
-            ctx.fillText("— 06.12.2026 —", stripWidth / 2, footerY + 115);
+            ctx.fillText("— 06.12.2026 —", stripWidth / 2, footerY + 95);
           }
 
           // Export Hasil
