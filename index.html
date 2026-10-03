@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Photobooth - Riyan & Amelia</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=Plus+Jakarta+Sans:wght@500&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #F9F1F1;
+      color: #3D2B2B;
+      text-align: center;
+      margin: 0;
+      padding: 20px;
+    }
+    h2 { font-family: 'Cormorant Garamond', serif; color: #8C6262; font-size: 2rem; margin-bottom: 10px; }
+    .camera-container {
+      position: relative;
+      width: 100%;
+      max-width: 400px;
+      margin: 0 auto;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+      background-color: #000;
+    }
+    video { width: 100%; display: block; transform: scaleX(-1); /* Efek Cermin */ }
+    .btn {
+      background: linear-gradient(135deg, #B3927A, #8C6D57);
+      color: #fff;
+      border: none;
+      padding: 12px 24px;
+      font-size: 1rem;
+      font-weight: bold;
+      border-radius: 30px;
+      cursor: pointer;
+      margin-top: 15px;
+      box-shadow: 0 4px 15px rgba(140, 109, 87, 0.3);
+    }
+    canvas { display: none; }
+    #result-img {
+      width: 100%;
+      max-width: 400px;
+      border-radius: 16px;
+      margin-top: 15px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Photobooth Wedding</h2>
+  <p style="font-size: 0.85rem; color: #735757;">Riyan & Amelia</p>
+
+  <!-- Area Kamera -->
+  <div class="camera-container" id="camera-box">
+    <video id="video" autoplay playsinline></video>
+  </div>
+
+  <button class="btn" id="snap-btn" onclick="takePhoto()">📷 Ambil Foto</button>
+
+  <!-- Canvas Tersembunyi untuk Olah Gambar -->
+  <canvas id="canvas"></canvas>
+
+  <!-- Hasil Foto -->
+  <div id="result-box" style="display:none;">
+    <h3 style="margin-top:20px; font-size:1.1rem;">Hasil Foto Anda:</h3>
+    <img id="result-img" alt="Hasil Foto">
+    <br>
+    <a id="download-link" download="wedding-riyan-amelia.png">
+      <button class="btn" style="background: #8C6262;">💾 Simpan Foto</button>
+    </a>
+    <br>
+    <button class="btn" style="background: #735757; font-size:0.85rem;" onclick="resetCamera()">🔄 Foto Ulang</button>
+  </div>
+
+<script>
+  const video = document.getElementById('video');
+  const canvas = document.getElementById('canvas');
+  const resultImg = document.getElementById('result-img');
+  const downloadLink = document.getElementById('download-link');
+  const resultBox = document.getElementById('result-box');
+  const cameraBox = document.getElementById('camera-box');
+  const snapBtn = document.getElementById('snap-btn');
+
+  // Akses Kamera Depan HP / Laptop
+  navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: false })
+    .then(stream => { video.srcObject = stream; })
+    .catch(err => { alert("Gagal mengakses kamera. Pastikan memberikan izin kamera."); });
+
+  function takePhoto() {
+    const width = video.videoWidth || 640;
+    const height = video.videoHeight || 480;
+
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext('2d');
+
+    // 1. Gambar Foto dari Video (Efek Cermin Di-flip Balik agar Normal)
+    ctx.translate(width, 0);
+    ctx.scale(-1, 1);
+    ctx.drawImage(video, 0, 0, width, height);
+    ctx.setTransform(1, 0, 0, 1, 0, 0); // Reset Transform
+
+    // 2. Tambahkan Overlay Pita / Gradasi Bawah
+    ctx.fillStyle = "rgba(61, 43, 43, 0.65)";
+    ctx.fillRect(0, height - 70, width, 70);
+
+    // 3. Tuliskan Teks Watermark / Bingkai
+    ctx.fillStyle = "#FFFFFF";
+    ctx.font = "bold 22px 'Plus Jakarta Sans', sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("The Wedding of Riyan & Amelia", width / 2, height - 38);
+
+    ctx.fillStyle = "#D8B4B4";
+    ctx.font = "italic 14px 'Plus Jakarta Sans', sans-serif";
+    ctx.fillText("06 Desember 2026 • #RiyanAmelia", width / 2, height - 16);
+
+    // 4. Export Hasil ke Gambar
+    const dataUrl = canvas.toDataURL('image/png');
+    resultImg.src = dataUrl;
+    downloadLink.href = dataUrl;
+
+    // Tampilkan Hasil & Sembunyikan Kamera
+    cameraBox.style.display = "none";
+    snapBtn.style.display = "none";
+    resultBox.style.display = "block";
+  }
+
+  function resetCamera() {
+    cameraBox.style.display = "block";
+    snapBtn.style.display = "inline-block";
+    resultBox.style.display = "none";
+  }
+</script>
+
+</body>
+</html>
