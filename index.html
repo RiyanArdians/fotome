@@ -888,7 +888,6 @@
     document.getElementById('zoom-val').innerText = zoomVal.toFixed(1) + 'x';
     document.getElementById('brightness-val').innerText = Math.round(brightnessVal * 100) + '%';
 
-    // Cek apakah kamera aktif diposisikan mirror (kamera depan HP)
     const isFrontCamera = video.classList.contains('mirror');
     const mirrorScale = isFrontCamera ? -1 : 1;
     video.style.transform = `scaleX(${mirrorScale}) scale(${zoomVal})`;
@@ -922,7 +921,7 @@
     }
   }
 
-  // DETEKSI OTOMATIS SEMUA KAMERA (HP / WEBCAM / DSLR / EXTERNAL)
+  // LOGIKA FILTER DETEKSI KAMERA (DEDUPLIKASI KAMERA MULTI-LENSA HP)
   async function populateCameraDevices() {
     const cameraSelect = document.getElementById('camera-select');
     try {
@@ -936,29 +935,53 @@
         return;
       }
 
-      videoDevices.forEach((device, index) => {
-        const option = document.createElement('option');
-        option.value = device.deviceId;
-        
-        // Buat nama label kamera yang jelas
-        let label = device.label || `Kamera ${index + 1}`;
-        if (label.toLowerCase().includes('front') || label.toLowerCase().includes('user')) {
-          label = '📷 Kamera Depan';
-        } else if (label.toLowerCase().includes('back') || label.toLowerCase().includes('environment')) {
-          label = '📷 Kamera Belakang';
-        } else {
-          label = `🔌 ${label}`;
-        }
+      let hasAddedFront = false;
+      let hasAddedBack = false;
+      const filteredOptions = [];
 
-        option.text = label;
-        if (currentSelectedDeviceId && device.deviceId === currentSelectedDeviceId) {
+      videoDevices.forEach((device, index) => {
+        const labelLower = (device.label || '').toLowerCase();
+        
+        let isFront = labelLower.includes('front') || labelLower.includes('user') || labelLower.includes('depan');
+        let isBack = labelLower.includes('back') || labelLower.includes('environment') || labelLower.includes('belakang');
+
+        // Jika kamera internal HP, batasi hanya 1 Depan & 1 Belakang
+        if (isFront) {
+          if (!hasAddedFront) {
+            filteredOptions.push({ id: device.deviceId, label: '📷 Kamera Depan' });
+            hasAddedFront = true;
+          }
+        } else if (isBack) {
+          if (!hasAddedBack) {
+            filteredOptions.push({ id: device.deviceId, label: '📷 Kamera Belakang' });
+            hasAddedBack = true;
+          }
+        } else {
+          // Kamera Eksternal (USB Webcam / DSLR / Capture Card)
+          const customLabel = device.label ? `🔌 ${device.label}` : `🔌 Kamera Eksternal ${index + 1}`;
+          filteredOptions.push({ id: device.deviceId, label: customLabel });
+        }
+      });
+
+      // Jika label device belum lengkap di browser tertentu, gunakan fallback standar
+      if (filteredOptions.length === 0) {
+        videoDevices.forEach((d, i) => {
+          filteredOptions.push({ id: d.deviceId, label: `📷 Kamera ${i + 1}` });
+        });
+      }
+
+      filteredOptions.forEach(opt => {
+        const option = document.createElement('option');
+        option.value = opt.id;
+        option.text = opt.label;
+        if (currentSelectedDeviceId && opt.id === currentSelectedDeviceId) {
           option.selected = true;
         }
         cameraSelect.appendChild(option);
       });
 
-      if (!currentSelectedDeviceId && videoDevices.length > 0) {
-        currentSelectedDeviceId = videoDevices[0].deviceId;
+      if (!currentSelectedDeviceId && filteredOptions.length > 0) {
+        currentSelectedDeviceId = filteredOptions[0].id;
       }
     } catch (e) {
       console.log("Error enumerateDevices:", e);
@@ -986,12 +1009,11 @@
       currentStream = stream;
       video.srcObject = stream;
 
-      // Cek apakah kamera yang aktif adalah kamera depan/user
       const track = stream.getVideoTracks()[0];
       const settings = track.getSettings ? track.getSettings() : {};
       const label = (track.label || '').toLowerCase();
 
-      if (settings.facingMode === 'user' || label.includes('front') || label.includes('user')) {
+      if (settings.facingMode === 'user' || label.includes('front') || label.includes('user') || label.includes('depan')) {
         video.classList.add('mirror');
       } else {
         video.classList.remove('mirror');
@@ -1146,20 +1168,17 @@
 
     ctx.save();
 
-    // TERAPKAN EFEK BRIGHTNESS (TERMASUK DORONGAN EKSTRA DARI FLASH JIKA ON)
     let totalBrightness = brightnessVal;
     if (isFlashEnabled) {
       totalBrightness *= 1.22;
     }
     ctx.filter = `brightness(${totalBrightness}) contrast(1.05)`;
 
-    // TERAPKAN FLIP MIRROR JIKA KAMERA DIPASANG MIRROR
     if (video.classList.contains('mirror')) {
       ctx.translate(w, 0);
       ctx.scale(-1, 1);
     }
 
-    // TERAPKAN EFEK ZOOM CROP PADA CANVAS DENGAN PRESISI
     const cropW = w / zoomVal;
     const cropH = h / zoomVal;
     const cropX = (w - cropW) / 2;
@@ -1216,7 +1235,6 @@
       drawWavyRect(ctx, x, y, size, size, 8, 8, 10);
       ctx.clip();
     } else if (designStyle === 'engagement') {
-      // VARIASI BORDER POLAROID ASIMETRIS BERSIH
       const photoDisplaySize = 400;
       const topPad = 22;
       const sidePadLeft = (index % 2 === 0) ? 35 : 18;
@@ -1229,7 +1247,6 @@
       const frameW = photoDisplaySize + sidePadLeft + sidePadRight;
       const frameH = photoDisplaySize + topPad + bottomPad;
 
-      // Draw Background Frame Putih
       ctx.fillStyle = "#FFFFFF";
       ctx.fillRect(frameX, frameY, frameW, frameH);
 
@@ -1240,7 +1257,6 @@
       x = customX;
       size = photoDisplaySize;
     } else if (designStyle === 'fotome_brand') {
-      // DESAIN 4 (BASIC) - BINGKAI FOTO MODERN DENGAN EFEK BAYANGAN (DROP SHADOW)
       ctx.shadowColor = "rgba(140, 43, 56, 0.25)";
       ctx.shadowBlur = 24;
       ctx.shadowOffsetX = 0;
@@ -1251,7 +1267,6 @@
       ctx.roundRect(x - 10, y - 10, size + 20, size + 20, 16);
       ctx.fill();
 
-      // Reset shadow untuk kliping foto
       ctx.shadowColor = "transparent";
 
       ctx.beginPath();
@@ -1291,7 +1306,6 @@
       ctx.stroke();
       ctx.restore();
     } else if (designStyle === 'fotome_brand') {
-      // GARIS TEPI ELEGANT SANGAT HALUS
       ctx.save();
       ctx.strokeStyle = "rgba(140, 43, 56, 0.35)";
       ctx.lineWidth = 2;
@@ -1419,7 +1433,6 @@
     canvas.height = stripHeight;
     const ctx = canvas.getContext('2d');
 
-    // TEMA WARNA DYNAMIC BACKGROUND BISA DIPILIH UNTUK DESAIN 5 & LAINNYA
     let cardInnerColor = "#F9F1F1";
     let textColor = "#8C6262";
     let badgeBgColor = "#FFFFFF";
@@ -1472,7 +1485,6 @@
       ctx.fillText("03:31", stripWidth - 60, 180);
       ctx.fillText("04:00", stripWidth - 60, 205);
 
-      // SIMBOL INFINITY (∞) DIPERBESAR MENJADI 32px
       ctx.font = "bold 32px 'Courier Prime', monospace";
       ctx.textBaseline = "middle";
       ctx.fillText("∞", stripWidth - 60, 228);
@@ -1583,22 +1595,18 @@
             ctx.fillStyle = textColor;
             ctx.textAlign = "center";
             
-            // Nama Pasangan
             ctx.letterSpacing = "0px";
             ctx.font = "italic 700 60px 'Bodoni Moda', serif";
             ctx.fillText("Vira & Wahyu", stripWidth / 2, footerY + 60);
 
-            // Subtitle Event
             ctx.font = "600 22px 'Plus Jakarta Sans', sans-serif";
             ctx.letterSpacing = "3px";
             ctx.fillText("THE ENGAGEMENT DAY", stripWidth / 2, footerY + 105);
 
-            // Tanggal Acara
             ctx.font = "500 18px 'Plus Jakarta Sans', sans-serif";
             ctx.letterSpacing = "2px";
             ctx.fillText("04 OKTOBER 2026", stripWidth / 2, footerY + 138);
 
-            // Watermark Footer Paling Bawah
             ctx.font = "500 10.5px 'Plus Jakarta Sans', sans-serif";
             ctx.letterSpacing = "1.5px";
             ctx.globalAlpha = 0.75;
@@ -1607,7 +1615,6 @@
             ctx.restore();
           }
 
-          // Export Hasil & Trigger Animasi Polaroid
           const dataUrl = canvas.toDataURL('image/png');
           const resultImg = document.getElementById('result-img');
           
