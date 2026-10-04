@@ -98,20 +98,30 @@
       background-color: rgba(216, 180, 180, 0.12);
     }
 
+    /* BARIS CONTROL KAMERA 3 TOMBOL */
+    .cam-controls-row {
+      display: flex;
+      gap: 6px;
+      justify-content: center;
+      align-items: center;
+      margin-top: 6px;
+    }
+
     .btn-switch-cam {
       background-color: #FFFFFF;
       color: var(--dusty-rose);
       border: 1px solid var(--soft-blush);
-      padding: 7px 15px;
-      font-size: 0.78rem;
+      padding: 6px 10px;
+      font-size: 0.74rem;
       font-weight: 700;
       border-radius: 20px;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.05);
       transition: all 0.2s ease;
+      white-space: nowrap;
     }
 
     .btn-switch-cam:hover {
@@ -168,9 +178,6 @@
       margin: 16px 0 8px;
       text-transform: uppercase;
       letter-spacing: 1px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
     }
 
     .option-grid {
@@ -324,6 +331,14 @@
     }
 
     /* STEP 3: CAMERA */
+    .camera-header-info {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 8px;
+      gap: 4px;
+    }
+
     .camera-wrapper {
       position: relative;
       width: 100%;
@@ -331,7 +346,7 @@
       border-radius: 20px;
       overflow: hidden;
       background-color: #000;
-      margin: 12px 0 15px;
+      margin: 10px 0 15px;
       box-shadow: 0 10px 25px rgba(0,0,0,0.2);
     }
 
@@ -370,7 +385,7 @@
     }
 
     .photo-progress {
-      font-size: 0.9rem;
+      font-size: 0.92rem;
       color: var(--dusty-rose);
       font-weight: 700;
     }
@@ -495,7 +510,7 @@
       <h1 class="font-serif welcome-title">Capture Your Moment</h1>
       
       <p class="welcome-subtitle">
-        Selamat datang di Photobooth Pernikahan Kami.<br>Abadikan momen indah Anda bersama
+        Selamat datang di Photobooth Pernikahan Kami.<br>Abadikan momen indah kamu bersama
       </p>
       <div class="welcome-names">Riyan & Amelia</div>
 
@@ -508,10 +523,10 @@
   <!-- HALAMAN 2: PILIH STYLE -->
   <div id="step-template" class="hidden">
     <h2 class="font-serif" style="color: var(--dusty-rose); font-size: 1.85rem;">Pilih Style Photobooth</h2>
-    <p style="font-size: 0.82rem; color: #735757;">Lihat contoh gambar dan pilih style favorit Anda</p>
+    <p style="font-size: 0.82rem; color: #735757;">Lihat contoh gambar dan pilih style favorit kamu</p>
 
     <!-- Pilihan 1: Jumlah Foto -->
-    <p class="option-title"><i class="fa-solid fa-images"></i> 1. Jumlah Foto</p>
+    <p class="option-title">1. JUMLAH FOTO</p>
     <div class="option-grid">
       <div class="option-card active" onclick="selectPhotoCount(3, this)">
         <i class="fa-solid fa-layer-group" style="font-size: 1.1rem; display:block; margin-bottom:2px;"></i>
@@ -528,7 +543,7 @@
     </div>
 
     <!-- Pilihan 2: Visual Card Desain -->
-    <p class="option-title"><i class="fa-solid fa-wand-magic-sparkles"></i> 2. Pilihan Desain Wedding & Events</p>
+    <p class="option-title">2. PILIH DESAIN</p>
     <div class="design-grid">
       <!-- 1. Calla Lily -->
       <div class="design-card active" onclick="selectDesignStyle('floral', this)">
@@ -579,7 +594,7 @@
 
     <!-- Pilihan 3: Warna Background Soft -->
     <div id="color-section-wrapper" class="color-section-wrapper">
-      <p class="option-title"><i class="fa-solid fa-palette"></i> 3. Warna Frame Soft</p>
+      <p class="option-title">3. PILIH WARNA</p>
       <div class="color-grid">
         <div class="color-card active" onclick="selectBgColor('dusty', this)">
           <div class="color-dot" style="background-color: #8C6262;"></div>
@@ -618,17 +633,25 @@
 
   <!-- HALAMAN 3: AREA KAMERA -->
   <div id="step-camera" class="hidden">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+    <div class="camera-header-info">
+      <!-- KETERANGAN JUMLAH JEPRETAN DI ATAS -->
       <span class="photo-progress" id="photo-count-text">Foto 1 dari 3</span>
-      
-      <div style="display: flex; gap: 8px; align-items: center;">
-        <!-- TOGGLE TIMER ON/OFF -->
+
+      <!-- 3 TOMBOL KONTROL DI BAWAHNYA: TIMER, FLASH, SWITCH KAMERA -->
+      <div class="cam-controls-row">
+        <!-- TOMBOL 1: TIMER -->
         <button id="btn-toggle-timer" class="btn-switch-cam" onclick="toggleTimerMode()">
           <i class="fa-solid fa-stopwatch"></i> <span id="timer-toggle-text">Timer: ON</span>
         </button>
 
+        <!-- TOMBOL 2: FLASH -->
+        <button id="btn-toggle-flash" class="btn-switch-cam" onclick="toggleFlashMode()">
+          <i class="fa-solid fa-bolt"></i> <span id="flash-toggle-text">Flash: ON</span>
+        </button>
+
+        <!-- TOMBOL 3: SWITCH KAMERA -->
         <button class="btn-switch-cam" onclick="toggleCamera()">
-          <i class="fa-solid fa-arrows-rotate"></i> <span id="cam-mode-text">Kamera Depan</span>
+          <i class="fa-solid fa-arrows-rotate"></i> <span id="cam-mode-text">Depan</span>
         </button>
       </div>
     </div>
@@ -649,7 +672,7 @@
 
   <!-- HALAMAN 4: HASIL FOTO DENGAN ANIMASI POLAROID PRESISI -->
   <div id="step-result" class="hidden">
-    <h2 class="font-serif" style="color: var(--dusty-rose); font-size: 1.85rem;">Hasil Photobooth Anda</h2>
+    <h2 class="font-serif" style="color: var(--dusty-rose); font-size: 1.85rem;">Hasil Photobooth Kamu</h2>
     <p style="font-size: 0.82rem; color: #735757;">Terima kasih telah berbagi kebahagiaan!</p>
 
     <!-- ANATOMI KAMERA POLAROID LEBAR PRESISI (320px) -->
@@ -700,8 +723,9 @@
   let currentFacingMode = "user"; 
   let currentStream = null;
 
-  // SYSTEM TIMER CONFIGURATION (ON/OFF TOGGLE)
+  // SYSTEM TIMER & FLASH CONFIGURATION
   let isTimerEnabled = true;
+  let isFlashEnabled = true;
   let manualPhotoIndex = 0;
   let isCapturingSession = false;
 
@@ -769,6 +793,25 @@
     updateSnapButtonUI();
   }
 
+  function toggleFlashMode() {
+    isFlashEnabled = !isFlashEnabled;
+    const label = document.getElementById('flash-toggle-text');
+    label.innerText = isFlashEnabled ? "Flash: ON" : "Flash: OFF";
+
+    // MENTRIGGER PENYESUAIAN SETTING HARDWARE FLASH/TORCH JIKA DIDUKUNG DEVICE
+    if (currentStream) {
+      const track = currentStream.getVideoTracks()[0];
+      if (track) {
+        const capabilities = track.getCapabilities ? track.getCapabilities() : {};
+        if (capabilities.torch) {
+          track.applyConstraints({
+            advanced: [{ torch: isFlashEnabled }]
+          }).catch(e => console.log('Torch error:', e));
+        }
+      }
+    }
+  }
+
   function startCameraProcess() {
     goToStep(3);
     capturedPhotos = [];
@@ -807,14 +850,25 @@
 
       if (currentFacingMode === "user") {
         video.classList.add('mirror');
-        document.getElementById('cam-mode-text').innerText = "Kamera Depan";
+        document.getElementById('cam-mode-text').innerText = "Depan";
       } else {
         video.classList.remove('mirror');
-        document.getElementById('cam-mode-text').innerText = "Kamera Belakang";
+        document.getElementById('cam-mode-text').innerText = "Belakang";
+      }
+
+      // CEK DAN SESUAIKAN DENGAN KONDISI HARDWARE FLASH TERAKHIR
+      const track = stream.getVideoTracks()[0];
+      if (track) {
+        const capabilities = track.getCapabilities ? track.getCapabilities() : {};
+        if (capabilities.torch) {
+          track.applyConstraints({
+            advanced: [{ torch: isFlashEnabled }]
+          }).catch(e => console.log('Torch init error:', e));
+        }
       }
     })
     .catch(err => {
-      alert("Tidak dapat mengakses kamera. Pastikan memberikan izin kamera di browser Anda.");
+      alert("Tidak dapat mengakses kamera. Pastikan memberikan izin kamera di browser kamu.");
       goToStep(2);
     });
   }
@@ -842,7 +896,7 @@
     for (let i = 1; i <= targetPhotoCount; i++) {
       document.getElementById('photo-count-text').innerText = `Foto ${i} dari ${targetPhotoCount}`;
       await runCountdown(3);
-      triggerFlash();
+      if (isFlashEnabled) triggerFlashEffect();
       captureSingleFrame();
       await delay(1000);
     }
@@ -856,7 +910,7 @@
 
   // 2. MANUAL PENCET SESUAI KEINGINAN (Timer OFF)
   function captureManualSinglePhoto() {
-    triggerFlash();
+    if (isFlashEnabled) triggerFlashEffect();
     captureSingleFrame();
     manualPhotoIndex++;
 
@@ -887,9 +941,10 @@
     });
   }
 
-  function triggerFlash() {
-    flashOverlay.style.opacity = '0.9';
-    setTimeout(() => { flashOverlay.style.opacity = '0'; }, 150);
+  function triggerFlashEffect() {
+    // KILATAN LAYAR PUTIH UNTUK KAMERA DEPAN / BACKUP FLASH
+    flashOverlay.style.opacity = '0.95';
+    setTimeout(() => { flashOverlay.style.opacity = '0'; }, 180);
   }
 
   function delay(ms) {
@@ -1218,7 +1273,7 @@
       ctx.font = "bold 32px 'Courier Prime', monospace";
       ctx.textBaseline = "middle";
       ctx.fillText("∞", stripWidth - 60, 228);
-      ctx.textBaseline = "alphabetic"; // Reset baseline
+      ctx.textBaseline = "alphabetic";
 
       ctx.beginPath();
       ctx.moveTo(50, 245); ctx.lineTo(stripWidth - 50, 245);
@@ -1235,7 +1290,6 @@
     } else if (selectedDesignStyle === 'fotome_brand') {
       drawChatHeaderBar(ctx, stripWidth, textColor);
     } else if (selectedDesignStyle === 'engagement') {
-      // HEADER DESAIN 5: FOTOME
       ctx.fillStyle = textColor;
       ctx.textAlign = "center";
       ctx.font = "bold 32px 'Plus Jakarta Sans', sans-serif";
