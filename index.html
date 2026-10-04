@@ -380,7 +380,7 @@
       background: #FFFFFF;
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.1s ease;
+      transition: opacity 0.08s ease;
       z-index: 11;
     }
 
@@ -855,33 +855,41 @@
     openCameraStream();
   }
 
-  // FUNGSI NYALA SEMENTARA HARDWARE TORCH PAS JEPRET SAJA
-  function triggerHardwareTorchPulse() {
+  // SINKRONISASI KILATAN HARDWARE SAMA SEPERTI APLIKASI KAMERA HP
+  function turnHardwareTorch(state) {
     if (!currentStream) return;
     const track = currentStream.getVideoTracks()[0];
     if (!track) return;
 
     const capabilities = track.getCapabilities ? track.getCapabilities() : {};
     if (capabilities.torch) {
-      track.applyConstraints({ advanced: [{ torch: true }] })
-        .then(() => {
-          setTimeout(() => {
-            track.applyConstraints({ advanced: [{ torch: false }] }).catch(e => console.log(e));
-          }, 350); // Padam otomatis setelah 350 milidetik
-        })
-        .catch(e => console.log('Torch trigger error:', e));
+      track.applyConstraints({ advanced: [{ torch: state }] }).catch(e => console.log(e));
     }
   }
 
   function turnOffHardwareTorch() {
-    if (!currentStream) return;
-    const track = currentStream.getVideoTracks()[0];
-    if (track) {
-      const capabilities = track.getCapabilities ? track.getCapabilities() : {};
-      if (capabilities.torch) {
-        track.applyConstraints({ advanced: [{ torch: false }] }).catch(e => console.log(e));
-      }
-    }
+    turnHardwareTorch(false);
+  }
+
+  // LOGIKA DOUBLE FLASH (PRE-FLASH + MAIN FLASH PADA JEPRETAN)
+  async function triggerDoubleFlashSequence() {
+    // 1. Pre-flash (Kilatan pertama untuk penyesuaian sensor)
+    flashOverlay.style.opacity = '0.4';
+    turnHardwareTorch(true);
+    await delay(80);
+
+    flashOverlay.style.opacity = '0';
+    turnHardwareTorch(false);
+    await delay(120);
+
+    // 2. Main flash (Kilatan utama terang penuh saat foto ditangkap)
+    flashOverlay.style.opacity = '1';
+    turnHardwareTorch(true);
+  }
+
+  function stopFlashSequence() {
+    flashOverlay.style.opacity = '0';
+    turnHardwareTorch(false);
   }
 
   // LOGIKA PEMILIHAN OTOMATIS / MANUAL PRESS SNAP
@@ -904,11 +912,16 @@
       await runCountdown(3);
       
       if (isFlashEnabled) {
-        triggerFlashEffect();
-        await delay(150); // Jeda kecil agar flash/lampu sempat menyinari subjek sebelum frame diambil
+        await triggerDoubleFlashSequence();
+        await delay(100); // Jeda kecil tepat di tengah kilatan terang
       }
       
       captureSingleFrame();
+
+      if (isFlashEnabled) {
+        stopFlashSequence();
+      }
+
       await delay(1000);
     }
 
@@ -922,11 +935,16 @@
   // 2. MANUAL PENCET SESUAI KEINGINAN (Timer OFF)
   async function captureManualSinglePhoto() {
     if (isFlashEnabled) {
-      triggerFlashEffect();
-      await delay(150);
+      await triggerDoubleFlashSequence();
+      await delay(100);
     }
 
     captureSingleFrame();
+
+    if (isFlashEnabled) {
+      stopFlashSequence();
+    }
+
     manualPhotoIndex++;
 
     if (manualPhotoIndex < targetPhotoCount) {
@@ -956,15 +974,6 @@
     });
   }
 
-  function triggerFlashEffect() {
-    // 1. Kilatan layar putih
-    flashOverlay.style.opacity = '0.98';
-    setTimeout(() => { flashOverlay.style.opacity = '0'; }, 220);
-
-    // 2. Hardware Flash HP
-    triggerHardwareTorchPulse();
-  }
-
   function delay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
@@ -982,9 +991,9 @@
       ctx.scale(-1, 1);
     }
 
-    // JIKA FLASH "ON", BERIKAN PENINGKATAN BRIGHTNESS CANVAS SUPAYA HASIL FOTO LEBIH TERANG & TAJAM
+    // EFEK PENCAHAYAAN FLASH DRAMATIS TERANG SAAT FLASH ON
     if (isFlashEnabled) {
-      ctx.filter = "brightness(1.18) contrast(1.05)";
+      ctx.filter = "brightness(1.25) contrast(1.10) saturate(1.05)";
     } else {
       ctx.filter = "none";
     }
