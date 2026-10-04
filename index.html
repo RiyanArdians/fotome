@@ -105,6 +105,7 @@
       justify-content: center;
       align-items: center;
       margin-top: 6px;
+      flex-wrap: wrap;
     }
 
     .btn-switch-cam {
@@ -126,6 +127,22 @@
 
     .btn-switch-cam:hover {
       transform: scale(1.03);
+    }
+
+    /* DROPDOWN SELECTOR KAMERA EKSTERNAL */
+    .camera-select-dropdown {
+      background-color: #FFFFFF;
+      color: var(--dusty-rose);
+      border: 1px solid var(--soft-blush);
+      padding: 5px 8px;
+      font-size: 0.74rem;
+      font-weight: 700;
+      border-radius: 20px;
+      outline: none;
+      cursor: pointer;
+      max-width: 130px;
+      text-overflow: ellipsis;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     }
 
     /* CONTAINER SLIDER (ZOOM & BRIGHTNESS) */
@@ -682,7 +699,7 @@
       <!-- KETERANGAN JUMLAH JEPRETAN DI ATAS -->
       <span class="photo-progress" id="photo-count-text">Foto 1 dari 3</span>
 
-      <!-- 3 TOMBOL KONTROL DI BAWAHNYA: TIMER, FLASH, SWITCH KAMERA -->
+      <!-- 3 TOMBOL KONTROL DI BAWAHNYA: TIMER, FLASH, DROPDOWN PILIHAN KAMERA -->
       <div class="cam-controls-row">
         <!-- TOMBOL 1: TIMER -->
         <button id="btn-toggle-timer" class="btn-switch-cam" onclick="toggleTimerMode()">
@@ -694,10 +711,10 @@
           <i class="fa-solid fa-bolt"></i> <span id="flash-toggle-text">Flash: ON</span>
         </button>
 
-        <!-- TOMBOL 3: SWITCH KAMERA -->
-        <button class="btn-switch-cam" onclick="toggleCamera()">
-          <i class="fa-solid fa-arrows-rotate"></i> <span id="cam-mode-text">Depan</span>
-        </button>
+        <!-- TOMBOL 3: DROPDOWN KAMERA (HP / WEBCAM / USB / DSLR) -->
+        <select id="camera-select" class="camera-select-dropdown" onchange="onCameraDeviceChange(this.value)">
+          <option value="">Memuat Kamera...</option>
+        </select>
       </div>
     </div>
 
@@ -783,7 +800,7 @@
   let selectedBgColor = 'dusty';
   let capturedPhotos = [];
   
-  let currentFacingMode = "user"; 
+  let currentSelectedDeviceId = null;
   let currentStream = null;
 
   // SYSTEM TIMER & FLASH CONFIGURATION
@@ -871,8 +888,9 @@
     document.getElementById('zoom-val').innerText = zoomVal.toFixed(1) + 'x';
     document.getElementById('brightness-val').innerText = Math.round(brightnessVal * 100) + '%';
 
-    // Terapkan efek visual langsung ke elemen video preview kamera
-    const mirrorScale = (currentFacingMode === "user") ? -1 : 1;
+    // Cek apakah kamera aktif diposisikan mirror (kamera depan HP)
+    const isFrontCamera = video.classList.contains('mirror');
+    const mirrorScale = isFrontCamera ? -1 : 1;
     video.style.transform = `scaleX(${mirrorScale}) scale(${zoomVal})`;
     video.style.filter = `brightness(${brightnessVal})`;
   }
@@ -886,7 +904,6 @@
     // Reset slider ke nilai default
     document.getElementById('zoom-slider').value = 1;
     document.getElementById('brightness-slider').value = 1;
-    updateCameraAdjustments();
 
     updateSnapButtonUI();
     openCameraStream();
@@ -905,25 +922,82 @@
     }
   }
 
+  // DETEKSI OTOMATIS SEMUA KAMERA (HP / WEBCAM / DSLR / EXTERNAL)
+  async function populateCameraDevices() {
+    const cameraSelect = document.getElementById('camera-select');
+    try {
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      const videoDevices = devices.filter(d => d.kind === 'videoinput');
+
+      cameraSelect.innerHTML = '';
+
+      if (videoDevices.length === 0) {
+        cameraSelect.innerHTML = '<option value="">Kamera Tidak Ditemukan</option>';
+        return;
+      }
+
+      videoDevices.forEach((device, index) => {
+        const option = document.createElement('option');
+        option.value = device.deviceId;
+        
+        // Buat nama label kamera yang jelas
+        let label = device.label || `Kamera ${index + 1}`;
+        if (label.toLowerCase().includes('front') || label.toLowerCase().includes('user')) {
+          label = '📷 Kamera Depan';
+        } else if (label.toLowerCase().includes('back') || label.toLowerCase().includes('environment')) {
+          label = '📷 Kamera Belakang';
+        } else {
+          label = `🔌 ${label}`;
+        }
+
+        option.text = label;
+        if (currentSelectedDeviceId && device.deviceId === currentSelectedDeviceId) {
+          option.selected = true;
+        }
+        cameraSelect.appendChild(option);
+      });
+
+      if (!currentSelectedDeviceId && videoDevices.length > 0) {
+        currentSelectedDeviceId = videoDevices[0].deviceId;
+      }
+    } catch (e) {
+      console.log("Error enumerateDevices:", e);
+    }
+  }
+
   function openCameraStream() {
     if (currentStream) {
       currentStream.getTracks().forEach(track => track.stop());
     }
 
-    navigator.mediaDevices.getUserMedia({ 
-      video: { facingMode: currentFacingMode, width: { ideal: 1080 }, height: { ideal: 1440 } }, 
-      audio: false 
-    })
-    .then(stream => { 
+    const videoConstraints = {
+      width: { ideal: 1080 },
+      height: { ideal: 1440 }
+    };
+
+    if (currentSelectedDeviceId) {
+      videoConstraints.deviceId = { exact: currentSelectedDeviceId };
+    } else {
+      videoConstraints.facingMode = "user";
+    }
+
+    navigator.mediaDevices.getUserMedia({ video: videoConstraints, audio: false })
+    .then(async stream => { 
       currentStream = stream;
       video.srcObject = stream;
 
-      if (currentFacingMode === "user") {
-        document.getElementById('cam-mode-text').innerText = "Depan";
+      // Cek apakah kamera yang aktif adalah kamera depan/user
+      const track = stream.getVideoTracks()[0];
+      const settings = track.getSettings ? track.getSettings() : {};
+      const label = (track.label || '').toLowerCase();
+
+      if (settings.facingMode === 'user' || label.includes('front') || label.includes('user')) {
+        video.classList.add('mirror');
       } else {
-        document.getElementById('cam-mode-text').innerText = "Belakang";
+        video.classList.remove('mirror');
       }
 
+      await populateCameraDevices();
       updateCameraAdjustments();
     })
     .catch(err => {
@@ -932,8 +1006,9 @@
     });
   }
 
-  function toggleCamera() {
-    currentFacingMode = (currentFacingMode === "user") ? "environment" : "user";
+  function onCameraDeviceChange(deviceId) {
+    if (!deviceId) return;
+    currentSelectedDeviceId = deviceId;
     openCameraStream();
   }
 
@@ -1078,8 +1153,8 @@
     }
     ctx.filter = `brightness(${totalBrightness}) contrast(1.05)`;
 
-    // TERAPKAN FLIP MIRROR UNTUK KAMERA DEPAN
-    if (currentFacingMode === "user") {
+    // TERAPKAN FLIP MIRROR JIKA KAMERA DIPASANG MIRROR
+    if (video.classList.contains('mirror')) {
       ctx.translate(w, 0);
       ctx.scale(-1, 1);
     }
