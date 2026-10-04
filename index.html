@@ -747,6 +747,7 @@
 
   function goToStep(stepNumber) {
     resetEjectAnimation();
+    turnOffHardwareTorch();
 
     document.getElementById('step-welcome').classList.add('hidden');
     document.getElementById('step-template').classList.add('hidden');
@@ -797,19 +798,6 @@
     isFlashEnabled = !isFlashEnabled;
     const label = document.getElementById('flash-toggle-text');
     label.innerText = isFlashEnabled ? "Flash: ON" : "Flash: OFF";
-
-    // MENTRIGGER PENYESUAIAN SETTING HARDWARE FLASH/TORCH JIKA DIDUKUNG DEVICE
-    if (currentStream) {
-      const track = currentStream.getVideoTracks()[0];
-      if (track) {
-        const capabilities = track.getCapabilities ? track.getCapabilities() : {};
-        if (capabilities.torch) {
-          track.applyConstraints({
-            advanced: [{ torch: isFlashEnabled }]
-          }).catch(e => console.log('Torch error:', e));
-        }
-      }
-    }
   }
 
   function startCameraProcess() {
@@ -855,17 +843,6 @@
         video.classList.remove('mirror');
         document.getElementById('cam-mode-text').innerText = "Belakang";
       }
-
-      // CEK DAN SESUAIKAN DENGAN KONDISI HARDWARE FLASH TERAKHIR
-      const track = stream.getVideoTracks()[0];
-      if (track) {
-        const capabilities = track.getCapabilities ? track.getCapabilities() : {};
-        if (capabilities.torch) {
-          track.applyConstraints({
-            advanced: [{ torch: isFlashEnabled }]
-          }).catch(e => console.log('Torch init error:', e));
-        }
-      }
     })
     .catch(err => {
       alert("Tidak dapat mengakses kamera. Pastikan memberikan izin kamera di browser kamu.");
@@ -876,6 +853,35 @@
   function toggleCamera() {
     currentFacingMode = (currentFacingMode === "user") ? "environment" : "user";
     openCameraStream();
+  }
+
+  // FUNGSI NYALA SEMENTARA HARDWARE TORCH PAS JEPRET SAJA
+  function triggerHardwareTorchPulse() {
+    if (!currentStream) return;
+    const track = currentStream.getVideoTracks()[0];
+    if (!track) return;
+
+    const capabilities = track.getCapabilities ? track.getCapabilities() : {};
+    if (capabilities.torch) {
+      track.applyConstraints({ advanced: [{ torch: true }] })
+        .then(() => {
+          setTimeout(() => {
+            track.applyConstraints({ advanced: [{ torch: false }] }).catch(e => console.log(e));
+          }, 300); // Padam otomatis setelah 300 milidetik
+        })
+        .catch(e => console.log('Torch trigger error:', e));
+    }
+  }
+
+  function turnOffHardwareTorch() {
+    if (!currentStream) return;
+    const track = currentStream.getVideoTracks()[0];
+    if (track) {
+      const capabilities = track.getCapabilities ? track.getCapabilities() : {};
+      if (capabilities.torch) {
+        track.applyConstraints({ advanced: [{ torch: false }] }).catch(e => console.log(e));
+      }
+    }
   }
 
   // LOGIKA PEMILIHAN OTOMATIS / MANUAL PRESS SNAP
@@ -942,9 +948,12 @@
   }
 
   function triggerFlashEffect() {
-    // KILATAN LAYAR PUTIH UNTUK KAMERA DEPAN / BACKUP FLASH
+    // 1. Ditolong oleh kilatan layar putih untuk kamera depan / backup
     flashOverlay.style.opacity = '0.95';
-    setTimeout(() => { flashOverlay.style.opacity = '0'; }, 180);
+    setTimeout(() => { flashOverlay.style.opacity = '0'; }, 200);
+
+    // 2. Pemicu kilatan singkat pada hardware flash kamera HP
+    triggerHardwareTorchPulse();
   }
 
   function delay(ms) {
