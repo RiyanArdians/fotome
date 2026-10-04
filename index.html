@@ -867,7 +867,7 @@
         .then(() => {
           setTimeout(() => {
             track.applyConstraints({ advanced: [{ torch: false }] }).catch(e => console.log(e));
-          }, 300); // Padam otomatis setelah 300 milidetik
+          }, 350); // Padam otomatis setelah 350 milidetik
         })
         .catch(e => console.log('Torch trigger error:', e));
     }
@@ -902,7 +902,12 @@
     for (let i = 1; i <= targetPhotoCount; i++) {
       document.getElementById('photo-count-text').innerText = `Foto ${i} dari ${targetPhotoCount}`;
       await runCountdown(3);
-      if (isFlashEnabled) triggerFlashEffect();
+      
+      if (isFlashEnabled) {
+        triggerFlashEffect();
+        await delay(150); // Jeda kecil agar flash/lampu sempat menyinari subjek sebelum frame diambil
+      }
+      
       captureSingleFrame();
       await delay(1000);
     }
@@ -915,8 +920,12 @@
   }
 
   // 2. MANUAL PENCET SESUAI KEINGINAN (Timer OFF)
-  function captureManualSinglePhoto() {
-    if (isFlashEnabled) triggerFlashEffect();
+  async function captureManualSinglePhoto() {
+    if (isFlashEnabled) {
+      triggerFlashEffect();
+      await delay(150);
+    }
+
     captureSingleFrame();
     manualPhotoIndex++;
 
@@ -948,11 +957,11 @@
   }
 
   function triggerFlashEffect() {
-    // 1. Ditolong oleh kilatan layar putih untuk kamera depan / backup
-    flashOverlay.style.opacity = '0.95';
-    setTimeout(() => { flashOverlay.style.opacity = '0'; }, 200);
+    // 1. Kilatan layar putih
+    flashOverlay.style.opacity = '0.98';
+    setTimeout(() => { flashOverlay.style.opacity = '0'; }, 220);
 
-    // 2. Pemicu kilatan singkat pada hardware flash kamera HP
+    // 2. Hardware Flash HP
     triggerHardwareTorchPulse();
   }
 
@@ -972,6 +981,14 @@
       ctx.translate(w, 0);
       ctx.scale(-1, 1);
     }
+
+    // JIKA FLASH "ON", BERIKAN PENINGKATAN BRIGHTNESS CANVAS SUPAYA HASIL FOTO LEBIH TERANG & TAJAM
+    if (isFlashEnabled) {
+      ctx.filter = "brightness(1.18) contrast(1.05)";
+    } else {
+      ctx.filter = "none";
+    }
+
     ctx.drawImage(video, 0, 0, w, h);
 
     capturedPhotos.push(tempCanvas.toDataURL('image/png'));
