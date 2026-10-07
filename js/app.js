@@ -329,6 +329,7 @@ function renderFinalPhotostrip() {
   canvas.width = width;
   canvas.height = height;
 
+  // 1. Set Warna Background
   let bgColor = '#8C6262';
   if (selectedBgColor === 'mocha') bgColor = '#B3927A';
   else if (selectedBgColor === 'blue') bgColor = '#83A398';
@@ -339,53 +340,58 @@ function renderFinalPhotostrip() {
   ctx.fillStyle = bgColor;
   ctx.fillRect(0, 0, width, height);
 
-  let loadedCount = 0;
-  capturedPhotos.forEach((src, idx) => {
-    const img = new Image();
-    img.onload = () => {
-      const currentY = headerSpace + (idx * (photoHeight + 20));
-      ctx.drawImage(img, photoMargin, currentY, photoWidth, photoHeight);
-      loadedCount++;
+  // 2. Load Semua Foto Secara Pararel (Setara & Cepat)
+  const loadImagePromises = capturedPhotos.map((src) => {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => resolve(img);
+      img.onerror = () => resolve(null); // Menjaga agar tidak freeze jika ada eror
+      img.src = src;
+    });
+  });
 
-      if (loadedCount === count) {
-        // Teks Bawah
-        ctx.fillStyle = '#FFFFFF';
-        ctx.font = 'bold 36px "Cormorant Garamond", serif';
-        ctx.textAlign = 'center';
-        ctx.fillText("Riyan & Amelia", width / 2, height - 100);
-
-        ctx.font = '20px "Plus Jakarta Sans", sans-serif';
-        ctx.fillText("06 Desember 2026", width / 2, height - 60);
-
-        const resultImg = document.getElementById('result-img');
-        const downloadLink = document.getElementById('download-link');
-        const photoWrapper = document.querySelector('.photo-eject-wrapper');
-        const dataUrl = canvas.toDataURL('image/png');
-
-        if (resultImg) {
-          resultImg.src = dataUrl;
-          // Clean inline styles agar mengikuti CSS polaroid
-          resultImg.removeAttribute('style');
-        }
-
-        if (downloadLink) {
-          downloadLink.href = dataUrl;
-          downloadLink.download = "Photobooth-Riyan-Amelia.png";
-        }
-
-        // PICU ANIMASI EJECT KELUAR DARI KAMERA
-        if (photoWrapper) {
-          photoWrapper.removeAttribute('style'); // Hapus override manual
-          photoWrapper.classList.remove('eject'); // Reset
-          
-          // Triggers reflow browser untuk meriset animasi
-          void photoWrapper.offsetWidth; 
-          
-          // Tambahkan class eject agar foto meluncur keluar ke bawah
-          photoWrapper.classList.add('eject');
-        }
+  Promise.all(loadImagePromises).then((images) => {
+    images.forEach((img, idx) => {
+      if (img) {
+        const currentY = headerSpace + (idx * (photoHeight + 20));
+        ctx.drawImage(img, photoMargin, currentY, photoWidth, photoHeight);
       }
-    };
-    img.src = src;
+    });
+
+    // 3. Gambar Teks Nama & Tanggal Pasangan
+    ctx.fillStyle = '#FFFFFF';
+    ctx.font = 'bold 36px "Cormorant Garamond", serif';
+    ctx.textAlign = 'center';
+    ctx.fillText("Riyan & Amelia", width / 2, height - 100);
+
+    ctx.font = '20px "Plus Jakarta Sans", sans-serif';
+    ctx.fillText("06 Desember 2026", width / 2, height - 60);
+
+    // 4. Salin Hasil Canvas ke Elemen Gambar HTML
+    const resultImg = document.getElementById('result-img');
+    const downloadLink = document.getElementById('download-link');
+    const photoWrapper = document.querySelector('.photo-eject-wrapper');
+    const dataUrl = canvas.toDataURL('image/png');
+
+    if (resultImg) {
+      resultImg.src = dataUrl;
+      resultImg.removeAttribute('style');
+    }
+
+    if (downloadLink) {
+      downloadLink.href = dataUrl;
+      downloadLink.download = "Photobooth-Riyan-Amelia.png";
+    }
+
+    // 5. Jalankan Animasi Polaroid Meluncur Keluar dari Kamera
+    if (photoWrapper) {
+      photoWrapper.removeAttribute('style');
+      photoWrapper.classList.remove('eject');
+      
+      // Force Reflow
+      void photoWrapper.offsetWidth; 
+      
+      photoWrapper.classList.add('eject');
+    }
   });
 }
