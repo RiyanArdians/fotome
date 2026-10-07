@@ -14,6 +14,7 @@
       max-width: 480px;
       margin: 40px auto;
       box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+      text-align: center;
     }
     .status-badge {
       display: inline-block;
@@ -57,10 +58,10 @@
   <h2 class="font-serif" style="color: var(--dusty-rose); font-size: 1.8rem; margin-bottom: 10px;">Dashboard Super Admin</h2>
   <p style="font-size: 0.85rem; color: #666; margin-bottom: 20px;">Kontrol status event FOTOME secara real-time</p>
 
-  <div id="status-display" class="status-badge status-off">Status Event: Sembunyikan/OFF</div>
+  <div id="status-display" class="status-badge status-off">Memuat Status...</div>
 
   <button id="btn-toggle-status" class="btn-primary" onclick="toggleEventStatus()" style="margin-top: 0; margin-bottom: 25px;">
-    Ubah Status ke ON
+    Ubah Status
   </button>
 
   <div class="form-group">
@@ -81,14 +82,14 @@
 <script>
   let isEventActive = false;
 
-  // Dengarkan perubahan data di Firestore secara real-time
+  // Real-time listener dari Firestore
   db.collection('settings').doc('wedding_event').onSnapshot(doc => {
+    const badge = document.getElementById('status-display');
+    const btn = document.getElementById('btn-toggle-status');
+
     if (doc.exists) {
       const data = doc.data();
-      isEventActive = data.isActive || false;
-
-      const badge = document.getElementById('status-display');
-      const btn = document.getElementById('btn-toggle-status');
+      isEventActive = data.isActive === true;
 
       if (isEventActive) {
         badge.innerText = "Status Event: AKTIF / ON";
@@ -102,13 +103,30 @@
 
       if (data.title) document.getElementById('event-title').value = data.title;
       if (data.date) document.getElementById('event-date').value = data.date;
+    } else {
+      // Jika dokumen belum ada di Firestore, buatkan dokumen default
+      badge.innerText = "Status Event: NONAKTIF / OFF";
+      badge.className = "status-badge status-off";
+      btn.innerText = "Aktifkan Event (ON)";
+      isEventActive = false;
     }
+  }, error => {
+    console.error("Firebase Error:", error);
+    alert("Koneksi Firebase bermasalah: " + error.message);
   });
 
   function toggleEventStatus() {
+    const newStatus = !isEventActive;
+    
     db.collection('settings').doc('wedding_event').set({
-      isActive: !isEventActive
-    }, { merge: true });
+      isActive: newStatus
+    }, { merge: true })
+    .then(() => {
+      console.log("Status berhasil diperbarui ke:", newStatus);
+    })
+    .catch(err => {
+      alert("Gagal memperbarui status: " + err.message);
+    });
   }
 
   function saveEventDetails() {
@@ -118,8 +136,12 @@
     db.collection('settings').doc('wedding_event').set({
       title: title,
       date: date
-    }, { merge: true }).then(() => {
+    }, { merge: true })
+    .then(() => {
       alert("Detail event berhasil disimpan!");
+    })
+    .catch(err => {
+      alert("Gagal menyimpan detail: " + err.message);
     });
   }
 </script>
