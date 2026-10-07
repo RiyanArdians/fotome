@@ -905,9 +905,9 @@
 
     const width = 600;
     const count = capturedPhotos.length;
-    const photoH = 380;
-    const photoW = 520;
-    const gap = 20;
+    const photoH = 360;
+    const photoW = 500;
+    const gap = 24;
 
     const height = 120 + (count * photoH) + ((count - 1) * gap) + 200;
     canvas.width = width;
@@ -926,8 +926,29 @@
     capturedPhotos.forEach((src, idx) => {
       const img = new Image();
       img.onload = () => {
+        const photoX = (width - photoW) / 2;
         const photoY = 100 + (idx * (photoH + gap));
-        ctx.drawImage(img, (width - photoW) / 2, photoY, photoW, photoH);
+
+        // HITUNG ASPECT RATIO CENTER-CROP PROPOSIONAL (TIDAK MELEBAR / GEPENG)
+        const imgAspect = img.width / img.height;
+        const boxAspect = photoW / photoH;
+
+        let renderW, renderH, offsetX, offsetY;
+
+        if (imgAspect > boxAspect) {
+          renderH = img.height;
+          renderW = img.height * boxAspect;
+          offsetX = (img.width - renderW) / 2;
+          offsetY = 0;
+        } else {
+          renderW = img.width;
+          renderH = img.width / boxAspect;
+          offsetX = 0;
+          offsetY = (img.height - renderH) / 2;
+        }
+
+        // Gambar foto yang ter-crop dengan proporsi sempurna
+        ctx.drawImage(img, offsetX, offsetY, renderW, renderH, photoX, photoY, photoW, photoH);
 
         loaded++;
         if (loaded === count) {
