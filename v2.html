@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Wedding Virtual Photobooth - FOTOME</title>
+  <title>Virtual Photobooth & Guestbook - FOTOME</title>
   
   <!-- Google Fonts & Font Awesome -->
-  <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Great+Vibes&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,500;1,600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-  <!-- Firebase Compatibility SDK -->
+  <!-- Firebase Compat SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
   <script src="./js/config.js"></script>
@@ -32,9 +32,8 @@
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      justify-content: center;
       align-items: center;
-      padding: 15px 10px;
+      padding: 15px 10px 40px;
     }
 
     .font-serif { font-family: 'Cormorant Garamond', serif; }
@@ -43,176 +42,186 @@
 
     .app-card {
       width: 100%;
-      max-width: 420px;
+      max-width: 430px;
       background: var(--card-white);
       border-radius: 28px;
-      padding: 30px 20px;
+      padding: 28px 20px;
       box-shadow: 0 15px 35px rgba(122, 28, 40, 0.08);
       border: 1px solid rgba(212, 175, 55, 0.25);
       text-align: center;
       position: relative;
-      overflow: hidden;
     }
 
-    /* HEADER TEMA MEWAH */
     .brand-subtitle {
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       color: var(--gold-accent);
       letter-spacing: 3px;
       text-transform: uppercase;
       font-weight: 700;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
 
     .event-main-title {
-      font-size: 2.6rem;
+      font-size: 2.5rem;
       color: var(--primary-crimson);
       line-height: 1.1;
-      margin-bottom: 15px;
+      margin-bottom: 12px;
     }
 
     .event-date-text {
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       color: #6E5353;
-      margin-bottom: 25px;
+      margin-bottom: 20px;
       letter-spacing: 1px;
     }
 
-    /* BUTTONS STYLING HASIL VIDEO */
-    .btn-luxury {
+    .btn-primary-v2 {
       background: linear-gradient(135deg, #8C2331 0%, var(--primary-crimson) 100%);
       color: #FFFFFF;
       border: 1px solid var(--gold-accent);
-      padding: 16px 24px;
-      font-size: 0.95rem;
+      padding: 14px 20px;
+      font-size: 0.92rem;
       font-weight: 700;
       border-radius: 30px;
       cursor: pointer;
-      box-shadow: 0 6px 18px rgba(122, 28, 40, 0.25);
-      width: 100%;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      transition: all 0.3s ease;
-    }
-
-    .btn-luxury:active { transform: scale(0.98); }
-
-    .btn-luxury-outline {
-      background: transparent;
-      color: var(--primary-crimson);
-      border: 1px solid var(--primary-crimson);
-      padding: 12px 20px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      border-radius: 30px;
-      cursor: pointer;
-      margin-top: 10px;
+      box-shadow: 0 6px 18px rgba(122, 28, 40, 0.2);
       width: 100%;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
+      transition: all 0.2s ease;
     }
 
-    /* SELECTOR FRAME DIGITAL */
-    .frame-selection-title {
-      font-size: 0.8rem;
+    .btn-primary-v2:active { transform: scale(0.98); }
+
+    .btn-outline-v2 {
+      background: transparent;
+      color: var(--primary-crimson);
+      border: 1px solid var(--primary-crimson);
+      padding: 10px 18px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      border-radius: 30px;
+      cursor: pointer;
+      margin-top: 8px;
+      width: 100%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    /* GRID OPTION */
+    .section-label {
+      font-size: 0.75rem;
       font-weight: 700;
       color: var(--primary-crimson);
       text-align: left;
-      margin: 15px 0 10px;
+      margin: 14px 0 8px;
       text-transform: uppercase;
       letter-spacing: 1px;
     }
 
-    .frame-grid {
+    .option-grid-3 {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-      margin-bottom: 20px;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 12px;
     }
 
-    .frame-card {
-      border: 2px solid #EFE8DE;
-      border-radius: 16px;
-      padding: 10px;
+    .option-btn {
+      border: 1.5px solid #EFE8DE;
+      border-radius: 12px;
+      padding: 10px 4px;
+      font-size: 0.75rem;
+      font-weight: 600;
       cursor: pointer;
-      transition: all 0.2s ease;
+      background: #FFF;
+      text-align: center;
+    }
+
+    .option-btn.active {
+      border-color: var(--primary-crimson);
+      background: #FFFDF9;
+      color: var(--primary-crimson);
+      font-weight: 700;
+    }
+
+    /* FRAME SELECTION (3 FRAME OPTIONS) */
+    .frame-grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .frame-card-item {
+      border: 1.5px solid #EFE8DE;
+      border-radius: 12px;
+      padding: 8px 4px;
+      cursor: pointer;
       background: #FFF;
       display: flex;
       flex-direction: column;
       align-items: center;
     }
 
-    .frame-card.active {
+    .frame-card-item.active {
       border-color: var(--primary-crimson);
-      box-shadow: 0 5px 15px rgba(122, 28, 40, 0.15);
-      background: #FFFDF9;
+      box-shadow: 0 4px 12px rgba(122, 28, 40, 0.15);
     }
 
-    .frame-preview-box {
+    .frame-box-preview {
       width: 100%;
-      height: 100px;
-      border-radius: 8px;
+      height: 60px;
+      border-radius: 6px;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 4px;
-      padding: 6px;
-      margin-bottom: 8px;
+      gap: 3px;
+      padding: 4px;
+      margin-bottom: 6px;
     }
 
-    .frame-preview-box.theme-crimson { background: #7A1C28; }
-    .frame-preview-box.theme-cream { background: #EFE8DE; }
+    .frame-box-preview.f-basic { background: #111111; }
+    .frame-box-preview.f-crimson { background: #7A1C28; }
+    .frame-box-preview.f-cream { background: #EFE8DE; }
 
-    .mini-photo-slot {
-      width: 32px;
-      height: 70px;
+    .mini-slot {
+      width: 20px;
+      height: 42px;
       background: #FFF;
-      border-radius: 4px;
+      border-radius: 2px;
     }
 
-    /* CAMERA VIEW */
-    .cam-header {
-      font-size: 0.88rem;
-      font-weight: 700;
-      color: var(--primary-crimson);
-      margin-bottom: 10px;
-    }
-
-    .camera-box {
+    /* CAMERA & SLIDER */
+    .camera-wrapper {
       position: relative;
       width: 100%;
       aspect-ratio: 4/3;
-      border-radius: 20px;
+      border-radius: 18px;
       overflow: hidden;
       background: #000;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
 
-    video {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
+    video { width: 100%; height: 100%; object-fit: cover; }
     video.mirror { transform: scaleX(-1); }
 
-    .countdown-layer {
+    .countdown-overlay {
       position: absolute;
       top: 0; left: 0; right: 0; bottom: 0;
       background: rgba(0,0,0,0.4);
       color: #FFF;
-      font-size: 5rem;
+      font-size: 4.5rem;
       font-weight: 700;
       display: flex;
       align-items: center;
       justify-content: center;
     }
 
-    .flash-layer {
+    .flash-overlay {
       position: absolute;
       top: 0; left: 0; right: 0; bottom: 0;
       background: #FFF;
@@ -221,27 +230,110 @@
       transition: opacity 0.1s;
     }
 
-    .flash-layer.active { opacity: 1; }
+    .flash-overlay.active { opacity: 1; }
 
-    /* HASIL PHOTOSTRIP ALA KISAH KEKAL */
-    .result-display-wrapper {
-      margin: 15px 0;
-      display: flex;
-      justify-content: center;
-    }
-
-    #result-img {
-      max-width: 100%;
-      height: auto;
-      border-radius: 12px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-    }
-
-    .app-footer {
+    /* FORM UCAPAN / GUESTBOOK INPUT */
+    .wish-form-box {
+      background: #FAF6F0;
+      border: 1px solid rgba(212,175,55,0.3);
+      border-radius: 16px;
+      padding: 14px;
       margin-top: 15px;
-      font-size: 0.7rem;
-      color: #AA9999;
-      text-align: center;
+      text-align: left;
+    }
+
+    .wish-form-box label {
+      display: block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--primary-crimson);
+      margin-bottom: 4px;
+    }
+
+    .wish-form-box input, .wish-form-box textarea {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid #D8B4B4;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 0.8rem;
+      outline: none;
+      margin-bottom: 8px;
+      background: #FFF;
+    }
+
+    /* FEED GALERI SAMA SEPERTI MEDSOS */
+    .feed-container {
+      width: 100%;
+      max-width: 430px;
+      margin-top: 25px;
+    }
+
+    .feed-header {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--primary-crimson);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .feed-card {
+      background: #FFF;
+      border-radius: 18px;
+      padding: 14px;
+      margin-bottom: 15px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.04);
+      border: 1px solid rgba(212,175,55,0.2);
+      text-align: left;
+    }
+
+    .feed-user-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .feed-avatar {
+      width: 34px;
+      height: 34px;
+      background: var(--primary-crimson);
+      color: #FFF;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.85rem;
+    }
+
+    .feed-user-name {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-dark);
+    }
+
+    .feed-time {
+      font-size: 0.68rem;
+      color: #999;
+    }
+
+    .feed-photo-img {
+      width: 100%;
+      border-radius: 10px;
+      margin-bottom: 10px;
+    }
+
+    .feed-message {
+      font-size: 0.82rem;
+      color: #444;
+      line-height: 1.4;
+      font-style: italic;
+      background: #FAF6F0;
+      padding: 8px 12px;
+      border-radius: 8px;
     }
 
     canvas { display: none; }
@@ -249,104 +341,138 @@
 </head>
 <body>
 
+<!-- MAIN CARD PHOTOBOOTH -->
 <div class="app-card">
 
-  <!-- STEP 1: WELCOME SCREEN (SAMA SEPERTI DI VIDEO) -->
+  <!-- STEP 1: WELCOME SCREEN -->
   <div id="step-welcome">
     <p class="brand-subtitle">WEDDING MEMORIES OF</p>
     <h1 class="font-script event-main-title" id="display-event-title">Riyan & Amelia</h1>
     <p class="event-date-text">06 DESEMBER 2026</p>
 
-    <div style="background: #FAF6F0; padding: 18px; border-radius: 18px; margin-bottom: 20px; border: 1px solid rgba(212,175,55,0.3);">
-      <p style="font-size: 0.85rem; color: #555; line-height: 1.5; font-style: italic;">
-        "Terima kasih telah hadir dan menjadi bagian dari kenangan indah di hari bahagia kami."
+    <div style="background: #FAF6F0; padding: 16px; border-radius: 16px; margin-bottom: 18px; border: 1px solid rgba(212,175,55,0.3);">
+      <p style="font-size: 0.82rem; color: #555; line-height: 1.5; font-style: italic;">
+        "Abadikan momen kebahagiaanmu bersama kami & tinggalkan pesan ucapan manis di galeri kenangan!"
       </p>
     </div>
 
-    <button class="btn-luxury" onclick="goToStep(2)">
-      <i class="fa-solid fa-camera"></i> Ambil Foto Kenangan
+    <button class="btn-primary-v2" onclick="goToStep(2)">
+      <i class="fa-solid fa-camera"></i> Mulai Berfoto
     </button>
   </div>
 
-  <!-- STEP 2: PILIH FRAME DIGITAL TEMA EVENT -->
+  <!-- STEP 2: PILIH JUMLAH FOTO & FRAME -->
   <div id="step-template" class="hidden">
-    <h2 class="font-serif" style="color: var(--primary-crimson); font-size: 1.8rem;">Pilih Frame Digital</h2>
-    <p style="font-size: 0.8rem; color: #777;">Pilih desain bingkai favorit kamu</p>
+    <h2 class="font-serif" style="color: var(--primary-crimson); font-size: 1.7rem;">Pilih Style Foto</h2>
 
-    <div class="frame-selection-title">TEMA BINGKAI</div>
-    <div class="frame-grid">
-      <div class="frame-card active" onclick="selectFrameTheme('crimson', this)">
-        <div class="frame-preview-box theme-crimson">
-          <div class="mini-photo-slot"></div>
-          <div class="mini-photo-slot"></div>
+    <!-- 1. Pilihan Jumlah Foto (1 s/d 3) -->
+    <div class="section-label">1. JUMLAH FOTO</div>
+    <div class="option-grid-3">
+      <div class="option-btn active" onclick="selectPhotoCount(3, this)">3 Foto (Strip)</div>
+      <div class="option-btn" onclick="selectPhotoCount(2, this)">2 Foto (Duo)</div>
+      <div class="option-btn" onclick="selectPhotoCount(1, this)">1 Foto (Single)</div>
+    </div>
+
+    <!-- 2. Pilihan 3 Frame -->
+    <div class="section-label">2. PILIH FRAME</div>
+    <div class="frame-grid-3">
+      <!-- Frame 1: Basic FOTOME -->
+      <div class="frame-card-item active" onclick="selectFrameStyle('basic', this)">
+        <div class="frame-box-preview f-basic">
+          <div class="mini-slot"></div>
+          <div class="mini-slot"></div>
         </div>
-        <strong style="font-size: 0.75rem; color: var(--primary-crimson);">1. Elegant Crimson</strong>
+        <strong style="font-size:0.68rem;">1. FOTOME Basic</strong>
       </div>
 
-      <div class="frame-card" onclick="selectFrameTheme('cream', this)">
-        <div class="frame-preview-box theme-cream">
-          <div class="mini-photo-slot"></div>
-          <div class="mini-photo-slot"></div>
+      <!-- Frame 2: Crimson Custom -->
+      <div class="frame-card-item" onclick="selectFrameStyle('crimson', this)">
+        <div class="frame-box-preview f-crimson">
+          <div class="mini-slot"></div>
+          <div class="mini-slot"></div>
         </div>
-        <strong style="font-size: 0.75rem; color: #555;">2. Cream Luxury</strong>
+        <strong style="font-size:0.68rem; color:var(--primary-crimson);">2. Crimson Elegance</strong>
+      </div>
+
+      <!-- Frame 3: Cream Custom -->
+      <div class="frame-card-item" onclick="selectFrameStyle('cream', this)">
+        <div class="frame-box-preview f-cream">
+          <div class="mini-slot"></div>
+          <div class="mini-slot"></div>
+        </div>
+        <strong style="font-size:0.68rem; color:#666;">3. Soft Cream</strong>
       </div>
     </div>
 
-    <button class="btn-luxury" onclick="startCameraProcess()">
+    <button class="btn-primary-v2" onclick="startCameraProcess()">
       Lanjut Ke Kamera &rarr;
     </button>
-    <button class="btn-luxury-outline" onclick="goToStep(1)">
+    <button class="btn-outline-v2" onclick="goToStep(1)">
       &larr; Kembali
     </button>
   </div>
 
-  <!-- STEP 3: CAMERA -->
+  <!-- STEP 3: AREA KAMERA -->
   <div id="step-camera" class="hidden">
-    <div class="cam-header" id="cam-progress-text">Foto 1 dari 3</div>
+    <div style="font-size: 0.85rem; font-weight: 700; color: var(--primary-crimson); margin-bottom: 8px;" id="cam-progress-text">Foto 1 dari 3</div>
 
-    <div class="camera-box">
+    <div class="camera-wrapper">
       <video id="video" class="mirror" autoplay playsinline></video>
-      <div id="countdown-overlay" class="countdown-layer hidden">3</div>
-      <div id="flash-overlay" class="flash-layer"></div>
+      <div id="countdown-overlay" class="countdown-overlay hidden">3</div>
+      <div id="flash-overlay" class="flash-overlay"></div>
     </div>
 
-    <button id="btn-snap" class="btn-luxury" onclick="takePhotoSnap()">
-      <i class="fa-solid fa-circle"></i> Ambil Foto (3s)
+    <button id="btn-snap" class="btn-primary-v2" onclick="takePhotoSnap()">
+      <i class="fa-solid fa-camera"></i> Ambil Foto (3s)
     </button>
-    <button class="btn-luxury-outline" onclick="goToStep(2)">
-      Batal
+    <button class="btn-outline-v2" onclick="goToStep(2)">
+      Batal / Ubah Style
     </button>
   </div>
 
-  <!-- STEP 4: HASIL (TAMPILAN STRIP GANDA ALA KISAH KEKAL) -->
+  <!-- STEP 4: HASIL + FORM UCAPAN SIMPAN -->
   <div id="step-result" class="hidden">
-    <h2 class="font-serif" style="color: var(--primary-crimson); font-size: 1.8rem;">Hasil Photobooth Kamu</h2>
-    <p style="font-size: 0.8rem; color: #777;">Simpan foto dan bagikan ke momen bahagiamu!</p>
+    <h2 class="font-serif" style="color: var(--primary-crimson); font-size: 1.7rem;">Hasil Foto Kamu</h2>
 
-    <div class="result-display-wrapper">
-      <img id="result-img" alt="Hasil Photobooth">
+    <div style="margin: 12px 0;">
+      <img id="result-img" style="width: 100%; border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.12);" alt="Hasil Photobooth">
     </div>
 
-    <a id="download-link" download="Wedding-Photobooth.png">
-      <button class="btn-luxury">
-        <i class="fa-solid fa-download"></i> Unduh Foto Strip
-      </button>
-    </a>
+    <!-- FORM INPUT NAMA & UCAPAN -->
+    <div class="wish-form-box">
+      <label>Nama Kamu / Inisial</label>
+      <input type="text" id="input-sender-name" placeholder="Misal: Budi & Sarah">
 
-    <button class="btn-luxury-outline" onclick="goToStep(2)">
+      <label>Pesan / Ucapan Doa Kamu</label>
+      <textarea id="input-sender-message" rows="2" placeholder="Tuliskan ucapan manismu di sini..."></textarea>
+    </div>
+
+    <button class="btn-primary-v2" style="margin-top: 12px;" onclick="saveAndShareToFeed()">
+      <i class="fa-solid fa-paper-plane"></i> Unduh & Simpan ke Galeri
+    </button>
+
+    <button class="btn-outline-v2" onclick="goToStep(2)">
       <i class="fa-solid fa-rotate-right"></i> Foto Ulang
     </button>
   </div>
 
 </div>
 
-<div class="app-footer">
-  FOTOME Virtual Photobooth System
+<!-- FEED GALERI PUBLIK (MEDSOS STYLE) -->
+<div class="feed-container">
+  <div class="feed-header">
+    <span><i class="fa-solid fa-images"></i> Galeri Kenangan Tamu</span>
+    <span style="font-size: 0.72rem; color: #888;" id="total-posts-count">0 Kiriman</span>
+  </div>
+
+  <div id="feed-list-box">
+    <p style="font-size: 0.8rem; color: #999; text-align: center;">Memuat ucapan & foto tamu...</p>
+  </div>
 </div>
 
 <canvas id="canvas"></canvas>
 
-<!-- SCRIPT PENGUNCI SAKLAR REALTIME SUPER ADMIN -->
+<!-- SCRIPT PENGUNCI FIRESTORE REALTIME -->
 <script>
   const EVENT_DOC_ID = 'v2_event'; 
 
@@ -380,11 +506,7 @@
               </div>
             `;
             lockOverlay.style.position = 'fixed';
-            lockOverlay.style.top = '0';
-            lockOverlay.style.left = '0';
-            lockOverlay.style.width = '100%';
-            lockOverlay.style.height = '100%';
-            lockOverlay.style.zIndex = '999999';
+            lockOverlay.style.top = '0'; lockOverlay.style.left = '0'; lockOverlay.style.width = '100%'; lockOverlay.style.height = '100%'; lockOverlay.style.zIndex = '999999';
             document.body.appendChild(lockOverlay);
           }
         } else {
@@ -392,12 +514,17 @@
         }
       }
     });
+
+    // LOAD FEED GALERI REALTIME DARI FIRESTORE
+    loadRealtimeFeed();
   }
 
-  // CORE PHOTOBOOTH V2
-  let selectedTheme = 'crimson';
+  // ENGINE PHOTOBOOTH & FEED
+  let targetPhotoCount = 3;
+  let selectedFrameStyle = 'basic';
   let capturedPhotos = [];
   let videoStream = null;
+  let generatedDataUrl = "";
 
   function goToStep(step) {
     ['step-welcome', 'step-template', 'step-camera', 'step-result'].forEach(id => {
@@ -407,17 +534,23 @@
     document.getElementById(map[step]).classList.remove('hidden');
   }
 
-  function selectFrameTheme(theme, card) {
-    selectedTheme = theme;
-    document.querySelectorAll('.frame-card').forEach(c => c.classList.remove('active'));
-    card.classList.add('active');
+  function selectPhotoCount(count, btn) {
+    targetPhotoCount = count;
+    btn.parentElement.querySelectorAll('.option-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+
+  function selectFrameStyle(frame, item) {
+    selectedFrameStyle = frame;
+    item.parentElement.querySelectorAll('.frame-card-item').forEach(i => i.classList.remove('active'));
+    item.classList.add('active');
   }
 
   function startCameraProcess() {
     goToStep(3);
     capturedPhotos = [];
-    document.getElementById('cam-progress-text').innerText = "Foto 1 dari 3";
-    
+    document.getElementById('cam-progress-text').innerText = `Foto 1 dari ${targetPhotoCount}`;
+
     navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } })
       .then(stream => {
         videoStream = stream;
@@ -458,8 +591,8 @@
         ctx.drawImage(video, 0, 0);
         capturedPhotos.push(tempCanvas.toDataURL('image/png'));
 
-        if (capturedPhotos.length < 3) {
-          document.getElementById('cam-progress-text').innerText = `Foto ${capturedPhotos.length + 1} dari 3`;
+        if (capturedPhotos.length < targetPhotoCount) {
+          document.getElementById('cam-progress-text').innerText = `Foto ${capturedPhotos.length + 1} dari ${targetPhotoCount}`;
           setTimeout(() => { document.getElementById('btn-snap').disabled = false; }, 1000);
         } else {
           renderPhotostripV2();
@@ -470,57 +603,124 @@
     }, 1000);
   }
 
-  // RENDER DUAL STRIP POLAROID ALA KISAH KEKAL
+  // RENDER CANVAS HASIL DENGAN 3 PILIHAN FRAME
   function renderPhotostripV2() {
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
 
-    const width = 800; // Lebar untuk 2 strip foto berdampingan
-    const height = 1200;
+    const width = 600;
+    const count = capturedPhotos.length;
+    const photoH = 380;
+    const photoW = 520;
+    const gap = 20;
+
+    const height = 120 + (count * photoH) + ((count - 1) * gap) + 200;
     canvas.width = width;
     canvas.height = height;
 
-    let mainColor = selectedTheme === 'crimson' ? '#7A1C28' : '#EFE8DE';
-    let textColor = selectedTheme === 'crimson' ? '#FFFFFF' : '#2B1E1E';
+    let bgColor = "#111111";
+    let textColor = "#FFFFFF";
 
-    ctx.fillStyle = mainColor;
+    if (selectedFrameStyle === 'crimson') { bgColor = "#7A1C28"; textColor = "#FFFFFF"; }
+    else if (selectedFrameStyle === 'cream') { bgColor = "#EFE8DE"; textColor = "#2B1E1E"; }
+
+    ctx.fillStyle = bgColor;
     ctx.fillRect(0, 0, width, height);
 
     let loaded = 0;
     capturedPhotos.forEach((src, idx) => {
       const img = new Image();
       img.onload = () => {
-        // Gambarkan di Strip Kiri & Strip Kanan
-        const photoH = 260;
-        const photoW = 320;
-        const startY = 160 + (idx * 280);
-
-        // Strip 1 (Kiri)
-        ctx.drawImage(img, 50, startY, photoW, photoH);
-        // Strip 2 (Kanan)
-        ctx.drawImage(img, 430, startY, photoW, photoH);
+        const photoY = 100 + (idx * (photoH + gap));
+        ctx.drawImage(img, (width - photoW) / 2, photoY, photoW, photoH);
 
         loaded++;
-        if (loaded === capturedPhotos.length) {
-          // Teks Header Pasangan
+        if (loaded === count) {
+          // FOOTER TITLE & WATERMARK
           ctx.fillStyle = textColor;
-          ctx.font = "italic 40px 'Alex Brush', cursive";
+          ctx.font = "bold 38px 'Cormorant Garamond', serif";
           ctx.textAlign = "center";
-          ctx.fillText("Wedding Memories of", width / 2, 80);
-          ctx.font = "bold 36px 'Cormorant Garamond', serif";
-          ctx.fillText(eventTitle.toUpperCase(), width / 2, 125);
+          ctx.fillText(eventTitle.toUpperCase(), width / 2, height - 100);
 
-          // Teks Footer
-          ctx.font = "20px 'Plus Jakarta Sans', sans-serif";
-          ctx.fillText("06 DESEMBER 2026", width / 2, height - 60);
+          ctx.font = "18px 'Plus Jakarta Sans', sans-serif";
+          ctx.fillText("06 DESEMBER 2026 • FOTOME", width / 2, height - 60);
 
-          const dataUrl = canvas.toDataURL('image/png');
-          document.getElementById('result-img').src = dataUrl;
-          document.getElementById('download-link').href = dataUrl;
+          generatedDataUrl = canvas.toDataURL('image/jpeg', 0.85);
+          document.getElementById('result-img').src = generatedDataUrl;
         }
       };
       img.src = src;
     });
+  }
+
+  // FUNGSI SIMPAN & POSTING KE FEED GALERI REALTIME
+  function saveAndShareToFeed() {
+    const senderName = document.getElementById('input-sender-name').value.trim() || "Tamu Undangan";
+    const senderMessage = document.getElementById('input-sender-message').value.trim() || "Selamat untuk kebahagiaan kalian! 💐";
+
+    // 1. Trigger Download Otomatis Ke HP Tamu
+    const a = document.createElement('a');
+    a.href = generatedDataUrl;
+    a.download = `Photobooth-${eventTitle.replace(/\s+/g, '-')}.jpg`;
+    a.click();
+
+    // 2. Simpan Data ke Firestore Collection 'posts'
+    if (typeof db !== 'undefined') {
+      db.collection('posts').add({
+        eventId: EVENT_DOC_ID,
+        name: senderName,
+        message: senderMessage,
+        photoData: generatedDataUrl,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      }).then(() => {
+        alert("Foto berhasil diunduh dan tersimpan di Galeri Kenangan!");
+        document.getElementById('input-sender-name').value = '';
+        document.getElementById('input-sender-message').value = '';
+        goToStep(1);
+      }).catch(err => {
+        console.error("Gagal simpan ke galeri:", err);
+      });
+    }
+  }
+
+  // LOAD REALTIME FEED GALERI
+  function loadRealtimeFeed() {
+    db.collection('posts')
+      .where('eventId', '==', EVENT_DOC_ID)
+      .onSnapshot(snapshot => {
+        const feedBox = document.getElementById('feed-list-box');
+        const countSpan = document.getElementById('total-posts-count');
+        feedBox.innerHTML = '';
+
+        if (snapshot.empty) {
+          feedBox.innerHTML = '<p style="font-size: 0.8rem; color: #999; text-align: center;">Belum ada foto ucapan di galeri. Jadi yang pertama!</p>';
+          countSpan.innerText = '0 Kiriman';
+          return;
+        }
+
+        countSpan.innerText = `${snapshot.size} Kiriman`;
+
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          const card = document.createElement('div');
+          card.className = 'feed-card';
+          
+          const initial = data.name ? data.name.charAt(0).toUpperCase() : 'T';
+
+          card.innerHTML = `
+            <div class="feed-user-info">
+              <div class="feed-avatar">${initial}</div>
+              <div>
+                <div class="feed-user-name">${data.name || 'Tamu Undangan'}</div>
+                <div class="feed-time">Kenangan Kebahagiaan</div>
+              </div>
+            </div>
+            <img class="feed-photo-img" src="${data.photoData}" alt="Foto Kenangan">
+            <div class="feed-message">"${data.message || ''}"</div>
+          `;
+          feedBox.appendChild(card);
+        });
+      });
   }
 </script>
 
