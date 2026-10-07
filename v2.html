@@ -80,7 +80,7 @@
       color: #FFFFFF;
       border: 1px solid var(--gold-accent);
       padding: 14px 20px;
-      font-size: 0.92rem;
+      font-size: 0.88rem;
       font-weight: 700;
       border-radius: 30px;
       cursor: pointer;
@@ -91,20 +91,38 @@
       justify-content: center;
       gap: 8px;
       transition: all 0.2s ease;
+      margin-top: 10px;
     }
 
     .btn-primary-v2:active { transform: scale(0.98); }
 
-    .btn-outline-v2 {
-      background: transparent;
+    .btn-secondary-v2 {
+      background: #FFF;
       color: var(--primary-crimson);
-      border: 1px solid var(--primary-crimson);
-      padding: 10px 18px;
-      font-size: 0.82rem;
-      font-weight: 600;
+      border: 1.5px solid var(--primary-crimson);
+      padding: 12px 18px;
+      font-size: 0.85rem;
+      font-weight: 700;
       border-radius: 30px;
       cursor: pointer;
       margin-top: 8px;
+      width: 100%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.03);
+    }
+
+    .btn-outline-v2 {
+      background: transparent;
+      color: #888;
+      border: none;
+      padding: 10px 18px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 6px;
       width: 100%;
       display: inline-flex;
       align-items: center;
@@ -336,7 +354,7 @@
       background: #FFF;
     }
 
-    /* MODAL POP-UP (LIGHTBOX UNTUK PERBESAR) */
+    /* MODAL POP-UP (LIGHTBOX) */
     .modal-overlay {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
@@ -488,7 +506,7 @@
     </button>
   </div>
 
-  <!-- STEP 4: HASIL + FORM UCAPAN -->
+  <!-- STEP 4: HASIL + 2 OPSI PENYIMPANAN -->
   <div id="step-result" class="hidden">
     <h2 class="font-serif" style="color: var(--primary-crimson); font-size: 1.7rem;">Hasil Foto Kamu</h2>
 
@@ -496,16 +514,23 @@
       <img id="result-img" style="width: 100%; border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.12);" alt="Hasil Photobooth">
     </div>
 
+    <!-- FORM INPUT NAMA & UCAPAN (OPSIONAL JIKA MAU PUBLIC) -->
     <div class="wish-form-box">
-      <label>Nama Kamu / Inisial</label>
+      <label>Nama Kamu / Inisial (Opsional jika upload ke galeri)</label>
       <input type="text" id="input-sender-name" placeholder="Misal: Budi & Sarah">
 
       <label>Pesan / Ucapan Doa Kamu</label>
       <textarea id="input-sender-message" rows="2" placeholder="Tuliskan ucapan manismu di sini..."></textarea>
     </div>
 
-    <button class="btn-primary-v2" style="margin-top: 12px;" onclick="saveAndShareToFeed()">
-      <i class="fa-solid fa-paper-plane"></i> Unduh & Simpan ke Galeri
+    <!-- OPSI 1: UNDUH + POSTING KE GALERI TAMU -->
+    <button class="btn-primary-v2" onclick="saveAndShareToFeed()">
+      <i class="fa-solid fa-paper-plane"></i> Unduh & Posting ke Galeri Tamu
+    </button>
+
+    <!-- OPSI 2: SIMPAN KHUSUS PRIVAT KE HP -->
+    <button class="btn-secondary-v2" onclick="savePrivateOnly()">
+      <i class="fa-solid fa-download"></i> Simpan Sendiri (Privat Ke HP)
     </button>
 
     <button class="btn-outline-v2" onclick="goToStep(2)">
@@ -527,7 +552,7 @@
   </div>
 </div>
 
-<!-- MODAL POP-UP UNTUK PERBESAR FOTO AKIBAT DIKLIK (LIGHTBOX) -->
+<!-- MODAL POP-UP UNTUK PERBESAR FOTO -->
 <div id="photo-modal" class="modal-overlay hidden">
   <div class="modal-card">
     <button class="modal-close-btn" onclick="closeModal()">✕</button>
@@ -718,14 +743,20 @@
     });
   }
 
-  function saveAndShareToFeed() {
-    const senderName = document.getElementById('input-sender-name').value.trim() || "Tamu Undangan";
-    const senderMessage = document.getElementById('input-sender-message').value.trim() || "Selamat untuk kebahagiaan kalian! 💐";
-
+  // FUNGSI TRIGGER DOWNLOAD GAMBAR KE HP
+  function downloadImageToPhone() {
     const a = document.createElement('a');
     a.href = generatedDataUrl;
     a.download = `Photobooth-${eventTitle.replace(/\s+/g, '-')}.jpg`;
     a.click();
+  }
+
+  // OPSI 1: UNDUH + POSTING KE GALERI FIRESTORE
+  function saveAndShareToFeed() {
+    const senderName = document.getElementById('input-sender-name').value.trim() || "Tamu Undangan";
+    const senderMessage = document.getElementById('input-sender-message').value.trim() || "Selamat untuk kebahagiaan kalian! 💐";
+
+    downloadImageToPhone();
 
     if (typeof db !== 'undefined') {
       db.collection('posts').add({
@@ -735,12 +766,19 @@
         photoData: generatedDataUrl,
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       }).then(() => {
-        alert("Foto berhasil diunduh dan tersimpan di Galeri!");
+        alert("Foto berhasil diunduh dan diposting ke Galeri!");
         document.getElementById('input-sender-name').value = '';
         document.getElementById('input-sender-message').value = '';
         goToStep(1);
       });
     }
+  }
+
+  // OPSI 2: SIMPAN PRIVAT SAJA (HANYA DOWNLOAD KE HP)
+  function savePrivateOnly() {
+    downloadImageToPhone();
+    alert("Foto berhasil disimpan secara privat ke HP kamu!");
+    goToStep(1);
   }
 
   // LOAD REALTIME FEED GRID IG 3 KOLOM
@@ -779,7 +817,6 @@
       });
   }
 
-  // MODAL PERBESAR (POP-UP LIGHTBOX)
   function openModal(name, message, photoSrc) {
     document.getElementById('modal-name').innerText = name || 'Tamu Undangan';
     document.getElementById('modal-msg').innerText = `"${message || ''}"`;
