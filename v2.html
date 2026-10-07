@@ -213,7 +213,7 @@
       border-radius: 2px;
     }
 
-    /* AREA KAMERA & KONTROL LENGKAP */
+    /* AREA KAMERA & KONTROL */
     .camera-wrapper {
       position: relative;
       width: 100%;
@@ -598,8 +598,8 @@
 
 </div>
 
-<!-- FEED GALERI PUBLIK (EXPLORE INSTAGRAM STYLE 3 KOLOM) -->
-<div class="feed-container">
+<!-- FEED GALERI PUBLIK (HANYA TAMPIL DI HALAMAN DEPAN LOBBY) -->
+<div class="feed-container" id="main-gallery-section">
   <div class="feed-header">
     <span><i class="fa-solid fa-border-all"></i> Galeri Kenangan Tamu</span>
     <span style="font-size: 0.72rem; color: #888;" id="total-posts-count">0 Kiriman</span>
@@ -677,12 +677,11 @@
   let generatedDataUrl = "";
 
   // VARIABLE KONTROL KAMERA LENGKAP
-  let currentFacingMode = "user";
   let isMirror = true;
-  let timerDuration = 3; // Opsi: 3, 5, 0 (OFF)
-  let zoomLevel = 1;      // Opsi: 1, 1.5, 2, 0.5
+  let timerDuration = 3; // 3, 5, 0
+  let zoomLevel = 1;      // 1, 1.5, 2, 0.5
   let availableVideoDevices = [];
-  let currentDeviceId = null;
+  let currentCameraIndex = 0;
 
   function goToStep(step) {
     ['step-welcome', 'step-template', 'step-camera', 'step-result'].forEach(id => {
@@ -690,6 +689,14 @@
     });
     const map = {1:'step-welcome', 2:'step-template', 3:'step-camera', 4:'step-result'};
     document.getElementById(map[step]).classList.remove('hidden');
+
+    // HANYA TAMPILKAN GALERI DI HALAMAN PERTAMA (WELCOME SCREEN)
+    const gallerySection = document.getElementById('main-gallery-section');
+    if (step === 1) {
+      gallerySection.classList.remove('hidden');
+    } else {
+      gallerySection.classList.add('hidden');
+    }
   }
 
   function selectPhotoCount(count, btn) {
@@ -716,9 +723,13 @@
       videoStream.getTracks().forEach(track => track.stop());
     }
 
-    let constraints = { video: { facingMode: currentFacingMode } };
-    if (currentDeviceId) {
-      constraints = { video: { deviceId: { exact: currentDeviceId } } };
+    let constraints = { video: { facingMode: "user" } };
+
+    if (availableVideoDevices.length > 0) {
+      const selectedDevice = availableVideoDevices[currentCameraIndex];
+      if (selectedDevice) {
+        constraints = { video: { deviceId: { exact: selectedDevice.deviceId } } };
+      }
     }
 
     navigator.mediaDevices.getUserMedia(constraints)
@@ -733,7 +744,7 @@
       })
       .catch(err => {
         console.error("Gagal membuka kamera:", err);
-        alert("Gagal membuka kamera. Harap beri izin akses kamera di browser kamu!");
+        alert("Gagal membuka kamera. Harap beri izin akses kamera di browser!");
       });
   }
 
@@ -753,9 +764,9 @@
       select.style.display = 'block';
       availableVideoDevices.forEach((device, idx) => {
         const option = document.createElement('option');
-        option.value = device.deviceId;
+        option.value = idx;
         option.text = device.label || `Kamera ${idx + 1}`;
-        if (currentDeviceId && device.deviceId === currentDeviceId) {
+        if (idx === currentCameraIndex) {
           option.selected = true;
         }
         select.appendChild(option);
@@ -763,9 +774,11 @@
     });
   }
 
+  // SWITCH KAMERA BERPUTAR KE SEMUA KAMERA YANG DETECTED
   function switchCamera() {
-    currentFacingMode = (currentFacingMode === "user") ? "environment" : "user";
-    currentDeviceId = null;
+    if (availableVideoDevices.length > 1) {
+      currentCameraIndex = (currentCameraIndex + 1) % availableVideoDevices.length;
+    }
     initCameraStream();
   }
 
@@ -803,8 +816,8 @@
     video.style.transform = transformStr;
   }
 
-  function onCameraSelectChange(deviceId) {
-    currentDeviceId = deviceId;
+  function onCameraSelectChange(indexVal) {
+    currentCameraIndex = parseInt(indexVal);
     initCameraStream();
   }
 
@@ -815,17 +828,14 @@
     goToStep(2);
   }
 
-  // AMBIL FOTO SNAPSHOT DENGAN TIMER / TIMER OFF
   function takePhotoSnap() {
     document.getElementById('btn-snap').disabled = true;
 
-    // JIKA TIMER OFF (0s)
     if (timerDuration === 0) {
       executeSnapCapture();
       return;
     }
 
-    // JIKA TIMER 3s ATAU 5s
     let count = timerDuration;
     const overlay = document.getElementById('countdown-overlay');
     overlay.innerText = count;
@@ -843,7 +853,6 @@
     }, 1000);
   }
 
-  // JEPET FOTO KE CANVAS
   function executeSnapCapture() {
     const flash = document.getElementById('flash-overlay');
     flash.classList.add('active');
@@ -861,7 +870,6 @@
       ctx.scale(-1, 1);
     }
 
-    // Efek Zoom pada Canvas Output
     if (zoomLevel !== 1) {
       const sw = tempCanvas.width / zoomLevel;
       const sh = tempCanvas.height / zoomLevel;
@@ -888,7 +896,6 @@
     }
   }
 
-  // RENDER CANVASES
   function renderPhotostripV2() {
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
@@ -972,7 +979,6 @@
     goToStep(1);
   }
 
-  // LOAD REALTIME FEED GRID IG 3 KOLOM
   function loadRealtimeFeedIG() {
     db.collection('posts')
       .where('eventId', '==', EVENT_DOC_ID)
