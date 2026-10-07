@@ -975,11 +975,27 @@
     a.click();
   }
 
+  // FUNGSI UNDUH FOTO DENGAN FORMAT: [Nama Tamu] - [Nama Klien].jpg
+  function downloadImageToPhone(senderName) {
+    const nameGuest = senderName ? senderName.replace(/[^\w\s-]/gi, '').trim() : "Tamu";
+    const nameClient = eventTitle ? eventTitle.replace(/[^\w\s-]/gi, '').trim() : "FOTOME";
+
+    // Format Nama File Unduhan
+    const fileName = `${nameGuest} - ${nameClient}.jpg`;
+
+    const a = document.createElement('a');
+    a.href = generatedDataUrl;
+    a.download = fileName;
+    a.click();
+  }
+
+  // OPSI 1: UNDUH & POSTING KE GALERI TAMU
   function saveAndShareToFeed() {
     const senderName = document.getElementById('input-sender-name').value.trim() || "Tamu Undangan";
     const senderMessage = document.getElementById('input-sender-message').value.trim() || "Selamat untuk kebahagiaan kalian! 💐";
 
-    downloadImageToPhone();
+    // Unduh foto dengan nama file custom
+    downloadImageToPhone(senderName);
 
     if (typeof db !== 'undefined') {
       db.collection('posts').add({
@@ -997,8 +1013,10 @@
     }
   }
 
+  // OPSI 2: SIMPAN PRIVAT KE HP
   function savePrivateOnly() {
-    downloadImageToPhone();
+    const senderName = document.getElementById('input-sender-name').value.trim() || "Tamu";
+    downloadImageToPhone(senderName);
     alert("Foto berhasil disimpan secara privat ke HP kamu!");
     goToStep(1);
   }
