@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Super Admin Switcher - FOTOME</title>
+  <title>Super Admin Dynamic - FOTOME</title>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     body {
@@ -13,27 +13,68 @@
       color: #3D2B2B;
     }
     .admin-container {
-      max-width: 500px;
+      max-width: 520px;
       margin: 0 auto;
       background: #FFF;
       border-radius: 20px;
       padding: 25px;
       box-shadow: 0 10px 25px rgba(0,0,0,0.08);
     }
+    .form-card {
+      background: #FAF6EE;
+      border: 1px solid rgba(216, 180, 180, 0.4);
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 25px;
+    }
+    .form-group {
+      margin-bottom: 12px;
+      text-align: left;
+    }
+    .form-group label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #8C6262;
+      margin-bottom: 4px;
+    }
+    .form-group input {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #D8B4B4;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 0.85rem;
+      outline: none;
+    }
+    .btn-add {
+      background: #8C6262;
+      color: #FFF;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 20px;
+      font-weight: 700;
+      cursor: pointer;
+      width: 100%;
+      font-size: 0.85rem;
+    }
     .event-card {
       border: 1px solid #EAE0E0;
       border-radius: 14px;
-      padding: 15px;
-      margin-top: 15px;
+      padding: 14px 16px;
+      margin-top: 12px;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      background: #FFF;
     }
     .badge {
       padding: 4px 10px;
       border-radius: 12px;
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       font-weight: 700;
+      display: inline-block;
+      margin-top: 4px;
     }
     .badge-on { background: #E8F5E9; color: #2E7D32; }
     .badge-off { background: #FFEBEE; color: #C62828; }
@@ -44,7 +85,19 @@
       font-weight: 600;
       cursor: pointer;
       font-size: 0.8rem;
+      color: #FFF;
     }
+    .btn-on { background: #C62828; }
+    .btn-off { background: #2E7D32; }
+    .btn-delete {
+      background: transparent;
+      border: none;
+      color: #AAA;
+      cursor: pointer;
+      font-size: 0.9rem;
+      margin-left: 10px;
+    }
+    .btn-delete:hover { color: #C62828; }
   </style>
 
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -54,56 +107,105 @@
 <body>
 
 <div class="admin-container">
-  <h2>Saklar Kontrol Photobooth</h2>
-  <p style="font-size:0.8rem; color:#777;">Aktifkan/nonaktifkan akses halaman virtual photobooth per projek.</p>
+  <h2 style="font-size: 1.5rem; color: #8C6262; margin-bottom: 5px;">Kontrol Saklar Photobooth</h2>
+  <p style="font-size: 0.8rem; color: #777; margin-bottom: 20px;">Tambah projek HTML baru dan atur akses ON/OFF secara otomatis.</p>
 
-  <!-- EVENT 1: Main Project (index.html) -->
-  <div class="event-card">
-    <div>
-      <strong>1. index.html</strong><br>
-      <span id="status-1" class="badge badge-off">Memuat...</span>
+  <!-- FORM TAMBAH PROJEK BARU -->
+  <div class="form-card">
+    <h3 style="font-size: 0.95rem; color: #8C6262; margin-bottom: 10px;">➕ Tambah Projek Baru</h3>
+    <div class="form-group">
+      <label>Nama File / Nama Client (misal: clien1.html)</label>
+      <input type="text" id="input-filename" placeholder="clien1.html">
     </div>
-    <button id="btn-1" class="btn-toggle" onclick="toggleStatus('wedding_event', isStatus1Active)">Ubah</button>
+    <div class="form-group">
+      <label>ID Dokumen Firestore (misal: clien1_event)</label>
+      <input type="text" id="input-docid" placeholder="clien1_event">
+    </div>
+    <button class="btn-add" onclick="addNewProject()">Tambah ke Daftar Saklar</button>
   </div>
 
-  <!-- EVENT 2: Rudi Project (rudi.html) -->
-  <div class="event-card">
-    <div>
-      <strong>2. rudi.html</strong><br>
-      <span id="status-2" class="badge badge-off">Memuat...</span>
-    </div>
-    <button id="btn-2" class="btn-toggle" onclick="toggleStatus('rudi_event', isStatus2Active)">Ubah</button>
+  <h3 style="font-size: 1rem; text-align: left; color: #3D2B2B; margin-bottom: 10px;">Daftar Projek Aktif</h3>
+  <div id="project-list-container">
+    <p style="font-size: 0.8rem; color: #999;">Memuat daftar projek...</p>
   </div>
 </div>
 
 <script>
-  let isStatus1Active = false;
-  let isStatus2Active = false;
+  // LOAD DAFTAR PROJEK SECARA DYNAMIC DARI FIRESTORE
+  db.collection('settings').onSnapshot(snapshot => {
+    const container = document.getElementById('project-list-container');
+    container.innerHTML = '';
 
-  // Realtime Listener index.html (wedding_event)
-  db.collection('settings').doc('wedding_event').onSnapshot(doc => {
-    if (doc.exists) {
-      isStatus1Active = doc.data().isActive === true;
-      document.getElementById('status-1').innerText = isStatus1Active ? "ONLINE / ON" : "OFFLINE / OFF";
-      document.getElementById('status-1').className = "badge " + (isStatus1Active ? "badge-on" : "badge-off");
-      document.getElementById('btn-1').innerText = isStatus1Active ? "Matikan" : "Aktifkan";
+    if (snapshot.empty) {
+      container.innerHTML = '<p style="font-size: 0.8rem; color: #999;">Belum ada projek terdaftar.</p>';
+      return;
     }
+
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      const docId = doc.id;
+      const fileName = data.fileName || docId;
+      const isActive = data.isActive === true;
+
+      const card = document.createElement('div');
+      card.className = 'event-card';
+      card.innerHTML = `
+        <div style="text-align: left;">
+          <strong style="font-size: 0.9rem;">${fileName}</strong><br>
+          <span style="font-size: 0.7rem; color: #888;">ID: ${docId}</span><br>
+          <span class="badge ${isActive ? 'badge-on' : 'badge-off'}">
+            ${isActive ? 'ONLINE / ON' : 'OFFLINE / OFF'}
+          </span>
+        </div>
+        <div style="display: flex; align-items: center;">
+          <button class="btn-toggle ${isActive ? 'btn-on' : 'btn-off'}" onclick="toggleEventStatus('${docId}', ${isActive})">
+            ${isActive ? 'Matikan (OFF)' : 'Aktifkan (ON)'}
+          </button>
+          <button class="btn-delete" title="Hapus dari daftar" onclick="deleteProject('${docId}')">🗑️</button>
+        </div>
+      `;
+      container.appendChild(card);
+    });
+  }, error => {
+    console.error("Firestore Error:", error);
   });
 
-  // Realtime Listener rudi.html (rudi_event)
-  db.collection('settings').doc('rudi_event').onSnapshot(doc => {
-    if (doc.exists) {
-      isStatus2Active = doc.data().isActive === true;
-      document.getElementById('status-2').innerText = isStatus2Active ? "ONLINE / ON" : "OFFLINE / OFF";
-      document.getElementById('status-2').className = "badge " + (isStatus2Active ? "badge-on" : "badge-off");
-      document.getElementById('btn-2').innerText = isStatus2Active ? "Matikan" : "Aktifkan";
-    }
-  });
+  // FUNGSI TAMBAH PROJEK BARU
+  function addNewProject() {
+    const fileName = document.getElementById('input-filename').value.trim();
+    const docId = document.getElementById('input-docid').value.trim();
 
-  function toggleStatus(docId, currentStatus) {
+    if (!fileName || !docId) {
+      alert("Harap isi Nama File dan ID Dokumen!");
+      return;
+    }
+
+    db.collection('settings').doc(docId).set({
+      fileName: fileName,
+      isActive: true,
+      title: "Riyan & Amelia",
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    }, { merge: true })
+    .then(() => {
+      alert(`Projek "${fileName}" berhasil ditambahkan!`);
+      document.getElementById('input-filename').value = '';
+      document.getElementById('input-docid').value = '';
+    })
+    .catch(err => alert("Gagal menambah projek: " + err.message));
+  }
+
+  // FUNGSI SAKLAR ON/OFF
+  function toggleEventStatus(docId, currentStatus) {
     db.collection('settings').doc(docId).set({
       isActive: !currentStatus
     }, { merge: true });
+  }
+
+  // FUNGSI HAPUS PROJEK
+  function deleteProject(docId) {
+    if (confirm(`Apakah kamu yakin ingin menghapus projek dengan ID "${docId}" dari Super Admin?`)) {
+      db.collection('settings').doc(docId).delete();
+    }
   }
 </script>
 
