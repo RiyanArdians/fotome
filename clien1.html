@@ -147,7 +147,7 @@
       border-radius: 20px;
       outline: none;
       cursor: pointer;
-      max-width: 130px;
+      max-width: 140px;
       text-overflow: ellipsis;
       box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     }
@@ -470,7 +470,6 @@
       align-items: center;
     }
 
-    /* DESAIN BODY KAMERA POLAROID LEBAR PRESISI (320px) */
     .polaroid-camera-body {
       width: 320px;
       height: 110px;
@@ -486,7 +485,6 @@
       justify-content: center;
     }
 
-    /* LENSA KAMERA PRESISI PROPORSI */
     .camera-lens {
       width: 60px;
       height: 60px;
@@ -496,7 +494,6 @@
       box-shadow: 0 4px 8px rgba(0,0,0,0.25);
     }
 
-    /* ACCENTS KAMERA */
     .camera-flash {
       position: absolute;
       top: 18px;
@@ -519,7 +516,6 @@
       border-radius: 3px;
     }
 
-    /* CELAH / SLOT KELUAR FOTO SEJAJAR PRESISI FRAME (320px) */
     .camera-slot {
       width: 320px;
       height: 14px;
@@ -530,7 +526,6 @@
       box-shadow: inset 0 3px 6px rgba(0,0,0,0.85), 0 2px 4px rgba(0,0,0,0.15);
     }
 
-    /* WADAH FOTO CLIPPING ANIMASI SLOW EJECT */
     .photo-eject-wrapper {
       width: 320px;
       overflow: hidden;
@@ -555,7 +550,6 @@
       transition: transform 4.5s cubic-bezier(0.15, 0.85, 0.35, 1);
     }
 
-    /* FOOTER APPLICATION SANGAT ELEGAN & SIMPEL */
     .app-footer {
       margin-top: 20px;
       font-size: 0.68rem;
@@ -614,7 +608,6 @@
     <!-- Pilihan 2: Visual Card Desain -->
     <p class="option-title">2. PILIH DESAIN</p>
     <div class="design-grid">
-      <!-- 1. Calla Lily -->
       <div class="design-card active" onclick="selectDesignStyle('floral', this)">
         <div class="preview-box design1">
           <img src="./assets/calla-lily-corner.png" class="preview-img-corner" alt="Lily" onerror="this.style.display='none'">
@@ -624,7 +617,6 @@
         <strong style="font-size:0.75rem; color:var(--text-dark);">1. Calla Lily</strong>
       </div>
 
-      <!-- 2. Recipe -->
       <div class="design-card" onclick="selectDesignStyle('receipt', this)">
         <div class="preview-box design2">
           <i class="fa-solid fa-receipt" style="font-size: 1.1rem; color: #333;"></i>
@@ -633,7 +625,6 @@
         <strong style="font-size:0.75rem; color:var(--text-dark);">2. Recipe</strong>
       </div>
 
-      <!-- 3. Wavy Red -->
       <div class="design-card" onclick="selectDesignStyle('wavy_red', this)">
         <div class="preview-box design3">
           <div class="preview-photo"></div>
@@ -642,7 +633,6 @@
         <strong style="font-size:0.75rem; color:var(--text-dark);">3. Wavy Red</strong>
       </div>
 
-      <!-- 4. Basic -->
       <div class="design-card" onclick="selectDesignStyle('fotome_brand', this)">
         <div class="preview-box design4">
           <div class="preview-photo"></div>
@@ -651,7 +641,6 @@
         <strong style="font-size:0.75rem; color:var(--text-dark);">4. Basic</strong>
       </div>
 
-      <!-- 5. Engagement -->
       <div class="design-card" onclick="selectDesignStyle('engagement', this)">
         <div class="preview-box design5">
           <div class="preview-photo"></div>
@@ -703,45 +692,36 @@
   <!-- HALAMAN 3: AREA KAMERA -->
   <div id="step-camera" class="hidden">
     <div class="camera-header-info">
-      <!-- KETERANGAN JUMLAH JEPRETAN DI ATAS -->
       <span class="photo-progress" id="photo-count-text">Foto 1 dari 3</span>
 
-      <!-- 3 TOMBOL KONTROL DI BAWAHNYA: TIMER, FLASH, DROPDOWN PILIHAN KAMERA -->
       <div class="cam-controls-row">
-        <!-- TOMBOL 1: TIMER -->
         <button id="btn-toggle-timer" class="btn-switch-cam" onclick="toggleTimerMode()">
           <i class="fa-solid fa-stopwatch"></i> <span id="timer-toggle-text">Timer: ON</span>
         </button>
 
-        <!-- TOMBOL 2: FLASH -->
         <button id="btn-toggle-flash" class="btn-switch-cam" onclick="toggleFlashMode()">
           <i class="fa-solid fa-bolt"></i> <span id="flash-toggle-text">Flash: ON</span>
         </button>
 
-        <!-- TOMBOL 3: DROPDOWN KAMERA (HP / WEBCAM / USB / DSLR) -->
         <select id="camera-select" class="camera-select-dropdown" onchange="onCameraDeviceChange(this.value)">
           <option value="">Memuat Kamera...</option>
         </select>
       </div>
     </div>
 
-    <!-- AREA PREVIEW KAMERA -->
     <div class="camera-wrapper">
       <video id="video" class="mirror" autoplay playsinline></video>
       <div id="countdown-overlay" class="countdown-overlay hidden">3</div>
       <div id="flash-overlay" class="flash-overlay"></div>
     </div>
 
-    <!-- SLIDER PENGATUR ZOOM & BRIGHTNESS (REALTIME) -->
     <div class="slider-adjust-wrapper">
-      <!-- SLIDER ZOOM -->
       <div class="slider-item">
         <label for="zoom-slider"><i class="fa-solid fa-magnifying-glass-plus"></i> Zoom:</label>
         <input type="range" id="zoom-slider" min="1" max="2.5" step="0.1" value="1" oninput="updateCameraAdjustments()">
         <span id="zoom-val" class="slider-val">1.0x</span>
       </div>
 
-      <!-- SLIDER BRIGHTNESS -->
       <div class="slider-item">
         <label for="brightness-slider"><i class="fa-solid fa-sun"></i> Cahaya:</label>
         <input type="range" id="brightness-slider" min="0.7" max="1.5" step="0.05" value="1" oninput="updateCameraAdjustments()">
@@ -757,12 +737,11 @@
     </button>
   </div>
 
-  <!-- HALAMAN 4: HASIL FOTO DENGAN ANIMASI POLAROID PRESISI -->
+  <!-- HALAMAN 4: HASIL FOTO -->
   <div id="step-result" class="hidden">
     <h2 class="font-serif" style="color: var(--dusty-rose); font-size: 1.85rem;">Hasil Photobooth Kamu</h2>
     <p style="font-size: 0.82rem; color: #735757;">Terima kasih telah berbagi kebahagiaan!</p>
 
-    <!-- ANATOMI KAMERA POLAROID LEBAR PRESISI (320px) -->
     <div class="polaroid-container">
       <div class="polaroid-camera-body">
         <div class="camera-flash"></div>
@@ -793,20 +772,16 @@
 
 </div>
 
-<!-- FOOTER WEB -->
 <div class="app-footer">
   FOTOME by Riyan Ardiansyah
 </div>
 
-<!-- Canvas Tersembunyi -->
 <canvas id="canvas"></canvas>
 
-<!-- ========================================================= -->
-<!-- 1. SISTEM SAKLAR ON/OFF FIREBASE REALTIME                 -->
-<!-- ========================================================= -->
+<!-- 1. SISTEM SAKLAR ON/OFF FIREBASE REALTIME -->
 <script>
-  // Ganti ID dokumen khusus untuk Client 1
-const EVENT_DOC_ID = 'clien1_event';
+  // UBAH ID DOKUMEN INI UNTUK KLIENT LAIN (misal: 'clien1_event')
+  const EVENT_DOC_ID = 'clien1_event'; 
 
   let dynamicTitle = "Riyan & Amelia";
 
@@ -822,7 +797,6 @@ const EVENT_DOC_ID = 'clien1_event';
 
         let lockOverlay = document.getElementById('lock-overlay');
 
-        // JIKA STATUS EVENT OFF -> TAMPILKAN OVERLAY PENGUNCI
         if (data.isActive === false) {
           if (!lockOverlay) {
             lockOverlay = document.createElement('div');
@@ -850,7 +824,6 @@ const EVENT_DOC_ID = 'clien1_event';
             document.body.style.overflow = 'hidden';
           }
         } else {
-          // JIKA STATUS EVENT ON -> HAPUS OVERLAY PENGUNCI
           if (lockOverlay) {
             lockOverlay.remove();
             document.body.style.overflow = 'auto';
@@ -863,9 +836,7 @@ const EVENT_DOC_ID = 'clien1_event';
   }
 </script>
 
-<!-- ========================================================= -->
-<!-- 2. LOGIKA MURNI PHOTOBOOTH (MURNI KODE LAMA)             -->
-<!-- ========================================================= -->
+<!-- 2. LOGIKA MURNI PHOTOBOOTH (TERFILTER MAKSIMAL 2 KAMERA) -->
 <script>
   let targetPhotoCount = 3;
   let selectedDesignStyle = 'floral'; 
@@ -875,13 +846,10 @@ const EVENT_DOC_ID = 'clien1_event';
   let currentSelectedDeviceId = null;
   let currentStream = null;
 
-  // SYSTEM TIMER & FLASH CONFIGURATION
   let isTimerEnabled = true;
   let isFlashEnabled = true;
   let manualPhotoIndex = 0;
-  let isCapturingSession = false;
 
-  // LOAD ASSET GAMBAR
   const lilyAsset = new Image();
   lilyAsset.src = './assets/calla-lily-corner.png';
 
@@ -923,7 +891,6 @@ const EVENT_DOC_ID = 'clien1_event';
     document.querySelectorAll('.design-card').forEach(el => el.classList.remove('active'));
     element.classList.add('active');
 
-    // MENGATUR SISTEM DYNAMIC DISABLE UNTUK PILIHAN WARNA
     const colorWrapper = document.getElementById('color-section-wrapper');
     if (styleName === 'receipt' || styleName === 'wavy_red' || styleName === 'fotome_brand') {
       colorWrapper.classList.add('disabled');
@@ -940,19 +907,15 @@ const EVENT_DOC_ID = 'clien1_event';
 
   function toggleTimerMode() {
     isTimerEnabled = !isTimerEnabled;
-    const label = document.getElementById('timer-toggle-text');
-    label.innerText = isTimerEnabled ? "Timer: ON" : "Timer: OFF";
-
+    document.getElementById('timer-toggle-text').innerText = isTimerEnabled ? "Timer: ON" : "Timer: OFF";
     updateSnapButtonUI();
   }
 
   function toggleFlashMode() {
     isFlashEnabled = !isFlashEnabled;
-    const label = document.getElementById('flash-toggle-text');
-    label.innerText = isFlashEnabled ? "Flash: ON" : "Flash: OFF";
+    document.getElementById('flash-toggle-text').innerText = isFlashEnabled ? "Flash: ON" : "Flash: OFF";
   }
 
-  // FUNGSI REALTIME UNTUK SLIDER ZOOM DAN BRIGHTNESS
   function updateCameraAdjustments() {
     const zoomVal = parseFloat(document.getElementById('zoom-slider').value);
     const brightnessVal = parseFloat(document.getElementById('brightness-slider').value);
@@ -960,7 +923,6 @@ const EVENT_DOC_ID = 'clien1_event';
     document.getElementById('zoom-val').innerText = zoomVal.toFixed(1) + 'x';
     document.getElementById('brightness-val').innerText = Math.round(brightnessVal * 100) + '%';
 
-    // Cek apakah kamera aktif diposisikan mirror (kamera depan HP)
     const isFrontCamera = video.classList.contains('mirror');
     const mirrorScale = isFrontCamera ? -1 : 1;
     video.style.transform = `scaleX(${mirrorScale}) scale(${zoomVal})`;
@@ -971,9 +933,7 @@ const EVENT_DOC_ID = 'clien1_event';
     goToStep(3);
     capturedPhotos = [];
     manualPhotoIndex = 0;
-    isCapturingSession = false;
 
-    // Reset slider ke nilai default
     document.getElementById('zoom-slider').value = 1;
     document.getElementById('brightness-slider').value = 1;
 
@@ -994,7 +954,7 @@ const EVENT_DOC_ID = 'clien1_event';
     }
   }
 
-  // DETEKSI OTOMATIS & DIBATASI MANTAP HANYA 1 KAMERA DEPAN & 1 KAMERA BELAKANG
+  // POPULATE CAMERA DENGAN FILTER RINGKAS (MAKS 2 OPERASI KAMERA)
   async function populateCameraDevices() {
     const cameraSelect = document.getElementById('camera-select');
     try {
@@ -1008,7 +968,6 @@ const EVENT_DOC_ID = 'clien1_event';
         return;
       }
 
-      // Cari sensor kamera depan & belakang terbaik
       let frontCam = videoDevices.find(d => {
         const label = (d.label || '').toLowerCase();
         return label.includes('front') || label.includes('user') || label.includes('depan');
@@ -1019,11 +978,9 @@ const EVENT_DOC_ID = 'clien1_event';
         return label.includes('back') || label.includes('environment') || label.includes('belakang');
       });
 
-      // Fallback jika label browser belum memberikan nama lengkap
       if (!frontCam && videoDevices.length > 0) frontCam = videoDevices[0];
       if (!backCam && videoDevices.length > 1) backCam = videoDevices[1];
 
-      // Susun daftar ringkas max 2 pilihan utama saja
       let filteredDevices = [];
       if (frontCam) {
         filteredDevices.push({ deviceId: frontCam.deviceId, label: '📷 Kamera Depan' });
@@ -1032,7 +989,6 @@ const EVENT_DOC_ID = 'clien1_event';
         filteredDevices.push({ deviceId: backCam.deviceId, label: '📸 Kamera Belakang' });
       }
 
-      // Jika karena suatu hal tidak terfilter, tampilkan opsi dasar tanpa duplikat berlebih
       if (filteredDevices.length === 0) {
         videoDevices.slice(0, 2).forEach((device, index) => {
           filteredDevices.push({
@@ -1042,7 +998,6 @@ const EVENT_DOC_ID = 'clien1_event';
         });
       }
 
-      // Masukkan ke dalam Dropdown HTML
       filteredDevices.forEach(item => {
         const option = document.createElement('option');
         option.value = item.deviceId;
@@ -1056,35 +1011,6 @@ const EVENT_DOC_ID = 'clien1_event';
 
       if (!currentSelectedDeviceId && filteredDevices.length > 0) {
         currentSelectedDeviceId = filteredDevices[0].deviceId;
-      }
-    } catch (e) {
-      console.log("Error enumerateDevices:", e);
-    }
-  }
-
-      videoDevices.forEach((device, index) => {
-        const option = document.createElement('option');
-        option.value = device.deviceId;
-        
-        // Buat nama label kamera yang jelas
-        let label = device.label || `Kamera ${index + 1}`;
-        if (label.toLowerCase().includes('front') || label.toLowerCase().includes('user')) {
-          label = '📷 Kamera Depan';
-        } else if (label.toLowerCase().includes('back') || label.toLowerCase().includes('environment')) {
-          label = '📷 Kamera Belakang';
-        } else {
-          label = `🔌 ${label}`;
-        }
-
-        option.text = label;
-        if (currentSelectedDeviceId && device.deviceId === currentSelectedDeviceId) {
-          option.selected = true;
-        }
-        cameraSelect.appendChild(option);
-      });
-
-      if (!currentSelectedDeviceId && videoDevices.length > 0) {
-        currentSelectedDeviceId = videoDevices[0].deviceId;
       }
     } catch (e) {
       console.log("Error enumerateDevices:", e);
@@ -1112,7 +1038,6 @@ const EVENT_DOC_ID = 'clien1_event';
       currentStream = stream;
       video.srcObject = stream;
 
-      // Cek apakah kamera yang aktif adalah kamera depan/user
       const track = stream.getVideoTracks()[0];
       const settings = track.getSettings ? track.getSettings() : {};
       const label = (track.label || '').toLowerCase();
@@ -1138,7 +1063,6 @@ const EVENT_DOC_ID = 'clien1_event';
     openCameraStream();
   }
 
-  // SINKRONISASI KILATAN HARDWARE SAMA SEPERTI APLIKASI KAMERA HP
   function turnHardwareTorch(state) {
     if (!currentStream) return;
     const track = currentStream.getVideoTracks()[0];
@@ -1154,7 +1078,6 @@ const EVENT_DOC_ID = 'clien1_event';
     turnHardwareTorch(false);
   }
 
-  // LOGIKA DOUBLE FLASH (PRE-FLASH + MAIN FLASH PADA JEPRETAN)
   async function triggerDoubleFlashSequence() {
     flashOverlay.style.opacity = '0.4';
     turnHardwareTorch(true);
@@ -1173,7 +1096,6 @@ const EVENT_DOC_ID = 'clien1_event';
     turnHardwareTorch(false);
   }
 
-  // LOGIKA PEMILIHAN OTOMATIS / MANUAL PRESS SNAP
   async function handleSnapButtonClick() {
     if (isTimerEnabled) {
       startAutoPhotoSequence();
@@ -1182,7 +1104,6 @@ const EVENT_DOC_ID = 'clien1_event';
     }
   }
 
-  // 1. OTOMATIS DENGAN TIMER (3 Detik)
   async function startAutoPhotoSequence() {
     document.getElementById('btn-snap').disabled = true;
     document.getElementById('btn-snap').style.opacity = '0.5';
@@ -1213,7 +1134,6 @@ const EVENT_DOC_ID = 'clien1_event';
     document.getElementById('btn-snap').style.opacity = '1';
   }
 
-  // 2. MANUAL PENCET SESUAI KEINGINAN (Timer OFF)
   async function captureManualSinglePhoto() {
     if (isFlashEnabled) {
       await triggerDoubleFlashSequence();
@@ -1272,20 +1192,17 @@ const EVENT_DOC_ID = 'clien1_event';
 
     ctx.save();
 
-    // TERAPKAN EFEK BRIGHTNESS (TERMASUK DORONGAN EKSTRA DARI FLASH JIKA ON)
     let totalBrightness = brightnessVal;
     if (isFlashEnabled) {
       totalBrightness *= 1.22;
     }
     ctx.filter = `brightness(${totalBrightness}) contrast(1.05)`;
 
-    // TERAPKAN FLIP MIRROR JIKA KAMERA DIPASANG MIRROR
     if (video.classList.contains('mirror')) {
       ctx.translate(w, 0);
       ctx.scale(-1, 1);
     }
 
-    // TERAPKAN EFEK ZOOM CROP PADA CANVAS DENGAN PRESISI
     const cropW = w / zoomVal;
     const cropH = h / zoomVal;
     const cropX = (w - cropW) / 2;
@@ -1342,7 +1259,6 @@ const EVENT_DOC_ID = 'clien1_event';
       drawWavyRect(ctx, x, y, size, size, 8, 8, 10);
       ctx.clip();
     } else if (designStyle === 'engagement') {
-      // VARIASI BORDER POLAROID ASIMETRIS BERSIH
       const photoDisplaySize = 400;
       const topPad = 22;
       const sidePadLeft = (index % 2 === 0) ? 35 : 18;
@@ -1355,7 +1271,6 @@ const EVENT_DOC_ID = 'clien1_event';
       const frameW = photoDisplaySize + sidePadLeft + sidePadRight;
       const frameH = photoDisplaySize + topPad + bottomPad;
 
-      // Draw Background Frame Putih
       ctx.fillStyle = "#FFFFFF";
       ctx.fillRect(frameX, frameY, frameW, frameH);
 
@@ -1366,7 +1281,6 @@ const EVENT_DOC_ID = 'clien1_event';
       x = customX;
       size = photoDisplaySize;
     } else if (designStyle === 'fotome_brand') {
-      // DESAIN 4 (BASIC) - BINGKAI FOTO MODERN DENGAN EFEK BAYANGAN (DROP SHADOW)
       ctx.shadowColor = "rgba(140, 43, 56, 0.25)";
       ctx.shadowBlur = 24;
       ctx.shadowOffsetX = 0;
@@ -1377,7 +1291,6 @@ const EVENT_DOC_ID = 'clien1_event';
       ctx.roundRect(x - 10, y - 10, size + 20, size + 20, 16);
       ctx.fill();
 
-      // Reset shadow untuk kliping foto
       ctx.shadowColor = "transparent";
 
       ctx.beginPath();
@@ -1417,7 +1330,6 @@ const EVENT_DOC_ID = 'clien1_event';
       ctx.stroke();
       ctx.restore();
     } else if (designStyle === 'fotome_brand') {
-      // GARIS TEPI ELEGANT SANGAT HALUS
       ctx.save();
       ctx.strokeStyle = "rgba(140, 43, 56, 0.35)";
       ctx.lineWidth = 2;
@@ -1468,7 +1380,6 @@ const EVENT_DOC_ID = 'clien1_event';
     ctx.restore();
   }
 
-  // HEADER DESAIN 4: BASIC (TEKS "CATCH THE MOMENT")
   function drawChatHeaderBar(ctx, width, textColor) {
     ctx.save();
     ctx.fillStyle = "#8C2B38";
@@ -1479,7 +1390,6 @@ const EVENT_DOC_ID = 'clien1_event';
     ctx.restore();
   }
 
-  // DRAWING CHAT MENU BOX UNTUK DESAIN 4
   function drawChatMenuBox(ctx, x, y, width, height) {
     ctx.save();
     ctx.fillStyle = "rgba(255, 255, 255, 0.92)";
@@ -1523,12 +1433,10 @@ const EVENT_DOC_ID = 'clien1_event';
     ctx.restore();
   }
 
-  // RENDER CANVAS UTAMA PHOTOSTRIP
   function renderPhotostrip() {
     const stripWidth = 600;
     const photoBoxSize = 420;
     
-    // Penyesuaian Tinggi Header & Footer
     let headerHeight = 100;
     let footerHeight = 220;
 
@@ -1545,7 +1453,6 @@ const EVENT_DOC_ID = 'clien1_event';
     canvas.height = stripHeight;
     const ctx = canvas.getContext('2d');
 
-    // TEMA WARNA DYNAMIC BACKGROUND BISA DIPILIH UNTUK DESAIN 5 & LAINNYA
     let cardInnerColor = "#F9F1F1";
     let textColor = "#8C6262";
     let badgeBgColor = "#FFFFFF";
@@ -1561,11 +1468,9 @@ const EVENT_DOC_ID = 'clien1_event';
     else if (selectedDesignStyle === 'receipt') { cardInnerColor = "#F5F4F0"; textColor = "#111111"; }
     else if (selectedDesignStyle === 'fotome_brand') { cardInnerColor = "#FAFAFA"; textColor = "#111111"; }
 
-    // 1. Latar Belakang Utama
     ctx.fillStyle = cardInnerColor;
     ctx.fillRect(0, 0, stripWidth, stripHeight);
 
-    // 2. HEADER ORNAMEN BERDASARKAN DESAIN
     if (selectedDesignStyle === 'floral') {
       drawCallaLilyOuterCorner(ctx, 0, 0, 420, 320, false, false);
       drawCallaLilyOuterCorner(ctx, stripWidth, stripHeight, 440, 340, true, true);
@@ -1598,7 +1503,6 @@ const EVENT_DOC_ID = 'clien1_event';
       ctx.fillText("03:31", stripWidth - 60, 180);
       ctx.fillText("04:00", stripWidth - 60, 205);
 
-      // SIMBOL INFINITY (∞) DIPERBESAR MENJADI 32px
       ctx.font = "bold 32px 'Courier Prime', monospace";
       ctx.textBaseline = "middle";
       ctx.fillText("∞", stripWidth - 60, 228);
@@ -1626,7 +1530,6 @@ const EVENT_DOC_ID = 'clien1_event';
       ctx.fillText("F O T O M E", stripWidth / 2, 60);
     }
 
-    // 3. Render Foto-Foto Utama
     const startY = headerHeight;
 
     let loadedCount = 0;
@@ -1709,22 +1612,18 @@ const EVENT_DOC_ID = 'clien1_event';
             ctx.fillStyle = textColor;
             ctx.textAlign = "center";
             
-            // Nama Pasangan
             ctx.letterSpacing = "0px";
             ctx.font = "italic 700 60px 'Bodoni Moda', serif";
             ctx.fillText("Vira & Wahyu", stripWidth / 2, footerY + 60);
 
-            // Subtitle Event
             ctx.font = "600 22px 'Plus Jakarta Sans', sans-serif";
             ctx.letterSpacing = "3px";
             ctx.fillText("THE ENGAGEMENT DAY", stripWidth / 2, footerY + 105);
 
-            // Tanggal Acara
             ctx.font = "500 18px 'Plus Jakarta Sans', sans-serif";
             ctx.letterSpacing = "2px";
             ctx.fillText("04 OKTOBER 2026", stripWidth / 2, footerY + 138);
 
-            // Watermark Footer Paling Bawah
             ctx.font = "500 10.5px 'Plus Jakarta Sans', sans-serif";
             ctx.letterSpacing = "1.5px";
             ctx.globalAlpha = 0.75;
@@ -1733,7 +1632,6 @@ const EVENT_DOC_ID = 'clien1_event';
             ctx.restore();
           }
 
-          // Export Hasil & Trigger Animasi Polaroid
           const dataUrl = canvas.toDataURL('image/png');
           const resultImg = document.getElementById('result-img');
           
