@@ -1,11 +1,13 @@
-// DENGERIN STATUS EVENT DARI FIREBASE SECARA REAL-TIME
+// =========================================================
+// 1. SISTEM KONTROL AKSES REAL-TIME FIREBASE (OVERLAY MURNI)
+// =========================================================
 if (typeof db !== 'undefined') {
   db.collection('settings').doc('wedding_event').onSnapshot(doc => {
     if (doc.exists) {
       const data = doc.data();
       let lockOverlay = document.getElementById('lock-overlay');
 
-      // JIKA STATUS EVENT NONAKTIF / OFF -> TAMPILKAN PENGUNCI
+      // JIKA STATUS EVENT NONAKTIF / OFF -> TAMPILKAN OVERLAY KUNCI
       if (data.isActive === false) {
         if (!lockOverlay) {
           lockOverlay = document.createElement('div');
@@ -28,11 +30,11 @@ if (typeof db !== 'undefined') {
           lockOverlay.style.left = '0';
           lockOverlay.style.width = '100vw';
           lockOverlay.style.height = '100vh';
-          lockOverlay.style.zIndex = '99999';
+          lockOverlay.style.zIndex = '999999';
           document.body.appendChild(lockOverlay);
         }
       } else {
-        // JIKA STATUS EVENT AKTIF / ON -> HAPUS PENGUNCI
+        // JIKA STATUS EVENT AKTIF / ON -> HAPUS OVERLAY KUNCI
         if (lockOverlay) {
           lockOverlay.remove();
         }
@@ -42,3 +44,13 @@ if (typeof db !== 'undefined') {
     console.error("Firebase Sync Error:", error);
   });
 }
+
+// =========================================================
+// 2. KODE LOGIKA UTAMA PHOTOBOOTH
+// =========================================================
+let targetPhotoCount = 3;
+let selectedDesignStyle = 'floral'; 
+let selectedBgColor = 'dusty';
+let capturedPhotos = [];
+
+// Tambahkan sisa logika JavaScript photobooth Mas Riyan di bawah sini...
