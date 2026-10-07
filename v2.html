@@ -148,7 +148,7 @@
       font-weight: 700;
     }
 
-    /* FRAME SELECTION (3 FRAME OPTIONS) */
+    /* FRAME SELECTION */
     .frame-grid-3 {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -232,7 +232,7 @@
 
     .flash-overlay.active { opacity: 1; }
 
-    /* FORM UCAPAN / GUESTBOOK INPUT */
+    /* FORM UCAPAN */
     .wish-form-box {
       background: #FAF6F0;
       border: 1px solid rgba(212,175,55,0.3);
@@ -262,7 +262,7 @@
       background: #FFF;
     }
 
-    /* FEED GALERI SAMA SEPERTI MEDSOS */
+    /* GALERI EXPLORE IG (3 KOLOM KOTAK) */
     .feed-container {
       width: 100%;
       max-width: 430px;
@@ -270,7 +270,7 @@
     }
 
     .feed-header {
-      font-size: 1.1rem;
+      font-size: 1.05rem;
       font-weight: 700;
       color: var(--primary-crimson);
       margin-bottom: 12px;
@@ -279,61 +279,124 @@
       justify-content: space-between;
     }
 
-    .feed-card {
+    .ig-grid-container {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+    }
+
+    .ig-grid-item {
       background: #FFF;
-      border-radius: 18px;
-      padding: 14px;
-      margin-bottom: 15px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.04);
-      border: 1px solid rgba(212,175,55,0.2);
-      text-align: left;
-    }
-
-    .feed-user-info {
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid rgba(212,175,55,0.25);
+      cursor: pointer;
       display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 10px;
+      flex-direction: column;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      transition: transform 0.2s;
     }
 
-    .feed-avatar {
-      width: 34px;
-      height: 34px;
-      background: var(--primary-crimson);
-      color: #FFF;
-      border-radius: 50%;
+    .ig-grid-item:active { transform: scale(0.96); }
+
+    .ig-item-name {
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: var(--primary-crimson);
+      padding: 4px 4px 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      text-align: center;
+      background: #FFFDF9;
+    }
+
+    .ig-item-img-box {
+      width: 100%;
+      aspect-ratio: 1/1;
+      overflow: hidden;
+      background: #FAF6F0;
+    }
+
+    .ig-item-img-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .ig-item-msg {
+      font-size: 0.62rem;
+      color: #555;
+      padding: 3px 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      text-align: center;
+      font-style: italic;
+      background: #FFF;
+    }
+
+    /* MODAL POP-UP (LIGHTBOX UNTUK PERBESAR) */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(4px);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-weight: 700;
-      font-size: 0.85rem;
+      z-index: 9999;
+      padding: 20px;
     }
 
-    .feed-user-name {
-      font-size: 0.85rem;
-      font-weight: 700;
-      color: var(--text-dark);
-    }
-
-    .feed-time {
-      font-size: 0.68rem;
-      color: #999;
-    }
-
-    .feed-photo-img {
+    .modal-card {
+      background: #FFF;
+      border-radius: 20px;
+      padding: 20px;
+      max-width: 360px;
       width: 100%;
-      border-radius: 10px;
-      margin-bottom: 10px;
+      text-align: center;
+      position: relative;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      max-height: 90vh;
+      overflow-y: auto;
     }
 
-    .feed-message {
-      font-size: 0.82rem;
-      color: #444;
-      line-height: 1.4;
+    .modal-close-btn {
+      position: absolute;
+      top: 12px;
+      right: 14px;
+      background: #FAF6F0;
+      border: none;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      font-weight: 700;
+      color: #7A1C28;
+      cursor: pointer;
+    }
+
+    .modal-user-name {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--primary-crimson);
+      margin-bottom: 2px;
+    }
+
+    .modal-img {
+      width: 100%;
+      border-radius: 12px;
+      margin: 10px 0;
+    }
+
+    .modal-msg {
+      font-size: 0.85rem;
+      color: #333;
       font-style: italic;
       background: #FAF6F0;
-      padding: 8px 12px;
-      border-radius: 8px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      line-height: 1.4;
     }
 
     canvas { display: none; }
@@ -365,7 +428,6 @@
   <div id="step-template" class="hidden">
     <h2 class="font-serif" style="color: var(--primary-crimson); font-size: 1.7rem;">Pilih Style Foto</h2>
 
-    <!-- 1. Pilihan Jumlah Foto (1 s/d 3) -->
     <div class="section-label">1. JUMLAH FOTO</div>
     <div class="option-grid-3">
       <div class="option-btn active" onclick="selectPhotoCount(3, this)">3 Foto (Strip)</div>
@@ -373,10 +435,8 @@
       <div class="option-btn" onclick="selectPhotoCount(1, this)">1 Foto (Single)</div>
     </div>
 
-    <!-- 2. Pilihan 3 Frame -->
     <div class="section-label">2. PILIH FRAME</div>
     <div class="frame-grid-3">
-      <!-- Frame 1: Basic FOTOME -->
       <div class="frame-card-item active" onclick="selectFrameStyle('basic', this)">
         <div class="frame-box-preview f-basic">
           <div class="mini-slot"></div>
@@ -385,7 +445,6 @@
         <strong style="font-size:0.68rem;">1. FOTOME Basic</strong>
       </div>
 
-      <!-- Frame 2: Crimson Custom -->
       <div class="frame-card-item" onclick="selectFrameStyle('crimson', this)">
         <div class="frame-box-preview f-crimson">
           <div class="mini-slot"></div>
@@ -394,7 +453,6 @@
         <strong style="font-size:0.68rem; color:var(--primary-crimson);">2. Crimson Elegance</strong>
       </div>
 
-      <!-- Frame 3: Cream Custom -->
       <div class="frame-card-item" onclick="selectFrameStyle('cream', this)">
         <div class="frame-box-preview f-cream">
           <div class="mini-slot"></div>
@@ -430,7 +488,7 @@
     </button>
   </div>
 
-  <!-- STEP 4: HASIL + FORM UCAPAN SIMPAN -->
+  <!-- STEP 4: HASIL + FORM UCAPAN -->
   <div id="step-result" class="hidden">
     <h2 class="font-serif" style="color: var(--primary-crimson); font-size: 1.7rem;">Hasil Foto Kamu</h2>
 
@@ -438,7 +496,6 @@
       <img id="result-img" style="width: 100%; border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.12);" alt="Hasil Photobooth">
     </div>
 
-    <!-- FORM INPUT NAMA & UCAPAN -->
     <div class="wish-form-box">
       <label>Nama Kamu / Inisial</label>
       <input type="text" id="input-sender-name" placeholder="Misal: Budi & Sarah">
@@ -458,15 +515,26 @@
 
 </div>
 
-<!-- FEED GALERI PUBLIK (MEDSOS STYLE) -->
+<!-- FEED GALERI PUBLIK (EXPLORE INSTAGRAM STYLE 3 KOLOM) -->
 <div class="feed-container">
   <div class="feed-header">
-    <span><i class="fa-solid fa-images"></i> Galeri Kenangan Tamu</span>
+    <span><i class="fa-solid fa-border-all"></i> Galeri Kenangan Tamu</span>
     <span style="font-size: 0.72rem; color: #888;" id="total-posts-count">0 Kiriman</span>
   </div>
 
-  <div id="feed-list-box">
-    <p style="font-size: 0.8rem; color: #999; text-align: center;">Memuat ucapan & foto tamu...</p>
+  <div id="ig-grid-box" class="ig-grid-container">
+    <p style="font-size: 0.8rem; color: #999; grid-column: span 3; text-align: center;">Memuat ucapan & foto tamu...</p>
+  </div>
+</div>
+
+<!-- MODAL POP-UP UNTUK PERBESAR FOTO AKIBAT DIKLIK (LIGHTBOX) -->
+<div id="photo-modal" class="modal-overlay hidden">
+  <div class="modal-card">
+    <button class="modal-close-btn" onclick="closeModal()">✕</button>
+    <div class="modal-user-name" id="modal-name">Nama Tamu</div>
+    <div style="font-size:0.7rem; color:#888;">Kenangan Kebahagiaan</div>
+    <img id="modal-img" class="modal-img" src="" alt="Foto Perbesar">
+    <div class="modal-msg" id="modal-msg">"Ucapan doa tamu..."</div>
   </div>
 </div>
 
@@ -515,11 +583,10 @@
       }
     });
 
-    // LOAD FEED GALERI REALTIME DARI FIRESTORE
-    loadRealtimeFeed();
+    loadRealtimeFeedIG();
   }
 
-  // ENGINE PHOTOBOOTH & FEED
+  // ENGINE PHOTOBOOTH & FEED IG
   let targetPhotoCount = 3;
   let selectedFrameStyle = 'basic';
   let capturedPhotos = [];
@@ -603,7 +670,6 @@
     }, 1000);
   }
 
-  // RENDER CANVAS HASIL DENGAN 3 PILIHAN FRAME
   function renderPhotostripV2() {
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
@@ -636,7 +702,6 @@
 
         loaded++;
         if (loaded === count) {
-          // FOOTER TITLE & WATERMARK
           ctx.fillStyle = textColor;
           ctx.font = "bold 38px 'Cormorant Garamond', serif";
           ctx.textAlign = "center";
@@ -653,18 +718,15 @@
     });
   }
 
-  // FUNGSI SIMPAN & POSTING KE FEED GALERI REALTIME
   function saveAndShareToFeed() {
     const senderName = document.getElementById('input-sender-name').value.trim() || "Tamu Undangan";
     const senderMessage = document.getElementById('input-sender-message').value.trim() || "Selamat untuk kebahagiaan kalian! 💐";
 
-    // 1. Trigger Download Otomatis Ke HP Tamu
     const a = document.createElement('a');
     a.href = generatedDataUrl;
     a.download = `Photobooth-${eventTitle.replace(/\s+/g, '-')}.jpg`;
     a.click();
 
-    // 2. Simpan Data ke Firestore Collection 'posts'
     if (typeof db !== 'undefined') {
       db.collection('posts').add({
         eventId: EVENT_DOC_ID,
@@ -673,27 +735,25 @@
         photoData: generatedDataUrl,
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       }).then(() => {
-        alert("Foto berhasil diunduh dan tersimpan di Galeri Kenangan!");
+        alert("Foto berhasil diunduh dan tersimpan di Galeri!");
         document.getElementById('input-sender-name').value = '';
         document.getElementById('input-sender-message').value = '';
         goToStep(1);
-      }).catch(err => {
-        console.error("Gagal simpan ke galeri:", err);
       });
     }
   }
 
-  // LOAD REALTIME FEED GALERI
-  function loadRealtimeFeed() {
+  // LOAD REALTIME FEED GRID IG 3 KOLOM
+  function loadRealtimeFeedIG() {
     db.collection('posts')
       .where('eventId', '==', EVENT_DOC_ID)
       .onSnapshot(snapshot => {
-        const feedBox = document.getElementById('feed-list-box');
+        const gridBox = document.getElementById('ig-grid-box');
         const countSpan = document.getElementById('total-posts-count');
-        feedBox.innerHTML = '';
+        gridBox.innerHTML = '';
 
         if (snapshot.empty) {
-          feedBox.innerHTML = '<p style="font-size: 0.8rem; color: #999; text-align: center;">Belum ada foto ucapan di galeri. Jadi yang pertama!</p>';
+          gridBox.innerHTML = '<p style="font-size: 0.8rem; color: #999; grid-column: span 3; text-align: center;">Belum ada foto di galeri. Tampil pertama di sini!</p>';
           countSpan.innerText = '0 Kiriman';
           return;
         }
@@ -702,25 +762,33 @@
 
         snapshot.forEach(doc => {
           const data = doc.data();
-          const card = document.createElement('div');
-          card.className = 'feed-card';
+          const item = document.createElement('div');
+          item.className = 'ig-grid-item';
           
-          const initial = data.name ? data.name.charAt(0).toUpperCase() : 'T';
+          item.onclick = () => openModal(data.name, data.message, data.photoData);
 
-          card.innerHTML = `
-            <div class="feed-user-info">
-              <div class="feed-avatar">${initial}</div>
-              <div>
-                <div class="feed-user-name">${data.name || 'Tamu Undangan'}</div>
-                <div class="feed-time">Kenangan Kebahagiaan</div>
-              </div>
+          item.innerHTML = `
+            <div class="ig-item-name">${data.name || 'Tamu'}</div>
+            <div class="ig-item-img-box">
+              <img src="${data.photoData}" alt="Foto Strip">
             </div>
-            <img class="feed-photo-img" src="${data.photoData}" alt="Foto Kenangan">
-            <div class="feed-message">"${data.message || ''}"</div>
+            <div class="ig-item-msg">"${data.message || ''}"</div>
           `;
-          feedBox.appendChild(card);
+          gridBox.appendChild(item);
         });
       });
+  }
+
+  // MODAL PERBESAR (POP-UP LIGHTBOX)
+  function openModal(name, message, photoSrc) {
+    document.getElementById('modal-name').innerText = name || 'Tamu Undangan';
+    document.getElementById('modal-msg').innerText = `"${message || ''}"`;
+    document.getElementById('modal-img').src = photoSrc;
+    document.getElementById('photo-modal').classList.remove('hidden');
+  }
+
+  function closeModal() {
+    document.getElementById('photo-modal').classList.add('hidden');
   }
 </script>
 
