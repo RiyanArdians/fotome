@@ -3,14 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Photobooth Control - FOTOME</title>
+  <title>Photobooth Control & Gallery Manager - FOTOME</title>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       font-family: 'Plus Jakarta Sans', sans-serif;
@@ -25,7 +23,7 @@
 
     .admin-container {
       width: 100%;
-      max-width: 420px;
+      max-width: 440px;
       background: #FFF;
       border-radius: 24px;
       padding: 24px 20px;
@@ -43,11 +41,42 @@
     .sub-title {
       font-size: 0.78rem;
       color: #777;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
       line-height: 1.4;
     }
 
-    /* FORM CARD DIATUR AGAR INPUT TIDAK MELENCENG */
+    /* NAVIGASI TAB UTAMA ADMIN */
+    .tab-header {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #FAF6EE;
+      padding-bottom: 10px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      background: #FAF6EE;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #8C6262;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      background: #8C6262;
+      color: #FFF;
+      box-shadow: 0 4px 12px rgba(140, 98, 98, 0.2);
+    }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* FORM CARD TAMBAH PROJEK */
     .form-card {
       background: #FAF6EE;
       border: 1px solid rgba(216, 180, 180, 0.4);
@@ -85,7 +114,6 @@
       font-size: 0.82rem;
       outline: none;
       background: #FFF;
-      box-shadow: inset 0 1px 3px rgba(0,0,0,0.03);
     }
 
     .btn-add {
@@ -98,16 +126,7 @@
       cursor: pointer;
       width: 100%;
       font-size: 0.85rem;
-      margin-top: 4px;
       box-shadow: 0 4px 12px rgba(140, 98, 98, 0.2);
-    }
-
-    .section-title {
-      font-size: 0.9rem;
-      font-weight: 700;
-      text-align: left;
-      color: #3D2B2B;
-      margin-bottom: 12px;
     }
 
     /* KARTU ITEM PROJEK */
@@ -120,46 +139,15 @@
       align-items: center;
       justify-content: space-between;
       background: #FFF;
-      gap: 10px;
     }
 
-    .info-left {
-      text-align: left;
-      flex: 1;
-      overflow: hidden;
-    }
+    .info-left { text-align: left; flex: 1; }
+    .project-name { font-size: 0.88rem; font-weight: 700; color: #3D2B2B; }
+    .project-id { font-size: 0.7rem; color: #888; margin-bottom: 4px; }
 
-    .project-name {
-      font-size: 0.88rem;
-      font-weight: 700;
-      color: #3D2B2B;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .project-id {
-      font-size: 0.7rem;
-      color: #888;
-      margin-bottom: 4px;
-    }
-
-    .badge {
-      padding: 3px 10px;
-      border-radius: 12px;
-      font-size: 0.7rem;
-      font-weight: 700;
-      display: inline-block;
-    }
-
+    .badge { padding: 3px 10px; border-radius: 12px; font-size: 0.7rem; font-weight: 700; display: inline-block; }
     .badge-on { background: #E8F5E9; color: #2E7D32; }
     .badge-off { background: #FFEBEE; color: #C62828; }
-
-    .action-right {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
 
     .btn-toggle {
       border: none;
@@ -169,11 +157,9 @@
       cursor: pointer;
       font-size: 0.78rem;
       color: #FFF;
-      min-width: 65px;
     }
-
-    .btn-on { background: #C62828; }  /* Jika ON, tombol merah untuk mematikan */
-    .btn-off { background: #2E7D32; } /* Jika OFF, tombol hijau untuk mengaktifkan */
+    .btn-on { background: #C62828; }
+    .btn-off { background: #2E7D32; }
 
     .btn-delete {
       background: transparent;
@@ -182,9 +168,45 @@
       cursor: pointer;
       font-size: 0.95rem;
       padding: 4px;
+      margin-left: 6px;
     }
 
-    .btn-delete:hover { color: #C62828; }
+    /* KARTU ITEM GALERI UCAPAN (UNTUK MODERASI/HAPUS) */
+    .gallery-admin-card {
+      border: 1px solid #EAE0E0;
+      border-radius: 16px;
+      padding: 12px;
+      margin-bottom: 12px;
+      background: #FFF;
+      text-align: left;
+    }
+
+    .gallery-admin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .gallery-admin-name { font-size: 0.85rem; font-weight: 700; color: #8C6262; }
+    .gallery-admin-msg { font-size: 0.78rem; color: #555; font-style: italic; background: #FAF6EE; padding: 6px 10px; border-radius: 8px; margin-bottom: 8px; }
+    .gallery-admin-img { width: 100%; border-radius: 8px; margin-bottom: 8px; }
+
+    .btn-delete-post {
+      background: #C62828;
+      color: #FFF;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
   </style>
 
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -195,30 +217,65 @@
 
 <div class="admin-container">
   <h2 class="main-title">Photobooth Control</h2>
-  <p class="sub-title">Kelola status akses projek photobooth secara langsung.</p>
+  <p class="sub-title">Kelola saklar akses & moderasi galeri foto ucapan.</p>
 
-  <!-- FORM TAMBAH PROJEK -->
-  <div class="form-card">
-    <div class="form-title">➕ Tambah Projek Baru</div>
-    <div class="form-group">
-      <label>Nama File / Client</label>
-      <input type="text" id="input-filename" placeholder="clien1.html">
-    </div>
-    <div class="form-group">
-      <label>ID Dokumen Firestore</label>
-      <input type="text" id="input-docid" placeholder="clien1_event">
-    </div>
-    <button class="btn-add" onclick="addNewProject()">Tambahkan</button>
+  <!-- TAB NAVIGASI -->
+  <div class="tab-header">
+    <button class="tab-btn active" onclick="switchTab('tab-projects', this)">
+      <i class="fa-solid fa-toggle-on"></i> Saklar Event
+    </button>
+    <button class="tab-btn" onclick="switchTab('tab-gallery', this)">
+      <i class="fa-solid fa-images"></i> Kelola Galeri
+    </button>
   </div>
 
-  <div class="section-title">Daftar Projek</div>
-  <div id="project-list-container">
-    <p style="font-size: 0.78rem; color: #999;">Memuat daftar...</p>
+  <!-- TAB 1: SAKLAR & TAMBAH PROJEK -->
+  <div id="tab-projects" class="tab-content active">
+    <div class="form-card">
+      <div class="form-title">➕ Tambah Projek Baru</div>
+      <div class="form-group">
+        <label>Nama File / Client</label>
+        <input type="text" id="input-filename" placeholder="v2.html">
+      </div>
+      <div class="form-group">
+        <label>ID Dokumen Firestore</label>
+        <input type="text" id="input-docid" placeholder="v2_event">
+      </div>
+      <button class="btn-add" onclick="addNewProject()">Tambahkan</button>
+    </div>
+
+    <div style="font-size: 0.9rem; font-weight: 700; text-align: left; margin-bottom: 12px;">Daftar Projek</div>
+    <div id="project-list-container">
+      <p style="font-size: 0.78rem; color: #999;">Memuat daftar...</p>
+    </div>
   </div>
+
+  <!-- TAB 2: MODERASI & HAPUS FOTO GALERI -->
+  <div id="tab-gallery" class="tab-content">
+    <div style="font-size: 0.85rem; text-align: left; margin-bottom: 12px; color: #8C6262; font-weight: 700;">
+      Hapus Foto Ucapan Iseng / Tidak Pantas
+    </div>
+    <div id="gallery-list-container">
+      <p style="font-size: 0.78rem; color: #999;">Memuat postingan galeri...</p>
+    </div>
+  </div>
+
 </div>
 
 <script>
-  // REALTIME LISTENER DAFTAR PROJEK
+  // NAVIGASI TAB
+  function switchTab(tabId, btnElem) {
+    document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(tb => tb.classList.remove('active'));
+    document.getElementById(tabId).classList.add('active');
+    btnElem.classList.add('active');
+
+    if (tabId === 'tab-gallery') {
+      loadGalleryAdmin();
+    }
+  }
+
+  // 1. KONTROL FIRESTORE UNTUK DAFTAR SAKLAR
   db.collection('settings').onSnapshot(snapshot => {
     const container = document.getElementById('project-list-container');
     container.innerHTML = '';
@@ -244,7 +301,7 @@
             ${isActive ? 'ON' : 'OFF'}
           </span>
         </div>
-        <div class="action-right">
+        <div style="display:flex; align-items:center;">
           <button class="btn-toggle ${isActive ? 'btn-on' : 'btn-off'}" onclick="toggleEventStatus('${docId}', ${isActive})">
             ${isActive ? 'OFF' : 'ON'}
           </button>
@@ -253,8 +310,6 @@
       `;
       container.appendChild(card);
     });
-  }, error => {
-    console.error("Firestore Error:", error);
   });
 
   function addNewProject() {
@@ -275,19 +330,65 @@
     .then(() => {
       document.getElementById('input-filename').value = '';
       document.getElementById('input-docid').value = '';
-    })
-    .catch(err => alert("Gagal menambahkan: " + err.message));
+    });
   }
 
   function toggleEventStatus(docId, currentStatus) {
-    db.collection('settings').doc(docId).set({
-      isActive: !currentStatus
-    }, { merge: true });
+    db.collection('settings').doc(docId).set({ isActive: !currentStatus }, { merge: true });
   }
 
   function deleteProject(docId) {
     if (confirm(`Hapus projek "${docId}"?`)) {
       db.collection('settings').doc(docId).delete();
+    }
+  }
+
+  // 2. KONTROL UNTUK MENAMPILKAN & MENGHAPUS FOTO GALERI
+  function loadGalleryAdmin() {
+    const galleryContainer = document.getElementById('gallery-list-container');
+    galleryContainer.innerHTML = '<p style="font-size: 0.78rem; color: #999;">Memuat data galeri...</p>';
+
+    db.collection('posts')
+      .onSnapshot(snapshot => {
+        galleryContainer.innerHTML = '';
+
+        if (snapshot.empty) {
+          galleryContainer.innerHTML = '<p style="font-size: 0.78rem; color: #999; text-align: center;">Belum ada foto yang diposting oleh tamu.</p>';
+          return;
+        }
+
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          const postId = doc.id;
+
+          const card = document.createElement('div');
+          card.className = 'gallery-admin-card';
+          card.innerHTML = `
+            <div class="gallery-admin-header">
+              <span class="gallery-admin-name">${data.name || 'Tamu Undangan'}</span>
+              <span style="font-size: 0.68rem; color: #999;">ID Event: ${data.eventId || '-'}</span>
+            </div>
+            <div class="gallery-admin-msg">"${data.message || '-'}"</div>
+            <img src="${data.photoData}" class="gallery-admin-img" alt="Foto Ucapan">
+            <button class="btn-delete-post" onclick="deleteGalleryPost('${postId}')">
+              <i class="fa-solid fa-trash"></i> Hapus Foto Ini dari Galeri
+            </button>
+          `;
+          galleryContainer.appendChild(card);
+        });
+      });
+  }
+
+  // FUNGSI HAPUS POSTINGAN FOTO DARI FIRESTORE
+  function deleteGalleryPost(postId) {
+    if (confirm("Apakah kamu yakin ingin menghapus foto ucapan ini dari galeri publik?")) {
+      db.collection('posts').doc(postId).delete()
+        .then(() => {
+          alert("Foto berhasil dihapus!");
+        })
+        .catch(err => {
+          alert("Gagal menghapus foto: " + err.message);
+        });
     }
   }
 </script>
