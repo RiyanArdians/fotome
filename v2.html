@@ -213,7 +213,7 @@
       border-radius: 2px;
     }
 
-    /* CAMERA & SLIDER */
+    /* AREA KAMERA & KONTROL (SAMA SEPERTI INDEX.HTML) */
     .camera-wrapper {
       position: relative;
       width: 100%;
@@ -226,6 +226,40 @@
 
     video { width: 100%; height: 100%; object-fit: cover; }
     video.mirror { transform: scaleX(-1); }
+
+    .cam-controls-bar {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+      align-items: center;
+    }
+
+    .cam-btn-icon {
+      background: #FAF6F0;
+      border: 1px solid rgba(212,175,55,0.4);
+      color: var(--primary-crimson);
+      padding: 8px 12px;
+      border-radius: 12px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      flex: 1;
+      justify-content: center;
+    }
+
+    .cam-select-box {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid #D8B4B4;
+      border-radius: 10px;
+      font-size: 0.75rem;
+      background: #FFF;
+      outline: none;
+      margin-bottom: 10px;
+    }
 
     .countdown-overlay {
       position: absolute;
@@ -488,7 +522,7 @@
     </button>
   </div>
 
-  <!-- STEP 3: AREA KAMERA -->
+  <!-- STEP 3: AREA KAMERA + KONTROL SWITCH & MIRROR (SAMA DENGAN INDEX.HTML) -->
   <div id="step-camera" class="hidden">
     <div style="font-size: 0.85rem; font-weight: 700; color: var(--primary-crimson); margin-bottom: 8px;" id="cam-progress-text">Foto 1 dari 3</div>
 
@@ -498,10 +532,23 @@
       <div id="flash-overlay" class="flash-overlay"></div>
     </div>
 
+    <!-- TOMBOL PENGATURAN KAMERA -->
+    <div class="cam-controls-bar">
+      <button class="cam-btn-icon" onclick="switchCamera()">
+        <i class="fa-solid fa-camera-rotate"></i> Switch Kamera
+      </button>
+      <button class="cam-btn-icon" id="btn-mirror" onclick="toggleMirror()">
+        <i class="fa-solid fa-arrows-left-right"></i> Mirror: ON
+      </button>
+    </div>
+
+    <!-- SELEKTOR KAMERA -->
+    <select id="camera-select" class="cam-select-box" onchange="onCameraSelectChange(this.value)"></select>
+
     <button id="btn-snap" class="btn-primary-v2" onclick="takePhotoSnap()">
       <i class="fa-solid fa-camera"></i> Ambil Foto (3s)
     </button>
-    <button class="btn-outline-v2" onclick="goToStep(2)">
+    <button class="btn-outline-v2" onclick="stopCameraAndGoBack()">
       Batal / Ubah Style
     </button>
   </div>
@@ -514,7 +561,7 @@
       <img id="result-img" style="width: 100%; border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.12);" alt="Hasil Photobooth">
     </div>
 
-    <!-- FORM INPUT NAMA & UCAPAN (OPSIONAL JIKA MAU PUBLIC) -->
+    <!-- FORM INPUT NAMA & UCAPAN -->
     <div class="wish-form-box">
       <label>Nama Kamu / Inisial (Opsional jika upload ke galeri)</label>
       <input type="text" id="input-sender-name" placeholder="Misal: Budi & Sarah">
@@ -611,12 +658,18 @@
     loadRealtimeFeedIG();
   }
 
-  // ENGINE PHOTOBOOTH & FEED IG
+  // ENGINE PHOTOBOOTH V2
   let targetPhotoCount = 3;
   let selectedFrameStyle = 'basic';
   let capturedPhotos = [];
   let videoStream = null;
   let generatedDataUrl = "";
+
+  // VARIABLE KONTROL KAMERA (SAMA SEPERTI INDEX.HTML)
+  let currentFacingMode = "user";
+  let isMirror = true;
+  let availableVideoDevices = [];
+  let currentDeviceId = null;
 
   function goToStep(step) {
     ['step-welcome', 'step-template', 'step-camera', 'step-result'].forEach(id => {
@@ -638,20 +691,98 @@
     item.classList.add('active');
   }
 
+  // START CAMERA & DETEKSI PERANGKAT (SEPERTI INDEX.HTML)
   function startCameraProcess() {
     goToStep(3);
     capturedPhotos = [];
     document.getElementById('cam-progress-text').innerText = `Foto 1 dari ${targetPhotoCount}`;
+    initCameraStream();
+  }
 
-    navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } })
+  function initCameraStream() {
+    if (videoStream) {
+      videoStream.getTracks().forEach(track => track.stop());
+    }
+
+    let constraints = { video: { facingMode: currentFacingMode } };
+    if (currentDeviceId) {
+      constraints = { video: { deviceId: { exact: currentDeviceId } } };
+    }
+
+    navigator.mediaDevices.getUserMedia(constraints)
       .then(stream => {
         videoStream = stream;
         const video = document.getElementById('video');
         video.srcObject = stream;
         video.play();
+
+        enumerateVideoDevices();
+      })
+      .catch(err => {
+        console.error("Gagal membuka kamera:", err);
+        alert("Gagal membuka kamera. Harap beri izin akses kamera di browser kamu!");
       });
   }
 
+  function enumerateVideoDevices() {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) return;
+
+    navigator.mediaDevices.enumerateDevices().then(devices => {
+      availableVideoDevices = devices.filter(d => d.kind === 'videoinput');
+      const select = document.getElementById('camera-select');
+      select.innerHTML = '';
+
+      if (availableVideoDevices.length === 0) {
+        select.style.display = 'none';
+        return;
+      }
+
+      select.style.display = 'block';
+      availableVideoDevices.forEach((device, idx) => {
+        const option = document.createElement('option');
+        option.value = device.deviceId;
+        option.text = device.label || `Kamera ${idx + 1}`;
+        if (currentDeviceId && device.deviceId === currentDeviceId) {
+          option.selected = true;
+        }
+        select.appendChild(option);
+      });
+    });
+  }
+
+  function switchCamera() {
+    currentFacingMode = (currentFacingMode === "user") ? "environment" : "user";
+    currentDeviceId = null;
+    initCameraStream();
+  }
+
+  function toggleMirror() {
+    isMirror = !isMirror;
+    const video = document.getElementById('video');
+    const btn = document.getElementById('btn-mirror');
+
+    if (isMirror) {
+      video.classList.add('mirror');
+      btn.innerHTML = `<i class="fa-solid fa-arrows-left-right"></i> Mirror: ON`;
+    } else {
+      video.classList.remove('mirror');
+      btn.innerHTML = `<i class="fa-solid fa-arrows-left-right"></i> Mirror: OFF`;
+    }
+  }
+
+  function onCameraSelectChange(deviceId) {
+    currentDeviceId = deviceId;
+    initCameraStream();
+  }
+
+  function stopCameraAndGoBack() {
+    if (videoStream) {
+      videoStream.getTracks().forEach(track => track.stop());
+    }
+    goToStep(2);
+  }
+
+  // AMBIL FOTO SNAPSHOT
   function takePhotoSnap() {
     document.getElementById('btn-snap').disabled = true;
     let count = 3;
@@ -672,14 +803,18 @@
         flash.classList.add('active');
         setTimeout(() => flash.classList.remove('active'), 200);
 
-        // Snap
+        // Snap canvas mengikuti status Mirror
         const video = document.getElementById('video');
         const tempCanvas = document.createElement('canvas');
         tempCanvas.width = video.videoWidth || 640;
         tempCanvas.height = video.videoHeight || 480;
         const ctx = tempCanvas.getContext('2d');
-        ctx.translate(tempCanvas.width, 0);
-        ctx.scale(-1, 1);
+
+        if (isMirror) {
+          ctx.translate(tempCanvas.width, 0);
+          ctx.scale(-1, 1);
+        }
+
         ctx.drawImage(video, 0, 0);
         capturedPhotos.push(tempCanvas.toDataURL('image/png'));
 
@@ -687,6 +822,9 @@
           document.getElementById('cam-progress-text').innerText = `Foto ${capturedPhotos.length + 1} dari ${targetPhotoCount}`;
           setTimeout(() => { document.getElementById('btn-snap').disabled = false; }, 1000);
         } else {
+          if (videoStream) {
+            videoStream.getTracks().forEach(track => track.stop());
+          }
           renderPhotostripV2();
           goToStep(4);
           document.getElementById('btn-snap').disabled = false;
@@ -695,6 +833,7 @@
     }, 1000);
   }
 
+  // RENDER CANVASES
   function renderPhotostripV2() {
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
@@ -743,7 +882,6 @@
     });
   }
 
-  // FUNGSI TRIGGER DOWNLOAD GAMBAR KE HP
   function downloadImageToPhone() {
     const a = document.createElement('a');
     a.href = generatedDataUrl;
@@ -751,7 +889,6 @@
     a.click();
   }
 
-  // OPSI 1: UNDUH + POSTING KE GALERI FIRESTORE
   function saveAndShareToFeed() {
     const senderName = document.getElementById('input-sender-name').value.trim() || "Tamu Undangan";
     const senderMessage = document.getElementById('input-sender-message').value.trim() || "Selamat untuk kebahagiaan kalian! 💐";
@@ -774,7 +911,6 @@
     }
   }
 
-  // OPSI 2: SIMPAN PRIVAT SAJA (HANYA DOWNLOAD KE HP)
   function savePrivateOnly() {
     downloadImageToPhone();
     alert("Foto berhasil disimpan secara privat ke HP kamu!");
