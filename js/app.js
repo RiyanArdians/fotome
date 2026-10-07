@@ -53,7 +53,7 @@ if (typeof db !== 'undefined') {
 /* =========================================================
    2. VARIABEL & KONFIGURASI UTAMA
    ========================================================= */
-let targetPhotoCount = 3; // Default
+let targetPhotoCount = 3; 
 let selectedDesignStyle = 'floral'; 
 let selectedBgColor = 'dusty';
 let capturedPhotos = [];
@@ -85,10 +85,10 @@ function goToStep(stepNumber) {
 }
 
 /* =========================================================
-   4. SELEKSI STYLE & WARNA (DIPERBAIKI)
+   4. SELEKSI STYLE & WARNA
    ========================================================= */
 function selectPhotoCount(count, cardElem) {
-  targetPhotoCount = parseInt(count, 10); // Update nilai pasti
+  targetPhotoCount = parseInt(count, 10);
   if (cardElem && cardElem.parentElement) {
     const cards = cardElem.parentElement.querySelectorAll('.option-card');
     cards.forEach(c => c.classList.remove('active'));
@@ -123,13 +123,12 @@ function selectBgColor(colorName, cardElem) {
 }
 
 /* =========================================================
-   5. SKRIP KAMERA & DETEKSI KAMERA HP
+   5. SKRIP KAMERA & FILTER HANYA 2 KAMERA (DEPAN & BELAKANG)
    ========================================================= */
 function startCameraProcess() {
   goToStep(3);
   capturedPhotos = [];
   
-  // Update teks indikator foto pertama
   const countText = document.getElementById('photo-count-text');
   if (countText) {
     countText.innerText = `Foto 1 dari ${targetPhotoCount}`;
@@ -149,24 +148,34 @@ function initCameraDevices() {
     const videoDevices = devices.filter(d => d.kind === 'videoinput');
     if (selectCam) {
       selectCam.innerHTML = '';
-      videoDevices.forEach((device, index) => {
+      
+      let frontCam = videoDevices.find(d => d.label.toLowerCase().includes('front') || d.label.toLowerCase().includes('user') || d.label.toLowerCase().includes('depan'));
+      let backCam = videoDevices.find(d => d.label.toLowerCase().includes('back') || d.label.toLowerCase().includes('environment') || d.label.toLowerCase().includes('belakang'));
+
+      // Jika tidak terdeteksi kata kunci, ambil perangkat index pertama dan kedua
+      if (!frontCam && videoDevices.length > 0) frontCam = videoDevices[0];
+      if (!backCam && videoDevices.length > 1) backCam = videoDevices[1];
+
+      let filteredDevices = [];
+      if (frontCam) filteredDevices.push({ deviceId: frontCam.deviceId, label: '📷 Kamera Depan' });
+      if (backCam && backCam.deviceId !== frontCam.deviceId) filteredDevices.push({ deviceId: backCam.deviceId, label: '📸 Kamera Belakang' });
+
+      // Jika filter kosong, masukkan semua
+      if (filteredDevices.length === 0) {
+        videoDevices.forEach((device, idx) => {
+          filteredDevices.push({ deviceId: device.deviceId, label: `Kamera ${idx + 1}` });
+        });
+      }
+
+      filteredDevices.forEach(item => {
         const option = document.createElement('option');
-        option.value = device.deviceId;
-        
-        // Buat nama kamera di HP lebih informatif
-        let label = device.label || `Kamera ${index + 1}`;
-        if (label.toLowerCase().includes('front') || label.toLowerCase().includes('user') || label.toLowerCase().includes('depan')) {
-          label = `📷 Kamera Depan (${index + 1})`;
-        } else if (label.toLowerCase().includes('back') || label.toLowerCase().includes('environment') || label.toLowerCase().includes('belakang')) {
-          label = `📸 Kamera Belakang (${index + 1})`;
-        }
-        
-        option.text = label;
+        option.value = item.deviceId;
+        option.text = item.label;
         selectCam.appendChild(option);
       });
 
-      if (videoDevices.length > 0) {
-        currentCameraDeviceId = videoDevices[0].deviceId;
+      if (filteredDevices.length > 0) {
+        currentCameraDeviceId = filteredDevices[0].deviceId;
         startCameraStream(currentCameraDeviceId);
       }
     }
@@ -231,7 +240,7 @@ function updateCameraAdjustments() {
 }
 
 /* =========================================================
-   6. PENGAMBILAN FOTO & GENERATE HASIL (LANGSUNG MUNCUL)
+   6. AMBIL FOTO & PAKSA GAMBAR HASIL TAMPIL DI LAYAR
    ========================================================= */
 function handleSnapButtonClick() {
   const btnSnap = document.getElementById('btn-snap');
@@ -270,7 +279,7 @@ function takePhotoSnap() {
   }
 
   const video = document.getElementById('video');
-  const canvas = document.createElement('canvas'); // Pakai canvas temporary agar bersih
+  const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d');
 
   canvas.width = video.videoWidth || 640;
@@ -294,7 +303,6 @@ function takePhotoSnap() {
       if (btnSnap) btnSnap.disabled = false;
     }, 1000);
   } else {
-    // Foto lengkap, render dan langsung munculkan di halaman hasil
     setTimeout(() => {
       renderFinalPhotostrip();
       goToStep(4);
@@ -316,13 +324,11 @@ function renderFinalPhotostrip() {
   const headerSpace = 60;
   const footerSpace = 200;
   
-  // Hitung tinggi canvas secara dinamis sesuai jumlah foto (1, 2, atau 3)
   const height = headerSpace + (count * photoHeight) + ((count - 1) * 20) + footerSpace;
   
   canvas.width = width;
   canvas.height = height;
 
-  // Background
   let bgColor = '#8C6262';
   if (selectedBgColor === 'mocha') bgColor = '#B3927A';
   else if (selectedBgColor === 'blue') bgColor = '#83A398';
@@ -333,7 +339,6 @@ function renderFinalPhotostrip() {
   ctx.fillStyle = bgColor;
   ctx.fillRect(0, 0, width, height);
 
-  // Render Foto
   let loadedCount = 0;
   capturedPhotos.forEach((src, idx) => {
     const img = new Image();
@@ -343,7 +348,6 @@ function renderFinalPhotostrip() {
       loadedCount++;
 
       if (loadedCount === count) {
-        // Teks Bawah
         ctx.fillStyle = '#FFFFFF';
         ctx.font = 'bold 36px "Cormorant Garamond", serif';
         ctx.textAlign = 'center';
@@ -352,13 +356,19 @@ function renderFinalPhotostrip() {
         ctx.font = '20px "Plus Jakarta Sans", sans-serif';
         ctx.fillText("06 Desember 2026", width / 2, height - 60);
 
-        // Tampilkan gambar di elemen Halaman Hasil
         const resultImg = document.getElementById('result-img');
         const downloadLink = document.getElementById('download-link');
         const dataUrl = canvas.toDataURL('image/png');
 
         if (resultImg) {
           resultImg.src = dataUrl;
+          // PAKSA TAMPILKAN HASIL DENGAN STYLING
+          resultImg.style.display = 'block';
+          resultImg.style.width = '100%';
+          resultImg.style.height = 'auto';
+          resultImg.style.borderRadius = '12px';
+          resultImg.style.marginTop = '20px';
+          resultImg.style.boxShadow = '0 10px 25px rgba(0,0,0,0.15)';
         }
         
         if (downloadLink) {
