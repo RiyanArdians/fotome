@@ -3,100 +3,187 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Super Admin Dynamic - FOTOME</title>
+  <title>Photobooth Control - FOTOME</title>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
     body {
       font-family: 'Plus Jakarta Sans', sans-serif;
       background: #FDFBF7;
-      padding: 30px 15px;
+      padding: 20px 12px;
       color: #3D2B2B;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
     }
+
     .admin-container {
-      max-width: 520px;
-      margin: 0 auto;
+      width: 100%;
+      max-width: 420px;
       background: #FFF;
-      border-radius: 20px;
-      padding: 25px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+      border-radius: 24px;
+      padding: 24px 20px;
+      box-shadow: 0 10px 30px rgba(140, 98, 98, 0.08);
+      border: 1px solid rgba(216, 180, 180, 0.3);
     }
-    .form-card {
-      background: #FAF6EE;
-      border: 1px solid rgba(216, 180, 180, 0.4);
-      border-radius: 14px;
-      padding: 16px;
-      margin-bottom: 25px;
-    }
-    .form-group {
-      margin-bottom: 12px;
-      text-align: left;
-    }
-    .form-group label {
-      display: block;
-      font-size: 0.75rem;
+
+    .main-title {
+      font-size: 1.5rem;
       font-weight: 700;
       color: #8C6262;
       margin-bottom: 4px;
     }
+
+    .sub-title {
+      font-size: 0.78rem;
+      color: #777;
+      margin-bottom: 20px;
+      line-height: 1.4;
+    }
+
+    /* FORM CARD DIATUR AGAR INPUT TIDAK MELENCENG */
+    .form-card {
+      background: #FAF6EE;
+      border: 1px solid rgba(216, 180, 180, 0.4);
+      border-radius: 18px;
+      padding: 16px;
+      margin-bottom: 20px;
+    }
+
+    .form-title {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #8C6262;
+      margin-bottom: 12px;
+    }
+
+    .form-group {
+      margin-bottom: 12px;
+      text-align: left;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #8C6262;
+      margin-bottom: 4px;
+    }
+
     .form-group input {
       width: 100%;
-      padding: 8px 12px;
+      padding: 10px 12px;
       border: 1px solid #D8B4B4;
-      border-radius: 8px;
+      border-radius: 10px;
       font-family: inherit;
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       outline: none;
+      background: #FFF;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.03);
     }
+
     .btn-add {
       background: #8C6262;
       color: #FFF;
       border: none;
-      padding: 10px 16px;
+      padding: 12px;
       border-radius: 20px;
       font-weight: 700;
       cursor: pointer;
       width: 100%;
       font-size: 0.85rem;
+      margin-top: 4px;
+      box-shadow: 0 4px 12px rgba(140, 98, 98, 0.2);
     }
+
+    .section-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      text-align: left;
+      color: #3D2B2B;
+      margin-bottom: 12px;
+    }
+
+    /* KARTU ITEM PROJEK */
     .event-card {
       border: 1px solid #EAE0E0;
-      border-radius: 14px;
-      padding: 14px 16px;
-      margin-top: 12px;
+      border-radius: 16px;
+      padding: 12px 14px;
+      margin-bottom: 10px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       background: #FFF;
+      gap: 10px;
     }
+
+    .info-left {
+      text-align: left;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .project-name {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #3D2B2B;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .project-id {
+      font-size: 0.7rem;
+      color: #888;
+      margin-bottom: 4px;
+    }
+
     .badge {
-      padding: 4px 10px;
+      padding: 3px 10px;
       border-radius: 12px;
-      font-size: 0.72rem;
+      font-size: 0.7rem;
       font-weight: 700;
       display: inline-block;
-      margin-top: 4px;
     }
+
     .badge-on { background: #E8F5E9; color: #2E7D32; }
     .badge-off { background: #FFEBEE; color: #C62828; }
+
+    .action-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
     .btn-toggle {
       border: none;
-      padding: 8px 16px;
+      padding: 8px 18px;
       border-radius: 20px;
-      font-weight: 600;
+      font-weight: 700;
       cursor: pointer;
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       color: #FFF;
+      min-width: 65px;
     }
-    .btn-on { background: #C62828; }
-    .btn-off { background: #2E7D32; }
+
+    .btn-on { background: #C62828; }  /* Jika ON, tombol merah untuk mematikan */
+    .btn-off { background: #2E7D32; } /* Jika OFF, tombol hijau untuk mengaktifkan */
+
     .btn-delete {
       background: transparent;
       border: none;
-      color: #AAA;
+      color: #BBB;
       cursor: pointer;
-      font-size: 0.9rem;
-      margin-left: 10px;
+      font-size: 0.95rem;
+      padding: 4px;
     }
+
     .btn-delete:hover { color: #C62828; }
   </style>
 
@@ -107,37 +194,37 @@
 <body>
 
 <div class="admin-container">
-  <h2 style="font-size: 1.5rem; color: #8C6262; margin-bottom: 5px;">Kontrol Saklar Photobooth</h2>
-  <p style="font-size: 0.8rem; color: #777; margin-bottom: 20px;">Tambah projek HTML baru dan atur akses ON/OFF secara otomatis.</p>
+  <h2 class="main-title">Photobooth Control</h2>
+  <p class="sub-title">Kelola status akses projek photobooth secara langsung.</p>
 
-  <!-- FORM TAMBAH PROJEK BARU -->
+  <!-- FORM TAMBAH PROJEK -->
   <div class="form-card">
-    <h3 style="font-size: 0.95rem; color: #8C6262; margin-bottom: 10px;">➕ Tambah Projek Baru</h3>
+    <div class="form-title">➕ Tambah Projek Baru</div>
     <div class="form-group">
-      <label>Nama File / Nama Client (misal: clien1.html)</label>
+      <label>Nama File / Client</label>
       <input type="text" id="input-filename" placeholder="clien1.html">
     </div>
     <div class="form-group">
-      <label>ID Dokumen Firestore (misal: clien1_event)</label>
+      <label>ID Dokumen Firestore</label>
       <input type="text" id="input-docid" placeholder="clien1_event">
     </div>
-    <button class="btn-add" onclick="addNewProject()">Tambah ke Daftar Saklar</button>
+    <button class="btn-add" onclick="addNewProject()">Tambahkan</button>
   </div>
 
-  <h3 style="font-size: 1rem; text-align: left; color: #3D2B2B; margin-bottom: 10px;">Daftar Projek Aktif</h3>
+  <div class="section-title">Daftar Projek</div>
   <div id="project-list-container">
-    <p style="font-size: 0.8rem; color: #999;">Memuat daftar projek...</p>
+    <p style="font-size: 0.78rem; color: #999;">Memuat daftar...</p>
   </div>
 </div>
 
 <script>
-  // LOAD DAFTAR PROJEK SECARA DYNAMIC DARI FIRESTORE
+  // REALTIME LISTENER DAFTAR PROJEK
   db.collection('settings').onSnapshot(snapshot => {
     const container = document.getElementById('project-list-container');
     container.innerHTML = '';
 
     if (snapshot.empty) {
-      container.innerHTML = '<p style="font-size: 0.8rem; color: #999;">Belum ada projek terdaftar.</p>';
+      container.innerHTML = '<p style="font-size: 0.78rem; color: #999;">Belum ada projek.</p>';
       return;
     }
 
@@ -150,18 +237,18 @@
       const card = document.createElement('div');
       card.className = 'event-card';
       card.innerHTML = `
-        <div style="text-align: left;">
-          <strong style="font-size: 0.9rem;">${fileName}</strong><br>
-          <span style="font-size: 0.7rem; color: #888;">ID: ${docId}</span><br>
+        <div class="info-left">
+          <div class="project-name">${fileName}</div>
+          <div class="project-id">ID: ${docId}</div>
           <span class="badge ${isActive ? 'badge-on' : 'badge-off'}">
-            ${isActive ? 'ONLINE / ON' : 'OFFLINE / OFF'}
+            ${isActive ? 'ON' : 'OFF'}
           </span>
         </div>
-        <div style="display: flex; align-items: center;">
+        <div class="action-right">
           <button class="btn-toggle ${isActive ? 'btn-on' : 'btn-off'}" onclick="toggleEventStatus('${docId}', ${isActive})">
-            ${isActive ? 'Matikan (OFF)' : 'Aktifkan (ON)'}
+            ${isActive ? 'OFF' : 'ON'}
           </button>
-          <button class="btn-delete" title="Hapus dari daftar" onclick="deleteProject('${docId}')">🗑️</button>
+          <button class="btn-delete" title="Hapus" onclick="deleteProject('${docId}')">🗑️</button>
         </div>
       `;
       container.appendChild(card);
@@ -170,7 +257,6 @@
     console.error("Firestore Error:", error);
   });
 
-  // FUNGSI TAMBAH PROJEK BARU
   function addNewProject() {
     const fileName = document.getElementById('input-filename').value.trim();
     const docId = document.getElementById('input-docid').value.trim();
@@ -187,23 +273,20 @@
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     }, { merge: true })
     .then(() => {
-      alert(`Projek "${fileName}" berhasil ditambahkan!`);
       document.getElementById('input-filename').value = '';
       document.getElementById('input-docid').value = '';
     })
-    .catch(err => alert("Gagal menambah projek: " + err.message));
+    .catch(err => alert("Gagal menambahkan: " + err.message));
   }
 
-  // FUNGSI SAKLAR ON/OFF
   function toggleEventStatus(docId, currentStatus) {
     db.collection('settings').doc(docId).set({
       isActive: !currentStatus
     }, { merge: true });
   }
 
-  // FUNGSI HAPUS PROJEK
   function deleteProject(docId) {
-    if (confirm(`Apakah kamu yakin ingin menghapus projek dengan ID "${docId}" dari Super Admin?`)) {
+    if (confirm(`Hapus projek "${docId}"?`)) {
       db.collection('settings').doc(docId).delete();
     }
   }
