@@ -213,7 +213,7 @@
       border-radius: 2px;
     }
 
-    /* AREA KAMERA & KONTROL (SAMA SEPERTI INDEX.HTML) */
+    /* AREA KAMERA & KONTROL LENGKAP */
     .camera-wrapper {
       position: relative;
       width: 100%;
@@ -224,29 +224,34 @@
       margin-bottom: 10px;
     }
 
-    video { width: 100%; height: 100%; object-fit: cover; }
+    video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.2s ease;
+    }
+
     video.mirror { transform: scaleX(-1); }
 
-    .cam-controls-bar {
-      display: flex;
+    .cam-controls-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
       gap: 8px;
-      margin-bottom: 12px;
-      align-items: center;
+      margin-bottom: 10px;
     }
 
     .cam-btn-icon {
       background: #FAF6F0;
       border: 1px solid rgba(212,175,55,0.4);
       color: var(--primary-crimson);
-      padding: 8px 12px;
+      padding: 8px 10px;
       border-radius: 12px;
-      font-size: 0.78rem;
+      font-size: 0.75rem;
       font-weight: 700;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      flex: 1;
       justify-content: center;
     }
 
@@ -522,7 +527,7 @@
     </button>
   </div>
 
-  <!-- STEP 3: AREA KAMERA + KONTROL SWITCH & MIRROR (SAMA DENGAN INDEX.HTML) -->
+  <!-- STEP 3: AREA KAMERA + KONTROL SWITCH, MIRROR, TIMER, & ZOOM -->
   <div id="step-camera" class="hidden">
     <div style="font-size: 0.85rem; font-weight: 700; color: var(--primary-crimson); margin-bottom: 8px;" id="cam-progress-text">Foto 1 dari 3</div>
 
@@ -532,10 +537,16 @@
       <div id="flash-overlay" class="flash-overlay"></div>
     </div>
 
-    <!-- TOMBOL PENGATURAN KAMERA -->
-    <div class="cam-controls-bar">
+    <!-- BARIS KONTROL UTAMA KAMERA -->
+    <div class="cam-controls-grid">
+      <button class="cam-btn-icon" id="btn-timer" onclick="toggleTimerSetting()">
+        <i class="fa-solid fa-stopwatch"></i> Timer: 3s
+      </button>
+      <button class="cam-btn-icon" id="btn-zoom" onclick="toggleZoomSetting()">
+        <i class="fa-solid fa-magnifying-glass-plus"></i> Zoom: 1x
+      </button>
       <button class="cam-btn-icon" onclick="switchCamera()">
-        <i class="fa-solid fa-camera-rotate"></i> Switch Kamera
+        <i class="fa-solid fa-camera-rotate"></i> Switch
       </button>
       <button class="cam-btn-icon" id="btn-mirror" onclick="toggleMirror()">
         <i class="fa-solid fa-arrows-left-right"></i> Mirror: ON
@@ -546,7 +557,7 @@
     <select id="camera-select" class="cam-select-box" onchange="onCameraSelectChange(this.value)"></select>
 
     <button id="btn-snap" class="btn-primary-v2" onclick="takePhotoSnap()">
-      <i class="fa-solid fa-camera"></i> Ambil Foto (3s)
+      <i class="fa-solid fa-camera"></i> Ambil Foto
     </button>
     <button class="btn-outline-v2" onclick="stopCameraAndGoBack()">
       Batal / Ubah Style
@@ -665,9 +676,11 @@
   let videoStream = null;
   let generatedDataUrl = "";
 
-  // VARIABLE KONTROL KAMERA (SAMA SEPERTI INDEX.HTML)
+  // VARIABLE KONTROL KAMERA LENGKAP
   let currentFacingMode = "user";
   let isMirror = true;
+  let timerDuration = 3; // Opsi: 3, 5, 0 (OFF)
+  let zoomLevel = 1;      // Opsi: 1, 1.5, 2, 0.5
   let availableVideoDevices = [];
   let currentDeviceId = null;
 
@@ -691,7 +704,6 @@
     item.classList.add('active');
   }
 
-  // START CAMERA & DETEKSI PERANGKAT (SEPERTI INDEX.HTML)
   function startCameraProcess() {
     goToStep(3);
     capturedPhotos = [];
@@ -716,6 +728,7 @@
         video.srcObject = stream;
         video.play();
 
+        applyZoomTransform();
         enumerateVideoDevices();
       })
       .catch(err => {
@@ -758,16 +771,36 @@
 
   function toggleMirror() {
     isMirror = !isMirror;
-    const video = document.getElementById('video');
+    applyZoomTransform();
     const btn = document.getElementById('btn-mirror');
+    btn.innerHTML = `<i class="fa-solid fa-arrows-left-right"></i> Mirror: ${isMirror ? 'ON' : 'OFF'}`;
+  }
 
-    if (isMirror) {
-      video.classList.add('mirror');
-      btn.innerHTML = `<i class="fa-solid fa-arrows-left-right"></i> Mirror: ON`;
-    } else {
-      video.classList.remove('mirror');
-      btn.innerHTML = `<i class="fa-solid fa-arrows-left-right"></i> Mirror: OFF`;
-    }
+  function toggleTimerSetting() {
+    if (timerDuration === 3) timerDuration = 5;
+    else if (timerDuration === 5) timerDuration = 0; // OFF
+    else timerDuration = 3;
+
+    const btn = document.getElementById('btn-timer');
+    btn.innerHTML = `<i class="fa-solid fa-stopwatch"></i> Timer: ${timerDuration === 0 ? 'OFF' : timerDuration + 's'}`;
+  }
+
+  function toggleZoomSetting() {
+    if (zoomLevel === 1) zoomLevel = 1.5;
+    else if (zoomLevel === 1.5) zoomLevel = 2;
+    else if (zoomLevel === 2) zoomLevel = 0.5;
+    else zoomLevel = 1;
+
+    applyZoomTransform();
+    const btn = document.getElementById('btn-zoom');
+    btn.innerHTML = `<i class="fa-solid fa-magnifying-glass-plus"></i> Zoom: ${zoomLevel}x`;
+  }
+
+  function applyZoomTransform() {
+    const video = document.getElementById('video');
+    let transformStr = `scale(${zoomLevel})`;
+    if (isMirror) transformStr += ` scaleX(-1)`;
+    video.style.transform = transformStr;
   }
 
   function onCameraSelectChange(deviceId) {
@@ -782,10 +815,18 @@
     goToStep(2);
   }
 
-  // AMBIL FOTO SNAPSHOT
+  // AMBIL FOTO SNAPSHOT DENGAN TIMER / TIMER OFF
   function takePhotoSnap() {
     document.getElementById('btn-snap').disabled = true;
-    let count = 3;
+
+    // JIKA TIMER OFF (0s)
+    if (timerDuration === 0) {
+      executeSnapCapture();
+      return;
+    }
+
+    // JIKA TIMER 3s ATAU 5s
+    let count = timerDuration;
     const overlay = document.getElementById('countdown-overlay');
     overlay.innerText = count;
     overlay.classList.remove('hidden');
@@ -797,40 +838,54 @@
       } else {
         clearInterval(timer);
         overlay.classList.add('hidden');
-
-        // Flash
-        const flash = document.getElementById('flash-overlay');
-        flash.classList.add('active');
-        setTimeout(() => flash.classList.remove('active'), 200);
-
-        // Snap canvas mengikuti status Mirror
-        const video = document.getElementById('video');
-        const tempCanvas = document.createElement('canvas');
-        tempCanvas.width = video.videoWidth || 640;
-        tempCanvas.height = video.videoHeight || 480;
-        const ctx = tempCanvas.getContext('2d');
-
-        if (isMirror) {
-          ctx.translate(tempCanvas.width, 0);
-          ctx.scale(-1, 1);
-        }
-
-        ctx.drawImage(video, 0, 0);
-        capturedPhotos.push(tempCanvas.toDataURL('image/png'));
-
-        if (capturedPhotos.length < targetPhotoCount) {
-          document.getElementById('cam-progress-text').innerText = `Foto ${capturedPhotos.length + 1} dari ${targetPhotoCount}`;
-          setTimeout(() => { document.getElementById('btn-snap').disabled = false; }, 1000);
-        } else {
-          if (videoStream) {
-            videoStream.getTracks().forEach(track => track.stop());
-          }
-          renderPhotostripV2();
-          goToStep(4);
-          document.getElementById('btn-snap').disabled = false;
-        }
+        executeSnapCapture();
       }
     }, 1000);
+  }
+
+  // JEPET FOTO KE CANVAS
+  function executeSnapCapture() {
+    const flash = document.getElementById('flash-overlay');
+    flash.classList.add('active');
+    setTimeout(() => flash.classList.remove('active'), 200);
+
+    const video = document.getElementById('video');
+    const tempCanvas = document.createElement('canvas');
+    tempCanvas.width = video.videoWidth || 640;
+    tempCanvas.height = video.videoHeight || 480;
+    const ctx = tempCanvas.getContext('2d');
+
+    ctx.save();
+    if (isMirror) {
+      ctx.translate(tempCanvas.width, 0);
+      ctx.scale(-1, 1);
+    }
+
+    // Efek Zoom pada Canvas Output
+    if (zoomLevel !== 1) {
+      const sw = tempCanvas.width / zoomLevel;
+      const sh = tempCanvas.height / zoomLevel;
+      const sx = (tempCanvas.width - sw) / 2;
+      const sy = (tempCanvas.height - sh) / 2;
+      ctx.drawImage(video, sx, sy, sw, sh, 0, 0, tempCanvas.width, tempCanvas.height);
+    } else {
+      ctx.drawImage(video, 0, 0);
+    }
+    ctx.restore();
+
+    capturedPhotos.push(tempCanvas.toDataURL('image/png'));
+
+    if (capturedPhotos.length < targetPhotoCount) {
+      document.getElementById('cam-progress-text').innerText = `Foto ${capturedPhotos.length + 1} dari ${targetPhotoCount}`;
+      setTimeout(() => { document.getElementById('btn-snap').disabled = false; }, 800);
+    } else {
+      if (videoStream) {
+        videoStream.getTracks().forEach(track => track.stop());
+      }
+      renderPhotostripV2();
+      goToStep(4);
+      document.getElementById('btn-snap').disabled = false;
+    }
   }
 
   // RENDER CANVASES
