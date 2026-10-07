@@ -9,13 +9,335 @@
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Great+Vibes&family=Courier+Prime:wght@400;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,500;1,600;1,700&family=Bodoni+Moda:ital,opsz,wght@1,6..96,600;1,6..96,700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-  <!-- Link External CSS -->
-  <link rel="stylesheet" href="./css/style.css">
-
-  <!-- Firebase SDK Compat -->
+  <!-- Firebase Compatibility SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
   <script src="./js/config.js"></script>
+
+  <!-- STYLE INTERNAL LENGKAP (CSS DIBUAT SATU FILE) -->
+  <style>
+    :root {
+      --dusty-rose: #8C6262;
+      --soft-blush: #D8B4B4;
+      --cream-bg: #FDFBF7;
+      --text-dark: #3D2B2B;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--cream-bg);
+      color: var(--text-dark);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px 10px;
+    }
+
+    .font-serif { font-family: 'Cormorant Garamond', serif; }
+    .hidden { display: none !important; }
+
+    .app-card {
+      background: #ffffff;
+      border-radius: 28px;
+      padding: 30px 20px;
+      width: 100%;
+      max-width: 440px;
+      box-shadow: 0 15px 35px rgba(140, 98, 98, 0.1);
+      border: 1px solid rgba(216, 180, 180, 0.3);
+      text-align: center;
+      position: relative;
+    }
+
+    /* Welcome Screen */
+    .welcome-badge {
+      font-size: 0.75rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--dusty-rose);
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .welcome-title {
+      font-size: 2.2rem;
+      color: var(--dusty-rose);
+      margin-bottom: 12px;
+      line-height: 1.1;
+    }
+
+    .welcome-subtitle {
+      font-size: 0.85rem;
+      color: #6E5353;
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+
+    .welcome-names {
+      font-family: 'Great Vibes', cursive;
+      font-size: 2.2rem;
+      color: var(--dusty-rose);
+      margin-bottom: 25px;
+    }
+
+    /* Buttons */
+    .btn-primary {
+      width: 100%;
+      background: var(--dusty-rose);
+      color: #fff;
+      border: none;
+      padding: 14px 20px;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 6px 15px rgba(140, 98, 98, 0.25);
+    }
+
+    .btn-primary:active { transform: scale(0.98); }
+
+    .btn-secondary {
+      width: 100%;
+      background: transparent;
+      color: var(--dusty-rose);
+      border: 1px solid var(--dusty-rose);
+      padding: 12px 20px;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    /* Template Option Selection */
+    .option-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--dusty-rose);
+      letter-spacing: 1px;
+      margin: 15px 0 8px 0;
+      text-align: left;
+    }
+
+    .option-grid, .design-grid, .color-grid {
+      display: grid;
+      gap: 10px;
+    }
+
+    .option-grid { grid-template-columns: repeat(3, 1fr); }
+    .design-grid { grid-template-columns: repeat(3, 1fr); }
+    .color-grid { grid-template-columns: repeat(2, 1fr); }
+
+    .option-card, .design-card, .color-card {
+      border: 2px solid #F0E6E6;
+      border-radius: 14px;
+      padding: 10px 5px;
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: 0.2s;
+      background: #FFF;
+    }
+
+    .option-card.active, .design-card.active, .color-card.active {
+      border-color: var(--dusty-rose);
+      background-color: rgba(216, 180, 180, 0.15);
+      font-weight: 700;
+    }
+
+    .preview-box {
+      height: 50px;
+      background: #F2ECEC;
+      border-radius: 6px;
+      margin-bottom: 6px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      padding: 4px;
+    }
+
+    .preview-photo {
+      width: 80%;
+      height: 14px;
+      background: #DDD;
+      border-radius: 2px;
+    }
+
+    .color-card {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+    }
+
+    .color-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+    }
+
+    /* Camera View */
+    .camera-header-info {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .photo-progress {
+      font-weight: 700;
+      color: var(--dusty-rose);
+      font-size: 0.9rem;
+    }
+
+    .cam-controls-row {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-switch-cam, .camera-select-dropdown {
+      border: 1px solid var(--soft-blush);
+      border-radius: 20px;
+      padding: 6px 12px;
+      font-size: 0.75rem;
+      background: #FFF;
+      color: var(--text-dark);
+    }
+
+    .camera-wrapper {
+      position: relative;
+      width: 100%;
+      border-radius: 20px;
+      overflow: hidden;
+      background: #000;
+      aspect-ratio: 3/4;
+    }
+
+    #video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    #video.mirror { transform: scaleX(-1); }
+
+    .countdown-overlay {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.4);
+      color: #FFF;
+      font-size: 5rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .flash-overlay {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: #FFF;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.1s;
+    }
+
+    .flash-overlay.active { opacity: 1; }
+
+    .slider-adjust-wrapper {
+      margin: 12px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 0.75rem;
+      text-align: left;
+    }
+
+    .slider-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .slider-item input { flex: 1; }
+
+    /* ANIMASI POLAROID EJECT ASLI */
+    .polaroid-container {
+      position: relative;
+      width: 100%;
+      margin: 20px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .polaroid-camera-body {
+      width: 200px;
+      height: 110px;
+      background: #EAE3D9;
+      border-radius: 24px;
+      border: 3px solid #D6CBC0;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+      position: relative;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .camera-lens {
+      width: 54px;
+      height: 54px;
+      background: #222;
+      border-radius: 50%;
+      border: 4px solid #C4A4A4;
+    }
+
+    .camera-slot {
+      width: 180px;
+      height: 8px;
+      background: #1A1A1A;
+      border-radius: 4px;
+      position: absolute;
+      bottom: -4px;
+      z-index: 11;
+    }
+
+    .photo-eject-wrapper {
+      width: 220px;
+      position: relative;
+      z-index: 5;
+      margin-top: -60px;
+      opacity: 0;
+      transform: translateY(-120px);
+      transition: transform 2.5s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.5s ease;
+    }
+
+    .photo-eject-wrapper.eject {
+      opacity: 1;
+      transform: translateY(20px);
+    }
+
+    #result-img {
+      width: 100%;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+      display: block;
+    }
+
+    .app-footer {
+      margin-top: 15px;
+      font-size: 0.75rem;
+      color: #999;
+      text-align: center;
+    }
+  </style>
 </head>
 <body>
 
@@ -65,7 +387,6 @@
     <div class="design-grid">
       <div class="design-card active" onclick="selectDesignStyle('floral', this)">
         <div class="preview-box design1">
-          <img src="./assets/calla-lily-corner.png" class="preview-img-corner" alt="Lily" onerror="this.style.display='none'">
           <div class="preview-photo"></div>
           <div class="preview-photo"></div>
         </div>
@@ -86,22 +407,6 @@
           <div class="preview-photo"></div>
         </div>
         <strong style="font-size:0.75rem; color:var(--text-dark);">3. Wavy Red</strong>
-      </div>
-
-      <div class="design-card" onclick="selectDesignStyle('fotome_brand', this)">
-        <div class="preview-box design4">
-          <div class="preview-photo"></div>
-          <div class="preview-photo"></div>
-        </div>
-        <strong style="font-size:0.75rem; color:var(--text-dark);">4. Basic</strong>
-      </div>
-
-      <div class="design-card" onclick="selectDesignStyle('engagement', this)">
-        <div class="preview-box design5">
-          <div class="preview-photo"></div>
-          <div class="preview-photo"></div>
-        </div>
-        <strong style="font-size:0.75rem; color:var(--text-dark);">5. Engagement</strong>
       </div>
     </div>
 
@@ -124,14 +429,6 @@
         <div class="color-card" onclick="selectBgColor('lavender', this)">
           <div class="color-dot" style="background-color: #A283A2;"></div>
           Soft Lavender
-        </div>
-        <div class="color-card" onclick="selectBgColor('vanilla', this)">
-          <div class="color-dot" style="background-color: #D6C7BC;"></div>
-          Vanilla Cream
-        </div>
-        <div class="color-card" onclick="selectBgColor('dark', this)">
-          <div class="color-dot" style="background-color: #2B1E1E;"></div>
-          Charcoal Dark
         </div>
       </div>
     </div>
@@ -199,13 +496,11 @@
 
     <div class="polaroid-container">
       <div class="polaroid-camera-body">
-        <div class="camera-flash"></div>
         <div class="camera-lens"></div>
-        <div class="camera-stripe"></div>
+        <div class="camera-slot"></div>
       </div>
-      <div class="camera-slot"></div>
 
-      <div class="photo-eject-wrapper">
+      <div class="photo-eject-wrapper" id="eject-wrapper">
         <img id="result-img" alt="Hasil Photobooth">
       </div>
     </div>
@@ -233,21 +528,24 @@
 
 <canvas id="canvas" style="display: none;"></canvas>
 
+<!-- SCRIPT LOGIKA UTAMA (TERHUBUNG KE DOKUMEN FIRESTORE MINGGUAN / EVENT) -->
 <script>
-  // 1. DOKUMEN FIRESTORE SAKLAR
-  let currentTitle = "Riyan & Amelia";
-  let currentDate = "06 Desember 2026";
+  // ID DOKUMEN BISA DIGANTI MANUALLY PER EVENT (MISAL: 'wedding_event' ATAU 'rudi_event')
+  const EVENT_DOC_ID = 'wedding_event'; 
+
+  let eventTitle = "Riyan & Amelia";
+  let eventDate = "06 Desember 2026";
 
   if (typeof db !== 'undefined') {
-    db.collection('settings').doc('wedding_event').onSnapshot(doc => {
+    db.collection('settings').doc(EVENT_DOC_ID).onSnapshot(doc => {
       if (doc.exists) {
         const data = doc.data();
         if (data.title) {
-          currentTitle = data.title;
-          const titleEl = document.getElementById('display-title');
-          if (titleEl) titleEl.innerText = data.title;
+          eventTitle = data.title;
+          const t = document.getElementById('display-title');
+          if (t) t.innerText = data.title;
         }
-        if (data.date) currentDate = data.date;
+        if (data.date) eventDate = data.date;
 
         let lockOverlay = document.getElementById('lock-overlay');
         if (data.isActive === false) {
@@ -260,9 +558,9 @@
                   <div style="font-size: 3rem; margin-bottom: 10px;">🔒</div>
                   <h2 style="font-family: 'Cormorant Garamond', serif; color: #8C6262; font-size: 2rem; margin-bottom: 10px;">Photobooth Ditutup</h2>
                   <p style="color: #6E5353; font-size: 0.9rem; line-height: 1.6; margin-bottom: 20px;">
-                    Sesi virtual photobooth untuk acara saat ini sedang tidak aktif atau telah selesai.
+                    Sesi virtual photobooth untuk acara saat ini sedang tidak aktif.
                   </p>
-                  <div style="font-family: 'Great Vibes', cursive; font-size: 1.8rem; color: #8C6262;">${currentTitle}</div>
+                  <div style="font-family: 'Great Vibes', cursive; font-size: 1.8rem; color: #8C6262;">${eventTitle}</div>
                 </div>
                 <p style="margin-top: 25px; font-size: 0.7rem; color: #B39B9B;">FOTOME by Riyan Ardiansyah</p>
               </div>
@@ -286,7 +584,7 @@
     });
   }
 
-  // 2. LOGIKA UTAMA PHOTOBOOTH (KEMBALI KE ASLI)
+  // APP CORE ENGINE
   let targetPhotoCount = 3;
   let selectedDesignStyle = 'floral';
   let selectedBgColor = 'dusty';
@@ -295,50 +593,31 @@
   let isTimerActive = true;
   let isFlashActive = true;
   let videoStream = null;
-  let currentCameraDeviceId = "";
 
-  function goToStep(stepNumber) {
-    const steps = ['step-welcome', 'step-template', 'step-camera', 'step-result'];
-    steps.forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.classList.add('hidden');
+  function goToStep(step) {
+    ['step-welcome', 'step-template', 'step-camera', 'step-result'].forEach(id => {
+      document.getElementById(id).classList.add('hidden');
     });
-
-    let target = '';
-    if (stepNumber === 1) target = 'step-welcome';
-    else if (stepNumber === 2) target = 'step-template';
-    else if (stepNumber === 3) target = 'step-camera';
-    else if (stepNumber === 4) target = 'step-result';
-
-    const targetEl = document.getElementById(target);
-    if (targetEl) targetEl.classList.remove('hidden');
+    const targetMap = {1:'step-welcome', 2:'step-template', 3:'step-camera', 4:'step-result'};
+    document.getElementById(targetMap[step]).classList.remove('hidden');
   }
 
-  function selectPhotoCount(count, cardElem) {
+  function selectPhotoCount(count, el) {
     targetPhotoCount = parseInt(count, 10);
-    if (cardElem && cardElem.parentElement) {
-      const cards = cardElem.parentElement.querySelectorAll('.option-card');
-      cards.forEach(c => c.classList.remove('active'));
-      cardElem.classList.add('active');
-    }
+    el.parentElement.querySelectorAll('.option-card').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
   }
 
-  function selectDesignStyle(styleName, cardElem) {
-    selectedDesignStyle = styleName;
-    if (cardElem && cardElem.parentElement) {
-      const cards = cardElem.parentElement.querySelectorAll('.design-card');
-      cards.forEach(c => c.classList.remove('active'));
-      cardElem.classList.add('active');
-    }
+  function selectDesignStyle(style, el) {
+    selectedDesignStyle = style;
+    el.parentElement.querySelectorAll('.design-card').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
   }
 
-  function selectBgColor(colorName, cardElem) {
-    selectedBgColor = colorName;
-    if (cardElem && cardElem.parentElement) {
-      const cards = cardElem.parentElement.querySelectorAll('.color-card');
-      cards.forEach(c => c.classList.remove('active'));
-      cardElem.classList.add('active');
-    }
+  function selectBgColor(color, el) {
+    selectedBgColor = color;
+    el.parentElement.querySelectorAll('.color-card').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
   }
 
   function startCameraProcess() {
@@ -350,48 +629,32 @@
 
   function initCameraDevices() {
     const selectCam = document.getElementById('camera-select');
-    if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) return;
-
     navigator.mediaDevices.enumerateDevices().then(devices => {
       const videoDevices = devices.filter(d => d.kind === 'videoinput');
-      if (selectCam) {
-        selectCam.innerHTML = '';
-        videoDevices.forEach((device, idx) => {
-          const option = document.createElement('option');
-          option.value = device.deviceId;
-          option.text = device.label || `Kamera ${idx + 1}`;
-          selectCam.appendChild(option);
-        });
-
-        if (videoDevices.length > 0) {
-          currentCameraDeviceId = videoDevices[0].deviceId;
-          startCameraStream(currentCameraDeviceId);
-        }
-      }
+      selectCam.innerHTML = '';
+      videoDevices.forEach((device, idx) => {
+        const option = document.createElement('option');
+        option.value = device.deviceId;
+        option.text = device.label || `Kamera ${idx + 1}`;
+        selectCam.appendChild(option);
+      });
+      if (videoDevices.length > 0) startCameraStream(videoDevices[0].deviceId);
     });
   }
 
   function onCameraDeviceChange(deviceId) {
-    currentCameraDeviceId = deviceId;
     startCameraStream(deviceId);
   }
 
   function startCameraStream(deviceId) {
-    if (videoStream) {
-      videoStream.getTracks().forEach(track => track.stop());
-    }
-
-    const constraints = {
+    if (videoStream) videoStream.getTracks().forEach(track => track.stop());
+    navigator.mediaDevices.getUserMedia({
       video: deviceId ? { deviceId: { exact: deviceId } } : true
-    };
-
-    navigator.mediaDevices.getUserMedia(constraints).then(stream => {
+    }).then(stream => {
       videoStream = stream;
       const video = document.getElementById('video');
-      if (video) {
-        video.srcObject = stream;
-        video.play();
-      }
+      video.srcObject = stream;
+      video.play();
     });
   }
 
@@ -409,35 +672,25 @@
     const zoomVal = document.getElementById('zoom-slider').value;
     const brightVal = document.getElementById('brightness-slider').value;
     const video = document.getElementById('video');
-
     document.getElementById('zoom-val').innerText = zoomVal + 'x';
     document.getElementById('brightness-val').innerText = Math.round(brightVal * 100) + '%';
-
-    if (video) {
-      video.style.transform = `scale(${zoomVal})`;
-      video.style.filter = `brightness(${brightVal})`;
-    }
+    video.style.transform = `scale(${zoomVal})`;
+    video.style.filter = `brightness(${brightVal})`;
   }
 
   function handleSnapButtonClick() {
-    const btnSnap = document.getElementById('btn-snap');
-    if (btnSnap) btnSnap.disabled = true;
-
+    document.getElementById('btn-snap').disabled = true;
     if (isTimerActive) {
       let count = 3;
       const overlay = document.getElementById('countdown-overlay');
-      if (overlay) {
-        overlay.innerText = count;
-        overlay.classList.remove('hidden');
-      }
-
+      overlay.innerText = count;
+      overlay.classList.remove('hidden');
       const timer = setInterval(() => {
         count--;
-        if (count > 0) {
-          if (overlay) overlay.innerText = count;
-        } else {
+        if (count > 0) overlay.innerText = count;
+        else {
           clearInterval(timer);
-          if (overlay) overlay.classList.add('hidden');
+          overlay.classList.add('hidden');
           takePhotoSnap();
         }
       }, 1000);
@@ -449,40 +702,26 @@
   function takePhotoSnap() {
     if (isFlashActive) {
       const flash = document.getElementById('flash-overlay');
-      if (flash) {
-        flash.classList.add('active');
-        setTimeout(() => flash.classList.remove('active'), 250);
-      }
+      flash.classList.add('active');
+      setTimeout(() => flash.classList.remove('active'), 250);
     }
 
     const video = document.getElementById('video');
     const tempCanvas = document.createElement('canvas');
     const ctx = tempCanvas.getContext('2d');
-
     tempCanvas.width = video.videoWidth || 640;
     tempCanvas.height = video.videoHeight || 480;
-
     ctx.drawImage(video, 0, 0, tempCanvas.width, tempCanvas.height);
     capturedPhotos.push(tempCanvas.toDataURL('image/png'));
 
-    const countText = document.getElementById('photo-count-text');
-    if (countText) {
-      if (capturedPhotos.length < targetPhotoCount) {
-        countText.innerText = `Foto ${capturedPhotos.length + 1} dari ${targetPhotoCount}`;
-      }
-    }
-
     if (capturedPhotos.length < targetPhotoCount) {
-      setTimeout(() => {
-        const btnSnap = document.getElementById('btn-snap');
-        if (btnSnap) btnSnap.disabled = false;
-      }, 1000);
+      document.getElementById('photo-count-text').innerText = `Foto ${capturedPhotos.length + 1} dari ${targetPhotoCount}`;
+      setTimeout(() => { document.getElementById('btn-snap').disabled = false; }, 1000);
     } else {
       setTimeout(() => {
         renderFinalPhotostrip();
         goToStep(4);
-        const btnSnap = document.getElementById('btn-snap');
-        if (btnSnap) btnSnap.disabled = false;
+        document.getElementById('btn-snap').disabled = false;
       }, 500);
     }
   }
@@ -490,7 +729,6 @@
   function renderFinalPhotostrip() {
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
-
     const width = 600;
     const height = 1800;
     canvas.width = width;
@@ -500,8 +738,6 @@
     if (selectedBgColor === 'mocha') bgColor = '#B3927A';
     else if (selectedBgColor === 'blue') bgColor = '#83A398';
     else if (selectedBgColor === 'lavender') bgColor = '#A283A2';
-    else if (selectedBgColor === 'vanilla') bgColor = '#D6C7BC';
-    else if (selectedBgColor === 'dark') bgColor = '#2B1E1E';
 
     ctx.fillStyle = bgColor;
     ctx.fillRect(0, 0, width, height);
@@ -512,30 +748,23 @@
       img.onload = () => {
         ctx.drawImage(img, 40, 80 + (idx * 410), 520, 380);
         loaded++;
-
         if (loaded === capturedPhotos.length) {
           ctx.fillStyle = '#FFFFFF';
           ctx.font = 'bold 36px "Cormorant Garamond", serif';
           ctx.textAlign = 'center';
-          ctx.fillText(currentTitle, width / 2, height - 120);
-
+          ctx.fillText(eventTitle, width / 2, height - 120);
           ctx.font = '20px "Plus Jakarta Sans", sans-serif';
-          ctx.fillText(currentDate, width / 2, height - 80);
+          ctx.fillText(eventDate, width / 2, height - 80);
 
-          const resultImg = document.getElementById('result-img');
-          const downloadLink = document.getElementById('download-link');
-          const photoWrapper = document.querySelector('.photo-eject-wrapper');
           const dataUrl = canvas.toDataURL('image/png');
+          document.getElementById('result-img').src = dataUrl;
+          document.getElementById('download-link').href = dataUrl;
 
-          if (resultImg) resultImg.src = dataUrl;
-          if (downloadLink) downloadLink.href = dataUrl;
-
-          // EJECT ANIMATION UTAMA CSS (ORIGINAL)
-          if (photoWrapper) {
-            photoWrapper.classList.remove('eject');
-            void photoWrapper.offsetWidth;
-            photoWrapper.classList.add('eject');
-          }
+          // TRIGGER EJECT ANIMATION UTAMA
+          const wrapper = document.getElementById('eject-wrapper');
+          wrapper.classList.remove('eject');
+          void wrapper.offsetWidth; // Trigger Reflow
+          wrapper.classList.add('eject');
         }
       };
       img.src = src;
