@@ -3,149 +3,107 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Super Admin - FOTOME</title>
+  <title>Super Admin Switcher - FOTOME</title>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./css/style.css">
   <style>
-    .admin-card {
-      background: #ffffff;
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: #FDFBF7;
+      padding: 30px 15px;
+      color: #3D2B2B;
+    }
+    .admin-container {
+      max-width: 500px;
+      margin: 0 auto;
+      background: #FFF;
       border-radius: 20px;
       padding: 25px;
-      max-width: 480px;
-      margin: 40px auto;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-      text-align: center;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
     }
-    .status-badge {
-      display: inline-block;
-      padding: 6px 14px;
+    .event-card {
+      border: 1px solid #EAE0E0;
+      border-radius: 14px;
+      padding: 15px;
+      margin-top: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .badge {
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+    .badge-on { background: #E8F5E9; color: #2E7D32; }
+    .badge-off { background: #FFEBEE; color: #C62828; }
+    .btn-toggle {
+      border: none;
+      padding: 8px 16px;
       border-radius: 20px;
-      font-weight: 700;
-      font-size: 0.85rem;
-      margin-bottom: 20px;
-    }
-    .status-on { background: #E8F5E9; color: #2E7D32; }
-    .status-off { background: #FFEBEE; color: #C62828; }
-    .form-group {
-      text-align: left;
-      margin-bottom: 15px;
-    }
-    .form-group label {
-      display: block;
+      font-weight: 600;
+      cursor: pointer;
       font-size: 0.8rem;
-      font-weight: 700;
-      color: var(--dusty-rose);
-      margin-bottom: 5px;
-    }
-    .form-group input {
-      width: 100%;
-      padding: 10px 14px;
-      border: 1px solid var(--soft-blush);
-      border-radius: 10px;
-      font-family: inherit;
-      outline: none;
     }
   </style>
 
-  <!-- SDK Firebase CDN Versi Kompatibel -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-  
-  <!-- File Konfigurasi -->
   <script src="./js/config.js"></script>
 </head>
 <body>
 
-<div class="admin-card">
-  <h2 class="font-serif" style="color: var(--dusty-rose); font-size: 1.8rem; margin-bottom: 10px;">Dashboard Super Admin</h2>
-  <p style="font-size: 0.85rem; color: #666; margin-bottom: 20px;">Kontrol status event FOTOME secara real-time</p>
+<div class="admin-container">
+  <h2>Saklar Kontrol Photobooth</h2>
+  <p style="font-size:0.8rem; color:#777;">Aktifkan/nonaktifkan akses halaman virtual photobooth per projek.</p>
 
-  <div id="status-display" class="status-badge status-off">Memuat Status...</div>
-
-  <button id="btn-toggle-status" class="btn-primary" onclick="toggleEventStatus()" style="margin-top: 0; margin-bottom: 25px;">
-    Ubah Status
-  </button>
-
-  <div class="form-group">
-    <label>Nama Pasangan / Judul Event</label>
-    <input type="text" id="event-title" value="Riyan & Amelia">
+  <!-- EVENT 1: Main Project (index.html) -->
+  <div class="event-card">
+    <div>
+      <strong>1. index.html</strong><br>
+      <span id="status-1" class="badge badge-off">Memuat...</span>
+    </div>
+    <button id="btn-1" class="btn-toggle" onclick="toggleStatus('wedding_event', isStatus1Active)">Ubah</button>
   </div>
 
-  <div class="form-group">
-    <label>Tanggal Event</label>
-    <input type="text" id="event-date" value="06 Desember 2026">
+  <!-- EVENT 2: Rudi Project (rudi.html) -->
+  <div class="event-card">
+    <div>
+      <strong>2. rudi.html</strong><br>
+      <span id="status-2" class="badge badge-off">Memuat...</span>
+    </div>
+    <button id="btn-2" class="btn-toggle" onclick="toggleStatus('rudi_event', isStatus2Active)">Ubah</button>
   </div>
-
-  <button class="btn-secondary" onclick="saveEventDetails()">
-    Simpan Perubahan Teks
-  </button>
 </div>
 
 <script>
-  let isEventActive = false;
+  let isStatus1Active = false;
+  let isStatus2Active = false;
 
-  if (typeof firebase === 'undefined' || typeof db === 'undefined') {
-    alert("Error: js/config.js tidak berhasil dimuat! Periksa kembali file config.js Anda.");
-  } else {
-    db.collection('settings').doc('wedding_event').onSnapshot(doc => {
-      const badge = document.getElementById('status-display');
-      const btn = document.getElementById('btn-toggle-status');
+  // Realtime Listener index.html (wedding_event)
+  db.collection('settings').doc('wedding_event').onSnapshot(doc => {
+    if (doc.exists) {
+      isStatus1Active = doc.data().isActive === true;
+      document.getElementById('status-1').innerText = isStatus1Active ? "ONLINE / ON" : "OFFLINE / OFF";
+      document.getElementById('status-1').className = "badge " + (isStatus1Active ? "badge-on" : "badge-off");
+      document.getElementById('btn-1').innerText = isStatus1Active ? "Matikan" : "Aktifkan";
+    }
+  });
 
-      if (doc.exists) {
-        const data = doc.data();
-        isEventActive = data.isActive === true;
+  // Realtime Listener rudi.html (rudi_event)
+  db.collection('settings').doc('rudi_event').onSnapshot(doc => {
+    if (doc.exists) {
+      isStatus2Active = doc.data().isActive === true;
+      document.getElementById('status-2').innerText = isStatus2Active ? "ONLINE / ON" : "OFFLINE / OFF";
+      document.getElementById('status-2').className = "badge " + (isStatus2Active ? "badge-on" : "badge-off");
+      document.getElementById('btn-2').innerText = isStatus2Active ? "Matikan" : "Aktifkan";
+    }
+  });
 
-        if (isEventActive) {
-          badge.innerText = "Status Event: AKTIF / ON";
-          badge.className = "status-badge status-on";
-          btn.innerText = "Matikan Event (OFF)";
-        } else {
-          badge.innerText = "Status Event: NONAKTIF / OFF";
-          badge.className = "status-badge status-off";
-          btn.innerText = "Aktifkan Event (ON)";
-        }
-
-        if (data.title) document.getElementById('event-title').value = data.title;
-        if (data.date) document.getElementById('event-date').value = data.date;
-      } else {
-        badge.innerText = "Status Event: NONAKTIF / OFF";
-        badge.className = "status-badge status-off";
-        btn.innerText = "Aktifkan Event (ON)";
-        isEventActive = false;
-      }
-    }, error => {
-      console.error("Firebase Error:", error);
-    });
-  }
-
-  function toggleEventStatus() {
-    const newStatus = !isEventActive;
-    
-    db.collection('settings').doc('wedding_event').set({
-      isActive: newStatus
-    }, { merge: true })
-    .then(() => {
-      console.log("Status berhasil diubah ke:", newStatus);
-    })
-    .catch(err => {
-      alert("Gagal memperbarui status: " + err.message);
-    });
-  }
-
-  function saveEventDetails() {
-    const title = document.getElementById('event-title').value;
-    const date = document.getElementById('event-date').value;
-
-    db.collection('settings').doc('wedding_event').set({
-      title: title,
-      date: date
-    }, { merge: true })
-    .then(() => {
-      alert("Detail event berhasil disimpan!");
-    })
-    .catch(err => {
-      alert("Gagal menyimpan detail: " + err.message);
-    });
+  function toggleStatus(docId, currentStatus) {
+    db.collection('settings').doc(docId).set({
+      isActive: !currentStatus
+    }, { merge: true });
   }
 </script>
 
