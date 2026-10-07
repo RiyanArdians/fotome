@@ -7,13 +7,11 @@ if (typeof db !== 'undefined') {
       const data = doc.data();
       let lockOverlay = document.getElementById('lock-overlay');
 
-      // Update Teks Nama Pasangan di Halaman Depan jika ada di Firestore
       if (data.title) {
         const welcomeNames = document.querySelector('.welcome-names');
         if (welcomeNames) welcomeNames.innerText = data.title;
       }
 
-      // JIKA STATUS EVENT NONAKTIF / OFF -> TAMPILKAN OVERLAY KUNCI
       if (data.isActive === false) {
         if (!lockOverlay) {
           lockOverlay = document.createElement('div');
@@ -41,7 +39,6 @@ if (typeof db !== 'undefined') {
           document.body.style.overflow = 'hidden';
         }
       } else {
-        // JIKA STATUS EVENT AKTIF / ON -> HAPUS OVERLAY KUNCI
         if (lockOverlay) {
           lockOverlay.remove();
           document.body.style.overflow = 'auto';
@@ -56,7 +53,7 @@ if (typeof db !== 'undefined') {
 /* =========================================================
    2. VARIABEL & KONFIGURASI UTAMA
    ========================================================= */
-let targetPhotoCount = 3;
+let targetPhotoCount = 3; // Default
 let selectedDesignStyle = 'floral'; 
 let selectedBgColor = 'dusty';
 let capturedPhotos = [];
@@ -74,9 +71,7 @@ function goToStep(stepNumber) {
   
   steps.forEach(stepId => {
     const element = document.getElementById(stepId);
-    if (element) {
-      element.classList.add('hidden');
-    }
+    if (element) element.classList.add('hidden');
   });
 
   let targetId = '';
@@ -86,26 +81,28 @@ function goToStep(stepNumber) {
   else if (stepNumber === 4) targetId = 'step-result';
 
   const targetElement = document.getElementById(targetId);
-  if (targetElement) {
-    targetElement.classList.remove('hidden');
-  }
+  if (targetElement) targetElement.classList.remove('hidden');
 }
 
 /* =========================================================
-   4. SELEKSI STYLE & WARNA
+   4. SELEKSI STYLE & WARNA (DIPERBAIKI)
    ========================================================= */
 function selectPhotoCount(count, cardElem) {
-  targetPhotoCount = count;
-  const cards = cardElem.parentElement.querySelectorAll('.option-card');
-  cards.forEach(c => c.classList.remove('active'));
-  cardElem.classList.add('active');
+  targetPhotoCount = parseInt(count, 10); // Update nilai pasti
+  if (cardElem && cardElem.parentElement) {
+    const cards = cardElem.parentElement.querySelectorAll('.option-card');
+    cards.forEach(c => c.classList.remove('active'));
+    cardElem.classList.add('active');
+  }
 }
 
 function selectDesignStyle(styleName, cardElem) {
   selectedDesignStyle = styleName;
-  const cards = cardElem.parentElement.querySelectorAll('.design-card');
-  cards.forEach(c => c.classList.remove('active'));
-  cardElem.classList.add('active');
+  if (cardElem && cardElem.parentElement) {
+    const cards = cardElem.parentElement.querySelectorAll('.design-card');
+    cards.forEach(c => c.classList.remove('active'));
+    cardElem.classList.add('active');
+  }
 
   const colorSection = document.getElementById('color-section-wrapper');
   if (styleName === 'wavy_red') {
@@ -118,17 +115,26 @@ function selectDesignStyle(styleName, cardElem) {
 function selectBgColor(colorName, cardElem) {
   if (selectedDesignStyle === 'wavy_red') return;
   selectedBgColor = colorName;
-  const cards = cardElem.parentElement.querySelectorAll('.color-card');
-  cards.forEach(c => c.classList.remove('active'));
-  cardElem.classList.add('active');
+  if (cardElem && cardElem.parentElement) {
+    const cards = cardElem.parentElement.querySelectorAll('.color-card');
+    cards.forEach(c => c.classList.remove('active'));
+    cardElem.classList.add('active');
+  }
 }
 
 /* =========================================================
-   5. SKRIP KAMERA & PENGATURAN
+   5. SKRIP KAMERA & DETEKSI KAMERA HP
    ========================================================= */
 function startCameraProcess() {
   goToStep(3);
   capturedPhotos = [];
+  
+  // Update teks indikator foto pertama
+  const countText = document.getElementById('photo-count-text');
+  if (countText) {
+    countText.innerText = `Foto 1 dari ${targetPhotoCount}`;
+  }
+  
   initCameraDevices();
 }
 
@@ -146,9 +152,19 @@ function initCameraDevices() {
       videoDevices.forEach((device, index) => {
         const option = document.createElement('option');
         option.value = device.deviceId;
-        option.text = device.label || `Kamera ${index + 1}`;
+        
+        // Buat nama kamera di HP lebih informatif
+        let label = device.label || `Kamera ${index + 1}`;
+        if (label.toLowerCase().includes('front') || label.toLowerCase().includes('user') || label.toLowerCase().includes('depan')) {
+          label = `📷 Kamera Depan (${index + 1})`;
+        } else if (label.toLowerCase().includes('back') || label.toLowerCase().includes('environment') || label.toLowerCase().includes('belakang')) {
+          label = `📸 Kamera Belakang (${index + 1})`;
+        }
+        
+        option.text = label;
         selectCam.appendChild(option);
       });
+
       if (videoDevices.length > 0) {
         currentCameraDeviceId = videoDevices[0].deviceId;
         startCameraStream(currentCameraDeviceId);
@@ -170,7 +186,7 @@ function startCameraStream(deviceId) {
   }
 
   const constraints = {
-    video: deviceId ? { deviceId: { exact: deviceId } } : true
+    video: deviceId ? { deviceId: { exact: deviceId } } : { facingMode: "user" }
   };
 
   navigator.mediaDevices.getUserMedia(constraints)
@@ -215,7 +231,7 @@ function updateCameraAdjustments() {
 }
 
 /* =========================================================
-   6. PENGAMBILAN FOTO & GENERATE HASIL
+   6. PENGAMBILAN FOTO & GENERATE HASIL (LANGSUNG MUNCUL)
    ========================================================= */
 function handleSnapButtonClick() {
   const btnSnap = document.getElementById('btn-snap');
@@ -254,19 +270,22 @@ function takePhotoSnap() {
   }
 
   const video = document.getElementById('video');
-  const canvas = document.getElementById('canvas');
+  const canvas = document.createElement('canvas'); // Pakai canvas temporary agar bersih
   const ctx = canvas.getContext('2d');
 
   canvas.width = video.videoWidth || 640;
   canvas.height = video.videoHeight || 480;
 
-  // Tangkap gambar dari video
   ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
   capturedPhotos.push(canvas.toDataURL('image/png'));
 
   const countText = document.getElementById('photo-count-text');
   if (countText) {
-    countText.innerText = `Foto ${capturedPhotos.length} dari ${targetPhotoCount}`;
+    if (capturedPhotos.length < targetPhotoCount) {
+      countText.innerText = `Foto ${capturedPhotos.length + 1} dari ${targetPhotoCount}`;
+    } else {
+      countText.innerText = `Selesai (${targetPhotoCount} dari ${targetPhotoCount})`;
+    }
   }
 
   if (capturedPhotos.length < targetPhotoCount) {
@@ -275,13 +294,13 @@ function takePhotoSnap() {
       if (btnSnap) btnSnap.disabled = false;
     }, 1000);
   } else {
-    // Selesai ambil foto, buat kanvas strip photobooth
+    // Foto lengkap, render dan langsung munculkan di halaman hasil
     setTimeout(() => {
       renderFinalPhotostrip();
       goToStep(4);
       const btnSnap = document.getElementById('btn-snap');
       if (btnSnap) btnSnap.disabled = false;
-    }, 1000);
+    }, 800);
   }
 }
 
@@ -290,11 +309,20 @@ function renderFinalPhotostrip() {
   const ctx = canvas.getContext('2d');
 
   const width = 600;
-  const height = 1800;
+  const count = capturedPhotos.length;
+  const photoMargin = 40;
+  const photoWidth = width - (photoMargin * 2);
+  const photoHeight = 380;
+  const headerSpace = 60;
+  const footerSpace = 200;
+  
+  // Hitung tinggi canvas secara dinamis sesuai jumlah foto (1, 2, atau 3)
+  const height = headerSpace + (count * photoHeight) + ((count - 1) * 20) + footerSpace;
+  
   canvas.width = width;
   canvas.height = height;
 
-  // 1. Tentukan Warna Background
+  // Background
   let bgColor = '#8C6262';
   if (selectedBgColor === 'mocha') bgColor = '#B3927A';
   else if (selectedBgColor === 'blue') bgColor = '#83A398';
@@ -305,43 +333,32 @@ function renderFinalPhotostrip() {
   ctx.fillStyle = bgColor;
   ctx.fillRect(0, 0, width, height);
 
-  // 2. Render Foto-Foto yang Ditangkap
-  const photoMargin = 40;
-  const photoWidth = width - (photoMargin * 2);
-  const photoHeight = 380;
-  let startY = 80;
-
-  let loadedPhotosCount = 0;
-  
+  // Render Foto
+  let loadedCount = 0;
   capturedPhotos.forEach((src, idx) => {
     const img = new Image();
     img.onload = () => {
-      ctx.drawImage(img, photoMargin, startY + (idx * (photoHeight + 30)), photoWidth, photoHeight);
-      loadedPhotosCount++;
+      const currentY = headerSpace + (idx * (photoHeight + 20));
+      ctx.drawImage(img, photoMargin, currentY, photoWidth, photoHeight);
+      loadedCount++;
 
-      // Jika seluruh foto sudah berhasil digambar ke canvas
-      if (loadedPhotosCount === capturedPhotos.length) {
-        // Teks Nama & Tanggal Pasangan di Bagian Bawah
+      if (loadedCount === count) {
+        // Teks Bawah
         ctx.fillStyle = '#FFFFFF';
         ctx.font = 'bold 36px "Cormorant Garamond", serif';
         ctx.textAlign = 'center';
-        ctx.fillText("Riyan & Amelia", width / 2, height - 120);
+        ctx.fillText("Riyan & Amelia", width / 2, height - 100);
 
         ctx.font = '20px "Plus Jakarta Sans", sans-serif';
-        ctx.fillText("06 Desember 2026", width / 2, height - 80);
+        ctx.fillText("06 Desember 2026", width / 2, height - 60);
 
-        // Pasang hasil gambar ke elemen HTML
+        // Tampilkan gambar di elemen Halaman Hasil
         const resultImg = document.getElementById('result-img');
         const downloadLink = document.getElementById('download-link');
         const dataUrl = canvas.toDataURL('image/png');
 
         if (resultImg) {
           resultImg.src = dataUrl;
-          // Picu ulang efek slide / keluar foto polaroid
-          const photoWrapper = document.querySelector('.photo-eject-wrapper');
-          if (photoWrapper) {
-            photoWrapper.style.display = 'block';
-          }
         }
         
         if (downloadLink) {
