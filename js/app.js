@@ -1,3 +1,22 @@
+// Cek status event dari Firebase Firestore secara real-time
+if (typeof db !== 'undefined') {
+  db.collection('settings').doc('wedding_event').onSnapshot(doc => {
+    if (doc.exists) {
+      const data = doc.data();
+      
+      // Jika event OFF, kunci aplikasi
+      if (data.isActive === false) {
+        document.body.innerHTML = `
+          <div style="text-align:center; padding: 50px 20px; font-family: sans-serif;">
+            <h2 style="color: #8C6262; margin-bottom: 10px;">Photobooth Selesai</h2>
+            <p style="color: #666;">Sesi virtual photobooth untuk acara ini sedang tidak aktif.</p>
+          </div>
+        `;
+      }
+    }
+  });
+}
+
 let targetPhotoCount = 3;
 let selectedDesignStyle = 'floral'; 
 let selectedBgColor = 'dusty';
