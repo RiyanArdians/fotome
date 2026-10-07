@@ -1,19 +1,38 @@
-// Cek status event dari Firebase Firestore secara real-time
+// SIMPAN TAMPILAN ASLI APP UNTUK FITUR ON/OFF
+const originalAppHTML = document.body.innerHTML;
+
+// DENGERIN STATUS EVENT DARI FIREBASE SECARA REAL-TIME
 if (typeof db !== 'undefined') {
   db.collection('settings').doc('wedding_event').onSnapshot(doc => {
     if (doc.exists) {
       const data = doc.data();
       
-      // Jika event OFF, kunci aplikasi
+      // JIKA STATUS EVENT NONAKTIF / OFF -> KUNCI AKSES
       if (data.isActive === false) {
         document.body.innerHTML = `
-          <div style="text-align:center; padding: 50px 20px; font-family: sans-serif;">
-            <h2 style="color: #8C6262; margin-bottom: 10px;">Photobooth Selesai</h2>
-            <p style="color: #666;">Sesi virtual photobooth untuk acara ini sedang tidak aktif.</p>
+          <div style="min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; font-family: 'Plus Jakarta Sans', sans-serif; background-color: #FDFBF7; color: #3D2B2B;">
+            <div style="background: #FFF; padding: 40px 25px; border-radius: 24px; box-shadow: 0 15px 35px rgba(140, 98, 98, 0.1); border: 1px solid rgba(216, 180, 180, 0.3); max-width: 400px; width: 100%;">
+              <div style="font-size: 3rem; margin-bottom: 10px;">🔒</div>
+              <h2 style="font-family: 'Cormorant Garamond', serif; color: #8C6262; font-size: 2rem; margin-bottom: 10px;">Photobooth Ditutup</h2>
+              <p style="color: #6E5353; font-size: 0.9rem; line-height: 1.6; margin-bottom: 20px;">
+                Sesi virtual photobooth untuk acara saat ini sedang tidak aktif atau telah selesai.
+              </p>
+              <div style="font-family: 'Great Vibes', cursive; font-size: 1.8rem; color: #8C6262;">Riyan & Amelia</div>
+            </div>
+            <p style="margin-top: 25px; font-size: 0.7rem; color: #B39B9B;">FOTOME by Riyan Ardiansyah</p>
           </div>
         `;
+      } else {
+        // JIKA STATUS EVENT AKTIF / ON -> BUKA AKSES
+        if (document.body.innerHTML !== originalAppHTML) {
+          document.body.innerHTML = originalAppHTML;
+          // Re-bind fungsi jika diperlukan setelah unlock
+          location.reload(); 
+        }
       }
     }
+  }, error => {
+    console.error("Firebase Sync Error:", error);
   });
 }
 
