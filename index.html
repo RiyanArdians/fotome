@@ -211,13 +211,13 @@
     }
 
     .camera-wrapper {
-      position: relative;
-      width: 100%;
-      border-radius: 20px;
-      overflow: hidden;
-      background: #000;
-      aspect-ratio: 3/4;
-    }
+  position: relative;
+  width: 100%;
+  border-radius: 20px;
+  overflow: hidden;
+  background: #000;
+  aspect-ratio: 4/3; /* Diubah dari 3/4 ke 4/3 agar tidak terlalu panjang */
+}
 
     #video {
       width: 100%;
@@ -727,49 +727,62 @@
   }
 
   function renderFinalPhotostrip() {
-    const canvas = document.getElementById('canvas');
-    const ctx = canvas.getContext('2d');
-    const width = 600;
-    const height = 1800;
-    canvas.width = width;
-    canvas.height = height;
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas.getContext('2d');
 
-    let bgColor = '#8C6262';
-    if (selectedBgColor === 'mocha') bgColor = '#B3927A';
-    else if (selectedBgColor === 'blue') bgColor = '#83A398';
-    else if (selectedBgColor === 'lavender') bgColor = '#A283A2';
+  const width = 600;
+  const count = capturedPhotos.length;
+  const photoMargin = 40;
+  const photoWidth = width - (photoMargin * 2);
+  const photoHeight = 380;
+  const headerSpace = 60;
+  const footerSpace = 200;
 
-    ctx.fillStyle = bgColor;
-    ctx.fillRect(0, 0, width, height);
+  // HITUNG TINGGI KANVAS DINAMIS SESUAI JUMLAH FOTO
+  const height = headerSpace + (count * photoHeight) + ((count - 1) * 20) + footerSpace;
 
-    let loaded = 0;
-    capturedPhotos.forEach((src, idx) => {
-      const img = new Image();
-      img.onload = () => {
-        ctx.drawImage(img, 40, 80 + (idx * 410), 520, 380);
-        loaded++;
-        if (loaded === capturedPhotos.length) {
-          ctx.fillStyle = '#FFFFFF';
-          ctx.font = 'bold 36px "Cormorant Garamond", serif';
-          ctx.textAlign = 'center';
-          ctx.fillText(eventTitle, width / 2, height - 120);
-          ctx.font = '20px "Plus Jakarta Sans", sans-serif';
-          ctx.fillText(eventDate, width / 2, height - 80);
+  canvas.width = width;
+  canvas.height = height;
 
-          const dataUrl = canvas.toDataURL('image/png');
-          document.getElementById('result-img').src = dataUrl;
-          document.getElementById('download-link').href = dataUrl;
+  let bgColor = '#8C6262';
+  if (selectedBgColor === 'mocha') bgColor = '#B3927A';
+  else if (selectedBgColor === 'blue') bgColor = '#83A398';
+  else if (selectedBgColor === 'lavender') bgColor = '#A283A2';
 
-          // TRIGGER EJECT ANIMATION UTAMA
-          const wrapper = document.getElementById('eject-wrapper');
-          wrapper.classList.remove('eject');
-          void wrapper.offsetWidth; // Trigger Reflow
-          wrapper.classList.add('eject');
-        }
-      };
-      img.src = src;
-    });
-  }
+  ctx.fillStyle = bgColor;
+  ctx.fillRect(0, 0, width, height);
+
+  let loaded = 0;
+  capturedPhotos.forEach((src, idx) => {
+    const img = new Image();
+    img.onload = () => {
+      // Posisi Y menyesuaikan urutan foto
+      const currentY = headerSpace + (idx * (photoHeight + 20));
+      ctx.drawImage(img, photoMargin, currentY, photoWidth, photoHeight);
+      loaded++;
+
+      if (loaded === capturedPhotos.length) {
+        ctx.fillStyle = '#FFFFFF';
+        ctx.font = 'bold 36px "Cormorant Garamond", serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(eventTitle, width / 2, height - 120);
+
+        ctx.font = '20px "Plus Jakarta Sans", sans-serif';
+        ctx.fillText(eventDate, width / 2, height - 80);
+
+        const dataUrl = canvas.toDataURL('image/png');
+        document.getElementById('result-img').src = dataUrl;
+        document.getElementById('download-link').href = dataUrl;
+
+        const wrapper = document.getElementById('eject-wrapper');
+        wrapper.classList.remove('eject');
+        void wrapper.offsetWidth;
+        wrapper.classList.add('eject');
+      }
+    };
+    img.src = src;
+  });
+}
 </script>
 
 </body>
