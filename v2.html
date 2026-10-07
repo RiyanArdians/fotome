@@ -527,7 +527,7 @@
     </button>
   </div>
 
-  <!-- STEP 3: AREA KAMERA + KONTROL SWITCH, MIRROR, TIMER, & ZOOM -->
+  <!-- STEP 3: AREA KAMERA -->
   <div id="step-camera" class="hidden">
     <div style="font-size: 0.85rem; font-weight: 700; color: var(--primary-crimson); margin-bottom: 8px;" id="cam-progress-text">Foto 1 dari 3</div>
 
@@ -537,7 +537,7 @@
       <div id="flash-overlay" class="flash-overlay"></div>
     </div>
 
-    <!-- BARIS KONTROL UTAMA KAMERA -->
+    <!-- KONTROL KAMERA -->
     <div class="cam-controls-grid">
       <button class="cam-btn-icon" id="btn-timer" onclick="toggleTimerSetting()">
         <i class="fa-solid fa-stopwatch"></i> Timer: 3s
@@ -553,7 +553,7 @@
       </button>
     </div>
 
-    <!-- SELEKTOR KAMERA -->
+    <!-- SELEKTOR KAMERA (HANYA DEPAM & BELAKANG) -->
     <select id="camera-select" class="cam-select-box" onchange="onCameraSelectChange(this.value)"></select>
 
     <button id="btn-snap" class="btn-primary-v2" onclick="takePhotoSnap()">
@@ -676,12 +676,12 @@
   let videoStream = null;
   let generatedDataUrl = "";
 
-  // VARIABLE KONTROL KAMERA LENGKAP
+  // VARIABLE KONTROL KAMERA
+  let currentFacingMode = "user"; // "user" = Depan, "environment" = Belakang
   let isMirror = true;
-  let timerDuration = 3; // 3, 5, 0
-  let zoomLevel = 1;      // 1, 1.5, 2, 0.5
-  let availableVideoDevices = [];
-  let currentCameraIndex = 0;
+  let timerDuration = 3;
+  let zoomLevel = 1;      
+  let filteredCameras = []; 
 
   function goToStep(step) {
     ['step-welcome', 'step-template', 'step-camera', 'step-result'].forEach(id => {
@@ -690,7 +690,6 @@
     const map = {1:'step-welcome', 2:'step-template', 3:'step-camera', 4:'step-result'};
     document.getElementById(map[step]).classList.remove('hidden');
 
-    // HANYA TAMPILKAN GALERI DI HALAMAN PERTAMA (WELCOME SCREEN)
     const gallerySection = document.getElementById('main-gallery-section');
     if (step === 1) {
       gallerySection.classList.remove('hidden');
@@ -723,14 +722,11 @@
       videoStream.getTracks().forEach(track => track.stop());
     }
 
-    let constraints = { video: { facingMode: "user" } };
-
-    if (availableVideoDevices.length > 0) {
-      const selectedDevice = availableVideoDevices[currentCameraIndex];
-      if (selectedDevice) {
-        constraints = { video: { deviceId: { exact: selectedDevice.deviceId } } };
+    const constraints = {
+      video: {
+        facingMode: currentFacingMode
       }
-    }
+    };
 
     navigator.mediaDevices.getUserMedia(constraints)
       .then(stream => {
@@ -740,7 +736,7 @@
         video.play();
 
         applyZoomTransform();
-        enumerateVideoDevices();
+        enumerateFrontBackCameras();
       })
       .catch(err => {
         console.error("Gagal membuka kamera:", err);
@@ -748,25 +744,34 @@
       });
   }
 
-  function enumerateVideoDevices() {
+  // HANYA FILTER A KELOMPOK: KAMERA DEPAN & KAMERA BELAKANG
+  function enumerateFrontBackCameras() {
     if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) return;
 
     navigator.mediaDevices.enumerateDevices().then(devices => {
-      availableVideoDevices = devices.filter(d => d.kind === 'videoinput');
+      const videoDevices = devices.filter(d => d.kind === 'videoinput');
       const select = document.getElementById('camera-select');
       select.innerHTML = '';
 
-      if (availableVideoDevices.length === 0) {
+      if (videoDevices.length === 0) {
         select.style.display = 'none';
         return;
       }
 
+      // Filter pintar 2 Opsi utama saja
+      const frontCam = videoDevices.find(d => d.label.toLowerCase().includes('front') || d.label.toLowerCase().includes('depan')) || videoDevices[0];
+      const backCam = videoDevices.find(d => d.label.toLowerCase().includes('back') || d.label.toLowerCase().includes('belakang')) || videoDevices[videoDevices.length - 1];
+
+      filteredCameras = [];
+      if (frontCam) filteredCameras.push({ mode: 'user', label: '📷 Kamera Depan (Front)' });
+      if (backCam && backCam !== frontCam) filteredCameras.push({ mode: 'environment', label: '📷 Kamera Belakang (Back)' });
+
       select.style.display = 'block';
-      availableVideoDevices.forEach((device, idx) => {
+      filteredCameras.forEach(cam => {
         const option = document.createElement('option');
-        option.value = idx;
-        option.text = device.label || `Kamera ${idx + 1}`;
-        if (idx === currentCameraIndex) {
+        option.value = cam.mode;
+        option.text = cam.label;
+        if (cam.mode === currentFacingMode) {
           option.selected = true;
         }
         select.appendChild(option);
@@ -774,11 +779,9 @@
     });
   }
 
-  // SWITCH KAMERA BERPUTAR KE SEMUA KAMERA YANG DETECTED
+  // SWITCH KHUSUS BOLAK-BALIK DEPAM <-> BELAKANG
   function switchCamera() {
-    if (availableVideoDevices.length > 1) {
-      currentCameraIndex = (currentCameraIndex + 1) % availableVideoDevices.length;
-    }
+    currentFacingMode = (currentFacingMode === "user") ? "environment" : "user";
     initCameraStream();
   }
 
@@ -816,8 +819,8 @@
     video.style.transform = transformStr;
   }
 
-  function onCameraSelectChange(indexVal) {
-    currentCameraIndex = parseInt(indexVal);
+  function onCameraSelectChange(modeVal) {
+    currentFacingMode = modeVal;
     initCameraStream();
   }
 
