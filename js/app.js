@@ -1,16 +1,16 @@
 // =========================================================
-// 1. SISTEM KONTROL AKSES REAL-TIME FIREBASE (OVERLAY MURNI)
+// 1. SISTEM KONTROL AKSES REAL-TIME FIREBASE (BERSIH)
 // =========================================================
 if (typeof db !== 'undefined') {
   db.collection('settings').doc('wedding_event').onSnapshot(doc => {
     if (doc.exists) {
       const data = doc.data();
-      let lockOverlay = document.getElementById('lock-overlay');
+      const existingOverlay = document.getElementById('lock-overlay');
 
       // JIKA STATUS EVENT NONAKTIF / OFF -> TAMPILKAN OVERLAY KUNCI
       if (data.isActive === false) {
-        if (!lockOverlay) {
-          lockOverlay = document.createElement('div');
+        if (!existingOverlay) {
+          const lockOverlay = document.createElement('div');
           lockOverlay.id = 'lock-overlay';
           lockOverlay.innerHTML = `
             <div style="min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; font-family: 'Plus Jakarta Sans', sans-serif; background-color: #FDFBF7; color: #3D2B2B;">
@@ -20,7 +20,7 @@ if (typeof db !== 'undefined') {
                 <p style="color: #6E5353; font-size: 0.9rem; line-height: 1.6; margin-bottom: 20px;">
                   Sesi virtual photobooth untuk acara saat ini sedang tidak aktif atau telah selesai.
                 </p>
-                <div style="font-family: 'Great Vibes', cursive; font-size: 1.8rem; color: #8C6262;">Riyan & Amelia</div>
+                <div style="font-family: 'Great Vibes', cursive; font-size: 1.8rem; color: #8C6262;">${data.title || 'Riyan & Amelia'}</div>
               </div>
               <p style="margin-top: 25px; font-size: 0.7rem; color: #B39B9B;">FOTOME by Riyan Ardiansyah</p>
             </div>
@@ -28,15 +28,17 @@ if (typeof db !== 'undefined') {
           lockOverlay.style.position = 'fixed';
           lockOverlay.style.top = '0';
           lockOverlay.style.left = '0';
-          lockOverlay.style.width = '100vw';
-          lockOverlay.style.height = '100vh';
+          lockOverlay.style.width = '100%';
+          lockOverlay.style.height = '100%';
           lockOverlay.style.zIndex = '999999';
           document.body.appendChild(lockOverlay);
+          document.body.style.overflow = 'hidden'; // Kunci scroll
         }
       } else {
-        // JIKA STATUS EVENT AKTIF / ON -> HAPUS OVERLAY KUNCI
-        if (lockOverlay) {
-          lockOverlay.remove();
+        // JIKA STATUS EVENT AKTIF / ON -> HAPUS OVERLAY SEPENUHNYA
+        if (existingOverlay) {
+          existingOverlay.remove();
+          document.body.style.overflow = 'auto'; // Buka kembali scroll
         }
       }
     }
@@ -44,13 +46,3 @@ if (typeof db !== 'undefined') {
     console.error("Firebase Sync Error:", error);
   });
 }
-
-// =========================================================
-// 2. KODE LOGIKA UTAMA PHOTOBOOTH
-// =========================================================
-let targetPhotoCount = 3;
-let selectedDesignStyle = 'floral'; 
-let selectedBgColor = 'dusty';
-let capturedPhotos = [];
-
-// Tambahkan sisa logika JavaScript photobooth Mas Riyan di bawah sini...
