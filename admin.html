@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Super Admin - FOTOME</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./css/style.css">
+  <style>
+    .admin-card {
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 25px;
+      max-width: 480px;
+      margin: 40px auto;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    }
+    .status-badge {
+      display: inline-block;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      margin-bottom: 20px;
+    }
+    .status-on { background: #E8F5E9; color: #2E7D32; }
+    .status-off { background: #FFEBEE; color: #C62828; }
+    .form-group {
+      text-align: left;
+      margin-bottom: 15px;
+    }
+    .form-group label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--dusty-rose);
+      margin-bottom: 5px;
+    }
+    .form-group input {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid var(--soft-blush);
+      border-radius: 10px;
+      font-family: inherit;
+      outline: none;
+    }
+  </style>
+
+  <!-- Firebase Compatibility SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="./js/config.js"></script>
+</head>
+<body>
+
+<div class="admin-card">
+  <h2 class="font-serif" style="color: var(--dusty-rose); font-size: 1.8rem; margin-bottom: 10px;">Dashboard Super Admin</h2>
+  <p style="font-size: 0.85rem; color: #666; margin-bottom: 20px;">Kontrol status event FOTOME secara real-time</p>
+
+  <div id="status-display" class="status-badge status-off">Status Event: Sembunyikan/OFF</div>
+
+  <button id="btn-toggle-status" class="btn-primary" onclick="toggleEventStatus()" style="margin-top: 0; margin-bottom: 25px;">
+    Ubah Status ke ON
+  </button>
+
+  <div class="form-group">
+    <label>Nama Pasangan / Judul Event</label>
+    <input type="text" id="event-title" value="Riyan & Amelia">
+  </div>
+
+  <div class="form-group">
+    <label>Tanggal Event</label>
+    <input type="text" id="event-date" value="06 Desember 2026">
+  </div>
+
+  <button class="btn-secondary" onclick="saveEventDetails()">
+    Simpan Perubahan Teks
+  </button>
+</div>
+
+<script>
+  let isEventActive = false;
+
+  // Dengarkan perubahan data di Firestore secara real-time
+  db.collection('settings').doc('wedding_event').onSnapshot(doc => {
+    if (doc.exists) {
+      const data = doc.data();
+      isEventActive = data.isActive || false;
+
+      const badge = document.getElementById('status-display');
+      const btn = document.getElementById('btn-toggle-status');
+
+      if (isEventActive) {
+        badge.innerText = "Status Event: AKTIF / ON";
+        badge.className = "status-badge status-on";
+        btn.innerText = "Matikan Event (OFF)";
+      } else {
+        badge.innerText = "Status Event: NONAKTIF / OFF";
+        badge.className = "status-badge status-off";
+        btn.innerText = "Aktifkan Event (ON)";
+      }
+
+      if (data.title) document.getElementById('event-title').value = data.title;
+      if (data.date) document.getElementById('event-date').value = data.date;
+    }
+  });
+
+  function toggleEventStatus() {
+    db.collection('settings').doc('wedding_event').set({
+      isActive: !isEventActive
+    }, { merge: true });
+  }
+
+  function saveEventDetails() {
+    const title = document.getElementById('event-title').value;
+    const date = document.getElementById('event-date').value;
+
+    db.collection('settings').doc('wedding_event').set({
+      title: title,
+      date: date
+    }, { merge: true }).then(() => {
+      alert("Detail event berhasil disimpan!");
+    });
+  }
+</script>
+
+</body>
+</html>
