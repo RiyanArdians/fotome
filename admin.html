@@ -47,9 +47,11 @@
     }
   </style>
 
-  <!-- Firebase Compatibility SDK -->
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <!-- SDK Firebase CDN Versi Kompatibel -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  
+  <!-- File Konfigurasi -->
   <script src="./js/config.js"></script>
 </head>
 <body>
@@ -82,38 +84,42 @@
 <script>
   let isEventActive = false;
 
-  // Real-time listener dari Firestore
-  db.collection('settings').doc('wedding_event').onSnapshot(doc => {
-    const badge = document.getElementById('status-display');
-    const btn = document.getElementById('btn-toggle-status');
+  // Cek apakah Firebase terdefinisi
+  if (typeof firebase === 'undefined' || typeof db === 'undefined') {
+    alert("Error: js/config.js tidak berhasil dimuat! Periksa kembali file config.js di folder js/ Anda.");
+  } else {
+    // Listener Firestore
+    db.collection('settings').doc('wedding_event').onSnapshot(doc => {
+      const badge = document.getElementById('status-display');
+      const btn = document.getElementById('btn-toggle-status');
 
-    if (doc.exists) {
-      const data = doc.data();
-      isEventActive = data.isActive === true;
+      if (doc.exists) {
+        const data = doc.data();
+        isEventActive = data.isActive === true;
 
-      if (isEventActive) {
-        badge.innerText = "Status Event: AKTIF / ON";
-        badge.className = "status-badge status-on";
-        btn.innerText = "Matikan Event (OFF)";
+        if (isEventActive) {
+          badge.innerText = "Status Event: AKTIF / ON";
+          badge.className = "status-badge status-on";
+          btn.innerText = "Matikan Event (OFF)";
+        } else {
+          badge.innerText = "Status Event: NONAKTIF / OFF";
+          badge.className = "status-badge status-off";
+          btn.innerText = "Aktifkan Event (ON)";
+        }
+
+        if (data.title) document.getElementById('event-title').value = data.title;
+        if (data.date) document.getElementById('event-date').value = data.date;
       } else {
         badge.innerText = "Status Event: NONAKTIF / OFF";
         badge.className = "status-badge status-off";
         btn.innerText = "Aktifkan Event (ON)";
+        isEventActive = false;
       }
-
-      if (data.title) document.getElementById('event-title').value = data.title;
-      if (data.date) document.getElementById('event-date').value = data.date;
-    } else {
-      // Jika dokumen belum ada di Firestore, buatkan dokumen default
-      badge.innerText = "Status Event: NONAKTIF / OFF";
-      badge.className = "status-badge status-off";
-      btn.innerText = "Aktifkan Event (ON)";
-      isEventActive = false;
-    }
-  }, error => {
-    console.error("Firebase Error:", error);
-    alert("Koneksi Firebase bermasalah: " + error.message);
-  });
+    }, error => {
+      console.error("Firebase Error:", error);
+      alert("Error Firestore: " + error.message);
+    });
+  }
 
   function toggleEventStatus() {
     const newStatus = !isEventActive;
@@ -122,7 +128,7 @@
       isActive: newStatus
     }, { merge: true })
     .then(() => {
-      console.log("Status berhasil diperbarui ke:", newStatus);
+      console.log("Status berhasil diubah ke:", newStatus);
     })
     .catch(err => {
       alert("Gagal memperbarui status: " + err.message);
