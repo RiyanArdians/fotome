@@ -348,6 +348,7 @@ function renderFinalPhotostrip() {
       loadedCount++;
 
       if (loadedCount === count) {
+        // Teks Bawah
         ctx.fillStyle = '#FFFFFF';
         ctx.font = 'bold 36px "Cormorant Garamond", serif';
         ctx.textAlign = 'center';
@@ -362,15 +363,22 @@ function renderFinalPhotostrip() {
 
         if (resultImg) {
           resultImg.src = dataUrl;
-          // PAKSA TAMPILKAN HASIL DENGAN STYLING
           resultImg.style.display = 'block';
           resultImg.style.width = '100%';
           resultImg.style.height = 'auto';
-          resultImg.style.borderRadius = '12px';
-          resultImg.style.marginTop = '20px';
-          resultImg.style.boxShadow = '0 10px 25px rgba(0,0,0,0.15)';
         }
         
+        // PAKSA WAPPER POLAROID UNTUK MEMBUKA & MENAMPILKAN GAMBAR
+        const photoWrapper = document.querySelector('.photo-eject-wrapper');
+        if (photoWrapper) {
+          photoWrapper.style.display = 'block';
+          photoWrapper.style.height = 'auto';
+          photoWrapper.style.maxHeight = 'none';
+          photoWrapper.style.overflow = 'visible';
+          photoWrapper.style.transform = 'none';
+          photoWrapper.style.opacity = '1';
+        }
+
         if (downloadLink) {
           downloadLink.href = dataUrl;
           downloadLink.download = "Photobooth-Riyan-Amelia.png";
