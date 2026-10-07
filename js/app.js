@@ -1,31 +1,16 @@
-// 1. Fungsi Pilih Jumlah Foto (misal 3 atau 6 foto)
-function selectPhotoCount(count) {
-  targetPhotoCount = count;
-  
-  // Sembunyikan Screen 1, Tampilkan Screen 2 (Pilih Desain/Kamera)
-  document.getElementById('screen-select-count').classList.add('hidden');
-  document.getElementById('screen-select-frame').classList.remove('hidden');
-}
+// Fungsi untuk berpindah antar layar
+function nextScreen(targetScreenId) {
+  // Sembunyikan semua layar yang memiliki class 'screen'
+  const screens = document.querySelectorAll('.screen');
+  screens.forEach(screen => {
+    screen.classList.add('hidden');
+  });
 
-// 2. Fungsi Mulai Kamera / Ambil Foto
-function startCamera() {
-  const video = document.getElementById('webcam');
-  
-  // Sembunyikan screen sebelumnya, tampilkan screen kamera
-  document.getElementById('screen-select-frame').classList.add('hidden');
-  document.getElementById('screen-camera').classList.remove('hidden');
-
-  // Akses Kamera
-  if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-    navigator.mediaDevices.getUserMedia({ video: true })
-      .then(function (stream) {
-        video.srcObject = stream;
-        video.play();
-      })
-      .catch(function (err) {
-        alert("Gagal mengakses kamera: " + err.message);
-      });
+  // Tampilkan layar tujuan
+  const targetScreen = document.getElementById(targetScreenId);
+  if (targetScreen) {
+    targetScreen.classList.remove('hidden');
   } else {
-    alert("Kamera tidak didukung pada browser ini.");
+    console.error("Layar tidak ditemukan:", targetScreenId);
   }
 }
