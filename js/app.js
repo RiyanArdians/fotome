@@ -359,29 +359,30 @@ function renderFinalPhotostrip() {
 
         const resultImg = document.getElementById('result-img');
         const downloadLink = document.getElementById('download-link');
+        const photoWrapper = document.querySelector('.photo-eject-wrapper');
         const dataUrl = canvas.toDataURL('image/png');
 
         if (resultImg) {
           resultImg.src = dataUrl;
-          resultImg.style.display = 'block';
-          resultImg.style.width = '100%';
-          resultImg.style.height = 'auto';
-        }
-        
-        // PAKSA WAPPER POLAROID UNTUK MEMBUKA & MENAMPILKAN GAMBAR
-        const photoWrapper = document.querySelector('.photo-eject-wrapper');
-        if (photoWrapper) {
-          photoWrapper.style.display = 'block';
-          photoWrapper.style.height = 'auto';
-          photoWrapper.style.maxHeight = 'none';
-          photoWrapper.style.overflow = 'visible';
-          photoWrapper.style.transform = 'none';
-          photoWrapper.style.opacity = '1';
+          // Clean inline styles agar mengikuti CSS polaroid
+          resultImg.removeAttribute('style');
         }
 
         if (downloadLink) {
           downloadLink.href = dataUrl;
           downloadLink.download = "Photobooth-Riyan-Amelia.png";
+        }
+
+        // PICU ANIMASI EJECT KELUAR DARI KAMERA
+        if (photoWrapper) {
+          photoWrapper.removeAttribute('style'); // Hapus override manual
+          photoWrapper.classList.remove('eject'); // Reset
+          
+          // Triggers reflow browser untuk meriset animasi
+          void photoWrapper.offsetWidth; 
+          
+          // Tambahkan class eject agar foto meluncur keluar ke bawah
+          photoWrapper.classList.add('eject');
         }
       }
     };
