@@ -994,7 +994,7 @@ const EVENT_DOC_ID = 'clien1_event';
     }
   }
 
-  // DETEKSI OTOMATIS SEMUA KAMERA (HP / WEBCAM / DSLR / EXTERNAL)
+  // DETEKSI OTOMATIS & DIBATASI MANTAP HANYA 1 KAMERA DEPAN & 1 KAMERA BELAKANG
   async function populateCameraDevices() {
     const cameraSelect = document.getElementById('camera-select');
     try {
@@ -1007,6 +1007,60 @@ const EVENT_DOC_ID = 'clien1_event';
         cameraSelect.innerHTML = '<option value="">Kamera Tidak Ditemukan</option>';
         return;
       }
+
+      // Cari sensor kamera depan & belakang terbaik
+      let frontCam = videoDevices.find(d => {
+        const label = (d.label || '').toLowerCase();
+        return label.includes('front') || label.includes('user') || label.includes('depan');
+      });
+
+      let backCam = videoDevices.find(d => {
+        const label = (d.label || '').toLowerCase();
+        return label.includes('back') || label.includes('environment') || label.includes('belakang');
+      });
+
+      // Fallback jika label browser belum memberikan nama lengkap
+      if (!frontCam && videoDevices.length > 0) frontCam = videoDevices[0];
+      if (!backCam && videoDevices.length > 1) backCam = videoDevices[1];
+
+      // Susun daftar ringkas max 2 pilihan utama saja
+      let filteredDevices = [];
+      if (frontCam) {
+        filteredDevices.push({ deviceId: frontCam.deviceId, label: '📷 Kamera Depan' });
+      }
+      if (backCam && backCam.deviceId !== frontCam?.deviceId) {
+        filteredDevices.push({ deviceId: backCam.deviceId, label: '📸 Kamera Belakang' });
+      }
+
+      // Jika karena suatu hal tidak terfilter, tampilkan opsi dasar tanpa duplikat berlebih
+      if (filteredDevices.length === 0) {
+        videoDevices.slice(0, 2).forEach((device, index) => {
+          filteredDevices.push({
+            deviceId: device.deviceId,
+            label: index === 0 ? '📷 Kamera Depan' : '📸 Kamera Belakang'
+          });
+        });
+      }
+
+      // Masukkan ke dalam Dropdown HTML
+      filteredDevices.forEach(item => {
+        const option = document.createElement('option');
+        option.value = item.deviceId;
+        option.text = item.label;
+
+        if (currentSelectedDeviceId && item.deviceId === currentSelectedDeviceId) {
+          option.selected = true;
+        }
+        cameraSelect.appendChild(option);
+      });
+
+      if (!currentSelectedDeviceId && filteredDevices.length > 0) {
+        currentSelectedDeviceId = filteredDevices[0].deviceId;
+      }
+    } catch (e) {
+      console.log("Error enumerateDevices:", e);
+    }
+  }
 
       videoDevices.forEach((device, index) => {
         const option = document.createElement('option');
