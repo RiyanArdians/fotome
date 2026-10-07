@@ -294,7 +294,7 @@ function renderFinalPhotostrip() {
   canvas.width = width;
   canvas.height = height;
 
-  // Background
+  // 1. Tentukan Warna Background
   let bgColor = '#8C6262';
   if (selectedBgColor === 'mocha') bgColor = '#B3927A';
   else if (selectedBgColor === 'blue') bgColor = '#83A398';
@@ -305,20 +305,23 @@ function renderFinalPhotostrip() {
   ctx.fillStyle = bgColor;
   ctx.fillRect(0, 0, width, height);
 
-  // Gambar foto-foto yang diambil
-  let loadedCount = 0;
+  // 2. Render Foto-Foto yang Ditangkap
   const photoMargin = 40;
   const photoWidth = width - (photoMargin * 2);
   const photoHeight = 380;
   let startY = 80;
 
+  let loadedPhotosCount = 0;
+  
   capturedPhotos.forEach((src, idx) => {
     const img = new Image();
     img.onload = () => {
       ctx.drawImage(img, photoMargin, startY + (idx * (photoHeight + 30)), photoWidth, photoHeight);
-      loadedCount++;
-      if (loadedCount === capturedPhotos.length) {
-        // Teks Bawah
+      loadedPhotosCount++;
+
+      // Jika seluruh foto sudah berhasil digambar ke canvas
+      if (loadedPhotosCount === capturedPhotos.length) {
+        // Teks Nama & Tanggal Pasangan di Bagian Bawah
         ctx.fillStyle = '#FFFFFF';
         ctx.font = 'bold 36px "Cormorant Garamond", serif';
         ctx.textAlign = 'center';
@@ -327,12 +330,24 @@ function renderFinalPhotostrip() {
         ctx.font = '20px "Plus Jakarta Sans", sans-serif';
         ctx.fillText("06 Desember 2026", width / 2, height - 80);
 
+        // Pasang hasil gambar ke elemen HTML
         const resultImg = document.getElementById('result-img');
         const downloadLink = document.getElementById('download-link');
         const dataUrl = canvas.toDataURL('image/png');
 
-        if (resultImg) resultImg.src = dataUrl;
-        if (downloadLink) downloadLink.href = dataUrl;
+        if (resultImg) {
+          resultImg.src = dataUrl;
+          // Picu ulang efek slide / keluar foto polaroid
+          const photoWrapper = document.querySelector('.photo-eject-wrapper');
+          if (photoWrapper) {
+            photoWrapper.style.display = 'block';
+          }
+        }
+        
+        if (downloadLink) {
+          downloadLink.href = dataUrl;
+          downloadLink.download = "Photobooth-Riyan-Amelia.png";
+        }
       }
     };
     img.src = src;
