@@ -9,14 +9,12 @@
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Great+Vibes&family=Courier+Prime:wght@400;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,500;1,600;1,700&family=Bodoni+Moda:ital,opsz,wght@1,6..96,600;1,6..96,700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-  <!-- External CSS -->
+  <!-- Link External CSS -->
   <link rel="stylesheet" href="./css/style.css">
 
-  <!-- Firebase Compatibility SDK -->
+  <!-- Firebase SDK Compat -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-
-  <!-- Configuration File -->
   <script src="./js/config.js"></script>
 </head>
 <body>
@@ -32,7 +30,7 @@
       <p class="welcome-subtitle">
         Selamat datang di Photobooth Pernikahan Kami.<br>Abadikan momen indah kamu bersama
       </p>
-      <div class="welcome-names" id="display-event-title">Riyan & Amelia</div>
+      <div class="welcome-names" id="display-title">Riyan & Amelia</div>
 
       <button class="btn-primary" onclick="goToStep(2)">
         Ambil Foto Kenangan &rarr;
@@ -235,29 +233,21 @@
 
 <canvas id="canvas" style="display: none;"></canvas>
 
-<!-- SCRIPT UTAMA PHOTOBOOTH -->
 <script>
-  /* =========================================================
-     1. KONTROL FIREBASE REAL-TIME (SISTEM SAKLAR ON/OFF)
-     ========================================================= */
-  let eventData = {
-    title: "Riyan & Amelia",
-    date: "06 Desember 2026"
-  };
+  // 1. DOKUMEN FIRESTORE SAKLAR
+  let currentTitle = "Riyan & Amelia";
+  let currentDate = "06 Desember 2026";
 
   if (typeof db !== 'undefined') {
-    // Menghubungkan ke ID Dokumen 'wedding_event' di Firestore
     db.collection('settings').doc('wedding_event').onSnapshot(doc => {
       if (doc.exists) {
         const data = doc.data();
         if (data.title) {
-          eventData.title = data.title;
-          const titleElem = document.getElementById('display-event-title');
-          if (titleElem) titleElem.innerText = data.title;
+          currentTitle = data.title;
+          const titleEl = document.getElementById('display-title');
+          if (titleEl) titleEl.innerText = data.title;
         }
-        if (data.date) {
-          eventData.date = data.date;
-        }
+        if (data.date) currentDate = data.date;
 
         let lockOverlay = document.getElementById('lock-overlay');
         if (data.isActive === false) {
@@ -272,7 +262,7 @@
                   <p style="color: #6E5353; font-size: 0.9rem; line-height: 1.6; margin-bottom: 20px;">
                     Sesi virtual photobooth untuk acara saat ini sedang tidak aktif atau telah selesai.
                   </p>
-                  <div style="font-family: 'Great Vibes', cursive; font-size: 1.8rem; color: #8C6262;">${eventData.title}</div>
+                  <div style="font-family: 'Great Vibes', cursive; font-size: 1.8rem; color: #8C6262;">${currentTitle}</div>
                 </div>
                 <p style="margin-top: 25px; font-size: 0.7rem; color: #B39B9B;">FOTOME by Riyan Ardiansyah</p>
               </div>
@@ -293,14 +283,10 @@
           }
         }
       }
-    }, err => {
-      console.error("Firestore Error:", err);
     });
   }
 
-  /* =========================================================
-     2. VARIABEL CONFIGURATION
-     ========================================================= */
+  // 2. LOGIKA UTAMA PHOTOBOOTH (KEMBALI KE ASLI)
   let targetPhotoCount = 3;
   let selectedDesignStyle = 'floral';
   let selectedBgColor = 'dusty';
@@ -311,9 +297,6 @@
   let videoStream = null;
   let currentCameraDeviceId = "";
 
-  /* =========================================================
-     3. NAVIGASI STEP
-     ========================================================= */
   function goToStep(stepNumber) {
     const steps = ['step-welcome', 'step-template', 'step-camera', 'step-result'];
     steps.forEach(id => {
@@ -331,9 +314,6 @@
     if (targetEl) targetEl.classList.remove('hidden');
   }
 
-  /* =========================================================
-     4. SELEKSI STYLE & WARNA
-     ========================================================= */
   function selectPhotoCount(count, cardElem) {
     targetPhotoCount = parseInt(count, 10);
     if (cardElem && cardElem.parentElement) {
@@ -350,17 +330,9 @@
       cards.forEach(c => c.classList.remove('active'));
       cardElem.classList.add('active');
     }
-
-    const colorSection = document.getElementById('color-section-wrapper');
-    if (styleName === 'wavy_red') {
-      if (colorSection) colorSection.classList.add('disabled-section');
-    } else {
-      if (colorSection) colorSection.classList.remove('disabled-section');
-    }
   }
 
   function selectBgColor(colorName, cardElem) {
-    if (selectedDesignStyle === 'wavy_red') return;
     selectedBgColor = colorName;
     if (cardElem && cardElem.parentElement) {
       const cards = cardElem.parentElement.querySelectorAll('.color-card');
@@ -369,63 +341,33 @@
     }
   }
 
-  /* =========================================================
-     5. SKRIP KAMERA (DENGAN FILTER DEPAN & BELAKANG UTAMA)
-     ========================================================= */
   function startCameraProcess() {
     goToStep(3);
     capturedPhotos = [];
-    
-    const countText = document.getElementById('photo-count-text');
-    if (countText) {
-      countText.innerText = `Foto 1 dari ${targetPhotoCount}`;
-    }
-    
+    document.getElementById('photo-count-text').innerText = `Foto 1 dari ${targetPhotoCount}`;
     initCameraDevices();
   }
 
   function initCameraDevices() {
     const selectCam = document.getElementById('camera-select');
-    if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
-      alert("Kamera tidak didukung oleh browser Anda.");
-      return;
-    }
+    if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) return;
 
     navigator.mediaDevices.enumerateDevices().then(devices => {
       const videoDevices = devices.filter(d => d.kind === 'videoinput');
       if (selectCam) {
         selectCam.innerHTML = '';
-        
-        let frontCam = videoDevices.find(d => d.label.toLowerCase().includes('front') || d.label.toLowerCase().includes('user') || d.label.toLowerCase().includes('depan'));
-        let backCam = videoDevices.find(d => d.label.toLowerCase().includes('back') || d.label.toLowerCase().includes('environment') || d.label.toLowerCase().includes('belakang'));
-
-        if (!frontCam && videoDevices.length > 0) frontCam = videoDevices[0];
-        if (!backCam && videoDevices.length > 1) backCam = videoDevices[1];
-
-        let filteredDevices = [];
-        if (frontCam) filteredDevices.push({ deviceId: frontCam.deviceId, label: '📷 Kamera Depan' });
-        if (backCam && backCam.deviceId !== frontCam.deviceId) filteredDevices.push({ deviceId: backCam.deviceId, label: '📸 Kamera Belakang' });
-
-        if (filteredDevices.length === 0) {
-          videoDevices.forEach((device, idx) => {
-            filteredDevices.push({ deviceId: device.deviceId, label: `Kamera ${idx + 1}` });
-          });
-        }
-
-        filteredDevices.forEach(item => {
+        videoDevices.forEach((device, idx) => {
           const option = document.createElement('option');
-          option.value = item.deviceId;
-          option.text = item.label;
+          option.value = device.deviceId;
+          option.text = device.label || `Kamera ${idx + 1}`;
           selectCam.appendChild(option);
         });
 
-        if (filteredDevices.length > 0) {
-          currentCameraDeviceId = filteredDevices[0].deviceId;
+        if (videoDevices.length > 0) {
+          currentCameraDeviceId = videoDevices[0].deviceId;
           startCameraStream(currentCameraDeviceId);
         }
       }
-    }).catch(err => {
-      console.error("Gagal mendapatkan daftar kamera:", err);
     });
   }
 
@@ -440,34 +382,27 @@
     }
 
     const constraints = {
-      video: deviceId ? { deviceId: { exact: deviceId } } : { facingMode: "user" }
+      video: deviceId ? { deviceId: { exact: deviceId } } : true
     };
 
-    navigator.mediaDevices.getUserMedia(constraints)
-      .then(stream => {
-        videoStream = stream;
-        const video = document.getElementById('video');
-        if (video) {
-          video.srcObject = stream;
-          video.play();
-        }
-      })
-      .catch(err => {
-        console.error("Gagal mengakses kamera:", err);
-        alert("Tidak dapat mengakses kamera.");
-      });
+    navigator.mediaDevices.getUserMedia(constraints).then(stream => {
+      videoStream = stream;
+      const video = document.getElementById('video');
+      if (video) {
+        video.srcObject = stream;
+        video.play();
+      }
+    });
   }
 
   function toggleTimerMode() {
     isTimerActive = !isTimerActive;
-    const text = document.getElementById('timer-toggle-text');
-    if (text) text.innerText = isTimerActive ? "Timer: ON" : "Timer: OFF";
+    document.getElementById('timer-toggle-text').innerText = isTimerActive ? "Timer: ON" : "Timer: OFF";
   }
 
   function toggleFlashMode() {
     isFlashActive = !isFlashActive;
-    const text = document.getElementById('flash-toggle-text');
-    if (text) text.innerText = isFlashActive ? "Flash: ON" : "Flash: OFF";
+    document.getElementById('flash-toggle-text').innerText = isFlashActive ? "Flash: ON" : "Flash: OFF";
   }
 
   function updateCameraAdjustments() {
@@ -484,9 +419,6 @@
     }
   }
 
-  /* =========================================================
-     6. AMBIL FOTO & HASIL POLAROID EJECT
-     ========================================================= */
   function handleSnapButtonClick() {
     const btnSnap = document.getElementById('btn-snap');
     if (btnSnap) btnSnap.disabled = true;
@@ -537,8 +469,6 @@
     if (countText) {
       if (capturedPhotos.length < targetPhotoCount) {
         countText.innerText = `Foto ${capturedPhotos.length + 1} dari ${targetPhotoCount}`;
-      } else {
-        countText.innerText = `Selesai (${targetPhotoCount} dari ${targetPhotoCount})`;
       }
     }
 
@@ -553,7 +483,7 @@
         goToStep(4);
         const btnSnap = document.getElementById('btn-snap');
         if (btnSnap) btnSnap.disabled = false;
-      }, 800);
+      }, 500);
     }
   }
 
@@ -562,15 +492,7 @@
     const ctx = canvas.getContext('2d');
 
     const width = 600;
-    const count = capturedPhotos.length;
-    const photoMargin = 40;
-    const photoWidth = width - (photoMargin * 2);
-    const photoHeight = 380;
-    const headerSpace = 60;
-    const footerSpace = 200;
-    
-    const height = headerSpace + (count * photoHeight) + ((count - 1) * 20) + footerSpace;
-    
+    const height = 1800;
     canvas.width = width;
     canvas.height = height;
 
@@ -584,50 +506,39 @@
     ctx.fillStyle = bgColor;
     ctx.fillRect(0, 0, width, height);
 
-    const loadImagePromises = capturedPhotos.map((src) => {
-      return new Promise((resolve) => {
-        const img = new Image();
-        img.onload = () => resolve(img);
-        img.onerror = () => resolve(null);
-        img.src = src;
-      });
-    });
+    let loaded = 0;
+    capturedPhotos.forEach((src, idx) => {
+      const img = new Image();
+      img.onload = () => {
+        ctx.drawImage(img, 40, 80 + (idx * 410), 520, 380);
+        loaded++;
 
-    Promise.all(loadImagePromises).then((images) => {
-      images.forEach((img, idx) => {
-        if (img) {
-          const currentY = headerSpace + (idx * (photoHeight + 20));
-          ctx.drawImage(img, photoMargin, currentY, photoWidth, photoHeight);
+        if (loaded === capturedPhotos.length) {
+          ctx.fillStyle = '#FFFFFF';
+          ctx.font = 'bold 36px "Cormorant Garamond", serif';
+          ctx.textAlign = 'center';
+          ctx.fillText(currentTitle, width / 2, height - 120);
+
+          ctx.font = '20px "Plus Jakarta Sans", sans-serif';
+          ctx.fillText(currentDate, width / 2, height - 80);
+
+          const resultImg = document.getElementById('result-img');
+          const downloadLink = document.getElementById('download-link');
+          const photoWrapper = document.querySelector('.photo-eject-wrapper');
+          const dataUrl = canvas.toDataURL('image/png');
+
+          if (resultImg) resultImg.src = dataUrl;
+          if (downloadLink) downloadLink.href = dataUrl;
+
+          // EJECT ANIMATION UTAMA CSS (ORIGINAL)
+          if (photoWrapper) {
+            photoWrapper.classList.remove('eject');
+            void photoWrapper.offsetWidth;
+            photoWrapper.classList.add('eject');
+          }
         }
-      });
-
-      ctx.fillStyle = '#FFFFFF';
-      ctx.font = 'bold 36px "Cormorant Garamond", serif';
-      ctx.textAlign = 'center';
-      ctx.fillText(eventData.title, width / 2, height - 100);
-
-      ctx.font = '20px "Plus Jakarta Sans", sans-serif';
-      ctx.fillText(eventData.date, width / 2, height - 60);
-
-      const resultImg = document.getElementById('result-img');
-      const downloadLink = document.getElementById('download-link');
-      const photoWrapper = document.querySelector('.photo-eject-wrapper');
-      const dataUrl = canvas.toDataURL('image/png');
-
-      if (resultImg) {
-        resultImg.src = dataUrl;
-      }
-
-      if (downloadLink) {
-        downloadLink.href = dataUrl;
-        downloadLink.download = `Photobooth-${eventData.title.replace(/\s+/g, '-')}.png`;
-      }
-
-      if (photoWrapper) {
-        photoWrapper.classList.remove('eject');
-        void photoWrapper.offsetWidth; 
-        photoWrapper.classList.add('eject');
-      }
+      };
+      img.src = src;
     });
   }
 </script>
