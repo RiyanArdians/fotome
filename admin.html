@@ -171,83 +171,162 @@
       margin-left: 6px;
     }
 
-    /* BARIS COMPACT GALERI FOTO (LIST ROW RINGKAS) */
-    .gallery-row-item {
+    /* GRID GALERI KOTAK-KOTAK KECIL (3 KOLOM) */
+    .gallery-grid-admin {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .gallery-grid-card {
+      background: #FFF;
       border: 1px solid #EAE0E0;
       border-radius: 12px;
-      padding: 8px 10px;
-      margin-bottom: 8px;
-      background: #FFF;
+      padding: 6px;
+      cursor: pointer;
       display: flex;
+      flex-direction: column;
       align-items: center;
-      gap: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+      transition: transform 0.15s ease;
     }
 
-    .gallery-thumb {
-      width: 48px;
-      height: 48px;
-      border-radius: 8px;
+    .gallery-grid-card:active {
+      transform: scale(0.96);
+    }
+
+    .gallery-thumb-grid {
+      width: 100%;
+      aspect-ratio: 1/1;
       object-fit: cover;
-      border: 1px solid #E0D0D0;
-      flex-shrink: 0;
+      border-radius: 8px;
+      background: #FAF6EE;
+      margin-bottom: 4px;
     }
 
-    .gallery-info {
-      flex: 1;
-      text-align: left;
-      overflow: hidden;
-    }
-
-    .gallery-row-name {
-      font-size: 0.8rem;
+    .gallery-grid-name {
+      font-size: 0.7rem;
       font-weight: 700;
       color: #8C6262;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      width: 100%;
+      text-align: center;
     }
 
-    .gallery-row-msg {
-      font-size: 0.7rem;
-      color: #666;
+    .gallery-grid-msg {
+      font-size: 0.62rem;
+      color: #777;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      width: 100%;
+      text-align: center;
       font-style: italic;
     }
 
-    .gallery-actions {
+    /* MODAL POP-UP (ZOOM, DOWNLOAD & HAPUS) */
+    .hidden { display: none !important; }
+
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(4px);
       display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      padding: 20px;
+    }
+
+    .modal-card {
+      background: #FFF;
+      border-radius: 20px;
+      padding: 20px;
+      max-width: 360px;
+      width: 100%;
+      text-align: center;
+      position: relative;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-close-btn {
+      position: absolute;
+      top: 12px;
+      right: 14px;
+      background: #FAF6EE;
+      border: none;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      font-weight: 700;
+      color: #8C6262;
+      cursor: pointer;
+    }
+
+    .modal-user-name {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #8C6262;
+      margin-bottom: 2px;
+    }
+
+    .modal-img {
+      width: 100%;
+      border-radius: 12px;
+      margin: 10px 0;
+    }
+
+    .modal-msg {
+      font-size: 0.82rem;
+      color: #333;
+      font-style: italic;
+      background: #FAF6EE;
+      padding: 10px;
+      border-radius: 10px;
+      line-height: 1.4;
+      margin-bottom: 12px;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-modal-dl {
+      flex: 1;
+      background: #2E7D32;
+      color: #FFF;
+      border: none;
+      padding: 10px;
+      border-radius: 12px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       gap: 6px;
-      align-items: center;
     }
 
-    .btn-icon-save {
-      background: #E8F5E9;
-      color: #2E7D32;
-      border: 1px solid #C8E6C9;
-      width: 32px;
-      height: 32px;
-      border-radius: 8px;
+    .btn-modal-del {
+      flex: 1;
+      background: #C62828;
+      color: #FFF;
+      border: none;
+      padding: 10px;
+      border-radius: 12px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      cursor: pointer;
-      font-size: 0.8rem;
-    }
-
-    .btn-icon-del {
-      background: #FFEBEE;
-      color: #C62828;
-      border: 1px solid #FFCDD2;
-      width: 32px;
-      height: 32px;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      font-size: 0.8rem;
+      gap: 6px;
     }
   </style>
 
@@ -292,16 +371,35 @@
     </div>
   </div>
 
-  <!-- TAB 2: KELOLA GALERI (BARIS RINGKAS) -->
+  <!-- TAB 2: KELOLA GALERI (GRID KOTAK KECIL 3 KOLOM) -->
   <div id="tab-gallery" class="tab-content">
     <div style="font-size: 0.82rem; text-align: left; margin-bottom: 10px; color: #8C6262; font-weight: 700;">
-      Daftar Foto Ucapan Tamu
+      Klik foto untuk melihat, mengunduh, atau menghapus
     </div>
-    <div id="gallery-list-container">
-      <p style="font-size: 0.75rem; color: #999;">Memuat kiriman galeri...</p>
+    <div id="gallery-grid-container" class="gallery-grid-admin">
+      <p style="font-size: 0.75rem; color: #999; grid-column: span 3; text-align: center;">Memuat kiriman galeri...</p>
     </div>
   </div>
 
+</div>
+
+<!-- MODAL POP-UP (ZOOM, DOWNLOAD & HAPUS) -->
+<div id="admin-modal" class="modal-overlay hidden">
+  <div class="modal-card">
+    <button class="modal-close-btn" onclick="closeAdminModal()">✕</button>
+    <div class="modal-user-name" id="modal-sender-name">Nama Tamu</div>
+    <div style="font-size:0.68rem; color:#888;" id="modal-event-id">Event ID</div>
+    <img id="modal-img-src" class="modal-img" src="" alt="Foto Strip">
+    <div class="modal-msg" id="modal-sender-msg">"Pesan ucapan..."</div>
+    <div class="modal-actions">
+      <button class="btn-modal-dl" id="btn-modal-download">
+        <i class="fa-solid fa-download"></i> Unduh Foto
+      </button>
+      <button class="btn-modal-del" id="btn-modal-delete">
+        <i class="fa-solid fa-trash"></i> Hapus Foto
+      </button>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -385,62 +483,76 @@
     }
   }
 
-  // 2. KELOLA GALERI (TAMPILAN BARIS RINGKAS)
+  // 2. KELOLA GALERI (GRID KOTAK KECIL 3 KOLOM)
   function loadGalleryAdmin() {
-    const container = document.getElementById('gallery-list-container');
-    container.innerHTML = '<p style="font-size: 0.75rem; color: #999;">Memuat data galeri...</p>';
+    const container = document.getElementById('gallery-grid-container');
 
     db.collection('posts').onSnapshot(snapshot => {
       container.innerHTML = '';
 
       if (snapshot.empty) {
-        container.innerHTML = '<p style="font-size: 0.75rem; color: #999; text-align: center;">Belum ada foto yang masuk di galeri.</p>';
+        container.innerHTML = '<p style="font-size: 0.75rem; color: #999; grid-column: span 3; text-align: center;">Belum ada foto yang masuk di galeri.</p>';
         return;
       }
 
       snapshot.forEach(doc => {
         const data = doc.data();
         const postId = doc.id;
-        const name = data.name || 'Tamu Undangan';
+        const name = data.name || 'Tamu';
         const msg = data.message || '-';
 
-        const row = document.createElement('div');
-        row.className = 'gallery-row-item';
-        row.innerHTML = `
-          <img src="${data.photoData}" class="gallery-thumb" alt="Thumb">
-          <div class="gallery-info">
-            <div class="gallery-row-name">${name}</div>
-            <div class="gallery-row-msg">"${msg}"</div>
-          </div>
-          <div class="gallery-actions">
-            <button class="btn-icon-save" title="Simpan Ke HP" onclick="downloadPhotoToDevice('${data.photoData}', '${name}')">
-              <i class="fa-solid fa-download"></i>
-            </button>
-            <button class="btn-icon-del" title="Hapus dari Galeri" onclick="deleteGalleryPost('${postId}')">
-              <i class="fa-solid fa-trash"></i>
-            </button>
-          </div>
+        const card = document.createElement('div');
+        card.className = 'gallery-grid-card';
+        card.onclick = () => openAdminModal(postId, name, msg, data.photoData, data.eventId);
+
+        card.innerHTML = `
+          <img src="${data.photoData}" class="gallery-thumb-grid" alt="Thumb">
+          <div class="gallery-grid-name">${name}</div>
+          <div class="gallery-grid-msg">"${msg}"</div>
         `;
-        container.appendChild(row);
+        container.appendChild(card);
       });
     });
   }
 
-  // FUNGSI SIMPAN FOTO KE DEVICE PENGANTIN
-  function downloadPhotoToDevice(photoUrl, name) {
-    const a = document.createElement('a');
-    a.href = photoUrl;
-    a.download = `Photobooth-${name.replace(/\s+/g, '-')}.jpg`;
-    a.click();
+  // MODAL KONTROL (ZOOM, DOWNLOAD & HAPUS)
+  let activePostId = null;
+  let activePhotoUrl = "";
+  let activeSenderName = "";
+
+  function openAdminModal(postId, name, message, photoData, eventId) {
+    activePostId = postId;
+    activePhotoUrl = photoData;
+    activeSenderName = name;
+
+    document.getElementById('modal-sender-name').innerText = name;
+    document.getElementById('modal-event-id').innerText = `ID Event: ${eventId || '-'}`;
+    document.getElementById('modal-sender-msg').innerText = `"${message}"`;
+    document.getElementById('modal-img-src').src = photoData;
+
+    document.getElementById('btn-modal-download').onclick = () => {
+      const a = document.createElement('a');
+      a.href = activePhotoUrl;
+      a.download = `Photobooth-${activeSenderName.replace(/\s+/g, '-')}.jpg`;
+      a.click();
+    };
+
+    document.getElementById('btn-modal-delete').onclick = () => {
+      if (confirm(`Apakah kamu yakin ingin menghapus foto ucapan dari "${activeSenderName}" ini?`)) {
+        db.collection('posts').doc(activePostId).delete()
+          .then(() => {
+            alert("Foto berhasil dihapus!");
+            closeAdminModal();
+          })
+          .catch(err => alert("Gagal menghapus: " + err.message));
+      }
+    };
+
+    document.getElementById('admin-modal').classList.remove('hidden');
   }
 
-  // FUNGSI HAPUS POSTINGAN DARI FIRESTORE
-  function deleteGalleryPost(postId) {
-    if (confirm("Hapus foto ucapan ini dari galeri publik?")) {
-      db.collection('posts').doc(postId).delete()
-        .then(() => alert("Foto berhasil dihapus!"))
-        .catch(err => alert("Gagal menghapus: " + err.message));
-    }
+  function closeAdminModal() {
+    document.getElementById('admin-modal').classList.add('hidden');
   }
 </script>
 
