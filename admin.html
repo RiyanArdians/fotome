@@ -486,7 +486,7 @@
     </div>
   </div>
 
-  <!-- TAB 2: KELOLA GALERI (AKSI BATCH + COUNTER) -->
+  <!-- TAB 2: KELOLA GALERI -->
   <div id="tab-gallery" class="tab-content">
     
     <!-- STATS COUNTER BAR -->
@@ -523,7 +523,6 @@
   <div class="modal-card">
     <button class="modal-close-btn" onclick="closeAdminModal()">✕</button>
     <div class="modal-user-name" id="modal-sender-name">Nama Tamu</div>
-    <div style="font-size:0.68rem; color:#888;" id="modal-event-id">Event ID</div>
     <img id="modal-img-src" class="modal-img" src="" alt="Foto Strip">
     <div class="modal-msg" id="modal-sender-msg">"Pesan ucapan..."</div>
     <div class="modal-actions">
@@ -539,6 +538,19 @@
 
 <script>
   let allGalleryPosts = []; 
+
+  // HELPER FORMAT NAMA FILE: [Nama Tamu] - [Pesan Ucapan].jpg
+  function formatFileName(name, msg) {
+    const cleanName = (name || 'Tamu').replace(/[^\w\s-]/gi, '').trim() || 'Tamu';
+    const cleanMsg = (msg || '').replace(/[^\w\s-]/gi, '').trim();
+
+    if (cleanMsg && cleanMsg !== '-') {
+      // Ambil maksimal 40 karakter dari ucapan agar nama file tidak kepanjangan
+      const shortMsg = cleanMsg.substring(0, 40);
+      return `${cleanName} - ${shortMsg}.jpg`;
+    }
+    return `${cleanName}.jpg`;
+  }
 
   function switchTab(tabId, btnElem) {
     document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
@@ -619,7 +631,7 @@
     }
   }
 
-  // 2. KELOLA GALERI (WITH COUNTERS & BATCH OPERATIONS)
+  // 2. KELOLA GALERI
   function loadGalleryAdmin() {
     const container = document.getElementById('gallery-grid-container');
 
@@ -658,11 +670,11 @@
           <div class="card-checkbox-wrapper" onclick="event.stopPropagation()">
             <input type="checkbox" class="card-checkbox post-select-cb" value="${postId}" onchange="updateCardStyle(this, '${postId}')">
           </div>
-          <div class="gallery-thumb-box" onclick="openAdminModal('${postId}', '${name}', '${msg.replace(/'/g, "\\'")}', '${data.photoData}', '${data.eventId || ''}')">
+          <div class="gallery-thumb-box" onclick="openAdminModal('${postId}', '${name}', '${msg.replace(/'/g, "\\'")}', '${data.photoData}')">
             <img src="${data.photoData}" class="gallery-thumb-grid" alt="Thumb">
           </div>
-          <div class="gallery-grid-name" onclick="openAdminModal('${postId}', '${name}', '${msg.replace(/'/g, "\\'")}', '${data.photoData}', '${data.eventId || ''}')">${name}</div>
-          <div class="gallery-grid-msg" onclick="openAdminModal('${postId}', '${name}', '${msg.replace(/'/g, "\\'")}', '${data.photoData}', '${data.eventId || ''}')">"${msg}"</div>
+          <div class="gallery-grid-name" onclick="openAdminModal('${postId}', '${name}', '${msg.replace(/'/g, "\\'")}', '${data.photoData}')">${name}</div>
+          <div class="gallery-grid-msg" onclick="openAdminModal('${postId}', '${name}', '${msg.replace(/'/g, "\\'")}', '${data.photoData}')">"${msg}"</div>
         `;
         container.appendChild(card);
       });
@@ -679,7 +691,6 @@
     updateCounters();
   }
 
-  // FUNGSI UPDATE COUNTER STATISTIK (TOTAL & TERPILIH)
   function updateCounters() {
     const totalCount = allGalleryPosts.length;
     const selectedCount = document.querySelectorAll('.post-select-cb:checked').length;
@@ -702,6 +713,7 @@
     updateCounters();
   }
 
+  // UNDUH TERPILIH DENGAN FORMAT NAMA + UCAPAN
   function downloadSelectedPosts() {
     const selectedCbs = document.querySelectorAll('.post-select-cb:checked');
     if (selectedCbs.length === 0) {
@@ -716,9 +728,10 @@
       const postData = allGalleryPosts.find(p => p.id === postId);
       if (postData) {
         setTimeout(() => {
+          const fileName = formatFileName(postData.name, postData.message);
           const a = document.createElement('a');
           a.href = postData.photoData;
-          a.download = `Photobooth-${(postData.name || 'Tamu').replace(/\s+/g, '-')}-${idx+1}.jpg`;
+          a.download = fileName;
           a.click();
         }, idx * 300);
       }
@@ -745,25 +758,27 @@
     }
   }
 
-  // MODAL INDIVIDUAL
+  // MODAL INDIVIDUAL (PENAMAAN DUA KATA NAMA + UCAPAN & TANPA ID DI TAMPILAN)
   let activePostId = null;
   let activePhotoUrl = "";
   let activeSenderName = "";
+  let activeSenderMsg = "";
 
-  function openAdminModal(postId, name, message, photoData, eventId) {
+  function openAdminModal(postId, name, message, photoData) {
     activePostId = postId;
     activePhotoUrl = photoData;
     activeSenderName = name;
+    activeSenderMsg = message;
 
     document.getElementById('modal-sender-name').innerText = name;
-    document.getElementById('modal-event-id').innerText = `ID Event: ${eventId || '-'}`;
     document.getElementById('modal-sender-msg').innerText = `"${message}"`;
     document.getElementById('modal-img-src').src = photoData;
 
     document.getElementById('btn-modal-download').onclick = () => {
+      const fileName = formatFileName(activeSenderName, activeSenderMsg);
       const a = document.createElement('a');
       a.href = activePhotoUrl;
-      a.download = `Photobooth-${activeSenderName.replace(/\s+/g, '-')}.jpg`;
+      a.download = fileName;
       a.click();
     };
 
