@@ -469,7 +469,7 @@
       position: absolute;
       top: 12px;
       right: 14px;
-      background: #FAF6F0;
+      background: #FAF6EE;
       border: none;
       width: 30px;
       height: 30px;
@@ -502,10 +502,43 @@
       line-height: 1.4;
     }
 
+    /* TOAST NOTIFIKASI CUSTOM (TANPA TULISAN DOMAIN GITHUB) */
+    .custom-toast {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-100px);
+      background: #7A1C28;
+      color: #FFF;
+      padding: 12px 20px;
+      border-radius: 25px;
+      border: 1px solid #D4AF37;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+      font-size: 0.82rem;
+      font-weight: 600;
+      z-index: 99999;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      opacity: 0;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .custom-toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
     canvas { display: none; }
   </style>
 </head>
 <body>
+
+<!-- TOAST CUSTOM -->
+<div id="custom-toast" class="custom-toast">
+  <span id="toast-icon">✨</span>
+  <span id="toast-text">Pesan notifikasi...</span>
+</div>
 
 <!-- MAIN CARD PHOTOBOOTH -->
 <div class="app-card">
@@ -682,6 +715,18 @@
 
   let eventTitle = "Riyan & Amelia";
 
+  // FUNGSI TOAST NOTIFIKASI CUSTOM (TANPA JUDUL DOMAIN BROWSER)
+  function showToast(message, icon = "🎉") {
+    const toast = document.getElementById('custom-toast');
+    document.getElementById('toast-icon').innerText = icon;
+    document.getElementById('toast-text').innerText = message;
+
+    toast.classList.add('show');
+    setTimeout(() => {
+      toast.classList.remove('show');
+    }, 3200);
+  }
+
   if (typeof db !== 'undefined') {
     db.collection('settings').doc(EVENT_DOC_ID).onSnapshot(doc => {
       if (doc.exists) {
@@ -749,7 +794,6 @@
       gallerySection.classList.add('hidden');
     }
 
-    // TRIGGER ANIMASI POLAROID KELUAR DI STEP 4
     if (step === 4) {
       const slide = document.getElementById('polaroid-slide-elem');
       slide.classList.remove('printed');
@@ -797,7 +841,7 @@
       })
       .catch(err => {
         console.error("Gagal membuka kamera:", err);
-        alert("Gagal membuka kamera. Harap beri izin akses kamera di browser!");
+        showToast("Gagal membuka kamera. Cek izin browser!", "⚠️");
       });
   }
 
@@ -1045,10 +1089,10 @@
         photoData: generatedDataUrl,
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       }).then(() => {
-        alert("Foto berhasil diunduh dan diposting ke Galeri!");
+        showToast("Foto berhasil diunduh & diposting ke Galeri!", "📸");
         document.getElementById('input-sender-name').value = '';
         document.getElementById('input-sender-message').value = '';
-        goToStep(1);
+        setTimeout(() => { goToStep(1); }, 1200);
       });
     }
   }
@@ -1056,11 +1100,10 @@
   function savePrivateOnly() {
     const senderName = document.getElementById('input-sender-name').value.trim() || "Tamu";
     downloadImageToPhone(senderName);
-    alert("Foto berhasil disimpan secara privat ke HP kamu!");
-    goToStep(1);
+    showToast("Foto berhasil disimpan privat ke HP kamu!", "📥");
+    setTimeout(() => { goToStep(1); }, 1200);
   }
 
- // LOAD GALERI TAMU REALTIME (DENGAN SORTING MANUAL DI CLIENT KLIEN)
   function loadRealtimeFeedIG() {
     db.collection('posts')
       .where('eventId', '==', EVENT_DOC_ID)
@@ -1077,7 +1120,6 @@
 
         countSpan.innerText = `${snapshot.size} Kiriman`;
 
-        // AMBIL SEMUA DATA LALU URUTKAN WAKTU ASCENDING (TERBARU DI AKHIR/PALING BAWAH)
         let posts = [];
         snapshot.forEach(doc => {
           posts.push({ id: doc.id, ...doc.data() });
@@ -1086,10 +1128,9 @@
         posts.sort((a, b) => {
           const timeA = a.createdAt ? a.createdAt.toMillis() : 0;
           const timeB = b.createdAt ? b.createdAt.toMillis() : 0;
-          return timeA - timeB; // ASCENDING: Terbaru muncul di akhir
+          return timeA - timeB;
         });
 
-        // RENDER FOTO KE GRID
         posts.forEach(data => {
           const item = document.createElement('div');
           item.className = 'ig-grid-item';
