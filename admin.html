@@ -172,6 +172,69 @@
       margin-left: 6px;
     }
 
+    /* BATCH ACTION BAR (PILIH SEMUA, DOWNLOAD & HAPUS MASAL) */
+    .batch-bar {
+      background: #FAF6EE;
+      border: 1px solid rgba(216, 180, 180, 0.4);
+      border-radius: 14px;
+      padding: 10px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .batch-select-all {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #8C6262;
+      cursor: pointer;
+    }
+
+    .batch-select-all input {
+      accent-color: #8C6262;
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+    }
+
+    .batch-buttons {
+      display: flex;
+      gap: 6px;
+    }
+
+    .btn-batch-dl {
+      background: #2E7D32;
+      color: #FFF;
+      border: none;
+      padding: 6px 10px;
+      border-radius: 8px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .btn-batch-del {
+      background: #C62828;
+      color: #FFF;
+      border: none;
+      padding: 6px 10px;
+      border-radius: 8px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
     /* GRID ADMIN RAPI SERAGAM (3 KOLOM PRESISI) */
     .gallery-grid-admin {
       display: grid;
@@ -192,10 +255,26 @@
       box-shadow: 0 2px 5px rgba(0,0,0,0.02);
       overflow: hidden;
       width: 100%;
+      position: relative;
     }
 
-    .gallery-grid-card:active {
-      transform: scale(0.96);
+    .gallery-grid-card.selected {
+      border-color: #8C6262;
+      background: #FFFBF6;
+    }
+
+    .card-checkbox-wrapper {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      z-index: 5;
+    }
+
+    .card-checkbox {
+      accent-color: #8C6262;
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
     }
 
     .gallery-thumb-box {
@@ -381,11 +460,25 @@
     </div>
   </div>
 
-  <!-- TAB 2: KELOLA GALERI (GRID SERAGAM) -->
+  <!-- TAB 2: KELOLA GALERI (AKSI BATCH / MASAL & GRID) -->
   <div id="tab-gallery" class="tab-content">
-    <div style="font-size: 0.8rem; text-align: left; margin-bottom: 10px; color: #8C6262; font-weight: 700;">
-      Klik foto untuk perbesar, unduh, atau hapus
+    
+    <!-- BARIS KONTROL AKSI MASAL -->
+    <div class="batch-bar">
+      <label class="batch-select-all">
+        <input type="checkbox" id="check-select-all" onchange="toggleSelectAll(this)">
+        <span>Pilih Semua</span>
+      </label>
+      <div class="batch-buttons">
+        <button class="btn-batch-dl" onclick="downloadSelectedPosts()">
+          <i class="fa-solid fa-download"></i> Unduh
+        </button>
+        <button class="btn-batch-del" onclick="deleteSelectedPosts()">
+          <i class="fa-solid fa-trash"></i> Hapus
+        </button>
+      </div>
     </div>
+
     <div id="gallery-grid-container" class="gallery-grid-admin">
       <p style="font-size: 0.75rem; color: #999; grid-column: span 3; text-align: center;">Memuat kiriman galeri...</p>
     </div>
@@ -393,7 +486,7 @@
 
 </div>
 
-<!-- MODAL POP-UP (ZOOM, DOWNLOAD & HAPUS) -->
+<!-- MODAL POP-UP (ZOOM, DOWNLOAD & HAPUS INDIVIDUAL) -->
 <div id="admin-modal" class="modal-overlay hidden">
   <div class="modal-card">
     <button class="modal-close-btn" onclick="closeAdminModal()">✕</button>
@@ -413,6 +506,8 @@
 </div>
 
 <script>
+  let allGalleryPosts = []; // Menyimpan data postingan aktif
+
   // TAB SWITCHING
   function switchTab(tabId, btnElem) {
     document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
@@ -493,55 +588,116 @@
     }
   }
 
-  // KELOLA GALERI (GRID KOTAK DENGAN SORTING TERBARU DI PALING AKHIR)
+  // 2. KELOLA GALERI (GRID KOTAK DENGAN BATCH SELECT)
   function loadGalleryAdmin() {
     const container = document.getElementById('gallery-grid-container');
 
     db.collection('posts').onSnapshot(snapshot => {
       container.innerHTML = '';
+      allGalleryPosts = [];
+      document.getElementById('check-select-all').checked = false;
 
       if (snapshot.empty) {
         container.innerHTML = '<p style="font-size: 0.75rem; color: #999; grid-column: span 3; text-align: center;">Belum ada foto yang masuk di galeri.</p>';
         return;
       }
 
-      // AMBIL SEMUA DATA LALU URUTKAN WAKTU ASCENDING (TERBARU DI AKHIR/PALING BAWAH)
-      let posts = [];
       snapshot.forEach(doc => {
-        posts.push({ id: doc.id, ...doc.data() });
+        allGalleryPosts.push({ id: doc.id, ...doc.data() });
       });
 
-      posts.sort((a, b) => {
+      // ASCENDING: TERBARU DI AKHIR/PALING BAWAH
+      allGalleryPosts.sort((a, b) => {
         const timeA = a.createdAt ? a.createdAt.toMillis() : 0;
         const timeB = b.createdAt ? b.createdAt.toMillis() : 0;
-        return timeA - timeB; // ASCENDING: Terbaru muncul di akhir
+        return timeA - timeB;
       });
 
-      // RENDER FOTO KE GRID ADMIN
-      posts.forEach(data => {
+      allGalleryPosts.forEach(data => {
         const postId = data.id;
         const name = data.name || 'Tamu';
         const msg = data.message || '-';
 
         const card = document.createElement('div');
         card.className = 'gallery-grid-card';
-        card.onclick = () => openAdminModal(postId, name, msg, data.photoData, data.eventId);
+        card.id = `card-${postId}`;
 
         card.innerHTML = `
-          <div class="gallery-thumb-box">
+          <div class="card-checkbox-wrapper" onclick="event.stopPropagation()">
+            <input type="checkbox" class="card-checkbox post-select-cb" value="${postId}" onchange="updateCardStyle(this, '${postId}')">
+          </div>
+          <div class="gallery-thumb-box" onclick="openAdminModal('${postId}', '${name}', '${msg.replace(/'/g, "\\'")}', '${data.photoData}', '${data.eventId || ''}')">
             <img src="${data.photoData}" class="gallery-thumb-grid" alt="Thumb">
           </div>
-          <div class="gallery-grid-name">${name}</div>
-          <div class="gallery-grid-msg">"${msg}"</div>
+          <div class="gallery-grid-name" onclick="openAdminModal('${postId}', '${name}', '${msg.replace(/'/g, "\\'")}', '${data.photoData}', '${data.eventId || ''}')">${name}</div>
+          <div class="gallery-grid-msg" onclick="openAdminModal('${postId}', '${name}', '${msg.replace(/'/g, "\\'")}', '${data.photoData}', '${data.eventId || ''}')">"${msg}"</div>
         `;
         container.appendChild(card);
       });
-    }, error => {
-      console.error("Gagal memuat galeri admin:", error);
     });
   }
 
-  // MODAL KONTROL (ZOOM, DOWNLOAD & HAPUS)
+  function updateCardStyle(cb, postId) {
+    const card = document.getElementById(`card-${postId}`);
+    if (cb.checked) card.classList.add('selected');
+    else card.classList.remove('selected');
+  }
+
+  // PILIH SEMUA (SELECT ALL)
+  function toggleSelectAll(mainCb) {
+    const checkboxes = document.querySelectorAll('.post-select-cb');
+    checkboxes.forEach(cb => {
+      cb.checked = mainCb.checked;
+      updateCardStyle(cb, cb.value);
+    });
+  }
+
+  // UNDUH TERPILIH (MASAL)
+  function downloadSelectedPosts() {
+    const selectedCbs = document.querySelectorAll('.post-select-cb:checked');
+    if (selectedCbs.length === 0) {
+      alert("Harap pilih/centang minimal 1 foto untuk diunduh!");
+      return;
+    }
+
+    alert(`Mulai mengunduh ${selectedCbs.length} foto terpilih...`);
+
+    selectedCbs.forEach((cb, idx) => {
+      const postId = cb.value;
+      const postData = allGalleryPosts.find(p => p.id === postId);
+      if (postData) {
+        setTimeout(() => {
+          const a = document.createElement('a');
+          a.href = postData.photoData;
+          a.download = `Photobooth-${(postData.name || 'Tamu').replace(/\s+/g, '-')}-${idx+1}.jpg`;
+          a.click();
+        }, idx * 300); // Jeda singkat agar download tidak terblokir browser
+      }
+    });
+  }
+
+  // HAPUS TERPILIH (MASAL)
+  function deleteSelectedPosts() {
+    const selectedCbs = document.querySelectorAll('.post-select-cb:checked');
+    if (selectedCbs.length === 0) {
+      alert("Harap pilih/centang minimal 1 foto untuk dihapus!");
+      return;
+    }
+
+    if (confirm(`Apakah kamu yakin ingin menghapus ${selectedCbs.length} foto terpilih sekaligus dari galeri?`)) {
+      const batch = db.batch();
+      selectedCbs.forEach(cb => {
+        const docRef = db.collection('posts').doc(cb.value);
+        batch.delete(docRef);
+      });
+
+      batch.commit()
+        .then(() => alert(`${selectedCbs.length} foto berhasil dihapus!`))
+        .catch(err => alert("Gagal menghapus: " + err.message));
+    }
+  }
+
+  // MODAL KONTROL INDIVIDUAL
   let activePostId = null;
   let activePhotoUrl = "";
   let activeSenderName = "";
