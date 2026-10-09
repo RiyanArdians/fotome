@@ -172,7 +172,33 @@
       margin-left: 6px;
     }
 
-    /* BATCH ACTION BAR (PILIH SEMUA, DOWNLOAD & HAPUS MASAL) */
+    /* COUNTER SUMMARY BADGE */
+    .gallery-stats-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    .stat-badge-total {
+      background: #FAF6EE;
+      color: #8C6262;
+      padding: 4px 10px;
+      border-radius: 10px;
+      border: 1px solid rgba(216,180,180,0.4);
+    }
+
+    .stat-badge-selected {
+      background: #E8F5E9;
+      color: #2E7D32;
+      padding: 4px 10px;
+      border-radius: 10px;
+      border: 1px solid #C8E6C9;
+    }
+
+    /* BATCH ACTION BAR */
     .batch-bar {
       background: #FAF6EE;
       border: 1px solid rgba(216, 180, 180, 0.4);
@@ -235,7 +261,7 @@
       gap: 4px;
     }
 
-    /* GRID ADMIN RAPI SERAGAM (3 KOLOM PRESISI) */
+    /* GRID ADMIN RAPI SERAGAM */
     .gallery-grid-admin {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -315,7 +341,7 @@
       font-style: italic;
     }
 
-    /* MODAL POP-UP (ZOOM, DOWNLOAD & HAPUS) */
+    /* MODAL POP-UP */
     .hidden { display: none !important; }
 
     .modal-overlay {
@@ -460,9 +486,15 @@
     </div>
   </div>
 
-  <!-- TAB 2: KELOLA GALERI (AKSI BATCH / MASAL & GRID) -->
+  <!-- TAB 2: KELOLA GALERI (AKSI BATCH + COUNTER) -->
   <div id="tab-gallery" class="tab-content">
     
+    <!-- STATS COUNTER BAR -->
+    <div class="gallery-stats-bar">
+      <span class="stat-badge-total" id="stat-total-photos">Total Foto: 0</span>
+      <span class="stat-badge-selected" id="stat-selected-photos">Terpilih: 0</span>
+    </div>
+
     <!-- BARIS KONTROL AKSI MASAL -->
     <div class="batch-bar">
       <label class="batch-select-all">
@@ -486,7 +518,7 @@
 
 </div>
 
-<!-- MODAL POP-UP (ZOOM, DOWNLOAD & HAPUS INDIVIDUAL) -->
+<!-- MODAL POP-UP INDIVIDUAL -->
 <div id="admin-modal" class="modal-overlay hidden">
   <div class="modal-card">
     <button class="modal-close-btn" onclick="closeAdminModal()">✕</button>
@@ -506,9 +538,8 @@
 </div>
 
 <script>
-  let allGalleryPosts = []; // Menyimpan data postingan aktif
+  let allGalleryPosts = []; 
 
-  // TAB SWITCHING
   function switchTab(tabId, btnElem) {
     document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
     document.querySelectorAll('.tab-btn').forEach(tb => tb.classList.remove('active'));
@@ -588,7 +619,7 @@
     }
   }
 
-  // 2. KELOLA GALERI (GRID KOTAK DENGAN BATCH SELECT)
+  // 2. KELOLA GALERI (WITH COUNTERS & BATCH OPERATIONS)
   function loadGalleryAdmin() {
     const container = document.getElementById('gallery-grid-container');
 
@@ -599,6 +630,7 @@
 
       if (snapshot.empty) {
         container.innerHTML = '<p style="font-size: 0.75rem; color: #999; grid-column: span 3; text-align: center;">Belum ada foto yang masuk di galeri.</p>';
+        updateCounters();
         return;
       }
 
@@ -606,7 +638,7 @@
         allGalleryPosts.push({ id: doc.id, ...doc.data() });
       });
 
-      // ASCENDING: TERBARU DI AKHIR/PALING BAWAH
+      // ASCENDING: TERBARU DI AKHIR
       allGalleryPosts.sort((a, b) => {
         const timeA = a.createdAt ? a.createdAt.toMillis() : 0;
         const timeB = b.createdAt ? b.createdAt.toMillis() : 0;
@@ -634,6 +666,8 @@
         `;
         container.appendChild(card);
       });
+
+      updateCounters();
     });
   }
 
@@ -641,18 +675,33 @@
     const card = document.getElementById(`card-${postId}`);
     if (cb.checked) card.classList.add('selected');
     else card.classList.remove('selected');
+
+    updateCounters();
   }
 
-  // PILIH SEMUA (SELECT ALL)
+  // FUNGSI UPDATE COUNTER STATISTIK (TOTAL & TERPILIH)
+  function updateCounters() {
+    const totalCount = allGalleryPosts.length;
+    const selectedCount = document.querySelectorAll('.post-select-cb:checked').length;
+
+    document.getElementById('stat-total-photos').innerText = `Total Foto: ${totalCount}`;
+    document.getElementById('stat-selected-photos').innerText = `Terpilih: ${selectedCount}`;
+  }
+
   function toggleSelectAll(mainCb) {
     const checkboxes = document.querySelectorAll('.post-select-cb');
     checkboxes.forEach(cb => {
       cb.checked = mainCb.checked;
-      updateCardStyle(cb, cb.value);
+      const card = document.getElementById(`card-${cb.value}`);
+      if (card) {
+        if (mainCb.checked) card.classList.add('selected');
+        else card.classList.remove('selected');
+      }
     });
+
+    updateCounters();
   }
 
-  // UNDUH TERPILIH (MASAL)
   function downloadSelectedPosts() {
     const selectedCbs = document.querySelectorAll('.post-select-cb:checked');
     if (selectedCbs.length === 0) {
@@ -671,12 +720,11 @@
           a.href = postData.photoData;
           a.download = `Photobooth-${(postData.name || 'Tamu').replace(/\s+/g, '-')}-${idx+1}.jpg`;
           a.click();
-        }, idx * 300); // Jeda singkat agar download tidak terblokir browser
+        }, idx * 300);
       }
     });
   }
 
-  // HAPUS TERPILIH (MASAL)
   function deleteSelectedPosts() {
     const selectedCbs = document.querySelectorAll('.post-select-cb:checked');
     if (selectedCbs.length === 0) {
@@ -697,7 +745,7 @@
     }
   }
 
-  // MODAL KONTROL INDIVIDUAL
+  // MODAL INDIVIDUAL
   let activePostId = null;
   let activePhotoUrl = "";
   let activeSenderName = "";
