@@ -601,6 +601,7 @@
     return `${cleanName}.jpg`;
   }
 
+  // FUNGSI HELPER: WORD-WRAP TEKS PANJANG DENGAN UKURAN HIGH-DPI
   function wrapCanvasText(ctx, text, maxWidth) {
     const words = text.split(" ");
     const lines = [];
@@ -620,7 +621,7 @@
     return lines;
   }
 
-  // FUNGSI MELUKIS AREA PESAN UCAPAN DI FOOTER TERPISAH
+  // FUNGSI MELUKIS DENGAN RESOLUSI MAKSIMAL ULTRA HD (3X HIGH-DPI)
   function generateImageWithText(photoUrl, name, message, callback) {
     const img = new Image();
     img.crossOrigin = "anonymous";
@@ -628,35 +629,47 @@
       const canvas = document.getElementById('exportCanvas');
       const ctx = canvas.getContext('2d');
 
-      const imgW = img.naturalWidth || img.width || 600;
-      const imgH = img.naturalHeight || img.height || 1200;
+      // 1. Dapatkan resolusi asli foto (misal: 600px x 1800px)
+      const baseWidth = img.naturalWidth || img.width || 600;
+      const baseHeight = img.naturalHeight || img.height || 1800;
 
-      const maxTextWidth = imgW - 80;
-      const fontSizeName = Math.round(imgW * 0.038);
-      const fontSizeMsg = Math.round(imgW * 0.030);
-      const lineHeight = Math.round(fontSizeMsg * 1.4);
+      // 2. Tentukan FAKTOR SKALA ULTRA HD (2x lipat ketajaman piksel)
+      const scale = 2; 
+
+      const imgW = baseWidth * scale;
+      const imgH = baseHeight * scale;
+
+      // Setting ukuran font & margin sesuai skala High-DPI
+      const maxTextWidth = imgW - (120 * scale);
+      const fontSizeName = Math.round(22 * scale);
+      const fontSizeMsg = Math.round(17 * scale);
+      const lineHeight = Math.round(fontSizeMsg * 1.45);
 
       ctx.font = `italic ${fontSizeMsg}px 'Plus Jakarta Sans', sans-serif`;
       const cleanMsg = (message && message !== '-') ? `"${message}"` : "";
       const msgLines = cleanMsg ? wrapCanvasText(ctx, cleanMsg, maxTextWidth) : [];
 
+      // Hitung kebutuhan tinggi footer
       let footerHeight = 0;
       if (name || msgLines.length > 0) {
-        footerHeight = Math.round(imgW * 0.12) + (name ? Math.round(imgW * 0.06) : 0) + (msgLines.length * lineHeight);
+        footerHeight = Math.round(70 * scale) + (name ? Math.round(35 * scale) : 0) + (msgLines.length * lineHeight);
       }
 
+      // Ukuran Canvas Fisik Ultra HD
       canvas.width = imgW;
       canvas.height = imgH + footerHeight;
 
+      // KUALITAS SMOOTHING MAKSIMAL (VECTOR LIKE)
       ctx.imageSmoothingEnabled = true;
       ctx.imageSmoothingQuality = 'high';
 
-      // 1. Tempel Gambar Asli (Utuh)
+      // 3. Gambar Foto Utama dengan Skala Resolusi Tinggi
       ctx.drawImage(img, 0, 0, imgW, imgH);
 
-      // 2. Tempel Area Footer Terpisah
+      // 4. Gambar Area Footer Pesan
       if (footerHeight > 0) {
-        const pixelData = ctx.getImageData(10, imgH - 5, 1, 1).data;
+        // Ambil sampel warna background paling bawah
+        const pixelData = ctx.getImageData(10, imgH - 10, 1, 1).data;
         const bgColor = `rgb(${pixelData[0]}, ${pixelData[1]}, ${pixelData[2]})`;
 
         ctx.fillStyle = bgColor;
@@ -664,38 +677,42 @@
 
         const textColor = (pixelData[0] < 128) ? "#FFFFFF" : "#2B1E1E";
 
-        let currentY = imgH + Math.round(imgW * 0.04);
+        let currentY = imgH + (28 * scale);
 
+        // Garis Pemisah Rapi & Tajam
         ctx.strokeStyle = textColor;
         ctx.globalAlpha = 0.25;
-        ctx.lineWidth = 2;
+        ctx.lineWidth = Math.round(1.5 * scale);
 
-        const gapCenter = Math.round(imgW * 0.05);
+        const gapCenter = Math.round(25 * scale);
         ctx.beginPath();
-        ctx.moveTo(50, currentY);
+        ctx.moveTo(50 * scale, currentY);
         ctx.lineTo((canvas.width / 2) - gapCenter, currentY);
         ctx.stroke();
 
         ctx.beginPath();
         ctx.moveTo((canvas.width / 2) + gapCenter, currentY);
-        ctx.lineTo(canvas.width - 50, currentY);
+        ctx.lineTo(canvas.width - (50 * scale), currentY);
         ctx.stroke();
 
+        // Aksen Bintang
         ctx.globalAlpha = 0.6;
         ctx.fillStyle = textColor;
-        ctx.font = `${Math.round(imgW * 0.028)}px 'Plus Jakarta Sans', sans-serif`;
+        ctx.font = `${Math.round(15 * scale)}px 'Plus Jakarta Sans', sans-serif`;
         ctx.textAlign = "center";
-        ctx.fillText("✦", canvas.width / 2, currentY + Math.round(imgW * 0.009));
+        ctx.fillText("✦", canvas.width / 2, currentY + Math.round(5 * scale));
 
         ctx.globalAlpha = 1.0;
-        currentY += Math.round(imgW * 0.06);
+        currentY += Math.round(38 * scale);
 
+        // Cetak Nama Tamu (High Definition Font)
         if (name) {
           ctx.font = `bold ${fontSizeName}px 'Plus Jakarta Sans', sans-serif`;
           ctx.fillText(`From: ${name}`, canvas.width / 2, currentY);
-          currentY += Math.round(imgW * 0.055);
+          currentY += Math.round(32 * scale);
         }
 
+        // Cetak Pesan Ucapan Multi-baris
         if (msgLines.length > 0) {
           ctx.font = `italic ${fontSizeMsg}px 'Plus Jakarta Sans', sans-serif`;
           ctx.fillStyle = textColor;
@@ -708,6 +725,7 @@
         }
       }
 
+      // Export JPEG dengan Kualitas Kerapatan 100% (1.0)
       const finalDataUrl = canvas.toDataURL('image/jpeg', 1.0);
       callback(finalDataUrl);
     };
