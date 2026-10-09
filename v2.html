@@ -500,7 +500,6 @@
 </head>
 <body>
 
-<!-- MAIN CARD PHOTOBOOTH -->
 <div class="app-card">
 
   <!-- STEP 1: WELCOME SCREEN -->
@@ -526,7 +525,6 @@
     <div class="section-label">PILIHAN BINGKAI FIGMA</div>
 
     <div class="frame-slider-container">
-      <!-- DESIGN: 3 ➔ 2 ➔ 1 -->
       <div class="frame-card selected" onclick="selectFrame(this, './assets/v2/dsg3.png', 3)">
         <img src="./assets/v2/dsg3.png" class="frame-preview-img" alt="Desain 3">
         <div class="frame-label">Design 3 (3 Foto)</div>
@@ -540,7 +538,6 @@
         <div class="frame-label">Design 1 (1 Foto)</div>
       </div>
 
-      <!-- FLOWER: 3 ➔ 2 ➔ 1 -->
       <div class="frame-card" onclick="selectFrame(this, './assets/v2/flower3.png', 3)">
         <img src="./assets/v2/flower3.png" class="frame-preview-img" alt="Flower 3">
         <div class="frame-label">Floral 3 (3 Foto)</div>
@@ -554,7 +551,6 @@
         <div class="frame-label">Floral 1 (1 Foto)</div>
       </div>
 
-      <!-- LINE: 3 ➔ 2 ➔ 1 -->
       <div class="frame-card" onclick="selectFrame(this, './assets/v2/line 3.png', 3)">
         <img src="./assets/v2/line 3.png" class="frame-preview-img" alt="Line 3">
         <div class="frame-label">Minimal 3 (3 Foto)</div>
@@ -957,20 +953,17 @@
     }
   }
 
-  // FUNGSI RENDER PRESISI DENGAN HANDLING CORS & BASE64 (100% GARANSI MUNCUL)
+  // FUNGSI RENDER: FRAME FIGMA SEBAGAI BACKGROUND, FOTO DILUKIS DI DEPAN (LAYER ATAS)
   function renderPhotostripWithFigmaFrame() {
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
 
-    // Load Image dengan CORS Handling Aman
     const loadImageSafe = (src) => {
       return new Promise((resolve) => {
         const img = new Image();
         img.crossOrigin = "anonymous";
         img.onload = () => resolve(img);
         img.onerror = () => {
-          // Fallback jika terjadi kesalahan path
-          console.warn("Gagal memuat gambar dari path, memuat ulang tanpa crossOrigin:", src);
           const fallbackImg = new Image();
           fallbackImg.onload = () => resolve(fallbackImg);
           fallbackImg.src = src;
@@ -993,7 +986,10 @@
       ctx.imageSmoothingEnabled = true;
       ctx.imageSmoothingQuality = 'high';
 
-      // LAYOUT SLOT FOTO BERDASARKAN JUMLAH FOTO (1, 2, ATAU 3 FOTO)
+      // 1. LUKIS DULU FRAME FIGMA SEBAGAI BACKGROUND (LAYER PALING BAWAH)
+      ctx.drawImage(frameImg, 0, 0, W, H);
+
+      // 2. LUKIS FOTO-FOTO KAMERA DI DEPAN BACKGROUND (LAYER PALING ATAS)
       const totalPhotos = userImages.length;
       const slotW = Math.round(W * 0.82);
       const startX = Math.round((W - slotW) / 2);
@@ -1014,7 +1010,6 @@
         gapY = Math.round(H * 0.03);
       }
 
-      // 1. Gambar Dulu Foto Sesi Pengguna di Layer Paling Bawah (Background)
       userImages.forEach((photo, i) => {
         const currentY = startY + (i * (slotH + gapY));
 
@@ -1034,24 +1029,19 @@
           offsetY = (photo.height - renderH) / 2;
         }
 
+        // Cetak foto persis di depan background
         ctx.drawImage(photo, offsetX, offsetY, renderW, renderH, startX, currentY, slotW, slotH);
       });
-
-      // 2. Timpa Bingkai PNG Figma Transparan di Layer Atas (Foreground)
-      ctx.drawImage(frameImg, 0, 0, W, H);
 
       // 3. Export Hasil ke Elemen Image Preview
       try {
         generatedDataUrl = canvas.toDataURL('image/jpeg', 0.95);
-        document.getElementById('result-img').src = generatedDataUrl;
-        goToStep(4);
       } catch (err) {
-        console.error("Gagal men-export canvas dataUrl:", err);
-        // Fallback jika ketiadaan akses canvas cross-domain
         generatedDataUrl = canvas.toDataURL('image/png');
-        document.getElementById('result-img').src = generatedDataUrl;
-        goToStep(4);
       }
+      
+      document.getElementById('result-img').src = generatedDataUrl;
+      goToStep(4);
     });
   }
 
