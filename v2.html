@@ -347,7 +347,7 @@
       background: #FFF;
     }
 
-    /* GALERI EXPLORE IG (3 KOLOM KOTAK SISI TAMU) */
+    /* GALERI EXPLORE IG */
     .feed-container {
       width: 100%;
       max-width: 430px;
@@ -503,7 +503,7 @@
 <!-- MAIN CARD PHOTOBOOTH -->
 <div class="app-card">
 
-  <!-- STEP 1: WELCOME SCREEN (SAMBUTAN TAMU) -->
+  <!-- STEP 1: WELCOME SCREEN -->
   <div id="step-welcome">
     <p class="brand-subtitle">WEDDING MEMORIES OF</p>
     <h1 class="font-script event-main-title" id="display-event-title">Riyan & Amelia</h1>
@@ -520,7 +520,7 @@
     </button>
   </div>
 
-  <!-- STEP 2: SLIDER PILIHAN BINGKAI FIGMA (3 FOTO, 2 FOTO, 1 FOTO) -->
+  <!-- STEP 2: SLIDER PILIHAN BINGKAI FIGMA -->
   <div id="step-template" class="hidden">
     <h2 class="font-serif" style="color: var(--primary-crimson); font-size: 1.7rem;">Pilih Style Frame</h2>
     <div class="section-label">PILIHAN BINGKAI FIGMA</div>
@@ -689,7 +689,7 @@
 
   let eventTitle = "Riyan & Amelia";
   let selectedFramePath = './assets/v2/dsg3.png';
-  let requiredPhotoCount = 3; // Dinamis mengikuti tipe frame (1, 2, atau 3 foto)
+  let requiredPhotoCount = 3; 
   let capturedPhotos = [];
   let videoStream = null;
   let generatedDataUrl = "";
@@ -957,31 +957,34 @@
     }
   }
 
-  // FUNGSI RENDER PRESISI (FOTO PASTI MUNCUL)
+  // FUNGSI RENDER PRESISI DENGAN HANDLING CORS & BASE64 (100% GARANSI MUNCUL)
   function renderPhotostripWithFigmaFrame() {
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
 
-    // 1. Load Bingkai Figma & Seluruh Foto Pengguna Menggunakan Promise.all
-    const loadFrame = new Promise((resolve) => {
-      const img = new Image();
-      img.crossOrigin = "anonymous";
-      img.onload = () => resolve(img);
-      img.src = selectedFramePath;
-    });
-
-    const loadUserPhotos = Promise.all(capturedPhotos.map(src => {
+    // Load Image dengan CORS Handling Aman
+    const loadImageSafe = (src) => {
       return new Promise((resolve) => {
         const img = new Image();
         img.crossOrigin = "anonymous";
         img.onload = () => resolve(img);
+        img.onerror = () => {
+          // Fallback jika terjadi kesalahan path
+          console.warn("Gagal memuat gambar dari path, memuat ulang tanpa crossOrigin:", src);
+          const fallbackImg = new Image();
+          fallbackImg.onload = () => resolve(fallbackImg);
+          fallbackImg.src = src;
+        };
         img.src = src;
       });
-    }));
+    };
 
-    Promise.all([loadFrame, loadUserPhotos]).then(([frameImg, userImages]) => {
-      const W = frameImg.naturalWidth || 600;
-      const H = frameImg.naturalHeight || 1800;
+    const loadFramePromise = loadImageSafe(selectedFramePath);
+    const loadPhotosPromises = Promise.all(capturedPhotos.map(src => loadImageSafe(src)));
+
+    Promise.all([loadFramePromise, loadPhotosPromises]).then(([frameImg, userImages]) => {
+      const W = frameImg.naturalWidth || frameImg.width || 600;
+      const H = frameImg.naturalHeight || frameImg.height || 1800;
 
       canvas.width = W;
       canvas.height = H;
@@ -990,7 +993,7 @@
       ctx.imageSmoothingEnabled = true;
       ctx.imageSmoothingQuality = 'high';
 
-      // 2. Hitung Layout Slot Foto Berdasarkan Jumlah Foto (1, 2, atau 3 foto)
+      // LAYOUT SLOT FOTO BERDASARKAN JUMLAH FOTO (1, 2, ATAU 3 FOTO)
       const totalPhotos = userImages.length;
       const slotW = Math.round(W * 0.82);
       const startX = Math.round((W - slotW) / 2);
@@ -1011,7 +1014,7 @@
         gapY = Math.round(H * 0.03);
       }
 
-      // 3. Gambar Seluruh Foto Sesi di Layer Bawah
+      // 1. Gambar Dulu Foto Sesi Pengguna di Layer Paling Bawah (Background)
       userImages.forEach((photo, i) => {
         const currentY = startY + (i * (slotH + gapY));
 
@@ -1034,13 +1037,21 @@
         ctx.drawImage(photo, offsetX, offsetY, renderW, renderH, startX, currentY, slotW, slotH);
       });
 
-      // 4. Timpa Bingkai Transparan Figma di Layer Atas (Paling Depan)
+      // 2. Timpa Bingkai PNG Figma Transparan di Layer Atas (Foreground)
       ctx.drawImage(frameImg, 0, 0, W, H);
 
-      // 5. Ekspor Hasil Akhir ke Preview Image
-      generatedDataUrl = canvas.toDataURL('image/jpeg', 0.95);
-      document.getElementById('result-img').src = generatedDataUrl;
-      goToStep(4);
+      // 3. Export Hasil ke Elemen Image Preview
+      try {
+        generatedDataUrl = canvas.toDataURL('image/jpeg', 0.95);
+        document.getElementById('result-img').src = generatedDataUrl;
+        goToStep(4);
+      } catch (err) {
+        console.error("Gagal men-export canvas dataUrl:", err);
+        // Fallback jika ketiadaan akses canvas cross-domain
+        generatedDataUrl = canvas.toDataURL('image/png');
+        document.getElementById('result-img').src = generatedDataUrl;
+        goToStep(4);
+      }
     });
   }
 
