@@ -1060,11 +1060,10 @@
     goToStep(1);
   }
 
-  // LOAD GALERI TAMU REALTIME DENGAN URUTAN TERBARU DI PALING AKHIR (ASCENDING)
+ // LOAD GALERI TAMU REALTIME (DENGAN SORTING MANUAL DI CLIENT KLIEN)
   function loadRealtimeFeedIG() {
     db.collection('posts')
       .where('eventId', '==', EVENT_DOC_ID)
-      .orderBy('createdAt', 'asc') // TERBARU DI AKHIR (PALING BAWAH)
       .onSnapshot(snapshot => {
         const gridBox = document.getElementById('ig-grid-box');
         const countSpan = document.getElementById('total-posts-count');
@@ -1078,8 +1077,20 @@
 
         countSpan.innerText = `${snapshot.size} Kiriman`;
 
+        // AMBIL SEMUA DATA LALU URUTKAN WAKTU ASCENDING (TERBARU DI AKHIR/PALING BAWAH)
+        let posts = [];
         snapshot.forEach(doc => {
-          const data = doc.data();
+          posts.push({ id: doc.id, ...doc.data() });
+        });
+
+        posts.sort((a, b) => {
+          const timeA = a.createdAt ? a.createdAt.toMillis() : 0;
+          const timeB = b.createdAt ? b.createdAt.toMillis() : 0;
+          return timeA - timeB; // ASCENDING: Terbaru muncul di akhir
+        });
+
+        // RENDER FOTO KE GRID
+        posts.forEach(data => {
           const item = document.createElement('div');
           item.className = 'ig-grid-item';
           
@@ -1094,6 +1105,8 @@
           `;
           gridBox.appendChild(item);
         });
+      }, error => {
+        console.error("Gagal memuat galeri:", error);
       });
   }
 
