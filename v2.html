@@ -3,89 +3,142 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FOTOME - Photobooth</title>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&family=Cormorant+Garamond:wght@600;700&display=swap" rel="stylesheet">
+  <title>Virtual Photobooth & Guestbook - FOTOME</title>
+  
+  <!-- Google Fonts & Font Awesome -->
+  <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+  <!-- Firebase Compat SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="./js/config.js"></script>
+
   <style>
+    :root {
+      --primary-crimson: #7A1C28;
+      --gold-accent: #D4AF37;
+      --bg-cream: #FAF6F0;
+      --text-dark: #2B1E1E;
+      --card-white: #FFFFFF;
+    }
+
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       font-family: 'Plus Jakarta Sans', sans-serif;
-      background: #FDFBF7;
-      color: #3D2B2B;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      background-color: var(--bg-cream);
+      color: var(--text-dark);
       min-height: 100vh;
-      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 15px 10px 40px;
     }
+
+    .font-serif { font-family: 'Cormorant Garamond', serif; }
+    .font-script { font-family: 'Alex Brush', cursive; }
+    .hidden { display: none !important; }
 
     .app-card {
       width: 100%;
-      max-width: 420px;
-      background: #FFF;
-      border-radius: 24px;
-      padding: 24px 18px;
-      box-shadow: 0 10px 30px rgba(140, 98, 98, 0.08);
-      border: 1px solid rgba(216, 180, 180, 0.3);
+      max-width: 430px;
+      background: var(--card-white);
+      border-radius: 28px;
+      padding: 28px 20px;
+      box-shadow: 0 15px 35px rgba(122, 28, 40, 0.08);
+      border: 1px solid rgba(212, 175, 55, 0.25);
       text-align: center;
       position: relative;
     }
 
-    .app-header {
-      margin-bottom: 20px;
-    }
-
-    .app-title {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 2rem;
+    .brand-subtitle {
+      font-size: 0.72rem;
+      color: var(--gold-accent);
+      letter-spacing: 3px;
+      text-transform: uppercase;
       font-weight: 700;
-      color: #8C6262;
-      letter-spacing: 2px;
+      margin-bottom: 6px;
     }
 
-    .app-subtitle {
-      font-size: 0.78rem;
-      color: #888;
-      margin-top: 2px;
-    }
-
-    .step-section { display: none; }
-    .step-section.active { display: block; }
-
-    /* STEP 1: HALAMAN AWAL / WELCOME SCREEN TAMU */
-    .welcome-box {
-      padding: 20px 10px;
-    }
-
-    .welcome-icon {
-      font-size: 3rem;
-      color: #8C6262;
+    .event-main-title {
+      font-size: 2.5rem;
+      color: var(--primary-crimson);
+      line-height: 1.1;
       margin-bottom: 12px;
     }
 
-    .welcome-title {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.6rem;
-      font-weight: 700;
-      color: #3D2B2B;
-      margin-bottom: 8px;
+    .event-date-text {
+      font-size: 0.8rem;
+      color: #6E5353;
+      margin-bottom: 20px;
+      letter-spacing: 1px;
     }
 
-    .welcome-desc {
-      font-size: 0.82rem;
-      color: #666;
-      line-height: 1.5;
-      margin-bottom: 24px;
+    .btn-primary-v2 {
+      background: linear-gradient(135deg, #8C2331 0%, var(--primary-crimson) 100%);
+      color: #FFFFFF;
+      border: 1px solid var(--gold-accent);
+      padding: 14px 20px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      border-radius: 30px;
+      cursor: pointer;
+      box-shadow: 0 6px 18px rgba(122, 28, 40, 0.2);
+      width: 100%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      margin-top: 10px;
     }
 
-    /* STEP 2: SLIDER DESAIN FRAME (URUTAN 3 KE 1) */
-    .section-title {
-      font-size: 0.92rem;
+    .btn-primary-v2:active { transform: scale(0.98); }
+
+    .btn-secondary-v2 {
+      background: #FFF;
+      color: var(--primary-crimson);
+      border: 1.5px solid var(--primary-crimson);
+      padding: 12px 18px;
+      font-size: 0.85rem;
       font-weight: 700;
-      color: #8C6262;
-      margin-bottom: 14px;
+      border-radius: 30px;
+      cursor: pointer;
+      margin-top: 8px;
+      width: 100%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.03);
+    }
+
+    .btn-outline-v2 {
+      background: transparent;
+      color: #888;
+      border: none;
+      padding: 10px 18px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 6px;
+      width: 100%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    /* SLIDER DESAIN FRAME FIGMA */
+    .section-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--primary-crimson);
+      text-align: left;
+      margin: 14px 0 8px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
 
     .frame-slider-container {
@@ -102,14 +155,14 @@
       height: 6px;
     }
     .frame-slider-container::-webkit-scrollbar-thumb {
-      background: #D8B4B4;
+      background: var(--gold-accent);
       border-radius: 10px;
     }
 
     .frame-card {
-      flex: 0 0 150px;
+      flex: 0 0 145px;
       scroll-snap-align: center;
-      background: #FAF6EE;
+      background: #FAF6F0;
       border: 2px solid transparent;
       border-radius: 16px;
       padding: 8px;
@@ -120,19 +173,15 @@
       align-items: center;
     }
 
-    .frame-card:hover {
-      transform: translateY(-2px);
-    }
-
     .frame-card.selected {
-      border-color: #8C6262;
-      background: #FFFBF6;
-      box-shadow: 0 6px 16px rgba(140, 98, 98, 0.15);
+      border-color: var(--primary-crimson);
+      background: #FFFDF9;
+      box-shadow: 0 6px 16px rgba(122, 28, 40, 0.15);
     }
 
     .frame-preview-img {
       width: 100%;
-      height: 210px;
+      height: 200px;
       object-fit: contain;
       border-radius: 8px;
       background: #FFF;
@@ -140,173 +189,344 @@
     }
 
     .frame-label {
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       font-weight: 700;
-      color: #8C6262;
+      color: var(--primary-crimson);
       margin-top: 8px;
     }
 
-    /* STEP 3: KAMERA & FOTO */
-    .camera-box {
-      width: 100%;
-      aspect-ratio: 4 / 3;
-      background: #000;
-      border-radius: 16px;
-      overflow: hidden;
+    /* AREA KAMERA & KONTROL */
+    .camera-wrapper {
       position: relative;
-      margin-bottom: 12px;
-    }
-
-    video, canvas {
       width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .photo-grid-preview {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 6px;
-      margin-top: 10px;
-    }
-
-    .thumb-slot {
       aspect-ratio: 4/3;
-      background: #FAF6EE;
-      border-radius: 8px;
+      border-radius: 18px;
       overflow: hidden;
-      border: 1px dashed #D8B4B4;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.7rem;
-      color: #BBB;
+      background: #000;
+      margin-bottom: 10px;
     }
 
-    .thumb-slot img {
+    video {
       width: 100%;
       height: 100%;
       object-fit: cover;
+      transition: transform 0.2s ease;
     }
 
-    /* STEP 4: FORM INPUT UCAPAN */
-    .form-group {
-      text-align: left;
-      margin-bottom: 12px;
-    }
+    video.mirror { transform: scaleX(-1); }
 
-    .form-group label {
-      font-size: 0.75rem;
-      font-weight: 700;
-      color: #8C6262;
-      display: block;
-      margin-bottom: 4px;
-    }
-
-    .form-group input, .form-group textarea {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid #D8B4B4;
-      border-radius: 10px;
-      font-family: inherit;
-      font-size: 0.82rem;
-      outline: none;
-      background: #FAF6EE;
-    }
-
-    /* TOMBOL KONTROL UTAMA */
-    .btn-main {
-      width: 100%;
-      background: #8C6262;
-      color: #FFF;
-      border: none;
-      padding: 12px;
-      border-radius: 16px;
-      font-weight: 700;
-      font-size: 0.85rem;
-      cursor: pointer;
-      box-shadow: 0 4px 12px rgba(140, 98, 98, 0.2);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    .cam-controls-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
       gap: 8px;
-      margin-top: 8px;
+      margin-bottom: 10px;
     }
 
-    .btn-main:disabled {
-      background: #CCC;
-      cursor: not-allowed;
-      box-shadow: none;
-    }
-
-    .btn-secondary {
-      background: transparent;
-      border: 1px solid #D8B4B4;
-      color: #8C6262;
-      padding: 8px 12px;
+    .cam-btn-icon {
+      background: #FAF6F0;
+      border: 1px solid rgba(212,175,55,0.4);
+      color: var(--primary-crimson);
+      padding: 8px 10px;
       border-radius: 12px;
       font-size: 0.75rem;
       font-weight: 700;
       cursor: pointer;
-      margin-top: 8px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      justify-content: center;
     }
 
-    /* HASIL RENDER PREVIEW */
-    .result-preview-box {
+    .cam-select-box {
       width: 100%;
-      max-height: 480px;
-      overflow-y: auto;
+      padding: 8px 10px;
+      border: 1px solid #D8B4B4;
+      border-radius: 10px;
+      font-size: 0.75rem;
+      background: #FFF;
+      outline: none;
+      margin-bottom: 10px;
+    }
+
+    .countdown-overlay {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.4);
+      color: #FFF;
+      font-size: 4.5rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .flash-overlay {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: #FFF;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.1s;
+    }
+
+    .flash-overlay.active { opacity: 1; }
+
+    /* ANIMASI POLAROID */
+    .polaroid-chamber {
+      position: relative;
+      width: 100%;
+      background: #2B1E1E;
+      border-radius: 18px 18px 8px 8px;
+      padding: 12px 16px 8px;
+      margin: 10px 0 16px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    }
+
+    .polaroid-lens-dot {
+      width: 14px;
+      height: 14px;
+      background: var(--gold-accent);
+      border-radius: 50%;
+      margin: 0 auto 8px;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.4);
+    }
+
+    .polaroid-slot {
+      background: #111;
+      height: 10px;
+      border-radius: 5px;
+      width: 80%;
+      margin: 0 auto;
+      box-shadow: inset 0 3px 6px #000;
+      position: relative;
+      z-index: 2;
+    }
+
+    .polaroid-paper-wrapper {
+      overflow: hidden;
+      padding-top: 4px;
+      margin-top: -5px;
+    }
+
+    .polaroid-paper-slide {
+      transform: translateY(-100%);
+      transition: transform 1.8s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+
+    .polaroid-paper-slide.printed {
+      transform: translateY(0);
+    }
+
+    /* FORM UCAPAN */
+    .wish-form-box {
+      background: #FAF6F0;
+      border: 1px solid rgba(212,175,55,0.3);
       border-radius: 16px;
-      border: 1px solid #EAE0E0;
-      padding: 10px;
-      background: #FAF6EE;
-      margin-bottom: 12px;
+      padding: 14px;
+      margin-top: 15px;
+      text-align: left;
     }
 
-    .result-img {
-      width: 100%;
-      height: auto;
-      border-radius: 8px;
+    .wish-form-box label {
       display: block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--primary-crimson);
+      margin-bottom: 4px;
     }
 
-    #hiddenCanvas { display: none; }
-  </style>
+    .wish-form-box input, .wish-form-box textarea {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid #D8B4B4;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 0.8rem;
+      outline: none;
+      margin-bottom: 8px;
+      background: #FFF;
+    }
 
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-  <script src="./js/config.js"></script>
+    /* GALERI EXPLORE IG (3 KOLOM KOTAK SISI TAMU) */
+    .feed-container {
+      width: 100%;
+      max-width: 430px;
+      margin-top: 25px;
+    }
+
+    .feed-header {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--primary-crimson);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .ig-grid-container {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+    }
+
+    .ig-grid-item {
+      background: #FFF;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid rgba(212,175,55,0.25);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      transition: transform 0.2s;
+    }
+
+    .ig-grid-item:active { transform: scale(0.96); }
+
+    .ig-item-name {
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: var(--primary-crimson);
+      padding: 4px 4px 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      text-align: center;
+      background: #FFFDF9;
+    }
+
+    .ig-item-img-box {
+      width: 100%;
+      aspect-ratio: 1/1;
+      overflow: hidden;
+      background: #FAF6F0;
+    }
+
+    .ig-item-img-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .ig-item-msg {
+      font-size: 0.62rem;
+      color: #555;
+      padding: 3px 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      text-align: center;
+      font-style: italic;
+      background: #FFF;
+    }
+
+    /* MODAL LIGHTBOX & ALERT */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(5px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 99999;
+      padding: 15px;
+    }
+
+    .modal-card {
+      background: #FFF;
+      border-radius: 20px;
+      padding: 20px 16px 16px;
+      max-width: 360px;
+      width: 100%;
+      text-align: center;
+      position: relative;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+      border: 1px solid rgba(212, 175, 55, 0.3);
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+
+    .modal-close-btn {
+      position: absolute;
+      top: 10px;
+      right: 12px;
+      background: #7A1C28;
+      color: #FFF;
+      border: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      z-index: 100;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+
+    .modal-user-name {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--primary-crimson);
+      margin-bottom: 2px;
+      padding-right: 25px;
+    }
+
+    .modal-img {
+      width: 100%;
+      max-height: 60vh;
+      object-fit: contain;
+      border-radius: 12px;
+      margin: 10px 0;
+      background: #FAF6F0;
+    }
+
+    .modal-msg {
+      font-size: 0.82rem;
+      color: #333;
+      font-style: italic;
+      background: #FAF6F0;
+      padding: 10px 12px;
+      border-radius: 10px;
+      line-height: 1.4;
+      word-break: break-word;
+    }
+
+    canvas { display: none; }
+  </style>
 </head>
 <body>
 
+<!-- MAIN CARD PHOTOBOOTH -->
 <div class="app-card">
-  <div class="app-header">
-    <div class="app-title">FOTOME</div>
-    <div class="app-subtitle">Capture your precious moments</div>
-  </div>
 
-  <!-- STEP 1: HALAMAN TAMPILAN AWAL TAMU (WELCOME SCREEN) -->
-  <div id="step-welcome" class="step-section active">
-    <div class="welcome-box">
-      <div class="welcome-icon">
-        <i class="fa-solid fa-camera-retro"></i>
-      </div>
-      <div class="welcome-title">Selamat Datang Tamu Undangan</div>
-      <p class="welcome-desc">
-        Abadikan momen bahagiamu hari ini bersama kami. Ambil 4 pose foto terbaikmu dan berikan doa ucapan terindah!
+  <!-- STEP 1: WELCOME SCREEN (SAMBUTAN KEMARIN) -->
+  <div id="step-welcome">
+    <p class="brand-subtitle">WEDDING MEMORIES OF</p>
+    <h1 class="font-script event-main-title" id="display-event-title">Riyan & Amelia</h1>
+    <p class="event-date-text">06 DESEMBER 2026</p>
+
+    <div style="background: #FAF6F0; padding: 16px; border-radius: 16px; margin-bottom: 18px; border: 1px solid rgba(212,175,55,0.3);">
+      <p style="font-size: 0.82rem; color: #555; line-height: 1.5; font-style: italic;">
+        "Abadikan momen kebahagiaanmu bersama kami & tinggalkan pesan ucapan manis di galeri kenangan!"
       </p>
-      <button class="btn-main" onclick="goToStep('step-design')">
-        Mulai Berfoto <i class="fa-solid fa-arrow-right"></i>
-      </button>
     </div>
+
+    <button class="btn-primary-v2" onclick="goToStep(2)">
+      <i class="fa-solid fa-camera"></i> Mulai Berfoto
+    </button>
   </div>
 
-  <!-- STEP 2: SLIDER PILIHAN DESAIN FRAME FIGMA (URUTAN DARI FRAME 3 KE 1) -->
-  <div id="step-design" class="step-section">
-    <div class="section-title">Pilih Desain Bingkai</div>
-    
-    <div class="frame-slider-container" id="frame-slider">
-      <!-- KATEGORI GRAPHIC / DSG: 3 ➔ 2 ➔ 1 -->
+  <!-- STEP 2: SLIDER PILIHAN BINGKAI FIGMA (URUTAN 3 KE 1) -->
+  <div id="step-template" class="hidden">
+    <h2 class="font-serif" style="color: var(--primary-crimson); font-size: 1.7rem;">Pilih Style Frame</h2>
+    <div class="section-label">PILIKAN BINGKAI FIGMA</div>
+
+    <div class="frame-slider-container">
+      <!-- DESIGN: 3 ➔ 2 ➔ 1 -->
       <div class="frame-card selected" onclick="selectFrame(this, './assets/v2/dsg3.png')">
         <img src="./assets/v2/dsg3.png" class="frame-preview-img" alt="Desain 3">
         <div class="frame-label">Design 3</div>
@@ -320,7 +540,7 @@
         <div class="frame-label">Design 1</div>
       </div>
 
-      <!-- KATEGORI FLOWER: 3 ➔ 2 ➔ 1 -->
+      <!-- FLOWER: 3 ➔ 2 ➔ 1 -->
       <div class="frame-card" onclick="selectFrame(this, './assets/v2/flower3.png')">
         <img src="./assets/v2/flower3.png" class="frame-preview-img" alt="Flower 3">
         <div class="frame-label">Floral 3</div>
@@ -334,7 +554,7 @@
         <div class="frame-label">Floral 1</div>
       </div>
 
-      <!-- KATEGORI LINE / MINIMAL: 3 ➔ 2 ➔ 1 -->
+      <!-- LINE: 3 ➔ 2 ➔ 1 -->
       <div class="frame-card" onclick="selectFrame(this, './assets/v2/line 3.png')">
         <img src="./assets/v2/line 3.png" class="frame-preview-img" alt="Line 3">
         <div class="frame-label">Minimal 3</div>
@@ -349,76 +569,208 @@
       </div>
     </div>
 
-    <button class="btn-main" onclick="goToStep('step-capture')">Lanjut ke Potret <i class="fa-solid fa-arrow-right"></i></button>
-    <button class="btn-secondary" onclick="goToStep('step-welcome')"><i class="fa-solid fa-arrow-left"></i> Kembali</button>
+    <button class="btn-primary-v2" onclick="startCameraProcess()">
+      Lanjut Ke Kamera &rarr;
+    </button>
+    <button class="btn-outline-v2" onclick="goToStep(1)">
+      &larr; Kembali
+    </button>
   </div>
 
-  <!-- STEP 3: SESI POTRET FOTO (KAMERA 4 POSE) -->
-  <div id="step-capture" class="step-section">
-    <div class="section-title">Ambil 4 Foto Sesi</div>
-    <div class="camera-box">
-      <video id="webcam" autoplay playsinline></video>
+  <!-- STEP 3: AREA KAMERA -->
+  <div id="step-camera" class="hidden">
+    <div style="font-size: 0.85rem; font-weight: 700; color: var(--primary-crimson); margin-bottom: 8px;" id="cam-progress-text">Foto 1 dari 4</div>
+
+    <div class="camera-wrapper">
+      <video id="video" class="mirror" autoplay playsinline></video>
+      <div id="countdown-overlay" class="countdown-overlay hidden">3</div>
+      <div id="flash-overlay" class="flash-overlay"></div>
     </div>
 
-    <button class="btn-main" id="btn-snap" onclick="takeSnapshot()"><i class="fa-solid fa-camera"></i> Ambil Foto (<span id="snap-count">0</span>/4)</button>
-    
-    <div class="photo-grid-preview">
-      <div class="thumb-slot" id="thumb-0">1</div>
-      <div class="thumb-slot" id="thumb-1">2</div>
-      <div class="thumb-slot" id="thumb-2">3</div>
-      <div class="thumb-slot" id="thumb-3">4</div>
+    <div class="cam-controls-grid">
+      <button class="cam-btn-icon" id="btn-timer" onclick="toggleTimerSetting()">
+        <i class="fa-solid fa-stopwatch"></i> Timer: 3s
+      </button>
+      <button class="cam-btn-icon" id="btn-zoom" onclick="toggleZoomSetting()">
+        <i class="fa-solid fa-magnifying-glass-plus"></i> Zoom: 1x
+      </button>
+      <button class="cam-btn-icon" onclick="switchCamera()">
+        <i class="fa-solid fa-camera-rotate"></i> Switch
+      </button>
+      <button class="cam-btn-icon" id="btn-mirror" onclick="toggleMirror()">
+        <i class="fa-solid fa-arrows-left-right"></i> Mirror: ON
+      </button>
     </div>
 
-    <button class="btn-secondary" onclick="resetCaptures()"><i class="fa-solid fa-rotate-right"></i> Ulangi Sesi Foto</button>
-    <button class="btn-main" id="btn-to-message" style="display:none; margin-top:10px;" onclick="goToStep('step-message')">Isi Pesan Ucapan <i class="fa-solid fa-arrow-right"></i></button>
+    <select id="camera-select" class="cam-select-box" onchange="onCameraSelectChange(this.value)"></select>
+
+    <button id="btn-snap" class="btn-primary-v2" onclick="takePhotoSnap()">
+      <i class="fa-solid fa-camera"></i> Ambil Foto
+    </button>
+    <button class="btn-outline-v2" onclick="stopCameraAndGoBack()">
+      Batal / Ubah Style
+    </button>
   </div>
 
-  <!-- STEP 4: ISI NAMA & UCAPAN DOA -->
-  <div id="step-message" class="step-section">
-    <div class="section-title">Pesan & Doa Ucapan</div>
-    
-    <div class="form-group">
-      <label>Nama Pengirim</label>
-      <input type="text" id="input-name" placeholder="Misal: Budi & Sarah">
+  <!-- STEP 4: HASIL FOTO POLAROID SLIDE & INPUT PESAN -->
+  <div id="step-result" class="hidden">
+    <h2 class="font-serif" style="color: var(--primary-crimson); font-size: 1.7rem;">Hasil Foto Kamu</h2>
+
+    <div class="polaroid-chamber">
+      <div class="polaroid-lens-dot"></div>
+      <div class="polaroid-slot"></div>
+      <div class="polaroid-paper-wrapper">
+        <div id="polaroid-slide-elem" class="polaroid-paper-slide">
+          <img id="result-img" style="width: 100%; border-radius: 10px; box-shadow: 0 8px 20px rgba(0,0,0,0.15);" alt="Hasil Photobooth">
+        </div>
+      </div>
     </div>
 
-    <div class="form-group">
-      <label>Pesan Ucapan / Doa</label>
-      <textarea id="input-message" rows="3" placeholder="Tuliskan ucapan manismu di sini..."></textarea>
+    <div class="wish-form-box">
+      <label>Nama Kamu / Inisial</label>
+      <input type="text" id="input-sender-name" placeholder="Misal: Budi & Sarah">
+
+      <label>Pesan / Ucapan Doa Kamu</label>
+      <textarea id="input-sender-message" rows="2" placeholder="Tuliskan ucapan manismu di sini..."></textarea>
     </div>
 
-    <button class="btn-main" onclick="processFinalRender()"><i class="fa-solid fa-wand-magic-sparkles"></i> Cetak Hasil Foto</button>
+    <button class="btn-primary-v2" onclick="saveAndShareToFeed()">
+      <i class="fa-solid fa-paper-plane"></i> Unduh & Posting ke Galeri Tamu
+    </button>
+
+    <button class="btn-secondary-v2" onclick="savePrivateOnly()">
+      <i class="fa-solid fa-download"></i> Simpan Sendiri (Privat Ke HP)
+    </button>
+
+    <button class="btn-outline-v2" onclick="goToStep(2)">
+      <i class="fa-solid fa-rotate-right"></i> Foto Ulang
+    </button>
   </div>
 
-  <!-- STEP 5: PREVIEW AKHIR & UPLOAD / SIMPAN GALERI -->
-  <div id="step-result" class="step-section">
-    <div class="section-title">Hasil Photostrip Kamu</div>
-    
-    <div class="result-preview-box">
-      <img id="result-img" class="result-img" src="" alt="Hasil Foto">
-    </div>
+</div>
 
-    <button class="btn-main" id="btn-upload" onclick="uploadToGallery()"><i class="fa-solid fa-cloud-arrow-up"></i> Simpan ke Galeri Ucapan</button>
-    <button class="btn-secondary" onclick="downloadDirect()"><i class="fa-solid fa-download"></i> Unduh Langsung ke HP</button>
+<!-- FEED GALERI PUBLIK (IG STYLE) -->
+<div class="feed-container" id="main-gallery-section">
+  <div class="feed-header">
+    <span><i class="fa-solid fa-border-all"></i> Galeri Kenangan Tamu</span>
+    <span style="font-size: 0.72rem; color: #888;" id="total-posts-count">0 Kiriman</span>
+  </div>
+
+  <div id="ig-grid-box" class="ig-grid-container">
+    <p style="font-size: 0.8rem; color: #999; grid-column: span 3; text-align: center;">Memuat ucapan & foto tamu...</p>
   </div>
 </div>
 
-<canvas id="hiddenCanvas"></canvas>
+<!-- MODAL LIGHTBOX FOTO TAMU -->
+<div id="photo-modal" class="modal-overlay hidden">
+  <div class="modal-card">
+    <button class="modal-close-btn" onclick="closeModal()">✕</button>
+    <div class="modal-user-name" id="modal-name">Nama Tamu</div>
+    <div style="font-size:0.7rem; color:#888;">Kenangan Kebahagiaan</div>
+    <img id="modal-img" class="modal-img" src="" alt="Foto Perbesar">
+    <div class="modal-msg" id="modal-msg">"Ucapan doa tamu..."</div>
+  </div>
+</div>
+
+<!-- MODAL POP-UP ALERT -->
+<div id="alert-modal" class="modal-overlay hidden">
+  <div class="modal-card">
+    <div style="font-size: 2.2rem; margin-bottom: 8px;" id="alert-icon">✨</div>
+    <div style="font-size: 0.95rem; font-weight: 700; color: #7A1C28; margin-bottom: 8px;" id="alert-title">Pemberitahuan</div>
+    <div style="font-size: 0.82rem; color: #555; line-height: 1.5; margin-bottom: 18px;" id="alert-text">Pesan...</div>
+    <button class="btn-primary-v2" style="margin-top:0;" onclick="closeAlertModal()">OK</button>
+  </div>
+</div>
+
+<canvas id="canvas"></canvas>
 
 <script>
+  const EVENT_DOC_ID = 'v2_event'; 
+
+  let eventTitle = "Riyan & Amelia";
   let selectedFramePath = './assets/v2/dsg3.png';
   let capturedPhotos = [];
   let videoStream = null;
-  let finalPhotoDataUrl = "";
+  let generatedDataUrl = "";
 
-  function goToStep(stepId) {
-    document.querySelectorAll('.step-section').forEach(sec => sec.classList.remove('active'));
-    document.getElementById(stepId).classList.add('active');
+  let currentFacingMode = "user"; 
+  let isMirror = true;
+  let timerDuration = 3;
+  let zoomLevel = 1;      
+  let onAlertCloseCallback = null;
 
-    if (stepId === 'step-capture') {
-      startCamera();
+  function showAlert(message, title = "Pemberitahuan", icon = "📸", callback = null) {
+    document.getElementById('alert-icon').innerText = icon;
+    document.getElementById('alert-title').innerText = title;
+    document.getElementById('alert-text').innerText = message;
+    onAlertCloseCallback = callback;
+    document.getElementById('alert-modal').classList.remove('hidden');
+  }
+
+  function closeAlertModal() {
+    document.getElementById('alert-modal').classList.add('hidden');
+    if (onAlertCloseCallback) {
+      onAlertCloseCallback();
+      onAlertCloseCallback = null;
+    }
+  }
+
+  if (typeof db !== 'undefined') {
+    db.collection('settings').doc(EVENT_DOC_ID).onSnapshot(doc => {
+      if (doc.exists) {
+        const data = doc.data();
+        if (data.title) {
+          eventTitle = data.title;
+          const t = document.getElementById('display-event-title');
+          if (t) t.innerText = data.title;
+        }
+
+        let lockOverlay = document.getElementById('lock-overlay');
+        if (data.isActive === false) {
+          if (!lockOverlay) {
+            lockOverlay = document.createElement('div');
+            lockOverlay.id = 'lock-overlay';
+            lockOverlay.innerHTML = `
+              <div style="min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; font-family: 'Plus Jakarta Sans', sans-serif; background-color: #FAF6F0; color: #2B1E1E;">
+                <div style="background: #FFF; padding: 40px 25px; border-radius: 24px; box-shadow: 0 15px 35px rgba(122, 28, 40, 0.1); border: 1px solid rgba(212, 175, 55, 0.3); max-width: 400px; width: 100%;">
+                  <div style="font-size: 3rem; margin-bottom: 10px;">🔒</div>
+                  <h2 style="font-family: 'Cormorant Garamond', serif; color: #7A1C28; font-size: 2rem; margin-bottom: 10px;">Photobooth Ditutup</h2>
+                  <p style="color: #6E5353; font-size: 0.9rem; line-height: 1.6; margin-bottom: 20px;">Sesi virtual photobooth saat ini sedang tidak aktif.</p>
+                  <div style="font-family: 'Alex Brush', cursive; font-size: 2.2rem; color: #7A1C28;">${eventTitle}</div>
+                </div>
+              </div>
+            `;
+            lockOverlay.style.position = 'fixed';
+            lockOverlay.style.top = '0'; lockOverlay.style.left = '0'; lockOverlay.style.width = '100%'; lockOverlay.style.height = '100%'; lockOverlay.style.zIndex = '999999';
+            document.body.appendChild(lockOverlay);
+          }
+        } else {
+          if (lockOverlay) lockOverlay.remove();
+        }
+      }
+    });
+
+    loadRealtimeFeedIG();
+  }
+
+  function goToStep(step) {
+    ['step-welcome', 'step-template', 'step-camera', 'step-result'].forEach(id => {
+      document.getElementById(id).classList.add('hidden');
+    });
+    const map = {1:'step-welcome', 2:'step-template', 3:'step-camera', 4:'step-result'};
+    document.getElementById(map[step]).classList.remove('hidden');
+
+    const gallerySection = document.getElementById('main-gallery-section');
+    if (step === 1) {
+      gallerySection.classList.remove('hidden');
     } else {
-      stopCamera();
+      gallerySection.classList.add('hidden');
+    }
+
+    if (step === 4) {
+      const slide = document.getElementById('polaroid-slide-elem');
+      slide.classList.remove('printed');
+      setTimeout(() => { slide.classList.add('printed'); }, 100);
     }
   }
 
@@ -428,69 +780,187 @@
     selectedFramePath = framePath;
   }
 
-  // KAMERA HANDLER
-  async function startCamera() {
-    try {
-      videoStream = await navigator.mediaDevices.getUserMedia({ video: { width: { ideal: 1280 }, height: { ideal: 960 }, facingMode: "user" }, audio: false });
-      document.getElementById('webcam').srcObject = videoStream;
-    } catch (err) {
-      alert("Gagal membuka kamera: " + err.message);
-    }
+  function startCameraProcess() {
+    goToStep(3);
+    capturedPhotos = [];
+    document.getElementById('cam-progress-text').innerText = `Foto 1 dari 4`;
+    initCameraStream();
   }
 
-  function stopCamera() {
+  function initCameraStream() {
     if (videoStream) {
       videoStream.getTracks().forEach(track => track.stop());
-      videoStream = null;
     }
+
+    const constraints = { video: { facingMode: currentFacingMode } };
+
+    navigator.mediaDevices.getUserMedia(constraints)
+      .then(stream => {
+        videoStream = stream;
+        const video = document.getElementById('video');
+        video.srcObject = stream;
+        video.play();
+
+        applyZoomTransform();
+        enumerateFrontBackCameras();
+      })
+      .catch(err => {
+        showAlert("Gagal membuka kamera. Harap beri izin akses kamera!", "Akses Kamera", "⚠️");
+      });
   }
 
-  function takeSnapshot() {
-    if (capturedPhotos.length >= 4) return;
+  function enumerateFrontBackCameras() {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) return;
 
-    const video = document.getElementById('webcam');
-    const canvas = document.createElement('canvas');
-    canvas.width = video.videoWidth || 640;
-    canvas.height = video.videoHeight || 480;
+    navigator.mediaDevices.enumerateDevices().then(devices => {
+      const videoDevices = devices.filter(d => d.kind === 'videoinput');
+      const select = document.getElementById('camera-select');
+      select.innerHTML = '';
 
-    const ctx = canvas.getContext('2d');
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      if (videoDevices.length === 0) {
+        select.style.display = 'none';
+        return;
+      }
 
-    const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
-    capturedPhotos.push(dataUrl);
+      const frontCam = videoDevices.find(d => d.label.toLowerCase().includes('front') || d.label.toLowerCase().includes('depan')) || videoDevices[0];
+      const backCam = videoDevices.find(d => d.label.toLowerCase().includes('back') || d.label.toLowerCase().includes('belakang')) || videoDevices[videoDevices.length - 1];
 
-    const idx = capturedPhotos.length - 1;
-    document.getElementById(`thumb-${idx}`).innerHTML = `<img src="${dataUrl}">`;
-    document.getElementById('snap-count').innerText = capturedPhotos.length;
+      const filtered = [];
+      if (frontCam) filtered.push({ mode: 'user', label: '📷 Kamera Depan (Front)' });
+      if (backCam && backCam !== frontCam) filtered.push({ mode: 'environment', label: '📷 Kamera Belakang (Back)' });
 
-    if (capturedPhotos.length === 4) {
-      document.getElementById('btn-snap').disabled = true;
-      document.getElementById('btn-to-message').style.display = 'flex';
-    }
+      select.style.display = 'block';
+      filtered.forEach(cam => {
+        const option = document.createElement('option');
+        option.value = cam.mode;
+        option.text = cam.label;
+        if (cam.mode === currentFacingMode) option.selected = true;
+        select.appendChild(option);
+      });
+    });
   }
 
-  function resetCaptures() {
-    capturedPhotos = [];
-    document.getElementById('snap-count').innerText = "0";
-    document.getElementById('btn-snap').disabled = false;
-    document.getElementById('btn-to-message').style.display = 'none';
-
-    for (let i = 0; i < 4; i++) {
-      document.getElementById(`thumb-${i}`).innerHTML = `${i + 1}`;
-    }
+  function switchCamera() {
+    currentFacingMode = (currentFacingMode === "user") ? "environment" : "user";
+    initCameraStream();
   }
 
-  // RENDER DENGAN BINGKAI FIGMA
-  function processFinalRender() {
-    if (capturedPhotos.length < 4) {
-      alert("Harap lengkapi 4 foto terlebih dahulu!");
+  function toggleMirror() {
+    isMirror = !isMirror;
+    applyZoomTransform();
+    document.getElementById('btn-mirror').innerHTML = `<i class="fa-solid fa-arrows-left-right"></i> Mirror: ${isMirror ? 'ON' : 'OFF'}`;
+  }
+
+  function toggleTimerSetting() {
+    if (timerDuration === 3) timerDuration = 5;
+    else if (timerDuration === 5) timerDuration = 0;
+    else timerDuration = 3;
+
+    document.getElementById('btn-timer').innerHTML = `<i class="fa-solid fa-stopwatch"></i> Timer: ${timerDuration === 0 ? 'OFF' : timerDuration + 's'}`;
+  }
+
+  function toggleZoomSetting() {
+    if (zoomLevel === 1) zoomLevel = 1.5;
+    else if (zoomLevel === 1.5) zoomLevel = 2;
+    else if (zoomLevel === 2) zoomLevel = 0.5;
+    else zoomLevel = 1;
+
+    applyZoomTransform();
+    document.getElementById('btn-zoom').innerHTML = `<i class="fa-solid fa-magnifying-glass-plus"></i> Zoom: ${zoomLevel}x`;
+  }
+
+  function applyZoomTransform() {
+    const video = document.getElementById('video');
+    let transformStr = `scale(${zoomLevel})`;
+    if (isMirror) transformStr += ` scaleX(-1)`;
+    video.style.transform = transformStr;
+  }
+
+  function onCameraSelectChange(modeVal) {
+    currentFacingMode = modeVal;
+    initCameraStream();
+  }
+
+  function stopCameraAndGoBack() {
+    if (videoStream) {
+      videoStream.getTracks().forEach(track => track.stop());
+    }
+    goToStep(2);
+  }
+
+  function takePhotoSnap() {
+    document.getElementById('btn-snap').disabled = true;
+
+    if (timerDuration === 0) {
+      executeSnapCapture();
       return;
     }
 
+    let count = timerDuration;
+    const overlay = document.getElementById('countdown-overlay');
+    overlay.innerText = count;
+    overlay.classList.remove('hidden');
+
+    const timer = setInterval(() => {
+      count--;
+      if (count > 0) {
+        overlay.innerText = count;
+      } else {
+        clearInterval(timer);
+        overlay.classList.add('hidden');
+        executeSnapCapture();
+      }
+    }, 1000);
+  }
+
+  function executeSnapCapture() {
+    const flash = document.getElementById('flash-overlay');
+    flash.classList.add('active');
+    setTimeout(() => flash.classList.remove('active'), 200);
+
+    const video = document.getElementById('video');
+    const tempCanvas = document.createElement('canvas');
+    tempCanvas.width = video.videoWidth || 640;
+    tempCanvas.height = video.videoHeight || 480;
+    const ctx = tempCanvas.getContext('2d');
+
+    ctx.save();
+    if (isMirror) {
+      ctx.translate(tempCanvas.width, 0);
+      ctx.scale(-1, 1);
+    }
+
+    if (zoomLevel !== 1) {
+      const sw = tempCanvas.width / zoomLevel;
+      const sh = tempCanvas.height / zoomLevel;
+      const sx = (tempCanvas.width - sw) / 2;
+      const sy = (tempCanvas.height - sh) / 2;
+      ctx.drawImage(video, sx, sy, sw, sh, 0, 0, tempCanvas.width, tempCanvas.height);
+    } else {
+      ctx.drawImage(video, 0, 0);
+    }
+    ctx.restore();
+
+    capturedPhotos.push(tempCanvas.toDataURL('image/png'));
+
+    if (capturedPhotos.length < 4) {
+      document.getElementById('cam-progress-text').innerText = `Foto ${capturedPhotos.length + 1} dari 4`;
+      setTimeout(() => { document.getElementById('btn-snap').disabled = false; }, 800);
+    } else {
+      if (videoStream) {
+        videoStream.getTracks().forEach(track => track.stop());
+      }
+      renderPhotostripWithFigmaFrame();
+      goToStep(4);
+      document.getElementById('btn-snap').disabled = false;
+    }
+  }
+
+  function renderPhotostripWithFigmaFrame() {
     const frameImg = new Image();
     frameImg.crossOrigin = "anonymous";
     frameImg.onload = () => {
-      const canvas = document.getElementById('hiddenCanvas');
+      const canvas = document.getElementById('canvas');
       const ctx = canvas.getContext('2d');
 
       const W = frameImg.naturalWidth || 600;
@@ -539,12 +1009,11 @@
               ctx.drawImage(photo, offsetX, offsetY, renderW, renderH, startX, currentY, slotW, slotH);
             });
 
-            // Timpa Frame PNG Figma
+            // Timpa Frame PNG Figma di Atas Foto
             ctx.drawImage(frameImg, 0, 0, W, H);
 
-            finalPhotoDataUrl = canvas.toDataURL('image/jpeg', 0.95);
-            document.getElementById('result-img').src = finalPhotoDataUrl;
-            goToStep('step-result');
+            generatedDataUrl = canvas.toDataURL('image/jpeg', 0.95);
+            document.getElementById('result-img').src = generatedDataUrl;
           }
         };
         pImg.src = src;
@@ -553,38 +1022,104 @@
     frameImg.src = selectedFramePath;
   }
 
-  // SIMPAN KE FIRESTORE GALERI
-  function uploadToGallery() {
-    const senderName = document.getElementById('input-name').value.trim() || 'Tamu';
-    const senderMsg = document.getElementById('input-message').value.trim() || '-';
-    const btnUpload = document.getElementById('btn-upload');
+  function downloadImageToPhone(senderName) {
+    const nameGuest = senderName ? senderName.replace(/[^\w\s-]/gi, '').trim() : "Tamu";
+    const nameClient = eventTitle ? eventTitle.replace(/[^\w\s-]/gi, '').trim() : "FOTOME";
+    const fileName = `${nameGuest} - ${nameClient}.jpg`;
 
-    btnUpload.disabled = true;
-    btnUpload.innerText = "Menyimpan ke Galeri...";
+    const a = document.createElement('a');
+    a.href = generatedDataUrl;
+    a.download = fileName;
+    a.click();
+  }
 
-    db.collection('posts').add({
-      name: senderName,
-      message: senderMsg,
-      photoData: finalPhotoDataUrl,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp()
-    })
-    .then(() => {
-      alert("Foto berhasil disimpan ke galeri ucapan!");
-      btnUpload.innerText = "Tersimpan ✔";
-    })
-    .catch(err => {
-      alert("Gagal menyimpan: " + err.message);
-      btnUpload.disabled = false;
-      btnUpload.innerText = "Simpan ke Galeri Ucapan";
+  function saveAndShareToFeed() {
+    const senderName = document.getElementById('input-sender-name').value.trim() || "Tamu Undangan";
+    const senderMessage = document.getElementById('input-sender-message').value.trim() || "Selamat untuk kebahagiaan kalian! 💐";
+
+    downloadImageToPhone(senderName);
+
+    if (typeof db !== 'undefined') {
+      db.collection('posts').add({
+        eventId: EVENT_DOC_ID,
+        name: senderName,
+        message: senderMessage,
+        photoData: generatedDataUrl,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      }).then(() => {
+        showAlert("Foto berhasil diunduh dan diposting ke Galeri!", "Berhasil Ditambahkan", "📸", () => {
+          document.getElementById('input-sender-name').value = '';
+          document.getElementById('input-sender-message').value = '';
+          goToStep(1);
+        });
+      });
+    }
+  }
+
+  function savePrivateOnly() {
+    const senderName = document.getElementById('input-sender-name').value.trim() || "Tamu";
+    downloadImageToPhone(senderName);
+    showAlert("Foto berhasil disimpan secara privat ke HP kamu!", "Tersimpan Privat", "📥", () => {
+      goToStep(1);
     });
   }
 
-  function downloadDirect() {
-    const senderName = document.getElementById('input-name').value.trim() || 'Tamu';
-    const a = document.createElement('a');
-    a.href = finalPhotoDataUrl;
-    a.download = `FOTOME - ${senderName}.jpg`;
-    a.click();
+  function loadRealtimeFeedIG() {
+    db.collection('posts')
+      .where('eventId', '==', EVENT_DOC_ID)
+      .onSnapshot(snapshot => {
+        const gridBox = document.getElementById('ig-grid-box');
+        const countSpan = document.getElementById('total-posts-count');
+        gridBox.innerHTML = '';
+
+        if (snapshot.empty) {
+          gridBox.innerHTML = '<p style="font-size: 0.8rem; color: #999; grid-column: span 3; text-align: center;">Belum ada foto di galeri. Tampil pertama di sini!</p>';
+          countSpan.innerText = '0 Kiriman';
+          return;
+        }
+
+        countSpan.innerText = `${snapshot.size} Kiriman`;
+
+        let posts = [];
+        snapshot.forEach(doc => {
+          posts.push({ id: doc.id, ...doc.data() });
+        });
+
+        posts.sort((a, b) => {
+          const timeA = a.createdAt ? a.createdAt.toMillis() : 0;
+          const timeB = b.createdAt ? b.createdAt.toMillis() : 0;
+          return timeA - timeB;
+        });
+
+        posts.forEach(data => {
+          const item = document.createElement('div');
+          item.className = 'ig-grid-item';
+          
+          item.onclick = () => openModal(data.name, data.message, data.photoData);
+
+          item.innerHTML = `
+            <div class="ig-item-name">${data.name || 'Tamu'}</div>
+            <div class="ig-item-img-box">
+              <img src="${data.photoData}" alt="Foto Strip">
+            </div>
+            <div class="ig-item-msg">"${data.message || ''}"</div>
+          `;
+          gridBox.appendChild(item);
+        });
+      }, error => {
+        console.error("Gagal memuat galeri:", error);
+      });
+  }
+
+  function openModal(name, message, photoSrc) {
+    document.getElementById('modal-name').innerText = name || 'Tamu Undangan';
+    document.getElementById('modal-msg').innerText = `"${message || ''}"`;
+    document.getElementById('modal-img').src = photoSrc;
+    document.getElementById('photo-modal').classList.remove('hidden');
+  }
+
+  function closeModal() {
+    document.getElementById('photo-modal').classList.add('hidden');
   }
 </script>
 
