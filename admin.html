@@ -555,7 +555,7 @@
     return `${cleanName}.jpg`;
   }
 
-  // FUNGSI KHUSUS ADMIN: MELUKIS NAMA & UCAPAN KETIKA DIUNDUH OLEH ADMIN
+  // FUNGSI KHUSUS ADMIN: MELUKIS NAMA & UCAPAN ELEGAN TANPA GARIS MEMOTONG
   function generateImageWithText(photoUrl, name, message, callback) {
     const img = new Image();
     img.crossOrigin = "anonymous";
@@ -563,41 +563,64 @@
       const canvas = document.getElementById('exportCanvas');
       const ctx = canvas.getContext('2d');
 
-      const extraPadding = (name || message) ? 110 : 0;
+      const extraPadding = (name || message) ? 140 : 0;
       canvas.width = img.width;
       canvas.height = img.height + extraPadding;
 
-      // Ambil warna latar belakang dari piksel bawah gambar asli agar match
+      // 1. Gambar foto asli photostrip
       ctx.drawImage(img, 0, 0);
+
+      // 2. Ambil warna background dari bagian bawah foto
       const pixelData = ctx.getImageData(10, img.height - 10, 1, 1).data;
       const bgColor = `rgb(${pixelData[0]}, ${pixelData[1]}, ${pixelData[2]})`;
 
       ctx.fillStyle = bgColor;
       ctx.fillRect(0, img.height, canvas.width, extraPadding);
 
-      let currentY = img.height + 35;
+      // Tentukan warna teks (otomatis menyesuaikan terang/gelap background)
       const textColor = (pixelData[0] < 128) ? "#FFFFFF" : "#2B1E1E";
 
-      // Garis Tipis
+      let currentY = img.height + 25;
+
+      // 3. Garis Pemisah dengan Aksen Bintang di Tengah (Rapi & Tidak Memotong Teks)
       ctx.strokeStyle = textColor;
-      ctx.globalAlpha = 0.3;
+      ctx.globalAlpha = 0.25;
+      ctx.lineWidth = 1;
+
+      // Garis Kiri
       ctx.beginPath();
-      ctx.moveTo(50, currentY - 15);
-      ctx.lineTo(canvas.width - 50, currentY - 15);
+      ctx.moveTo(60, currentY);
+      ctx.lineTo((canvas.width / 2) - 25, currentY);
       ctx.stroke();
-      ctx.globalAlpha = 1.0;
 
+      // Garis Kanan
+      ctx.beginPath();
+      ctx.moveTo((canvas.width / 2) + 25, currentY);
+      ctx.lineTo(canvas.width - 60, currentY);
+      ctx.stroke();
+
+      // Ikon Aksen Tengah
+      ctx.globalAlpha = 0.6;
       ctx.fillStyle = textColor;
+      ctx.font = "14px 'Plus Jakarta Sans', sans-serif";
       ctx.textAlign = "center";
+      ctx.fillText("✦", canvas.width / 2, currentY + 4);
 
+      ctx.globalAlpha = 1.0;
+      currentY += 35;
+
+      // 4. Cetak Nama Tamu (Format 'From: Nama')
       if (name) {
-        ctx.font = "bold 22px 'Plus Jakarta Sans', sans-serif";
+        ctx.font = "bold 20px 'Plus Jakarta Sans', sans-serif";
         ctx.fillText(`From: ${name}`, canvas.width / 2, currentY);
-        currentY += 32;
+        currentY += 30;
       }
 
+      // 5. Cetak Pesan Ucapan (Format Kutipan Miring Elegan)
       if (message && message !== '-') {
-        ctx.font = "italic 18px 'Plus Jakarta Sans', sans-serif";
+        ctx.font = "italic 16px 'Plus Jakarta Sans', sans-serif";
+        ctx.fillStyle = textColor;
+        ctx.globalAlpha = 0.85;
         ctx.fillText(`"${message}"`, canvas.width / 2, currentY);
       }
 
