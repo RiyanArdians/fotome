@@ -439,11 +439,11 @@
       background: #FFF;
     }
 
-    /* MODAL POP-UP (LIGHTBOX) */
+    /* MODAL POP-UP COMMON (LIGHTBOX / ALERT) */
     .modal-overlay {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.85);
+      background: rgba(0, 0, 0, 0.82);
       backdrop-filter: blur(4px);
       display: flex;
       align-items: center;
@@ -455,21 +455,20 @@
     .modal-card {
       background: #FFF;
       border-radius: 20px;
-      padding: 20px;
-      max-width: 360px;
+      padding: 22px 20px;
+      max-width: 340px;
       width: 100%;
       text-align: center;
       position: relative;
       box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-      max-height: 90vh;
-      overflow-y: auto;
+      border: 1px solid rgba(212, 175, 55, 0.3);
     }
 
     .modal-close-btn {
       position: absolute;
       top: 12px;
       right: 14px;
-      background: #FAF6EE;
+      background: #FAF6F0;
       border: none;
       width: 30px;
       height: 30px;
@@ -502,43 +501,10 @@
       line-height: 1.4;
     }
 
-    /* TOAST NOTIFIKASI CUSTOM (TANPA TULISAN DOMAIN GITHUB) */
-    .custom-toast {
-      position: fixed;
-      top: 20px;
-      left: 50%;
-      transform: translateX(-50%) translateY(-100px);
-      background: #7A1C28;
-      color: #FFF;
-      padding: 12px 20px;
-      border-radius: 25px;
-      border: 1px solid #D4AF37;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.3);
-      font-size: 0.82rem;
-      font-weight: 600;
-      z-index: 99999;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      opacity: 0;
-      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-
-    .custom-toast.show {
-      transform: translateX(-50%) translateY(0);
-      opacity: 1;
-    }
-
     canvas { display: none; }
   </style>
 </head>
 <body>
-
-<!-- TOAST CUSTOM -->
-<div id="custom-toast" class="custom-toast">
-  <span id="toast-icon">✨</span>
-  <span id="toast-text">Pesan notifikasi...</span>
-</div>
 
 <!-- MAIN CARD PHOTOBOOTH -->
 <div class="app-card">
@@ -643,11 +609,10 @@
     </button>
   </div>
 
-  <!-- STEP 4: HASIL FOTO DENGAN ANIMASI KELUAR DARI POLAROID -->
+  <!-- STEP 4: HASIL FOTO DENGAN ANIMASI POLAROID -->
   <div id="step-result" class="hidden">
     <h2 class="font-serif" style="color: var(--primary-crimson); font-size: 1.7rem;">Hasil Foto Kamu</h2>
 
-    <!-- KAMERA POLAROID DESAIN ANIMASI -->
     <div class="polaroid-chamber">
       <div class="polaroid-lens-dot"></div>
       <div class="polaroid-slot"></div>
@@ -696,7 +661,7 @@
   </div>
 </div>
 
-<!-- MODAL POP-UP UNTUK PERBESAR FOTO -->
+<!-- MODAL PERBESAR FOTO -->
 <div id="photo-modal" class="modal-overlay hidden">
   <div class="modal-card">
     <button class="modal-close-btn" onclick="closeModal()">✕</button>
@@ -707,6 +672,16 @@
   </div>
 </div>
 
+<!-- MODAL POP-UP PEMBERITAHUAN BIASA (TANPA DOMAIN BROWSER) -->
+<div id="alert-modal" class="modal-overlay hidden">
+  <div class="modal-card">
+    <div style="font-size: 2.2rem; margin-bottom: 8px;" id="alert-icon">✨</div>
+    <div style="font-size: 0.95rem; font-weight: 700; color: #7A1C28; margin-bottom: 8px;" id="alert-title">Pemberitahuan</div>
+    <div style="font-size: 0.82rem; color: #555; line-height: 1.5; margin-bottom: 18px;" id="alert-text">Pesan pemberitahuan...</div>
+    <button class="btn-primary-v2" style="margin-top:0;" onclick="closeAlertModal()">OK</button>
+  </div>
+</div>
+
 <canvas id="canvas"></canvas>
 
 <!-- SCRIPT ENGINE PHOTOBOOTH V2 -->
@@ -714,17 +689,23 @@
   const EVENT_DOC_ID = 'v2_event'; 
 
   let eventTitle = "Riyan & Amelia";
+  let onAlertCloseCallback = null;
 
-  // FUNGSI TOAST NOTIFIKASI CUSTOM (TANPA JUDUL DOMAIN BROWSER)
-  function showToast(message, icon = "🎉") {
-    const toast = document.getElementById('custom-toast');
-    document.getElementById('toast-icon').innerText = icon;
-    document.getElementById('toast-text').innerText = message;
+  // POP-UP PEMBERITAHUAN BIASA (TANPA JUDUL BROWSER)
+  function showAlert(message, title = "Pemberitahuan", icon = "📸", callback = null) {
+    document.getElementById('alert-icon').innerText = icon;
+    document.getElementById('alert-title').innerText = title;
+    document.getElementById('alert-text').innerText = message;
+    onAlertCloseCallback = callback;
+    document.getElementById('alert-modal').classList.remove('hidden');
+  }
 
-    toast.classList.add('show');
-    setTimeout(() => {
-      toast.classList.remove('show');
-    }, 3200);
+  function closeAlertModal() {
+    document.getElementById('alert-modal').classList.add('hidden');
+    if (onAlertCloseCallback) {
+      onAlertCloseCallback();
+      onAlertCloseCallback = null;
+    }
   }
 
   if (typeof db !== 'undefined') {
@@ -841,7 +822,7 @@
       })
       .catch(err => {
         console.error("Gagal membuka kamera:", err);
-        showToast("Gagal membuka kamera. Cek izin browser!", "⚠️");
+        showAlert("Gagal membuka kamera. Harap beri izin akses kamera di browser kamu!", "Akses Kamera", "⚠️");
       });
   }
 
@@ -1089,10 +1070,11 @@
         photoData: generatedDataUrl,
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       }).then(() => {
-        showToast("Foto berhasil diunduh & diposting ke Galeri!", "📸");
-        document.getElementById('input-sender-name').value = '';
-        document.getElementById('input-sender-message').value = '';
-        setTimeout(() => { goToStep(1); }, 1200);
+        showAlert("Foto berhasil diunduh dan diposting ke Galeri!", "Berhasil Ditambahkan", "📸", () => {
+          document.getElementById('input-sender-name').value = '';
+          document.getElementById('input-sender-message').value = '';
+          goToStep(1);
+        });
       });
     }
   }
@@ -1100,8 +1082,9 @@
   function savePrivateOnly() {
     const senderName = document.getElementById('input-sender-name').value.trim() || "Tamu";
     downloadImageToPhone(senderName);
-    showToast("Foto berhasil disimpan privat ke HP kamu!", "📥");
-    setTimeout(() => { goToStep(1); }, 1200);
+    showAlert("Foto berhasil disimpan secara privat ke HP kamu!", "Tersimpan Privat", "📥", () => {
+      goToStep(1);
+    });
   }
 
   function loadRealtimeFeedIG() {
