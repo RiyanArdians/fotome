@@ -443,6 +443,8 @@
       justify-content: center;
       gap: 6px;
     }
+
+    canvas { display: none; }
   </style>
 
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -536,20 +538,73 @@
   </div>
 </div>
 
+<canvas id="exportCanvas"></canvas>
+
 <script>
   let allGalleryPosts = []; 
 
-  // HELPER FORMAT NAMA FILE: [Nama Tamu] - [Pesan Ucapan].jpg
+  // HELPER FORMAT NAMA FILE AJA
   function formatFileName(name, msg) {
     const cleanName = (name || 'Tamu').replace(/[^\w\s-]/gi, '').trim() || 'Tamu';
     const cleanMsg = (msg || '').replace(/[^\w\s-]/gi, '').trim();
 
     if (cleanMsg && cleanMsg !== '-') {
-      // Ambil maksimal 40 karakter dari ucapan agar nama file tidak kepanjangan
       const shortMsg = cleanMsg.substring(0, 40);
       return `${cleanName} - ${shortMsg}.jpg`;
     }
     return `${cleanName}.jpg`;
+  }
+
+  // FUNGSI KHUSUS ADMIN: MELUKIS NAMA & UCAPAN KETIKA DIUNDUH OLEH ADMIN
+  function generateImageWithText(photoUrl, name, message, callback) {
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.onload = () => {
+      const canvas = document.getElementById('exportCanvas');
+      const ctx = canvas.getContext('2d');
+
+      const extraPadding = (name || message) ? 110 : 0;
+      canvas.width = img.width;
+      canvas.height = img.height + extraPadding;
+
+      // Ambil warna latar belakang dari piksel bawah gambar asli agar match
+      ctx.drawImage(img, 0, 0);
+      const pixelData = ctx.getImageData(10, img.height - 10, 1, 1).data;
+      const bgColor = `rgb(${pixelData[0]}, ${pixelData[1]}, ${pixelData[2]})`;
+
+      ctx.fillStyle = bgColor;
+      ctx.fillRect(0, img.height, canvas.width, extraPadding);
+
+      let currentY = img.height + 35;
+      const textColor = (pixelData[0] < 128) ? "#FFFFFF" : "#2B1E1E";
+
+      // Garis Tipis
+      ctx.strokeStyle = textColor;
+      ctx.globalAlpha = 0.3;
+      ctx.beginPath();
+      ctx.moveTo(50, currentY - 15);
+      ctx.lineTo(canvas.width - 50, currentY - 15);
+      ctx.stroke();
+      ctx.globalAlpha = 1.0;
+
+      ctx.fillStyle = textColor;
+      ctx.textAlign = "center";
+
+      if (name) {
+        ctx.font = "bold 22px 'Plus Jakarta Sans', sans-serif";
+        ctx.fillText(`From: ${name}`, canvas.width / 2, currentY);
+        currentY += 32;
+      }
+
+      if (message && message !== '-') {
+        ctx.font = "italic 18px 'Plus Jakarta Sans', sans-serif";
+        ctx.fillText(`"${message}"`, canvas.width / 2, currentY);
+      }
+
+      const finalUrl = canvas.toDataURL('image/jpeg', 0.9);
+      callback(finalUrl);
+    };
+    img.src = photoUrl;
   }
 
   function switchTab(tabId, btnElem) {
@@ -713,7 +768,7 @@
     updateCounters();
   }
 
-  // UNDUH TERPILIH DENGAN FORMAT NAMA + UCAPAN
+  // UNDUH TERPILIH MASAL DENGAN UCAPAN KHUSUS ADMIN
   function downloadSelectedPosts() {
     const selectedCbs = document.querySelectorAll('.post-select-cb:checked');
     if (selectedCbs.length === 0) {
@@ -721,19 +776,21 @@
       return;
     }
 
-    alert(`Mulai mengunduh ${selectedCbs.length} foto terpilih...`);
+    alert(`Mulai memproses dan mengunduh ${selectedCbs.length} foto terpilih...`);
 
     selectedCbs.forEach((cb, idx) => {
       const postId = cb.value;
       const postData = allGalleryPosts.find(p => p.id === postId);
       if (postData) {
         setTimeout(() => {
-          const fileName = formatFileName(postData.name, postData.message);
-          const a = document.createElement('a');
-          a.href = postData.photoData;
-          a.download = fileName;
-          a.click();
-        }, idx * 300);
+          generateImageWithText(postData.photoData, postData.name, postData.message, (finalDataUrl) => {
+            const fileName = formatFileName(postData.name, postData.message);
+            const a = document.createElement('a');
+            a.href = finalDataUrl;
+            a.download = fileName;
+            a.click();
+          });
+        }, idx * 400);
       }
     });
   }
@@ -758,7 +815,7 @@
     }
   }
 
-  // MODAL INDIVIDUAL (PENAMAAN DUA KATA NAMA + UCAPAN & TANPA ID DI TAMPILAN)
+  // MODAL INDIVIDUAL
   let activePostId = null;
   let activePhotoUrl = "";
   let activeSenderName = "";
@@ -775,11 +832,13 @@
     document.getElementById('modal-img-src').src = photoData;
 
     document.getElementById('btn-modal-download').onclick = () => {
-      const fileName = formatFileName(activeSenderName, activeSenderMsg);
-      const a = document.createElement('a');
-      a.href = activePhotoUrl;
-      a.download = fileName;
-      a.click();
+      generateImageWithText(activePhotoUrl, activeSenderName, activeSenderMsg, (finalDataUrl) => {
+        const fileName = formatFileName(activeSenderName, activeSenderMsg);
+        const a = document.createElement('a');
+        a.href = finalDataUrl;
+        a.download = fileName;
+        a.click();
+      });
     };
 
     document.getElementById('btn-modal-delete').onclick = () => {
