@@ -206,9 +206,14 @@
       padding: 10px;
       margin-bottom: 12px;
       display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .batch-top-row {
+      display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 8px;
     }
 
     .batch-select-all {
@@ -228,37 +233,55 @@
       cursor: pointer;
     }
 
-    .batch-buttons {
-      display: flex;
-      gap: 6px;
+    .batch-buttons-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 5px;
     }
 
-    .btn-batch-dl {
+    .btn-batch-dl-plain {
       background: #2E7D32;
       color: #FFF;
       border: none;
-      padding: 6px 10px;
+      padding: 6px 4px;
       border-radius: 8px;
-      font-size: 0.7rem;
+      font-size: 0.65rem;
       font-weight: 700;
       cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 4px;
+      justify-content: center;
+      gap: 3px;
+    }
+
+    .btn-batch-dl-msg {
+      background: #1565C0;
+      color: #FFF;
+      border: none;
+      padding: 6px 4px;
+      border-radius: 8px;
+      font-size: 0.65rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
     }
 
     .btn-batch-del {
       background: #C62828;
       color: #FFF;
       border: none;
-      padding: 6px 10px;
+      padding: 6px 4px;
       border-radius: 8px;
-      font-size: 0.7rem;
+      font-size: 0.65rem;
       font-weight: 700;
       cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 4px;
+      justify-content: center;
+      gap: 3px;
     }
 
     /* GRID ADMIN RAPI SERAGAM */
@@ -407,19 +430,34 @@
       margin-bottom: 12px;
     }
 
-    .modal-actions {
+    .modal-actions-col {
       display: flex;
-      gap: 8px;
+      flex-direction: column;
+      gap: 6px;
     }
 
-    .btn-modal-dl {
-      flex: 1;
+    .btn-modal-dl-plain {
       background: #2E7D32;
       color: #FFF;
       border: none;
-      padding: 10px;
+      padding: 9px;
       border-radius: 12px;
-      font-size: 0.78rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .btn-modal-dl-msg {
+      background: #1565C0;
+      color: #FFF;
+      border: none;
+      padding: 9px;
+      border-radius: 12px;
+      font-size: 0.75rem;
       font-weight: 700;
       cursor: pointer;
       display: flex;
@@ -429,13 +467,12 @@
     }
 
     .btn-modal-del {
-      flex: 1;
       background: #C62828;
       color: #FFF;
       border: none;
-      padding: 10px;
+      padding: 9px;
       border-radius: 12px;
-      font-size: 0.78rem;
+      font-size: 0.75rem;
       font-weight: 700;
       cursor: pointer;
       display: flex;
@@ -499,13 +536,19 @@
 
     <!-- BARIS KONTROL AKSI MASAL -->
     <div class="batch-bar">
-      <label class="batch-select-all">
-        <input type="checkbox" id="check-select-all" onchange="toggleSelectAll(this)">
-        <span>Pilih Semua</span>
-      </label>
-      <div class="batch-buttons">
-        <button class="btn-batch-dl" onclick="downloadSelectedPosts()">
-          <i class="fa-solid fa-download"></i> Unduh
+      <div class="batch-top-row">
+        <label class="batch-select-all">
+          <input type="checkbox" id="check-select-all" onchange="toggleSelectAll(this)">
+          <span>Pilih Semua</span>
+        </label>
+      </div>
+
+      <div class="batch-buttons-grid">
+        <button class="btn-batch-dl-plain" onclick="downloadSelectedPosts(false)">
+          <i class="fa-solid fa-download"></i> Unduh Polos
+        </button>
+        <button class="btn-batch-dl-msg" onclick="downloadSelectedPosts(true)">
+          <i class="fa-solid fa-envelope-open-text"></i> + Pesan
         </button>
         <button class="btn-batch-del" onclick="deleteSelectedPosts()">
           <i class="fa-solid fa-trash"></i> Hapus
@@ -520,16 +563,20 @@
 
 </div>
 
-<!-- MODAL POP-UP INDIVIDUAL -->
+<!-- MODAL POP-UP INDIVIDUAL DENGAN 2 OPSI UNDUH -->
 <div id="admin-modal" class="modal-overlay hidden">
   <div class="modal-card">
     <button class="modal-close-btn" onclick="closeAdminModal()">✕</button>
     <div class="modal-user-name" id="modal-sender-name">Nama Tamu</div>
     <img id="modal-img-src" class="modal-img" src="" alt="Foto Strip">
     <div class="modal-msg" id="modal-sender-msg">"Pesan ucapan..."</div>
-    <div class="modal-actions">
-      <button class="btn-modal-dl" id="btn-modal-download">
-        <i class="fa-solid fa-download"></i> Unduh Foto
+    
+    <div class="modal-actions-col">
+      <button class="btn-modal-dl-plain" id="btn-modal-dl-plain">
+        <i class="fa-solid fa-download"></i> Unduh Foto Polos (Tanpa Pesan)
+      </button>
+      <button class="btn-modal-dl-msg" id="btn-modal-dl-msg">
+        <i class="fa-solid fa-envelope-open-text"></i> Unduh Foto + Pesan Ucapan
       </button>
       <button class="btn-modal-del" id="btn-modal-delete">
         <i class="fa-solid fa-trash"></i> Hapus Foto
@@ -543,18 +590,17 @@
 <script>
   let allGalleryPosts = []; 
 
-  function formatFileName(name, msg) {
+  function formatFileName(name, msg, withMsg = false) {
     const cleanName = (name || 'Tamu').replace(/[^\w\s-]/gi, '').trim() || 'Tamu';
     const cleanMsg = (msg || '').replace(/[^\w\s-]/gi, '').trim();
 
-    if (cleanMsg && cleanMsg !== '-') {
-      const shortMsg = cleanMsg.substring(0, 40);
+    if (withMsg && cleanMsg && cleanMsg !== '-') {
+      const shortMsg = cleanMsg.substring(0, 30);
       return `${cleanName} - ${shortMsg}.jpg`;
     }
     return `${cleanName}.jpg`;
   }
 
-  // FUNGSI HELPER: MEMECAH TEKS PANJANG JADI BEBERAPA BARIS (WORD-WRAP)
   function wrapCanvasText(ctx, text, maxWidth) {
     const words = text.split(" ");
     const lines = [];
@@ -574,7 +620,7 @@
     return lines;
   }
 
-  // FUNGSI KHUSUS UNDUH ADMIN: MEMISAHKAN FOTO DENGAN FOOTER UCAPAN (SUPER TAJAM)
+  // FUNGSI MELUKIS AREA PESAN UCAPAN DI FOOTER TERPISAH
   function generateImageWithText(photoUrl, name, message, callback) {
     const img = new Image();
     img.crossOrigin = "anonymous";
@@ -582,44 +628,37 @@
       const canvas = document.getElementById('exportCanvas');
       const ctx = canvas.getContext('2d');
 
-      // 1. Ambil Dimensi Asli Foto Photostrip
       const imgW = img.naturalWidth || img.width || 600;
       const imgH = img.naturalHeight || img.height || 1200;
 
-      // 2. Tentukan Kebutuhan Tinggi Area Ucapan Terpisah (Footer Card)
       const maxTextWidth = imgW - 80;
-      const fontSizeName = Math.round(imgW * 0.038); // Ukuran font nama
-      const fontSizeMsg = Math.round(imgW * 0.030);  // Ukuran font ucapan
+      const fontSizeName = Math.round(imgW * 0.038);
+      const fontSizeMsg = Math.round(imgW * 0.030);
       const lineHeight = Math.round(fontSizeMsg * 1.4);
 
       ctx.font = `italic ${fontSizeMsg}px 'Plus Jakarta Sans', sans-serif`;
       const cleanMsg = (message && message !== '-') ? `"${message}"` : "";
       const msgLines = cleanMsg ? wrapCanvasText(ctx, cleanMsg, maxTextWidth) : [];
 
-      // Hitung tinggi khusus untuk blok footer di bawah frame
       let footerHeight = 0;
       if (name || msgLines.length > 0) {
         footerHeight = Math.round(imgW * 0.12) + (name ? Math.round(imgW * 0.06) : 0) + (msgLines.length * lineHeight);
       }
 
-      // Total Tinggi Canvas = Tinggi Foto + Tinggi Footer Terpisah
       canvas.width = imgW;
       canvas.height = imgH + footerHeight;
 
-      // Kualitas Render Maksimal
       ctx.imageSmoothingEnabled = true;
       ctx.imageSmoothingQuality = 'high';
 
-      // 3. Tempel Gambar Foto Asli (Bagian Atas)
+      // 1. Tempel Gambar Asli (Utuh)
       ctx.drawImage(img, 0, 0, imgW, imgH);
 
-      // 4. Buat Area Footer Terpisah di Bawah Frame Foto
+      // 2. Tempel Area Footer Terpisah
       if (footerHeight > 0) {
-        // Ambil warna latar belakang bagian paling bawah foto agar senada
         const pixelData = ctx.getImageData(10, imgH - 5, 1, 1).data;
         const bgColor = `rgb(${pixelData[0]}, ${pixelData[1]}, ${pixelData[2]})`;
 
-        // Cat area footer bawah
         ctx.fillStyle = bgColor;
         ctx.fillRect(0, imgH, canvas.width, footerHeight);
 
@@ -627,7 +666,6 @@
 
         let currentY = imgH + Math.round(imgW * 0.04);
 
-        // Garis Aksen Pemisah Antara Frame Foto & Area Ucapan
         ctx.strokeStyle = textColor;
         ctx.globalAlpha = 0.25;
         ctx.lineWidth = 2;
@@ -643,7 +681,6 @@
         ctx.lineTo(canvas.width - 50, currentY);
         ctx.stroke();
 
-        // Aksen Bintang Tengah
         ctx.globalAlpha = 0.6;
         ctx.fillStyle = textColor;
         ctx.font = `${Math.round(imgW * 0.028)}px 'Plus Jakarta Sans', sans-serif`;
@@ -653,14 +690,12 @@
         ctx.globalAlpha = 1.0;
         currentY += Math.round(imgW * 0.06);
 
-        // Cetak Nama Tamu di Area Footer
         if (name) {
           ctx.font = `bold ${fontSizeName}px 'Plus Jakarta Sans', sans-serif`;
           ctx.fillText(`From: ${name}`, canvas.width / 2, currentY);
           currentY += Math.round(imgW * 0.055);
         }
 
-        // Cetak Pesan Ucapan di Area Footer
         if (msgLines.length > 0) {
           ctx.font = `italic ${fontSizeMsg}px 'Plus Jakarta Sans', sans-serif`;
           ctx.fillStyle = textColor;
@@ -673,7 +708,6 @@
         }
       }
 
-      // Export file JPEG kualitas 100% (1.0)
       const finalDataUrl = canvas.toDataURL('image/jpeg', 1.0);
       callback(finalDataUrl);
     };
@@ -840,7 +874,8 @@
     updateCounters();
   }
 
-  function downloadSelectedPosts() {
+  // UNDUH MASAL (POLOS ATAU DENGAN PESAN)
+  function downloadSelectedPosts(withMessage) {
     const selectedCbs = document.querySelectorAll('.post-select-cb:checked');
     if (selectedCbs.length === 0) {
       alert("Harap pilih/centang minimal 1 foto untuk diunduh!");
@@ -854,14 +889,22 @@
       const postData = allGalleryPosts.find(p => p.id === postId);
       if (postData) {
         setTimeout(() => {
-          generateImageWithText(postData.photoData, postData.name, postData.message, (finalDataUrl) => {
-            const fileName = formatFileName(postData.name, postData.message);
+          if (withMessage) {
+            generateImageWithText(postData.photoData, postData.name, postData.message, (finalDataUrl) => {
+              const fileName = formatFileName(postData.name, postData.message, true);
+              const a = document.createElement('a');
+              a.href = finalDataUrl;
+              a.download = fileName;
+              a.click();
+            });
+          } else {
+            const fileName = formatFileName(postData.name, postData.message, false);
             const a = document.createElement('a');
-            a.href = finalDataUrl;
+            a.href = postData.photoData;
             a.download = fileName;
             a.click();
-          });
-        }, idx * 400);
+          }
+        }, idx * 350);
       }
     });
   }
@@ -902,9 +945,19 @@
     document.getElementById('modal-sender-msg').innerText = `"${message}"`;
     document.getElementById('modal-img-src').src = photoData;
 
-    document.getElementById('btn-modal-download').onclick = () => {
+    // OPSI 1: UNDUH POLOS
+    document.getElementById('btn-modal-dl-plain').onclick = () => {
+      const fileName = formatFileName(activeSenderName, activeSenderMsg, false);
+      const a = document.createElement('a');
+      a.href = activePhotoUrl;
+      a.download = fileName;
+      a.click();
+    };
+
+    // OPSI 2: UNDUH DENGAN PESAN
+    document.getElementById('btn-modal-dl-msg').onclick = () => {
       generateImageWithText(activePhotoUrl, activeSenderName, activeSenderMsg, (finalDataUrl) => {
-        const fileName = formatFileName(activeSenderName, activeSenderMsg);
+        const fileName = formatFileName(activeSenderName, activeSenderMsg, true);
         const a = document.createElement('a');
         a.href = finalDataUrl;
         a.download = fileName;
