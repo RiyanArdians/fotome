@@ -130,7 +130,7 @@
       gap: 6px;
     }
 
-    /* SLIDER DESAIN FRAME FIGMA */
+    /* SLIDER COVERFLOW 3D MELAYANG */
     .section-label {
       font-size: 0.75rem;
       font-weight: 700;
@@ -143,49 +143,51 @@
 
     .frame-slider-container {
       display: flex;
-      gap: 12px;
+      gap: 16px;
       overflow-x: auto;
       scroll-snap-type: x mandatory;
-      padding: 8px 4px 16px 4px;
+      padding: 20px 10px 30px;
+      perspective: 1000px;
       -webkit-overflow-scrolling: touch;
-      scrollbar-width: thin;
+      scrollbar-width: none;
     }
 
     .frame-slider-container::-webkit-scrollbar {
-      height: 6px;
-    }
-    .frame-slider-container::-webkit-scrollbar-thumb {
-      background: var(--gold-accent);
-      border-radius: 10px;
+      display: none;
     }
 
     .frame-card {
-      flex: 0 0 145px;
+      flex: 0 0 150px;
       scroll-snap-align: center;
-      background: #FAF6F0;
-      border: 2px solid transparent;
-      border-radius: 16px;
-      padding: 8px;
+      background: rgba(255, 255, 255, 0.6);
+      backdrop-filter: blur(8px);
+      border: 2px solid rgba(212, 175, 55, 0.3);
+      border-radius: 20px;
+      padding: 10px;
       cursor: pointer;
-      transition: all 0.25s ease;
+      transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
       display: flex;
       flex-direction: column;
       align-items: center;
+      transform: scale(0.88) rotateY(12deg);
+      opacity: 0.65;
     }
 
     .frame-card.selected {
       border-color: var(--primary-crimson);
-      background: #FFFDF9;
-      box-shadow: 0 6px 16px rgba(122, 28, 40, 0.15);
+      background: rgba(255, 255, 255, 0.95);
+      box-shadow: 0 12px 28px rgba(122, 28, 40, 0.22), 0 0 15px rgba(212, 175, 55, 0.35);
+      transform: scale(1.05) rotateY(0deg) translateY(-8px);
+      opacity: 1;
+      z-index: 5;
     }
 
     .frame-preview-img {
       width: 100%;
       height: 200px;
       object-fit: contain;
-      border-radius: 8px;
-      background: #FFF;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      border-radius: 10px;
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.12));
     }
 
     .frame-label {
@@ -953,7 +955,7 @@
     }
   }
 
-  // FUNGSI RENDER PRESISI: PRESISI POSISI FOTO DI BAWAH HEADER & TEPAT DI TENGAH
+  // FUNGSI RENDER PRESISI DENGAN SHADOW & POSISI 1 FOTO DITURUNKAN
   function renderPhotostripWithFigmaFrame() {
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
@@ -986,33 +988,31 @@
       ctx.imageSmoothingEnabled = true;
       ctx.imageSmoothingQuality = 'high';
 
-      // 1. Gambar Frame Background terlebih dahulu
+      // 1. Gambar Background Frame Figma
       ctx.drawImage(frameImg, 0, 0, W, H);
 
-      // 2. Hitung Ukuran & Posisi Foto Presisi
+      // 2. Setting Ukuran & Posisi Foto Presisi
       const totalPhotos = userImages.length;
-      
-      // Lebar foto disesuaikan agar proporsional di tengah
       const slotW = Math.round(W * 0.76); 
       const startX = Math.round((W - slotW) / 2);
 
       let slotH, startY, gapY;
 
       if (totalPhotos === 1) {
-        slotH = Math.round(H * 0.48);
-        startY = Math.round(H * 0.22); // Diturunkan agar tidak menutupi logo atas
+        slotH = Math.round(H * 0.44);
+        startY = Math.round(H * 0.28); // Diturunkan lebih pas di tengah frame
         gapY = 0;
       } else if (totalPhotos === 2) {
         slotH = Math.round(H * 0.28);
-        startY = Math.round(H * 0.19); // Diturunkan di bawah header
+        startY = Math.round(H * 0.19);
         gapY = Math.round(H * 0.035);
       } else { // 3 Foto
         slotH = Math.round(H * 0.20);
-        startY = Math.round(H * 0.17); // Poin awal diturunkan aman di bawah header "Fotome"
-        gapY = Math.round(H * 0.025);  // Jarak presisi antar 3 foto
+        startY = Math.round(H * 0.17);
+        gapY = Math.round(H * 0.025);
       }
 
-      // 3. Tempel Foto Kamera di Atas Background Frame
+      // 3. Tempel Foto Kamera di Atas Frame + Diberi Efek Shadow Estetik
       userImages.forEach((photo, i) => {
         const currentY = startY + (i * (slotH + gapY));
 
@@ -1032,10 +1032,21 @@
           offsetY = (photo.height - renderH) / 2;
         }
 
+        ctx.save();
+        
+        // EFEK SHADOW AGAR FOTO TERNILAI KLOP & ESTETIK DI ATAS FRAME
+        ctx.shadowColor = "rgba(0, 0, 0, 0.22)";
+        ctx.shadowBlur = 15;
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 6;
+
+        // Cetak foto dengan bayangan
         ctx.drawImage(photo, offsetX, offsetY, renderW, renderH, startX, currentY, slotW, slotH);
+        
+        ctx.restore();
       });
 
-      // 4. Export Hasil ke Preview
+      // 4. Export Hasil Akhir ke Preview
       try {
         generatedDataUrl = canvas.toDataURL('image/jpeg', 0.95);
       } catch (err) {
