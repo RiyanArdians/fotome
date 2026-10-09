@@ -503,7 +503,7 @@
 <!-- MAIN CARD PHOTOBOOTH -->
 <div class="app-card">
 
-  <!-- STEP 1: WELCOME SCREEN (SAMBUTAN KEMARIN) -->
+  <!-- STEP 1: WELCOME SCREEN (SAMBUTAN TAMU) -->
   <div id="step-welcome">
     <p class="brand-subtitle">WEDDING MEMORIES OF</p>
     <h1 class="font-script event-main-title" id="display-event-title">Riyan & Amelia</h1>
@@ -520,52 +520,52 @@
     </button>
   </div>
 
-  <!-- STEP 2: SLIDER PILIHAN BINGKAI FIGMA (URUTAN 3 KE 1) -->
+  <!-- STEP 2: SLIDER PILIHAN BINGKAI FIGMA (3 FOTO, 2 FOTO, 1 FOTO) -->
   <div id="step-template" class="hidden">
     <h2 class="font-serif" style="color: var(--primary-crimson); font-size: 1.7rem;">Pilih Style Frame</h2>
-    <div class="section-label">PILIKAN BINGKAI FIGMA</div>
+    <div class="section-label">PILIHAN BINGKAI FIGMA</div>
 
     <div class="frame-slider-container">
       <!-- DESIGN: 3 ➔ 2 ➔ 1 -->
-      <div class="frame-card selected" onclick="selectFrame(this, './assets/v2/dsg3.png')">
+      <div class="frame-card selected" onclick="selectFrame(this, './assets/v2/dsg3.png', 3)">
         <img src="./assets/v2/dsg3.png" class="frame-preview-img" alt="Desain 3">
-        <div class="frame-label">Design 3</div>
+        <div class="frame-label">Design 3 (3 Foto)</div>
       </div>
-      <div class="frame-card" onclick="selectFrame(this, './assets/v2/dsg2.png')">
+      <div class="frame-card" onclick="selectFrame(this, './assets/v2/dsg2.png', 2)">
         <img src="./assets/v2/dsg2.png" class="frame-preview-img" alt="Desain 2">
-        <div class="frame-label">Design 2</div>
+        <div class="frame-label">Design 2 (2 Foto)</div>
       </div>
-      <div class="frame-card" onclick="selectFrame(this, './assets/v2/dsg1.png')">
+      <div class="frame-card" onclick="selectFrame(this, './assets/v2/dsg1.png', 1)">
         <img src="./assets/v2/dsg1.png" class="frame-preview-img" alt="Desain 1">
-        <div class="frame-label">Design 1</div>
+        <div class="frame-label">Design 1 (1 Foto)</div>
       </div>
 
       <!-- FLOWER: 3 ➔ 2 ➔ 1 -->
-      <div class="frame-card" onclick="selectFrame(this, './assets/v2/flower3.png')">
+      <div class="frame-card" onclick="selectFrame(this, './assets/v2/flower3.png', 3)">
         <img src="./assets/v2/flower3.png" class="frame-preview-img" alt="Flower 3">
-        <div class="frame-label">Floral 3</div>
+        <div class="frame-label">Floral 3 (3 Foto)</div>
       </div>
-      <div class="frame-card" onclick="selectFrame(this, './assets/v2/flower2.png')">
+      <div class="frame-card" onclick="selectFrame(this, './assets/v2/flower2.png', 2)">
         <img src="./assets/v2/flower2.png" class="frame-preview-img" alt="Flower 2">
-        <div class="frame-label">Floral 2</div>
+        <div class="frame-label">Floral 2 (2 Foto)</div>
       </div>
-      <div class="frame-card" onclick="selectFrame(this, './assets/v2/flower1.png')">
+      <div class="frame-card" onclick="selectFrame(this, './assets/v2/flower1.png', 1)">
         <img src="./assets/v2/flower1.png" class="frame-preview-img" alt="Flower 1">
-        <div class="frame-label">Floral 1</div>
+        <div class="frame-label">Floral 1 (1 Foto)</div>
       </div>
 
       <!-- LINE: 3 ➔ 2 ➔ 1 -->
-      <div class="frame-card" onclick="selectFrame(this, './assets/v2/line 3.png')">
+      <div class="frame-card" onclick="selectFrame(this, './assets/v2/line 3.png', 3)">
         <img src="./assets/v2/line 3.png" class="frame-preview-img" alt="Line 3">
-        <div class="frame-label">Minimal 3</div>
+        <div class="frame-label">Minimal 3 (3 Foto)</div>
       </div>
-      <div class="frame-card" onclick="selectFrame(this, './assets/v2/line 2.png')">
+      <div class="frame-card" onclick="selectFrame(this, './assets/v2/line 2.png', 2)">
         <img src="./assets/v2/line 2.png" class="frame-preview-img" alt="Line 2">
-        <div class="frame-label">Minimal 2</div>
+        <div class="frame-label">Minimal 2 (2 Foto)</div>
       </div>
-      <div class="frame-card" onclick="selectFrame(this, './assets/v2/line 1.png')">
+      <div class="frame-card" onclick="selectFrame(this, './assets/v2/line 1.png', 1)">
         <img src="./assets/v2/line 1.png" class="frame-preview-img" alt="Line 1">
-        <div class="frame-label">Minimal 1</div>
+        <div class="frame-label">Minimal 1 (1 Foto)</div>
       </div>
     </div>
 
@@ -579,7 +579,7 @@
 
   <!-- STEP 3: AREA KAMERA -->
   <div id="step-camera" class="hidden">
-    <div style="font-size: 0.85rem; font-weight: 700; color: var(--primary-crimson); margin-bottom: 8px;" id="cam-progress-text">Foto 1 dari 4</div>
+    <div style="font-size: 0.85rem; font-weight: 700; color: var(--primary-crimson); margin-bottom: 8px;" id="cam-progress-text">Foto 1 dari 3</div>
 
     <div class="camera-wrapper">
       <video id="video" class="mirror" autoplay playsinline></video>
@@ -689,6 +689,7 @@
 
   let eventTitle = "Riyan & Amelia";
   let selectedFramePath = './assets/v2/dsg3.png';
+  let requiredPhotoCount = 3; // Dinamis mengikuti tipe frame (1, 2, atau 3 foto)
   let capturedPhotos = [];
   let videoStream = null;
   let generatedDataUrl = "";
@@ -774,16 +775,17 @@
     }
   }
 
-  function selectFrame(cardElem, framePath) {
+  function selectFrame(cardElem, framePath, photoCount) {
     document.querySelectorAll('.frame-card').forEach(c => c.classList.remove('selected'));
     cardElem.classList.add('selected');
     selectedFramePath = framePath;
+    requiredPhotoCount = photoCount || 3;
   }
 
   function startCameraProcess() {
     goToStep(3);
     capturedPhotos = [];
-    document.getElementById('cam-progress-text').innerText = `Foto 1 dari 4`;
+    document.getElementById('cam-progress-text').innerText = `Foto 1 dari ${requiredPhotoCount}`;
     initCameraStream();
   }
 
@@ -943,83 +945,103 @@
 
     capturedPhotos.push(tempCanvas.toDataURL('image/png'));
 
-    if (capturedPhotos.length < 4) {
-      document.getElementById('cam-progress-text').innerText = `Foto ${capturedPhotos.length + 1} dari 4`;
+    if (capturedPhotos.length < requiredPhotoCount) {
+      document.getElementById('cam-progress-text').innerText = `Foto ${capturedPhotos.length + 1} dari ${requiredPhotoCount}`;
       setTimeout(() => { document.getElementById('btn-snap').disabled = false; }, 800);
     } else {
       if (videoStream) {
         videoStream.getTracks().forEach(track => track.stop());
       }
       renderPhotostripWithFigmaFrame();
-      goToStep(4);
       document.getElementById('btn-snap').disabled = false;
     }
   }
 
+  // FUNGSI RENDER PRESISI (FOTO PASTI MUNCUL)
   function renderPhotostripWithFigmaFrame() {
-    const frameImg = new Image();
-    frameImg.crossOrigin = "anonymous";
-    frameImg.onload = () => {
-      const canvas = document.getElementById('canvas');
-      const ctx = canvas.getContext('2d');
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
 
+    // 1. Load Bingkai Figma & Seluruh Foto Pengguna Menggunakan Promise.all
+    const loadFrame = new Promise((resolve) => {
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.onload = () => resolve(img);
+      img.src = selectedFramePath;
+    });
+
+    const loadUserPhotos = Promise.all(capturedPhotos.map(src => {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+        img.onload = () => resolve(img);
+        img.src = src;
+      });
+    }));
+
+    Promise.all([loadFrame, loadUserPhotos]).then(([frameImg, userImages]) => {
       const W = frameImg.naturalWidth || 600;
       const H = frameImg.naturalHeight || 1800;
 
       canvas.width = W;
       canvas.height = H;
 
+      ctx.clearRect(0, 0, W, H);
       ctx.imageSmoothingEnabled = true;
       ctx.imageSmoothingQuality = 'high';
 
-      let loadedCount = 0;
-      const imgObjects = [];
+      // 2. Hitung Layout Slot Foto Berdasarkan Jumlah Foto (1, 2, atau 3 foto)
+      const totalPhotos = userImages.length;
+      const slotW = Math.round(W * 0.82);
+      const startX = Math.round((W - slotW) / 2);
 
-      capturedPhotos.forEach((src, idx) => {
-        const pImg = new Image();
-        pImg.onload = () => {
-          imgObjects[idx] = pImg;
-          loadedCount++;
-          if (loadedCount === 4) {
-            const slotW = Math.round(W * 0.82);
-            const slotH = Math.round(H * 0.185);
-            const startX = Math.round((W - slotW) / 2);
-            const startY = Math.round(H * 0.08);
-            const gapY = Math.round(H * 0.022);
+      let slotH, startY, gapY;
 
-            imgObjects.forEach((photo, i) => {
-              const currentY = startY + (i * (slotH + gapY));
+      if (totalPhotos === 1) {
+        slotH = Math.round(H * 0.55);
+        startY = Math.round(H * 0.15);
+        gapY = 0;
+      } else if (totalPhotos === 2) {
+        slotH = Math.round(H * 0.32);
+        startY = Math.round(H * 0.10);
+        gapY = Math.round(H * 0.04);
+      } else { // 3 Foto
+        slotH = Math.round(H * 0.22);
+        startY = Math.round(H * 0.08);
+        gapY = Math.round(H * 0.03);
+      }
 
-              const imgAspect = photo.width / photo.height;
-              const slotAspect = slotW / slotH;
-              let renderW, renderH, offsetX, offsetY;
+      // 3. Gambar Seluruh Foto Sesi di Layer Bawah
+      userImages.forEach((photo, i) => {
+        const currentY = startY + (i * (slotH + gapY));
 
-              if (imgAspect > slotAspect) {
-                renderH = photo.height;
-                renderW = photo.height * slotAspect;
-                offsetX = (photo.width - renderW) / 2;
-                offsetY = 0;
-              } else {
-                renderW = photo.width;
-                renderH = photo.width / slotAspect;
-                offsetX = 0;
-                offsetY = (photo.height - renderH) / 2;
-              }
+        const imgAspect = photo.width / photo.height;
+        const slotAspect = slotW / slotH;
+        let renderW, renderH, offsetX, offsetY;
 
-              ctx.drawImage(photo, offsetX, offsetY, renderW, renderH, startX, currentY, slotW, slotH);
-            });
+        if (imgAspect > slotAspect) {
+          renderH = photo.height;
+          renderW = photo.height * slotAspect;
+          offsetX = (photo.width - renderW) / 2;
+          offsetY = 0;
+        } else {
+          renderW = photo.width;
+          renderH = photo.width / slotAspect;
+          offsetX = 0;
+          offsetY = (photo.height - renderH) / 2;
+        }
 
-            // Timpa Frame PNG Figma di Atas Foto
-            ctx.drawImage(frameImg, 0, 0, W, H);
-
-            generatedDataUrl = canvas.toDataURL('image/jpeg', 0.95);
-            document.getElementById('result-img').src = generatedDataUrl;
-          }
-        };
-        pImg.src = src;
+        ctx.drawImage(photo, offsetX, offsetY, renderW, renderH, startX, currentY, slotW, slotH);
       });
-    };
-    frameImg.src = selectedFramePath;
+
+      // 4. Timpa Bingkai Transparan Figma di Layer Atas (Paling Depan)
+      ctx.drawImage(frameImg, 0, 0, W, H);
+
+      // 5. Ekspor Hasil Akhir ke Preview Image
+      generatedDataUrl = canvas.toDataURL('image/jpeg', 0.95);
+      document.getElementById('result-img').src = generatedDataUrl;
+      goToStep(4);
+    });
   }
 
   function downloadImageToPhone(senderName) {
