@@ -493,7 +493,7 @@
     }
   }
 
-  // 2. KELOLA GALERI (GRID KOTAK RAPI SERAGAM)
+  // KELOLA GALERI (GRID KOTAK DENGAN SORTING TERBARU DI PALING AKHIR)
   function loadGalleryAdmin() {
     const container = document.getElementById('gallery-grid-container');
 
@@ -505,9 +505,21 @@
         return;
       }
 
+      // AMBIL SEMUA DATA LALU URUTKAN WAKTU ASCENDING (TERBARU DI AKHIR/PALING BAWAH)
+      let posts = [];
       snapshot.forEach(doc => {
-        const data = doc.data();
-        const postId = doc.id;
+        posts.push({ id: doc.id, ...doc.data() });
+      });
+
+      posts.sort((a, b) => {
+        const timeA = a.createdAt ? a.createdAt.toMillis() : 0;
+        const timeB = b.createdAt ? b.createdAt.toMillis() : 0;
+        return timeA - timeB; // ASCENDING: Terbaru muncul di akhir
+      });
+
+      // RENDER FOTO KE GRID ADMIN
+      posts.forEach(data => {
+        const postId = data.id;
         const name = data.name || 'Tamu';
         const msg = data.message || '-';
 
@@ -524,6 +536,8 @@
         `;
         container.appendChild(card);
       });
+    }, error => {
+      console.error("Gagal memuat galeri admin:", error);
     });
   }
 
