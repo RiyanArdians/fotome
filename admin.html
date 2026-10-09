@@ -543,7 +543,6 @@
 <script>
   let allGalleryPosts = []; 
 
-  // HELPER FORMAT NAMA FILE AJA
   function formatFileName(name, msg) {
     const cleanName = (name || 'Tamu').replace(/[^\w\s-]/gi, '').trim() || 'Tamu';
     const cleanMsg = (msg || '').replace(/[^\w\s-]/gi, '').trim();
@@ -555,7 +554,7 @@
     return `${cleanName}.jpg`;
   }
 
-  / FUNGSI HELPER: MEMECAH TEKS PANJANG JADI BEBERAPA BARIS (WORD-WRAP)
+  // FUNGSI HELPER: MEMECAH TEKS PANJANG JADI BEBERAPA BARIS (WORD-WRAP)
   function wrapCanvasText(ctx, text, maxWidth) {
     const words = text.split(" ");
     const lines = [];
@@ -575,7 +574,7 @@
     return lines;
   }
 
-  // FUNGSI MELUKIS DENGAN DYNAMIC HEIGHT & MULTILINE TEXT
+  // FUNGSI MELUKIS NAMA & UCAPAN KHUSUS UNDUH ADMIN (DYNAMIC HEIGHT & WORD-WRAP)
   function generateImageWithText(photoUrl, name, message, callback) {
     const img = new Image();
     img.crossOrigin = "anonymous";
@@ -583,15 +582,13 @@
       const canvas = document.getElementById('exportCanvas');
       const ctx = canvas.getContext('2d');
 
-      const maxTextWidth = img.width - 100; // Batas lebar teks agar ada margin kiri-kanan
+      const maxTextWidth = img.width - 100;
       const lineHeight = 24;
 
-      // Hitung baris ucapan secara presisi
       ctx.font = "italic 16px 'Plus Jakarta Sans', sans-serif";
       const cleanMsg = (message && message !== '-') ? `"${message}"` : "";
       const msgLines = cleanMsg ? wrapCanvasText(ctx, cleanMsg, maxTextWidth) : [];
 
-      // Hitung kebutuhan tinggi ekstra di bawah foto
       let extraPadding = 0;
       if (name || msgLines.length > 0) {
         extraPadding = 70 + (name ? 30 : 0) + (msgLines.length * lineHeight);
@@ -600,11 +597,9 @@
       canvas.width = img.width;
       canvas.height = img.height + extraPadding;
 
-      // 1. Gambar foto asli photostrip
       ctx.drawImage(img, 0, 0);
 
       if (extraPadding > 0) {
-        // 2. Ambil warna background dari bagian bawah foto
         const pixelData = ctx.getImageData(10, img.height - 10, 1, 1).data;
         const bgColor = `rgb(${pixelData[0]}, ${pixelData[1]}, ${pixelData[2]})`;
 
@@ -615,7 +610,7 @@
 
         let currentY = img.height + 25;
 
-        // 3. Garis Aksen Pemisah
+        // Garis Pemisah Rapi
         ctx.strokeStyle = textColor;
         ctx.globalAlpha = 0.25;
         ctx.lineWidth = 1;
@@ -639,14 +634,14 @@
         ctx.globalAlpha = 1.0;
         currentY += 35;
 
-        // 4. Cetak Nama Tamu
+        // Nama Tamu
         if (name) {
           ctx.font = "bold 20px 'Plus Jakarta Sans', sans-serif";
           ctx.fillText(`From: ${name}`, canvas.width / 2, currentY);
           currentY += 30;
         }
 
-        // 5. Cetak Pesan Ucapan Multi-baris (Word-Wrapped)
+        // Pesan Multi-Baris Rapi
         if (msgLines.length > 0) {
           ctx.font = "italic 16px 'Plus Jakarta Sans', sans-serif";
           ctx.fillStyle = textColor;
@@ -763,7 +758,6 @@
         allGalleryPosts.push({ id: doc.id, ...doc.data() });
       });
 
-      // ASCENDING: TERBARU DI AKHIR
       allGalleryPosts.sort((a, b) => {
         const timeA = a.createdAt ? a.createdAt.toMillis() : 0;
         const timeB = b.createdAt ? b.createdAt.toMillis() : 0;
@@ -826,7 +820,6 @@
     updateCounters();
   }
 
-  // UNDUH TERPILIH MASAL DENGAN UCAPAN KHUSUS ADMIN
   function downloadSelectedPosts() {
     const selectedCbs = document.querySelectorAll('.post-select-cb:checked');
     if (selectedCbs.length === 0) {
