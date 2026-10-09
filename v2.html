@@ -953,7 +953,7 @@
     }
   }
 
-  // FUNGSI RENDER: FRAME FIGMA SEBAGAI BACKGROUND, FOTO DILUKIS DI DEPAN (LAYER ATAS)
+  // FUNGSI RENDER PRESISI: PRESISI POSISI FOTO DI BAWAH HEADER & TEPAT DI TENGAH
   function renderPhotostripWithFigmaFrame() {
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
@@ -986,30 +986,33 @@
       ctx.imageSmoothingEnabled = true;
       ctx.imageSmoothingQuality = 'high';
 
-      // 1. LUKIS DULU FRAME FIGMA SEBAGAI BACKGROUND (LAYER PALING BAWAH)
+      // 1. Gambar Frame Background terlebih dahulu
       ctx.drawImage(frameImg, 0, 0, W, H);
 
-      // 2. LUKIS FOTO-FOTO KAMERA DI DEPAN BACKGROUND (LAYER PALING ATAS)
+      // 2. Hitung Ukuran & Posisi Foto Presisi
       const totalPhotos = userImages.length;
-      const slotW = Math.round(W * 0.82);
+      
+      // Lebar foto disesuaikan agar proporsional di tengah
+      const slotW = Math.round(W * 0.76); 
       const startX = Math.round((W - slotW) / 2);
 
       let slotH, startY, gapY;
 
       if (totalPhotos === 1) {
-        slotH = Math.round(H * 0.55);
-        startY = Math.round(H * 0.15);
+        slotH = Math.round(H * 0.48);
+        startY = Math.round(H * 0.22); // Diturunkan agar tidak menutupi logo atas
         gapY = 0;
       } else if (totalPhotos === 2) {
-        slotH = Math.round(H * 0.32);
-        startY = Math.round(H * 0.10);
-        gapY = Math.round(H * 0.04);
+        slotH = Math.round(H * 0.28);
+        startY = Math.round(H * 0.19); // Diturunkan di bawah header
+        gapY = Math.round(H * 0.035);
       } else { // 3 Foto
-        slotH = Math.round(H * 0.22);
-        startY = Math.round(H * 0.08);
-        gapY = Math.round(H * 0.03);
+        slotH = Math.round(H * 0.20);
+        startY = Math.round(H * 0.17); // Poin awal diturunkan aman di bawah header "Fotome"
+        gapY = Math.round(H * 0.025);  // Jarak presisi antar 3 foto
       }
 
+      // 3. Tempel Foto Kamera di Atas Background Frame
       userImages.forEach((photo, i) => {
         const currentY = startY + (i * (slotH + gapY));
 
@@ -1029,11 +1032,10 @@
           offsetY = (photo.height - renderH) / 2;
         }
 
-        // Cetak foto persis di depan background
         ctx.drawImage(photo, offsetX, offsetY, renderW, renderH, startX, currentY, slotW, slotH);
       });
 
-      // 3. Export Hasil ke Elemen Image Preview
+      // 4. Export Hasil ke Preview
       try {
         generatedDataUrl = canvas.toDataURL('image/jpeg', 0.95);
       } catch (err) {
