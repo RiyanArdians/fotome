@@ -574,7 +574,7 @@
     return lines;
   }
 
-  // FUNGSI MELUKIS NAMA & UCAPAN KHUSUS UNDUH ADMIN (HIGH-RESOLUTION FIX)
+  // FUNGSI KHUSUS UNDUH ADMIN: MEMISAHKAN FOTO DENGAN FOOTER UCAPAN (SUPER TAJAM)
   function generateImageWithText(photoUrl, name, message, callback) {
     const img = new Image();
     img.crossOrigin = "anonymous";
@@ -582,82 +582,89 @@
       const canvas = document.getElementById('exportCanvas');
       const ctx = canvas.getContext('2d');
 
-      // Gunakan resolusi piksel asli gambar agar 100% tajam dan tidak blur
+      // 1. Ambil Dimensi Asli Foto Photostrip
       const imgW = img.naturalWidth || img.width || 600;
       const imgH = img.naturalHeight || img.height || 1200;
 
-      const maxTextWidth = imgW - 100; // Margin aman proporsional
-      const lineHeight = Math.round(imgW * 0.04); // Skala ukuran baris dinamis
+      // 2. Tentukan Kebutuhan Tinggi Area Ucapan Terpisah (Footer Card)
+      const maxTextWidth = imgW - 80;
+      const fontSizeName = Math.round(imgW * 0.038); // Ukuran font nama
+      const fontSizeMsg = Math.round(imgW * 0.030);  // Ukuran font ucapan
+      const lineHeight = Math.round(fontSizeMsg * 1.4);
 
-      // Hitung baris ucapan secara presisi berdasarkan lebar asli
-      ctx.font = `italic ${Math.round(imgW * 0.028)}px 'Plus Jakarta Sans', sans-serif`;
+      ctx.font = `italic ${fontSizeMsg}px 'Plus Jakarta Sans', sans-serif`;
       const cleanMsg = (message && message !== '-') ? `"${message}"` : "";
       const msgLines = cleanMsg ? wrapCanvasText(ctx, cleanMsg, maxTextWidth) : [];
 
-      let extraPadding = 0;
+      // Hitung tinggi khusus untuk blok footer di bawah frame
+      let footerHeight = 0;
       if (name || msgLines.length > 0) {
-        extraPadding = Math.round(imgW * 0.12) + (name ? Math.round(imgW * 0.05) : 0) + (msgLines.length * lineHeight);
+        footerHeight = Math.round(imgW * 0.12) + (name ? Math.round(imgW * 0.06) : 0) + (msgLines.length * lineHeight);
       }
 
+      // Total Tinggi Canvas = Tinggi Foto + Tinggi Footer Terpisah
       canvas.width = imgW;
-      canvas.height = imgH + extraPadding;
+      canvas.height = imgH + footerHeight;
 
-      // Enable smoothing berkualitas tinggi
+      // Kualitas Render Maksimal
       ctx.imageSmoothingEnabled = true;
       ctx.imageSmoothingQuality = 'high';
 
-      // 1. Gambar foto dengan resolusi asli utuh
+      // 3. Tempel Gambar Foto Asli (Bagian Atas)
       ctx.drawImage(img, 0, 0, imgW, imgH);
 
-      if (extraPadding > 0) {
-        // 2. Deteksi warna background dari piksel bawah foto
-        const pixelData = ctx.getImageData(10, imgH - 10, 1, 1).data;
+      // 4. Buat Area Footer Terpisah di Bawah Frame Foto
+      if (footerHeight > 0) {
+        // Ambil warna latar belakang bagian paling bawah foto agar senada
+        const pixelData = ctx.getImageData(10, imgH - 5, 1, 1).data;
         const bgColor = `rgb(${pixelData[0]}, ${pixelData[1]}, ${pixelData[2]})`;
 
+        // Cat area footer bawah
         ctx.fillStyle = bgColor;
-        ctx.fillRect(0, imgH, canvas.width, extraPadding);
+        ctx.fillRect(0, imgH, canvas.width, footerHeight);
 
         const textColor = (pixelData[0] < 128) ? "#FFFFFF" : "#2B1E1E";
 
         let currentY = imgH + Math.round(imgW * 0.04);
 
-        // 3. Garis Pemisah Rapi & Proporsional
+        // Garis Aksen Pemisah Antara Frame Foto & Area Ucapan
         ctx.strokeStyle = textColor;
         ctx.globalAlpha = 0.25;
-        ctx.lineWidth = 1.5;
+        ctx.lineWidth = 2;
 
-        const lineGap = Math.round(imgW * 0.05);
+        const gapCenter = Math.round(imgW * 0.05);
         ctx.beginPath();
-        ctx.moveTo(60, currentY);
-        ctx.lineTo((canvas.width / 2) - lineGap, currentY);
+        ctx.moveTo(50, currentY);
+        ctx.lineTo((canvas.width / 2) - gapCenter, currentY);
         ctx.stroke();
 
         ctx.beginPath();
-        ctx.moveTo((canvas.width / 2) + lineGap, currentY);
-        ctx.lineTo(canvas.width - 60, currentY);
+        ctx.moveTo((canvas.width / 2) + gapCenter, currentY);
+        ctx.lineTo(canvas.width - 50, currentY);
         ctx.stroke();
 
+        // Aksen Bintang Tengah
         ctx.globalAlpha = 0.6;
         ctx.fillStyle = textColor;
-        ctx.font = `${Math.round(imgW * 0.025)}px 'Plus Jakarta Sans', sans-serif`;
+        ctx.font = `${Math.round(imgW * 0.028)}px 'Plus Jakarta Sans', sans-serif`;
         ctx.textAlign = "center";
-        ctx.fillText("✦", canvas.width / 2, currentY + Math.round(imgW * 0.008));
+        ctx.fillText("✦", canvas.width / 2, currentY + Math.round(imgW * 0.009));
 
         ctx.globalAlpha = 1.0;
         currentY += Math.round(imgW * 0.06);
 
-        // 4. Nama Tamu (Ukuran Font Proporsional Resolusi Tinggi)
+        // Cetak Nama Tamu di Area Footer
         if (name) {
-          ctx.font = `bold ${Math.round(imgW * 0.035)}px 'Plus Jakarta Sans', sans-serif`;
+          ctx.font = `bold ${fontSizeName}px 'Plus Jakarta Sans', sans-serif`;
           ctx.fillText(`From: ${name}`, canvas.width / 2, currentY);
-          currentY += Math.round(imgW * 0.05);
+          currentY += Math.round(imgW * 0.055);
         }
 
-        // 5. Pesan Multi-Baris Rapi (Font Proporsional)
+        // Cetak Pesan Ucapan di Area Footer
         if (msgLines.length > 0) {
-          ctx.font = `italic ${Math.round(imgW * 0.028)}px 'Plus Jakarta Sans', sans-serif`;
+          ctx.font = `italic ${fontSizeMsg}px 'Plus Jakarta Sans', sans-serif`;
           ctx.fillStyle = textColor;
-          ctx.globalAlpha = 0.85;
+          ctx.globalAlpha = 0.88;
 
           msgLines.forEach(line => {
             ctx.fillText(line, canvas.width / 2, currentY);
@@ -666,9 +673,9 @@
         }
       }
 
-      // Export JPEG dengan kualitas maksimal (0.95 / 95%)
-      const finalUrl = canvas.toDataURL('image/jpeg', 0.95);
-      callback(finalUrl);
+      // Export file JPEG kualitas 100% (1.0)
+      const finalDataUrl = canvas.toDataURL('image/jpeg', 1.0);
+      callback(finalDataUrl);
     };
     img.src = photoUrl;
   }
