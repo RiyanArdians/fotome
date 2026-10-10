@@ -21,6 +21,7 @@
       --bg-cream: #FAF6F0;
       --text-dark: #2B1E1E;
       --card-white: #FFFFFF;
+      --current-card-bg: #8C2331; /* Dynamic background color */
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -130,7 +131,7 @@
       gap: 6px;
     }
 
-    /* DESAIN SLIDER CAROUSEL FULL FOCUS (TAMPIL 1 FRAME DI TENGAH) */
+    /* SLIDER DYNAMIC CHARACTER CARD ALA FIGMA VIDEO */
     .section-label {
       font-size: 0.75rem;
       font-weight: 700;
@@ -148,109 +149,127 @@
       font-style: italic;
     }
 
-    .carousel-focus-wrapper {
+    .dynamic-slider-container {
       position: relative;
       width: 100%;
-      max-width: 280px;
-      margin: 0 auto 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .carousel-track-container {
-      width: 100%;
+      max-width: 320px;
+      height: 380px;
+      margin: 0 auto 16px;
+      border-radius: 28px;
+      background: var(--current-card-bg);
+      padding: 20px 15px;
+      transition: background 0.5s ease-in-out;
       overflow: hidden;
-      border-radius: 20px;
-      background: #FAF6F0;
-      padding: 12px;
-      box-shadow: inset 0 2px 8px rgba(0,0,0,0.04), 0 10px 25px rgba(122,28,40,0.08);
-      border: 1px solid rgba(212, 175, 55, 0.3);
-    }
-
-    .carousel-track {
-      display: flex;
-      transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-      width: 100%;
-    }
-
-    .carousel-slide {
-      min-width: 100%;
-      box-sizing: border-box;
+      box-shadow: 0 15px 30px rgba(0,0,0,0.15);
       display: flex;
       flex-direction: column;
       align-items: center;
-      opacity: 0.4;
-      transform: scale(0.92);
-      transition: all 0.4s ease;
+      justify-content: space-between;
     }
 
-    .carousel-slide.active-slide {
-      opacity: 1;
-      transform: scale(1);
-    }
-
-    .carousel-frame-img {
-      width: 100%;
-      max-height: 280px;
-      object-fit: contain;
-      border-radius: 12px;
-      filter: drop-shadow(0 6px 12px rgba(0,0,0,0.15));
-    }
-
-    .carousel-frame-title {
+    .slider-header-title {
       font-family: 'Cormorant Garamond', serif;
-      font-size: 1.15rem;
+      font-size: 1.8rem;
       font-weight: 700;
-      color: var(--primary-crimson);
-      margin-top: 10px;
+      color: #FFFFFF;
+      text-shadow: 0 2px 6px rgba(0,0,0,0.3);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-top: 5px;
+      transition: opacity 0.3s;
     }
 
-    .carousel-nav-btn {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      background: rgba(255, 255, 255, 0.9);
-      color: var(--primary-crimson);
-      border: 1px solid rgba(212, 175, 55, 0.5);
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      cursor: pointer;
+    .slider-header-sub {
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.85);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .slider-cards-wrapper {
+      position: relative;
+      width: 100%;
+      height: 250px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.9rem;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.12);
-      z-index: 10;
-      transition: all 0.2s;
     }
 
-    .carousel-nav-btn:active { transform: translateY(-50%) scale(0.9); }
-    .carousel-nav-btn.prev { left: -16px; }
-    .carousel-nav-btn.next { right: -16px; }
-
-    .carousel-dots-bar {
+    .figma-card-item {
+      position: absolute;
+      width: 180px;
+      height: 240px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.3);
       display: flex;
+      align-items: center;
       justify-content: center;
-      gap: 6px;
-      margin-bottom: 14px;
-    }
-
-    .carousel-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #D8B4B4;
+      padding: 10px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
       cursor: pointer;
-      transition: all 0.3s ease;
+      user-select: none;
     }
 
-    .carousel-dot.active-dot {
-      background: var(--primary-crimson);
-      width: 20px;
-      border-radius: 10px;
+    .figma-card-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      filter: drop-shadow(0 8px 15px rgba(0,0,0,0.3));
+      transition: transform 0.3s ease;
     }
+
+    /* POSISI STACK SLIDER ALA VIDEO FIGMA */
+    .figma-card-item.active {
+      transform: translateX(0) scale(1.05) rotate(0deg);
+      opacity: 1;
+      z-index: 10;
+    }
+
+    .figma-card-item.next {
+      transform: translateX(65%) scale(0.85) rotate(6deg);
+      opacity: 0.6;
+      z-index: 5;
+    }
+
+    .figma-card-item.prev {
+      transform: translateX(-65%) scale(0.85) rotate(-6deg);
+      opacity: 0.6;
+      z-index: 5;
+    }
+
+    .figma-card-item.hidden-left {
+      transform: translateX(-120%) scale(0.7) rotate(-12deg);
+      opacity: 0;
+      z-index: 1;
+    }
+
+    .figma-card-item.hidden-right {
+      transform: translateX(120%) scale(0.7) rotate(12deg);
+      opacity: 0;
+      z-index: 1;
+    }
+
+    .action-fab-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: #FFFFFF;
+      color: var(--primary-crimson);
+      border: none;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+      cursor: pointer;
+      transition: transform 0.2s;
+      margin-bottom: 5px;
+    }
+
+    .action-fab-btn:active { transform: scale(0.9); }
 
     /* AREA KAMERA & KONTROL */
     .camera-wrapper {
@@ -576,75 +595,68 @@
     </button>
   </div>
 
-  <!-- STEP 2: SLIDER BINGKAI ELEGAN TAMU -->
+  <!-- STEP 2: SLIDER FIGMA ANIMATION CARD -->
   <div id="step-template" class="hidden">
     <h2 class="font-serif" style="color: var(--primary-crimson); font-size: 1.8rem;">Pilih Desain Bingkai</h2>
     <div class="section-label">KOLEKSI BINGKAI EKSKLUSIF</div>
-    <p class="section-subtitle-text">Geser untuk memilih desain favoritmu</p>
+    <p class="section-subtitle-text">Geser ke kanan / kiri untuk memilih bingkai</p>
 
-    <div class="carousel-focus-wrapper">
-      <button class="carousel-nav-btn prev" onclick="moveCarousel(-1)"><i class="fa-solid fa-chevron-left"></i></button>
-
-      <div class="carousel-track-container">
-        <div class="carousel-track" id="carousel-track">
-          
-          <!-- FRAME LIST SLIDES -->
-          <div class="carousel-slide active-slide" data-path="./assets/v2/dsg3.png" data-count="3">
-            <img src="./assets/v2/dsg3.png" class="carousel-frame-img" alt="Classic Royal (3 Foto)">
-            <div class="carousel-frame-title">Classic Royal (3 Sesi Foto)</div>
-          </div>
-
-          <div class="carousel-slide" data-path="./assets/v2/dsg2.png" data-count="2">
-            <img src="./assets/v2/dsg2.png" class="carousel-frame-img" alt="Classic Royal (2 Foto)">
-            <div class="carousel-frame-title">Classic Royal (2 Sesi Foto)</div>
-          </div>
-
-          <div class="carousel-slide" data-path="./assets/v2/dsg1.png" data-count="1">
-            <img src="./assets/v2/dsg1.png" class="carousel-frame-img" alt="Classic Royal (1 Foto)">
-            <div class="carousel-frame-title">Classic Royal (1 Sesi Foto)</div>
-          </div>
-
-          <div class="carousel-slide" data-path="./assets/v2/flower3.png" data-count="3">
-            <img src="./assets/v2/flower3.png" class="carousel-frame-img" alt="Floral Romance (3 Foto)">
-            <div class="carousel-frame-title">Floral Romance (3 Sesi Foto)</div>
-          </div>
-
-          <div class="carousel-slide" data-path="./assets/v2/flower2.png" data-count="2">
-            <img src="./assets/v2/flower2.png" class="carousel-frame-img" alt="Floral Romance (2 Foto)">
-            <div class="carousel-frame-title">Floral Romance (2 Sesi Foto)</div>
-          </div>
-
-          <div class="carousel-slide" data-path="./assets/v2/flower1.png" data-count="1">
-            <img src="./assets/v2/flower1.png" class="carousel-frame-img" alt="Floral Romance (1 Foto)">
-            <div class="carousel-frame-title">Floral Romance (1 Sesi Foto)</div>
-          </div>
-
-          <div class="carousel-slide" data-path="./assets/v2/line 3.png" data-count="3">
-            <img src="./assets/v2/line 3.png" class="carousel-frame-img" alt="Minimalist Modern (3 Foto)">
-            <div class="carousel-frame-title">Minimalist Modern (3 Sesi Foto)</div>
-          </div>
-
-          <div class="carousel-slide" data-path="./assets/v2/line 2.png" data-count="2">
-            <img src="./assets/v2/line 2.png" class="carousel-frame-img" alt="Minimalist Modern (2 Foto)">
-            <div class="carousel-frame-title">Minimalist Modern (2 Sesi Foto)</div>
-          </div>
-
-          <div class="carousel-slide" data-path="./assets/v2/line 1.png" data-count="1">
-            <img src="./assets/v2/line 1.png" class="carousel-frame-img" alt="Minimalist Modern (1 Foto)">
-            <div class="carousel-frame-title">Minimalist Modern (1 Sesi Foto)</div>
-          </div>
-
-        </div>
+    <!-- CONTAINER CONTAINER SLIDER EKSKLUSIF -->
+    <div class="dynamic-slider-container" id="dynamic-slider-box">
+      
+      <div style="text-align: center;">
+        <div class="slider-header-sub" id="card-theme-tag">ROYAL EDITION</div>
+        <div class="slider-header-title" id="card-theme-name">Classic 3 Photo</div>
       </div>
 
-      <button class="carousel-nav-btn next" onclick="moveCarousel(1)"><i class="fa-solid fa-chevron-right"></i></button>
+      <div class="slider-cards-wrapper" id="slider-stack-box">
+
+        <div class="figma-card-item" data-path="./assets/v2/dsg3.png" data-count="3" data-name="Classic Royal (3 Foto)" data-tag="ROYAL EDITION" data-color="#7A1C28">
+          <img src="./assets/v2/dsg3.png" alt="Desain 3">
+        </div>
+
+        <div class="figma-card-item" data-path="./assets/v2/dsg2.png" data-count="2" data-name="Classic Royal (2 Foto)" data-tag="ROYAL EDITION" data-color="#5B1620">
+          <img src="./assets/v2/dsg2.png" alt="Desain 2">
+        </div>
+
+        <div class="figma-card-item" data-path="./assets/v2/dsg1.png" data-count="1" data-name="Classic Royal (1 Foto)" data-tag="ROYAL EDITION" data-color="#8C2331">
+          <img src="./assets/v2/dsg1.png" alt="Desain 1">
+        </div>
+
+        <div class="figma-card-item" data-path="./assets/v2/flower3.png" data-count="3" data-name="Floral Romance (3 Foto)" data-tag="FLORAL COLLECTION" data-color="#4A5D4E">
+          <img src="./assets/v2/flower3.png" alt="Flower 3">
+        </div>
+
+        <div class="figma-card-item" data-path="./assets/v2/flower2.png" data-count="2" data-name="Floral Romance (2 Foto)" data-tag="FLORAL COLLECTION" data-color="#3D4E41">
+          <img src="./assets/v2/flower2.png" alt="Flower 2">
+        </div>
+
+        <div class="figma-card-item" data-path="./assets/v2/flower1.png" data-count="1" data-name="Floral Romance (1 Foto)" data-tag="FLORAL COLLECTION" data-color="#556B5A">
+          <img src="./assets/v2/flower1.png" alt="Flower 1">
+        </div>
+
+        <div class="figma-card-item" data-path="./assets/v2/line 3.png" data-count="3" data-name="Minimalist Modern (3 Foto)" data-tag="MINIMALIST STYLE" data-color="#2C3E50">
+          <img src="./assets/v2/line 3.png" alt="Line 3">
+        </div>
+
+        <div class="figma-card-item" data-path="./assets/v2/line 2.png" data-count="2" data-name="Minimalist Modern (2 Foto)" data-tag="MINIMALIST STYLE" data-color="#1A252F">
+          <img src="./assets/v2/line 2.png" alt="Line 2">
+        </div>
+
+        <div class="figma-card-item" data-path="./assets/v2/line 1.png" data-count="1" data-name="Minimalist Modern (1 Foto)" data-tag="MINIMALIST STYLE" data-color="#34495E">
+          <img src="./assets/v2/line 1.png" alt="Line 1">
+        </div>
+
+      </div>
+
+      <button class="action-fab-btn" onclick="startCameraProcess()" title="Gunakan Bingkai Ini">
+        <i class="fa-solid fa-arrow-right"></i>
+      </button>
+
     </div>
 
-    <!-- DOTS PAGINATION -->
-    <div class="carousel-dots-bar" id="carousel-dots"></div>
-
     <button class="btn-primary-v2" onclick="startCameraProcess()">
-      Pilih Bingkai Ini &amp; Lanjut Kamera &rarr;
+      Gunakan Bingkai Ini &amp; Mulai Foto &rarr;
     </button>
     <button class="btn-outline-v2" onclick="goToStep(1)">
       &larr; Kembali
@@ -774,69 +786,58 @@
   let zoomLevel = 1;      
   let onAlertCloseCallback = null;
 
-  // CAROUSEL FOCUS SLIDER LOGIC
-  let currentCarouselIndex = 0;
-  let slides = [];
+  // DYNAMIC FIGMA SLIDER LOGIC
+  let cardItems = [];
+  let currentCardIndex = 0;
 
   document.addEventListener("DOMContentLoaded", () => {
-    initCarouselSystem();
+    initFigmaSlider();
   });
 
-  function initCarouselSystem() {
-    slides = Array.from(document.querySelectorAll('.carousel-slide'));
-    const dotsContainer = document.getElementById('carousel-dots');
-    dotsContainer.innerHTML = '';
+  function initFigmaSlider() {
+    cardItems = Array.from(document.querySelectorAll('.figma-card-item'));
+    updateFigmaSliderPositions();
 
-    slides.forEach((_, idx) => {
-      const dot = document.createElement('div');
-      dot.className = `carousel-dot ${idx === 0 ? 'active-dot' : ''}`;
-      dot.onclick = () => jumpToSlide(idx);
-      dotsContainer.appendChild(dot);
-    });
-
-    updateCarouselDisplay();
-
-    // Touch Swipe Support
-    const track = document.getElementById('carousel-track');
+    // Touch Swipe Gesture
+    const container = document.getElementById('slider-stack-box');
     let startX = 0;
-    track.addEventListener('touchstart', e => { startX = e.touches[0].clientX; });
-    track.addEventListener('touchend', e => {
+    container.addEventListener('touchstart', e => { startX = e.touches[0].clientX; });
+    container.addEventListener('touchend', e => {
       let endX = e.changedTouches[0].clientX;
-      if (startX - endX > 40) moveCarousel(1);
-      else if (endX - startX > 40) moveCarousel(-1);
+      if (startX - endX > 35) moveFigmaSlider(1);
+      else if (endX - startX > 35) moveFigmaSlider(-1);
     });
   }
 
-  function moveCarousel(direction) {
-    currentCarouselIndex += direction;
-    if (currentCarouselIndex < 0) currentCarouselIndex = slides.length - 1;
-    if (currentCarouselIndex >= slides.length) currentCarouselIndex = 0;
-    updateCarouselDisplay();
+  function moveFigmaSlider(dir) {
+    currentCardIndex += dir;
+    if (currentCardIndex < 0) currentCardIndex = cardItems.length - 1;
+    if (currentCardIndex >= cardItems.length) currentCardIndex = 0;
+    updateFigmaSliderPositions();
   }
 
-  function jumpToSlide(index) {
-    currentCarouselIndex = index;
-    updateCarouselDisplay();
-  }
+  function updateFigmaSliderPositions() {
+    cardItems.forEach((card, i) => {
+      card.className = 'figma-card-item'; // Reset class
 
-  function updateCarouselDisplay() {
-    const track = document.getElementById('carousel-track');
-    track.style.transform = `translateX(-${currentCarouselIndex * 100}%)`;
+      if (i === currentCardIndex) {
+        card.classList.add('active');
+        selectedFramePath = card.getAttribute('data-path');
+        requiredPhotoCount = parseInt(card.getAttribute('data-count')) || 3;
 
-    slides.forEach((slide, idx) => {
-      if (idx === currentCarouselIndex) {
-        slide.classList.add('active-slide');
-        selectedFramePath = slide.getAttribute('data-path');
-        requiredPhotoCount = parseInt(slide.getAttribute('data-count')) || 3;
+        // Update Text & Color Theme Smoothly
+        document.getElementById('card-theme-tag').innerText = card.getAttribute('data-tag');
+        document.getElementById('card-theme-name').innerText = card.getAttribute('data-name');
+        document.getElementById('dynamic-slider-box').style.backgroundColor = card.getAttribute('data-color');
+      } else if (i === (currentCardIndex + 1) % cardItems.length) {
+        card.classList.add('next');
+      } else if (i === (currentCardIndex - 1 + cardItems.length) % cardItems.length) {
+        card.classList.add('prev');
+      } else if (i < currentCardIndex) {
+        card.classList.add('hidden-left');
       } else {
-        slide.classList.remove('active-slide');
+        card.classList.add('hidden-right');
       }
-    });
-
-    const dots = document.querySelectorAll('.carousel-dot');
-    dots.forEach((dot, idx) => {
-      if (idx === currentCarouselIndex) dot.classList.add('active-dot');
-      else dot.classList.remove('active-dot');
     });
   }
 
@@ -909,7 +910,7 @@
     }
 
     if (step === 2) {
-      updateCarouselDisplay();
+      updateFigmaSliderPositions();
     }
 
     if (step === 4) {
@@ -1139,7 +1140,7 @@
 
       if (totalPhotos === 1) {
         slotH = Math.round(H * 0.44);
-        startY = Math.round(H * 0.28); // Posisi 1 foto pas di tengah
+        startY = Math.round(H * 0.28);
         gapY = 0;
       } else if (totalPhotos === 2) {
         slotH = Math.round(H * 0.28);
