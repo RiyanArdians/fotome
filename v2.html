@@ -63,7 +63,7 @@
       flex-direction: column;
       justify-content: space-between;
       align-items: center;
-      padding: 20px 16px;
+      padding: 24px 16px 30px;
       position: relative;
       overflow: hidden;
     }
@@ -125,6 +125,40 @@
       gap: 6px;
     }
 
+    /* CUSTOM STYLING TOMBOL BACK DI STEP 2 */
+    .btn-back-styled {
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      color: #FFFFFF;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      padding: 10px 28px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      border-radius: 25px;
+      cursor: pointer;
+      letter-spacing: 1px;
+      transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      animation: subtlePulse 2.8s infinite ease-in-out;
+    }
+
+    .btn-back-styled:active {
+      transform: scale(0.94);
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    @keyframes subtlePulse {
+      0%, 100% {
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        border-color: rgba(255, 255, 255, 0.3);
+      }
+      50% {
+        box-shadow: 0 6px 20px rgba(255, 255, 255, 0.2);
+        border-color: rgba(255, 255, 255, 0.55);
+      }
+    }
+
     /* STEP 2 SLIDER FIGMA FULLSCREEN */
     .slider-header-box {
       text-align: center;
@@ -157,8 +191,8 @@
       position: relative;
       width: 100%;
       max-width: 380px;
-      height: 52vh;
-      min-height: 320px;
+      height: 54vh;
+      min-height: 330px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -169,7 +203,7 @@
       position: absolute;
       width: 200px;
       height: 100%;
-      max-height: 400px;
+      max-height: 410px;
       border-radius: 22px;
       background: rgba(255, 255, 255, 0.12);
       backdrop-filter: blur(12px);
@@ -198,6 +232,17 @@
     .figma-card-item.hidden-left { transform: translateX(-120%) scale(0.65) rotate(-12deg); opacity: 0; z-index: 1; }
     .figma-card-item.hidden-right { transform: translateX(120%) scale(0.65) rotate(12deg); opacity: 0; z-index: 1; }
 
+    /* ANIMASI KLIK FRAME TENGAH */
+    .figma-card-item.card-pressed {
+      animation: frameClickBounce 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
+    @keyframes frameClickBounce {
+      0% { transform: translateX(0) scale(1.05); }
+      40% { transform: translateX(0) scale(0.94); }
+      100% { transform: translateX(0) scale(1.08); opacity: 0.9; }
+    }
+
     /* STAGE PRINTER PRESISI & POP-UP FOTO */
     .printer-lottie-stage {
       width: 100vw;
@@ -221,7 +266,6 @@
       transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    /* PRINTER HILANG / FADE OUT */
     .vector-printer-wrapper.fade-out-printer {
       opacity: 0;
       transform: translateY(-30px) scale(0.85);
@@ -231,7 +275,6 @@
       overflow: hidden;
     }
 
-    /* KERTAS KOSONG ATAS */
     .paper-tray-input {
       width: 150px;
       height: 80px;
@@ -249,7 +292,6 @@
       transform: translateY(75px);
     }
 
-    /* BODI MESIN PRINTER FLAT PRESISI */
     .flat-printer-body {
       width: 290px;
       height: 110px;
@@ -320,7 +362,6 @@
       border-radius: 4px;
     }
 
-    /* WADAH TEMPAT RESULT FOTO PRESISI KELUAR */
     .printer-output-paper-container {
       position: relative;
       width: 180px;
@@ -350,7 +391,6 @@
       margin: 0 auto;
     }
 
-    /* CONTAINER PREVIEW POP-UP SETELAH CETAK */
     .popup-photo-container {
       width: 100%;
       max-width: 260px;
@@ -651,7 +691,7 @@
   <div class="slider-header-box">
     <div class="section-label-fullscreen" id="card-theme-tag">ROYAL EDITION</div>
     <div class="slider-main-title" id="card-theme-name">Classic Royal (3 Foto)</div>
-    <div style="font-size:0.75rem; color:rgba(255,255,255,0.8); font-style:italic;">Geser atau ketuk bingkai untuk memilih</div>
+    <div style="font-size:0.75rem; color:rgba(255,255,255,0.8); font-style:italic;">Ketuk bingkai untuk memilih & memulai</div>
   </div>
 
   <div class="slider-cards-viewport" id="slider-stack-box">
@@ -694,12 +734,9 @@
 
   </div>
 
-  <div style="width:100%; max-width:380px; display:flex; flex-direction:column; align-items:center; z-index:10; margin-bottom:10px;">
-    <button class="btn-primary-v2" onclick="startCameraProcess()">
-      Gunakan Bingkai Ini &amp; Mulai Foto &rarr;
-    </button>
-    <button class="btn-outline-v2" onclick="goToStep(1)">
-      &larr; Kembali
+  <div style="width:100%; max-width:380px; display:flex; justify-content:center; z-index:10; margin-bottom:12px;">
+    <button class="btn-back-styled" onclick="goToStep(1)">
+      Kembali
     </button>
   </div>
 
@@ -743,12 +780,9 @@
 <!-- STEP 4: ANIMASI PRINTER DENGAN POPUP FOTO FINAL -->
 <div id="step-result" class="printer-lottie-stage hidden">
   
-  <!-- WADAH MESIN PRINTER (AKAN FADE OUT JIKA SELESAI) -->
   <div class="vector-printer-wrapper" id="main-printer-unit">
-    <!-- 1. Kertas Kosong Atas -->
     <div class="paper-tray-input" id="paper-input-sheet"></div>
 
-    <!-- 2. Bodi Mesin Printer Flat -->
     <div class="flat-printer-body">
       <div class="printer-panel-top">
         <div class="led-dot led-red" id="led-red"></div>
@@ -761,7 +795,6 @@
       </div>
     </div>
 
-    <!-- 3. Hasil Foto Keluar Perlahan Dari Celah -->
     <div class="printer-output-paper-container">
       <div id="ejected-photo-sheet" class="ejected-photo-sheet">
         <img class="result-img-target" alt="Hasil Photobooth">
@@ -769,12 +802,10 @@
     </div>
   </div>
 
-  <!-- CONTAINER POPUP FOTO JIKA PRINTER SUDAH HILANG -->
   <div class="popup-photo-container" id="popup-photo-box">
     <img class="result-img-target" alt="Hasil Photobooth Pop Up">
   </div>
 
-  <!-- Teks Status Loading -->
   <div class="printer-status-text-box">
     <div class="status-main-label" id="printer-status-main">
       <i class="fa-solid fa-spinner fa-spin" id="spinner-icon"></i>
@@ -783,7 +814,6 @@
     <div class="status-sub-label" id="printer-status-sub">Harap tunggu sebentar</div>
   </div>
 
-  <!-- Form Ucapan & Tombol Simpan -->
   <div class="printer-bottom-actions" id="printer-bottom-actions">
     <div style="background: #FAF6F0; border: 1px solid rgba(212,175,55,0.3); border-radius: 12px; padding: 10px 12px; text-align: left;">
       <label style="display:block; font-size:0.68rem; font-weight:700; color:var(--primary-crimson); margin-bottom:2px;">Nama Kamu / Inisial</label>
@@ -870,7 +900,6 @@
   function initFigmaSlider() {
     cardItems = Array.from(document.querySelectorAll('.figma-card-item'));
     
-    // ATUR EVENT CLICK DENGAN MEMBEDAKAN SWIPE / DRAG DENGAN KLIK BIASA
     cardItems.forEach((card, index) => {
       let isDragging = false;
       let startX = 0;
@@ -898,13 +927,16 @@
       }, { passive: true });
 
       card.addEventListener('click', (e) => {
-        if (isDragging) return; // Jika gerakan swipe/drag, jangan trigget click
+        if (isDragging) return;
 
         if (index === currentCardIndex) {
-          // KETIKA KARTU AKTIF (TENGAH) DIKLIK, LANGSUNG KE KAMERA
-          startCameraProcess();
+          // EFEK ANIMASI KLIK FRAME DULU SEBELUM BUKA KAMERA
+          card.classList.add('card-pressed');
+          setTimeout(() => {
+            card.classList.remove('card-pressed');
+            startCameraProcess();
+          }, 320);
         } else {
-          // JIKA KARTU SAMPING DIKLIK, GESER KARTU TERSEBUT KE TENGAH
           currentCardIndex = index;
           updateFigmaSliderPositions();
         }
@@ -1259,7 +1291,6 @@
     }
   }
 
-  // FUNGSI RENDER PRESISI DENGAN SHADOW ESTETIK
   function renderPhotostripWithFigmaFrame() {
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
@@ -1349,7 +1380,6 @@
         generatedDataUrl = canvas.toDataURL('image/png');
       }
       
-      // Update semua gambar target hasil photobooth
       document.querySelectorAll('.result-img-target').forEach(img => {
         img.src = generatedDataUrl;
       });
