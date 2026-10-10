@@ -56,7 +56,6 @@
       margin: 15px 10px 40px;
     }
 
-    /* FULLSCREEN CONTAINER UNTUK STEP 2 & STEP 4 */
     .fullscreen-wrapper {
       width: 100vw;
       min-height: 100vh;
@@ -199,146 +198,190 @@
     .figma-card-item.hidden-left { transform: translateX(-120%) scale(0.65) rotate(-12deg); opacity: 0; z-index: 1; }
     .figma-card-item.hidden-right { transform: translateX(120%) scale(0.65) rotate(12deg); opacity: 0; z-index: 1; }
 
-    /* STEP 4: FULLSCREEN PRINTER MACHINE STYLE ALA VIDEO */
-    .printer-screen-bg {
-      background: linear-gradient(180deg, #1E1B1B 0%, #2D1A1E 100%);
-      min-height: 100vh;
+    /* ========================================================== */
+    /* DESAIN APLIKASI PRINTER FLAT VECTOR ALA LOTTIEFILES VIDEO  */
+    /* ========================================================== */
+    .printer-lottie-stage {
       width: 100vw;
-      padding: 20px 16px 30px;
+      min-height: 100vh;
+      background: #FFFFFF;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: space-between;
-    }
-
-    /* KEPALA MESIN PRINTER ATAS */
-    .printer-head-unit {
-      width: 100%;
-      max-width: 380px;
-      background: #110E0E;
-      border: 1px solid rgba(212, 175, 55, 0.3);
-      border-radius: 20px 20px 10px 10px;
-      padding: 16px 20px 12px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      justify-content: flex-start;
+      padding: 40px 16px 30px;
       position: relative;
-      z-index: 20;
+    }
+
+    .vector-printer-wrapper {
+      position: relative;
+      width: 310px;
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* KERTAS KOSONG ATAS (DITARIK MASUK) */
+    .paper-tray-input {
+      width: 160px;
+      height: 110px;
+      background: #FFFFFF;
+      border: 2px solid #E0E0E0;
+      border-bottom: none;
+      border-radius: 8px 8px 0 0;
+      margin-bottom: -15px;
+      box-shadow: 0 -4px 10px rgba(0,0,0,0.03);
+      transition: transform 1.8s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 1;
+    }
+
+    .paper-tray-input.pulled-in {
+      transform: translateY(85px); /* Kertas terhisap ke dalam printer */
+    }
+
+    /* BODI MESIN PRINTER FLAT DARK GREY */
+    .flat-printer-body {
+      width: 300px;
+      height: 135px;
+      background: #3B444B;
+      border-radius: 24px;
+      position: relative;
+      z-index: 10;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.18);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 16px;
+    }
+
+    /* PANEL KONTROL & LAMPU LED */
+    .printer-panel-top {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .led-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      transition: all 0.2s ease;
+    }
+
+    .led-red { background: #E74C3C; }
+    .led-green { background: #2ECC71; }
+
+    /* ANIMASI LAMPU LED BERKEDIP SAAT PROSES */
+    .led-red.blinking {
+      animation: ledBlinkRed 0.3s infinite alternate;
+    }
+    .led-green.blinking {
+      animation: ledBlinkGreen 0.3s infinite alternate;
+    }
+
+    @keyframes ledBlinkRed {
+      0% { background: #FF7675; box-shadow: 0 0 12px #E74C3C; }
+      100% { background: #7F1D1D; box-shadow: none; }
+    }
+
+    @keyframes ledBlinkGreen {
+      0% { background: #55E6C1; box-shadow: 0 0 12px #2ECC71; }
+      100% { background: #145A32; box-shadow: none; }
+    }
+
+    /* PINTU / CELAH BAGIAN TENGAH PRINTER */
+    .printer-door-tray {
+      width: 100%;
+      height: 48px;
+      background: #2C3539;
+      border-radius: 12px;
+      box-shadow: inset 0 2px 6px rgba(0,0,0,0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .printer-slot-gap {
+      width: 82%;
+      height: 8px;
+      background: #111;
+      border-radius: 4px;
+      position: relative;
+    }
+
+    /* WADAH TEMPAT RESULT FOTO KELUAR */
+    .printer-output-paper-container {
+      position: relative;
+      width: 230px;
+      margin-top: -10px;
+      overflow: hidden;
+      z-index: 5;
+      display: flex;
+      justify-content: center;
+      padding-top: 10px;
+    }
+
+    .ejected-photo-sheet {
+      width: 100%;
+      transform: translateY(-100%); /* Sembunyi penuh di celah printer */
+      transition: transform 3s cubic-bezier(0.25, 1, 0.5, 1);
+      filter: drop-shadow(0 12px 25px rgba(0,0,0,0.15));
+    }
+
+    .ejected-photo-sheet.fully-printed {
+      transform: translateY(0); /* Meluncur turun keluar penuh */
+    }
+
+    .ejected-photo-sheet img {
+      width: 100%;
+      border-radius: 10px;
+      display: block;
+    }
+
+    /* TEKS STATUS LOADING DIBATAS MESIN */
+    .printer-status-text-box {
+      margin-top: 25px;
       text-align: center;
+      z-index: 20;
     }
 
-    .printer-brand-text {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.1rem;
+    .status-main-label {
+      font-size: 0.92rem;
       font-weight: 700;
-      color: var(--gold-accent);
-      letter-spacing: 2px;
-      text-transform: uppercase;
-    }
-
-    .printer-led-bar {
+      color: var(--primary-crimson);
+      letter-spacing: 1px;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
-      margin-top: 8px;
     }
 
-    .printer-led-light {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: #444;
-      transition: all 0.2s ease;
+    .status-sub-label {
+      font-size: 0.78rem;
+      color: #777;
+      margin-top: 4px;
+      font-style: italic;
     }
 
-    /* EFK KEDIP LAMPU LED SAMBIL MENCETAK */
-    .printer-led-light.active-blink {
-      animation: ledBlink 0.35s infinite alternate;
-    }
-
-    @keyframes ledBlink {
-      0% { background: #FFD700; box-shadow: 0 0 12px #FFD700; }
-      100% { background: #333; box-shadow: none; }
-    }
-
-    /* CELAH SLOT TEMPAT KELUAR FOTO */
-    .printer-output-slot {
-      width: 90%;
-      height: 12px;
-      background: #000;
-      border-radius: 6px;
-      margin: 12px auto 0;
-      box-shadow: inset 0 3px 8px rgba(0,0,0,0.9);
-      position: relative;
-    }
-
-    /* AREA WADAH KERTAS FOTO SLIDE DOWN */
-    .printer-paper-ejector-box {
-      position: relative;
-      width: 100%;
-      max-width: 340px;
-      height: 52vh;
-      min-height: 340px;
-      overflow: hidden;
-      margin-top: -6px; /* Menempel persis di celah slot */
-      z-index: 10;
-      display: flex;
-      justify-content: center;
-    }
-
-    .printable-photo-sheet {
-      width: 82%;
-      max-width: 280px;
-      transform: translateY(-100%); /* Sembunyi penuh di atas celah */
-      transition: transform 2.5s cubic-bezier(0.25, 1, 0.5, 1);
-      filter: drop-shadow(0 15px 30px rgba(0,0,0,0.6));
-    }
-
-    .printable-photo-sheet.ejected {
-      transform: translateY(0); /* Meluncur keluar penuh */
-    }
-
-    .printable-photo-sheet img {
-      width: 100%;
-      border-radius: 12px;
-      display: block;
-    }
-
-    /* CONTAINER FORM UCAPAN DI KAKI PRINTER */
-    .printer-footer-controls {
+    /* CONTAINER FORM UCAPAN BAWAH */
+    .printer-bottom-actions {
       width: 100%;
       max-width: 380px;
-      z-index: 30;
+      margin-top: 20px;
       display: flex;
       flex-direction: column;
       gap: 10px;
+      z-index: 20;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.6s ease;
     }
 
-    .wish-form-box-dark {
-      background: rgba(255, 255, 255, 0.95);
-      border-radius: 16px;
-      padding: 14px;
-      text-align: left;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-    }
-
-    .wish-form-box-dark label {
-      display: block;
-      font-size: 0.72rem;
-      font-weight: 700;
-      color: var(--primary-crimson);
-      margin-bottom: 4px;
-    }
-
-    .wish-form-box-dark input, .wish-form-box-dark textarea {
-      width: 100%;
-      padding: 8px 10px;
-      border: 1px solid #D8B4B4;
-      border-radius: 8px;
-      font-family: inherit;
-      font-size: 0.8rem;
-      outline: none;
-      margin-bottom: 8px;
-      background: #FFF;
+    .printer-bottom-actions.visible {
+      opacity: 1;
+      transform: translateY(0);
     }
 
     /* KAMERA CONTROLS */
@@ -669,47 +712,61 @@
   </button>
 </div>
 
-<!-- STEP 4: FULLSCREEN PRINTER MACHINE ANIMATED PRINTING -->
-<div id="step-result" class="printer-screen-bg hidden">
+<!-- STEP 4: ANIMASI PRINTER FLAT VECTOR ALA LOTTIEFILES VIDEO -->
+<div id="step-result" class="printer-lottie-stage hidden">
   
-  <!-- KEPALA MESIN PRINTER ATAS -->
-  <div class="printer-head-unit">
-    <div class="printer-brand-text">FOTOME PRINTER UNIT</div>
-    <div style="font-size:0.68rem; color:#AAA; margin-top:2px;">Mencetak Kenangan Kebahagiaan...</div>
-    <div class="printer-led-bar">
-      <div class="printer-led-light" id="led-indicator"></div>
-      <span style="font-size: 0.65rem; color: #D4AF37; font-weight: 700;">PRINTING</span>
+  <div class="vector-printer-wrapper">
+    <!-- 1. Kertas Kosong Atas (Ditarik Masuk) -->
+    <div class="paper-tray-input" id="paper-input-sheet"></div>
+
+    <!-- 2. Bodi Mesin Printer Flat -->
+    <div class="flat-printer-body">
+      <div class="printer-panel-top">
+        <div class="led-dot led-red" id="led-red"></div>
+        <div class="led-dot led-green" id="led-green"></div>
+      </div>
+
+      <div class="printer-door-tray">
+        <div class="printer-slot-gap"></div>
+      </div>
     </div>
-    <!-- Slot Celah Tempat Keluar Foto -->
-    <div class="printer-output-slot"></div>
+
+    <!-- 3. Hasil Foto Keluar Dari Celah Bawah -->
+    <div class="printer-output-paper-container">
+      <div id="ejected-photo-sheet" class="ejected-photo-sheet">
+        <img id="result-img" alt="Hasil Photobooth">
+      </div>
+    </div>
   </div>
 
-  <!-- AREA KERTAS FOTO MELUNCUR KELUAR DARI SLOT -->
-  <div class="printer-paper-ejector-box">
-    <div id="polaroid-slide-elem" class="printable-photo-sheet">
-      <img id="result-img" alt="Hasil Photobooth">
+  <!-- Teks Status Loading Proses Cetak -->
+  <div class="printer-status-text-box">
+    <div class="status-main-label" id="printer-status-main">
+      <i class="fa-solid fa-spinner fa-spin" id="spinner-icon"></i>
+      <span id="printer-status-text">Memproses foto kamu...</span>
     </div>
+    <div class="status-sub-label" id="printer-status-sub">Harap tunggu sebentar</div>
   </div>
 
-  <!-- FORM UCAPAN & TOMBOL DILAYAR BANTALAN PRINTER -->
-  <div class="printer-footer-controls">
-    <div class="wish-form-box-dark">
-      <label>Nama Kamu / Inisial</label>
-      <input type="text" id="input-sender-name" placeholder="Misal: Budi & Sarah">
+  <!-- Form Ucapan & Tombol Simpan (Tampil Otomatis Setelah Selesai Cetak) -->
+  <div class="printer-bottom-actions" id="printer-bottom-actions">
+    <div style="background: #FAF6F0; border: 1px solid rgba(212,175,55,0.3); border-radius: 16px; padding: 14px; text-align: left;">
+      <label style="display:block; font-size:0.72rem; font-weight:700; color:var(--primary-crimson); margin-bottom:4px;">Nama Kamu / Inisial</label>
+      <input type="text" id="input-sender-name" style="width:100%; padding:8px 10px; border:1px solid #D8B4B4; border-radius:8px; font-size:0.8rem; outline:none; margin-bottom:8px; background:#FFF;" placeholder="Misal: Budi & Sarah">
 
-      <label>Pesan / Ucapan Doa Kamu</label>
-      <textarea id="input-sender-message" rows="2" placeholder="Tuliskan ucapan manismu di sini..."></textarea>
+      <label style="display:block; font-size:0.72rem; font-weight:700; color:var(--primary-crimson); margin-bottom:4px;">Pesan / Ucapan Doa Kamu</label>
+      <textarea id="input-sender-message" rows="2" style="width:100%; padding:8px 10px; border:1px solid #D8B4B4; border-radius:8px; font-size:0.8rem; outline:none; background:#FFF;" placeholder="Tuliskan ucapan manismu di sini..."></textarea>
     </div>
 
-    <button class="btn-primary-v2" onclick="saveAndShareToFeed()">
+    <button class="btn-primary-v2" style="max-width:100%;" onclick="saveAndShareToFeed()">
       <i class="fa-solid fa-paper-plane"></i> Unduh & Posting ke Galeri Tamu
     </button>
 
-    <button class="btn-secondary-v2" onclick="savePrivateOnly()">
+    <button class="btn-secondary-v2" style="max-width:100%;" onclick="savePrivateOnly()">
       <i class="fa-solid fa-download"></i> Simpan Sendiri (Privat Ke HP)
     </button>
 
-    <button class="btn-outline-v2" onclick="goToStep(2)">
+    <button class="btn-outline-v2" style="color:#888; max-width:100%;" onclick="goToStep(2)">
       <i class="fa-solid fa-rotate-right"></i> Foto Ulang
     </button>
   </div>
@@ -892,23 +949,48 @@
       updateFigmaSliderPositions();
     }
 
-    // EFEK PRINTER FULL SCREEN KELUAR DARI CELAH MESIN + LAMPU LED BERKEDIP
+    // EFEK ANIMASI PRINTER LOTTIEFILES ALA VIDEO
     if (step === 4) {
-      const photoSheet = document.getElementById('polaroid-slide-elem');
-      const led = document.getElementById('led-indicator');
+      const inputPaper = document.getElementById('paper-input-sheet');
+      const ejectedPhoto = document.getElementById('ejected-photo-sheet');
+      const ledRed = document.getElementById('led-red');
+      const ledGreen = document.getElementById('led-green');
+      const statusText = document.getElementById('printer-status-text');
+      const statusSub = document.getElementById('printer-status-sub');
+      const spinner = document.getElementById('spinner-icon');
+      const actionsBox = document.getElementById('printer-bottom-actions');
 
-      // Reset posisi foto ke dalam slot mesin printer
-      photoSheet.classList.remove('ejected');
-      led.classList.add('active-blink'); // Nyalakan lampu led berkedip
+      // Reset kondisi awal
+      inputPaper.classList.remove('pulled-in');
+      ejectedPhoto.classList.remove('fully-printed');
+      actionsBox.classList.remove('visible');
+      ledRed.classList.add('blinking');
+      ledGreen.classList.add('blinking');
+      spinner.style.display = 'inline-block';
+      statusText.innerText = "Memproses foto kamu...";
+      statusSub.innerText = "Kertas sedang ditarik masuk ke mesin...";
 
-      setTimeout(() => { 
-        photoSheet.classList.add('ejected'); // Foto meluncur keluar dari celah printer
-      }, 200);
-
-      // Matikan lampu kedip begitu proses cetak selesai (2.5 detik)
+      // TAHAP 1: Kertas atas ditarik masuk ke mesin (1.5 detik)
       setTimeout(() => {
-        led.classList.remove('active-blink');
-      }, 2700);
+        inputPaper.classList.add('pulled-in');
+        statusText.innerText = "Mencetak foto kenangan...";
+        statusSub.innerText = "Harap tunggu sebentar...";
+      }, 400);
+
+      // TAHAP 2: Hasil foto meluncur keluar dari celah bawah (3 detik)
+      setTimeout(() => {
+        ejectedPhoto.classList.add('fully-printed');
+      }, 1800);
+
+      // TAHAP 3: Proses selesai, lampu mati, tombol & form muncul
+      setTimeout(() => {
+        ledRed.classList.remove('blinking');
+        ledGreen.classList.remove('blinking');
+        spinner.style.display = 'none';
+        statusText.innerHTML = '<i class="fa-solid fa-circle-check" style="color:#2ECC71;"></i> Cetak Selesai!';
+        statusSub.innerText = "Foto kamu sudah siap disimpan!";
+        actionsBox.classList.add('visible');
+      }, 4800);
     }
   }
 
