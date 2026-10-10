@@ -130,71 +130,126 @@
       gap: 6px;
     }
 
-    /* SLIDER COVERFLOW 3D MELAYANG */
+    /* DESAIN SLIDER CAROUSEL FULL FOCUS (TAMPIL 1 FRAME DI TENGAH) */
     .section-label {
       font-size: 0.75rem;
       font-weight: 700;
-      color: var(--primary-crimson);
-      text-align: left;
-      margin: 14px 0 8px;
+      color: var(--gold-accent);
+      text-align: center;
+      margin: 6px 0 4px;
       text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: 2px;
     }
 
-    .frame-slider-container {
+    .section-subtitle-text {
+      font-size: 0.8rem;
+      color: #6E5353;
+      margin-bottom: 16px;
+      font-style: italic;
+    }
+
+    .carousel-focus-wrapper {
+      position: relative;
+      width: 100%;
+      max-width: 280px;
+      margin: 0 auto 12px;
       display: flex;
-      gap: 16px;
-      overflow-x: auto;
-      scroll-snap-type: x mandatory;
-      padding: 20px 10px 30px;
-      perspective: 1000px;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
+      align-items: center;
+      justify-content: center;
     }
 
-    .frame-slider-container::-webkit-scrollbar {
-      display: none;
-    }
-
-    .frame-card {
-      flex: 0 0 150px;
-      scroll-snap-align: center;
-      background: rgba(255, 255, 255, 0.6);
-      backdrop-filter: blur(8px);
-      border: 2px solid rgba(212, 175, 55, 0.3);
+    .carousel-track-container {
+      width: 100%;
+      overflow: hidden;
       border-radius: 20px;
-      padding: 10px;
-      cursor: pointer;
-      transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+      background: #FAF6F0;
+      padding: 12px;
+      box-shadow: inset 0 2px 8px rgba(0,0,0,0.04), 0 10px 25px rgba(122,28,40,0.08);
+      border: 1px solid rgba(212, 175, 55, 0.3);
+    }
+
+    .carousel-track {
+      display: flex;
+      transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+      width: 100%;
+    }
+
+    .carousel-slide {
+      min-width: 100%;
+      box-sizing: border-box;
       display: flex;
       flex-direction: column;
       align-items: center;
-      transform: scale(0.88) rotateY(12deg);
-      opacity: 0.65;
+      opacity: 0.4;
+      transform: scale(0.92);
+      transition: all 0.4s ease;
     }
 
-    .frame-card.selected {
-      border-color: var(--primary-crimson);
-      background: rgba(255, 255, 255, 0.95);
-      box-shadow: 0 12px 28px rgba(122, 28, 40, 0.22), 0 0 15px rgba(212, 175, 55, 0.35);
-      transform: scale(1.05) rotateY(0deg) translateY(-8px);
+    .carousel-slide.active-slide {
       opacity: 1;
-      z-index: 5;
+      transform: scale(1);
     }
 
-    .frame-preview-img {
+    .carousel-frame-img {
       width: 100%;
-      height: 200px;
+      max-height: 280px;
       object-fit: contain;
-      border-radius: 10px;
-      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.12));
+      border-radius: 12px;
+      filter: drop-shadow(0 6px 12px rgba(0,0,0,0.15));
     }
 
-    .frame-label {
-      font-size: 0.72rem;
+    .carousel-frame-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.15rem;
       font-weight: 700;
       color: var(--primary-crimson);
-      margin-top: 8px;
+      margin-top: 10px;
+    }
+
+    .carousel-nav-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255, 255, 255, 0.9);
+      color: var(--primary-crimson);
+      border: 1px solid rgba(212, 175, 55, 0.5);
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+      z-index: 10;
+      transition: all 0.2s;
+    }
+
+    .carousel-nav-btn:active { transform: translateY(-50%) scale(0.9); }
+    .carousel-nav-btn.prev { left: -16px; }
+    .carousel-nav-btn.next { right: -16px; }
+
+    .carousel-dots-bar {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+
+    .carousel-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #D8B4B4;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .carousel-dot.active-dot {
+      background: var(--primary-crimson);
+      width: 20px;
+      border-radius: 10px;
     }
 
     /* AREA KAMERA & KONTROL */
@@ -521,54 +576,75 @@
     </button>
   </div>
 
-  <!-- STEP 2: SLIDER PILIHAN BINGKAI FIGMA -->
+  <!-- STEP 2: SLIDER BINGKAI ELEGAN TAMU -->
   <div id="step-template" class="hidden">
-    <h2 class="font-serif" style="color: var(--primary-crimson); font-size: 1.7rem;">Pilih Style Frame</h2>
-    <div class="section-label">PILIHAN BINGKAI FIGMA</div>
+    <h2 class="font-serif" style="color: var(--primary-crimson); font-size: 1.8rem;">Pilih Desain Bingkai</h2>
+    <div class="section-label">KOLEKSI BINGKAI EKSKLUSIF</div>
+    <p class="section-subtitle-text">Geser untuk memilih desain favoritmu</p>
 
-    <div class="frame-slider-container">
-      <div class="frame-card selected" onclick="selectFrame(this, './assets/v2/dsg3.png', 3)">
-        <img src="./assets/v2/dsg3.png" class="frame-preview-img" alt="Desain 3">
-        <div class="frame-label">Design 3 (3 Foto)</div>
-      </div>
-      <div class="frame-card" onclick="selectFrame(this, './assets/v2/dsg2.png', 2)">
-        <img src="./assets/v2/dsg2.png" class="frame-preview-img" alt="Desain 2">
-        <div class="frame-label">Design 2 (2 Foto)</div>
-      </div>
-      <div class="frame-card" onclick="selectFrame(this, './assets/v2/dsg1.png', 1)">
-        <img src="./assets/v2/dsg1.png" class="frame-preview-img" alt="Desain 1">
-        <div class="frame-label">Design 1 (1 Foto)</div>
+    <div class="carousel-focus-wrapper">
+      <button class="carousel-nav-btn prev" onclick="moveCarousel(-1)"><i class="fa-solid fa-chevron-left"></i></button>
+
+      <div class="carousel-track-container">
+        <div class="carousel-track" id="carousel-track">
+          
+          <!-- FRAME LIST SLIDES -->
+          <div class="carousel-slide active-slide" data-path="./assets/v2/dsg3.png" data-count="3">
+            <img src="./assets/v2/dsg3.png" class="carousel-frame-img" alt="Classic Royal (3 Foto)">
+            <div class="carousel-frame-title">Classic Royal (3 Sesi Foto)</div>
+          </div>
+
+          <div class="carousel-slide" data-path="./assets/v2/dsg2.png" data-count="2">
+            <img src="./assets/v2/dsg2.png" class="carousel-frame-img" alt="Classic Royal (2 Foto)">
+            <div class="carousel-frame-title">Classic Royal (2 Sesi Foto)</div>
+          </div>
+
+          <div class="carousel-slide" data-path="./assets/v2/dsg1.png" data-count="1">
+            <img src="./assets/v2/dsg1.png" class="carousel-frame-img" alt="Classic Royal (1 Foto)">
+            <div class="carousel-frame-title">Classic Royal (1 Sesi Foto)</div>
+          </div>
+
+          <div class="carousel-slide" data-path="./assets/v2/flower3.png" data-count="3">
+            <img src="./assets/v2/flower3.png" class="carousel-frame-img" alt="Floral Romance (3 Foto)">
+            <div class="carousel-frame-title">Floral Romance (3 Sesi Foto)</div>
+          </div>
+
+          <div class="carousel-slide" data-path="./assets/v2/flower2.png" data-count="2">
+            <img src="./assets/v2/flower2.png" class="carousel-frame-img" alt="Floral Romance (2 Foto)">
+            <div class="carousel-frame-title">Floral Romance (2 Sesi Foto)</div>
+          </div>
+
+          <div class="carousel-slide" data-path="./assets/v2/flower1.png" data-count="1">
+            <img src="./assets/v2/flower1.png" class="carousel-frame-img" alt="Floral Romance (1 Foto)">
+            <div class="carousel-frame-title">Floral Romance (1 Sesi Foto)</div>
+          </div>
+
+          <div class="carousel-slide" data-path="./assets/v2/line 3.png" data-count="3">
+            <img src="./assets/v2/line 3.png" class="carousel-frame-img" alt="Minimalist Modern (3 Foto)">
+            <div class="carousel-frame-title">Minimalist Modern (3 Sesi Foto)</div>
+          </div>
+
+          <div class="carousel-slide" data-path="./assets/v2/line 2.png" data-count="2">
+            <img src="./assets/v2/line 2.png" class="carousel-frame-img" alt="Minimalist Modern (2 Foto)">
+            <div class="carousel-frame-title">Minimalist Modern (2 Sesi Foto)</div>
+          </div>
+
+          <div class="carousel-slide" data-path="./assets/v2/line 1.png" data-count="1">
+            <img src="./assets/v2/line 1.png" class="carousel-frame-img" alt="Minimalist Modern (1 Foto)">
+            <div class="carousel-frame-title">Minimalist Modern (1 Sesi Foto)</div>
+          </div>
+
+        </div>
       </div>
 
-      <div class="frame-card" onclick="selectFrame(this, './assets/v2/flower3.png', 3)">
-        <img src="./assets/v2/flower3.png" class="frame-preview-img" alt="Flower 3">
-        <div class="frame-label">Floral 3 (3 Foto)</div>
-      </div>
-      <div class="frame-card" onclick="selectFrame(this, './assets/v2/flower2.png', 2)">
-        <img src="./assets/v2/flower2.png" class="frame-preview-img" alt="Flower 2">
-        <div class="frame-label">Floral 2 (2 Foto)</div>
-      </div>
-      <div class="frame-card" onclick="selectFrame(this, './assets/v2/flower1.png', 1)">
-        <img src="./assets/v2/flower1.png" class="frame-preview-img" alt="Flower 1">
-        <div class="frame-label">Floral 1 (1 Foto)</div>
-      </div>
-
-      <div class="frame-card" onclick="selectFrame(this, './assets/v2/line 3.png', 3)">
-        <img src="./assets/v2/line 3.png" class="frame-preview-img" alt="Line 3">
-        <div class="frame-label">Minimal 3 (3 Foto)</div>
-      </div>
-      <div class="frame-card" onclick="selectFrame(this, './assets/v2/line 2.png', 2)">
-        <img src="./assets/v2/line 2.png" class="frame-preview-img" alt="Line 2">
-        <div class="frame-label">Minimal 2 (2 Foto)</div>
-      </div>
-      <div class="frame-card" onclick="selectFrame(this, './assets/v2/line 1.png', 1)">
-        <img src="./assets/v2/line 1.png" class="frame-preview-img" alt="Line 1">
-        <div class="frame-label">Minimal 1 (1 Foto)</div>
-      </div>
+      <button class="carousel-nav-btn next" onclick="moveCarousel(1)"><i class="fa-solid fa-chevron-right"></i></button>
     </div>
 
+    <!-- DOTS PAGINATION -->
+    <div class="carousel-dots-bar" id="carousel-dots"></div>
+
     <button class="btn-primary-v2" onclick="startCameraProcess()">
-      Lanjut Ke Kamera &rarr;
+      Pilih Bingkai Ini &amp; Lanjut Kamera &rarr;
     </button>
     <button class="btn-outline-v2" onclick="goToStep(1)">
       &larr; Kembali
@@ -606,7 +682,7 @@
       <i class="fa-solid fa-camera"></i> Ambil Foto
     </button>
     <button class="btn-outline-v2" onclick="stopCameraAndGoBack()">
-      Batal / Ubah Style
+      Batal / Ubah Bingkai
     </button>
   </div>
 
@@ -698,6 +774,72 @@
   let zoomLevel = 1;      
   let onAlertCloseCallback = null;
 
+  // CAROUSEL FOCUS SLIDER LOGIC
+  let currentCarouselIndex = 0;
+  let slides = [];
+
+  document.addEventListener("DOMContentLoaded", () => {
+    initCarouselSystem();
+  });
+
+  function initCarouselSystem() {
+    slides = Array.from(document.querySelectorAll('.carousel-slide'));
+    const dotsContainer = document.getElementById('carousel-dots');
+    dotsContainer.innerHTML = '';
+
+    slides.forEach((_, idx) => {
+      const dot = document.createElement('div');
+      dot.className = `carousel-dot ${idx === 0 ? 'active-dot' : ''}`;
+      dot.onclick = () => jumpToSlide(idx);
+      dotsContainer.appendChild(dot);
+    });
+
+    updateCarouselDisplay();
+
+    // Touch Swipe Support
+    const track = document.getElementById('carousel-track');
+    let startX = 0;
+    track.addEventListener('touchstart', e => { startX = e.touches[0].clientX; });
+    track.addEventListener('touchend', e => {
+      let endX = e.changedTouches[0].clientX;
+      if (startX - endX > 40) moveCarousel(1);
+      else if (endX - startX > 40) moveCarousel(-1);
+    });
+  }
+
+  function moveCarousel(direction) {
+    currentCarouselIndex += direction;
+    if (currentCarouselIndex < 0) currentCarouselIndex = slides.length - 1;
+    if (currentCarouselIndex >= slides.length) currentCarouselIndex = 0;
+    updateCarouselDisplay();
+  }
+
+  function jumpToSlide(index) {
+    currentCarouselIndex = index;
+    updateCarouselDisplay();
+  }
+
+  function updateCarouselDisplay() {
+    const track = document.getElementById('carousel-track');
+    track.style.transform = `translateX(-${currentCarouselIndex * 100}%)`;
+
+    slides.forEach((slide, idx) => {
+      if (idx === currentCarouselIndex) {
+        slide.classList.add('active-slide');
+        selectedFramePath = slide.getAttribute('data-path');
+        requiredPhotoCount = parseInt(slide.getAttribute('data-count')) || 3;
+      } else {
+        slide.classList.remove('active-slide');
+      }
+    });
+
+    const dots = document.querySelectorAll('.carousel-dot');
+    dots.forEach((dot, idx) => {
+      if (idx === currentCarouselIndex) dot.classList.add('active-dot');
+      else dot.classList.remove('active-dot');
+    });
+  }
+
   function showAlert(message, title = "Pemberitahuan", icon = "📸", callback = null) {
     document.getElementById('alert-icon').innerText = icon;
     document.getElementById('alert-title').innerText = title;
@@ -766,18 +908,15 @@
       gallerySection.classList.add('hidden');
     }
 
+    if (step === 2) {
+      updateCarouselDisplay();
+    }
+
     if (step === 4) {
       const slide = document.getElementById('polaroid-slide-elem');
       slide.classList.remove('printed');
       setTimeout(() => { slide.classList.add('printed'); }, 100);
     }
-  }
-
-  function selectFrame(cardElem, framePath, photoCount) {
-    document.querySelectorAll('.frame-card').forEach(c => c.classList.remove('selected'));
-    cardElem.classList.add('selected');
-    selectedFramePath = framePath;
-    requiredPhotoCount = photoCount || 3;
   }
 
   function startCameraProcess() {
@@ -955,7 +1094,7 @@
     }
   }
 
-  // FUNGSI RENDER PRESISI DENGAN SHADOW & POSISI 1 FOTO DITURUNKAN
+  // FUNGSI RENDER PRESISI DENGAN SHADOW ESTETIK
   function renderPhotostripWithFigmaFrame() {
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
@@ -988,7 +1127,7 @@
       ctx.imageSmoothingEnabled = true;
       ctx.imageSmoothingQuality = 'high';
 
-      // 1. Gambar Background Frame Figma
+      // 1. Gambar Background Bingkai
       ctx.drawImage(frameImg, 0, 0, W, H);
 
       // 2. Setting Ukuran & Posisi Foto Presisi
@@ -1000,7 +1139,7 @@
 
       if (totalPhotos === 1) {
         slotH = Math.round(H * 0.44);
-        startY = Math.round(H * 0.28); // Diturunkan lebih pas di tengah frame
+        startY = Math.round(H * 0.28); // Posisi 1 foto pas di tengah
         gapY = 0;
       } else if (totalPhotos === 2) {
         slotH = Math.round(H * 0.28);
@@ -1012,7 +1151,7 @@
         gapY = Math.round(H * 0.025);
       }
 
-      // 3. Tempel Foto Kamera di Atas Frame + Diberi Efek Shadow Estetik
+      // 3. Tempel Foto Kamera + Efek Bayangan Halus
       userImages.forEach((photo, i) => {
         const currentY = startY + (i * (slotH + gapY));
 
@@ -1033,16 +1172,12 @@
         }
 
         ctx.save();
-        
-        // EFEK SHADOW AGAR FOTO TERNILAI KLOP & ESTETIK DI ATAS FRAME
         ctx.shadowColor = "rgba(0, 0, 0, 0.22)";
         ctx.shadowBlur = 15;
         ctx.shadowOffsetX = 0;
         ctx.shadowOffsetY = 6;
 
-        // Cetak foto dengan bayangan
         ctx.drawImage(photo, offsetX, offsetY, renderW, renderH, startX, currentY, slotW, slotH);
-        
         ctx.restore();
       });
 
