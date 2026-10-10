@@ -238,8 +238,8 @@
       gap: 5px;
     }
 
-    .btn-batch-dl-plain { background: #2E7D32; color: #FFF; border: none; padding: 6px 4px; border-radius: 8px; font-size: 0.65rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 3px; }
-    .btn-batch-dl-msg { background: #1565C0; color: #FFF; border: none; padding: 6px 4px; border-radius: 8px; font-size: 0.65rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 3px; }
+    .btn-batch-dl-plain { background: #B3927A; color: #FFF; border: none; padding: 6px 4px; border-radius: 8px; font-size: 0.65rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 3px; }
+    .btn-batch-dl-msg { background: #8C6262; color: #FFF; border: none; padding: 6px 4px; border-radius: 8px; font-size: 0.65rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 3px; }
     .btn-batch-del { background: #C62828; color: #FFF; border: none; padding: 6px 4px; border-radius: 8px; font-size: 0.65rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 3px; }
 
     .gallery-grid-admin {
@@ -302,7 +302,7 @@
     .gallery-grid-name { font-size: 0.65rem; font-weight: 700; color: #8C6262; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; text-align: center; }
     .gallery-grid-msg { font-size: 0.58rem; color: #777; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; text-align: center; font-style: italic; }
 
-    /* STYLE MODUL KELOLA TAMU UNDANGAN */
+    /* STYLE MODUL KELOLA TAMU UNDANGAN (DISESUAIKAN TEMA DUSTY ROSE & MOCHA) */
     .guest-tools-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -322,12 +322,15 @@
       align-items: center;
       justify-content: center;
       gap: 6px;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+      box-shadow: 0 3px 8px rgba(140, 98, 98, 0.12);
+      transition: transform 0.1s;
     }
-    .btn-tool-add { background: #00796B; }
-    .btn-tool-import { background: #004D40; }
-    .btn-tool-text { background: #F57C00; }
-    .btn-tool-danger { background: #D32F2F; }
+    .btn-tool:active { transform: scale(0.96); }
+
+    .btn-tool-add { background: #8C6262; } /* Dusty Rose Dark */
+    .btn-tool-import { background: #B3927A; } /* Soft Mocha */
+    .btn-tool-text { background: #614141; } /* Deep Mocha */
+    .btn-tool-danger { background: #C62828; }
 
     .search-box-wrapper {
       position: relative;
@@ -376,7 +379,7 @@
     }
 
     .btn-view-mode.active {
-      background: #00796B;
+      background: #8C6262;
       color: #FFF;
     }
 
@@ -430,12 +433,12 @@
     }
     .btn-action-icon:active { transform: scale(0.92); }
 
-    .btn-act-wa { background: #004D40; }
-    .btn-act-share { background: #00796B; }
-    .btn-act-link { background: #FBC02D; color: #3D2B2B; }
+    .btn-act-wa { background: #25D366; }
+    .btn-act-share { background: #8C6262; }
+    .btn-act-link { background: #B3927A; }
     .btn-act-copy { background: #E0E0E0; color: #333; }
-    .btn-act-edit { background: #388E3C; }
-    .btn-act-del { background: #D32F2F; }
+    .btn-act-edit { background: #614141; }
+    .btn-act-del { background: #C62828; }
 
     .guest-table {
       width: 100%;
@@ -502,8 +505,8 @@
     .modal-msg { font-size: 0.82rem; color: #333; font-style: italic; background: #FAF6EE; padding: 10px; border-radius: 10px; line-height: 1.4; margin-bottom: 12px; }
     .modal-actions-col { display: flex; flex-direction: column; gap: 6px; }
 
-    .btn-modal-dl-plain { background: #2E7D32; color: #FFF; border: none; padding: 9px; border-radius: 12px; font-size: 0.75rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
-    .btn-modal-dl-msg { background: #1565C0; color: #FFF; border: none; padding: 9px; border-radius: 12px; font-size: 0.75rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
+    .btn-modal-dl-plain { background: #B3927A; color: #FFF; border: none; padding: 9px; border-radius: 12px; font-size: 0.75rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
+    .btn-modal-dl-msg { background: #8C6262; color: #FFF; border: none; padding: 9px; border-radius: 12px; font-size: 0.75rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
     .btn-modal-del { background: #C62828; color: #FFF; border: none; padding: 9px; border-radius: 12px; font-size: 0.75rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
 
     canvas { display: none; }
@@ -597,8 +600,8 @@
       <button class="btn-tool btn-tool-add" onclick="openAddGuestModal()">
         <i class="fa-solid fa-user-plus"></i> Tambah Tamu
       </button>
-      <button class="btn-tool btn-tool-import" onclick="triggerImportCSV()">
-        <i class="fa-solid fa-file-import"></i> Import Tamu
+      <button class="btn-tool btn-tool-import" onclick="openImportTutorialModal()">
+        <i class="fa-solid fa-file-csv"></i> Panduan & Import
       </button>
       <button class="btn-tool btn-tool-text" onclick="openTextTemplateModal()">
         <i class="fa-solid fa-comment-dots"></i> Teks & Link
@@ -695,6 +698,65 @@
   </div>
 </div>
 
+<!-- MODAL TUTORIAL & PANDUAN IMPORT CSV -->
+<div id="import-tutorial-modal" class="modal-overlay hidden">
+  <div class="modal-card" style="text-align: left;">
+    <button class="modal-close-btn" onclick="closeImportTutorialModal()">✕</button>
+    <div class="modal-user-name" style="text-align: center; margin-bottom: 12px;">
+      <i class="fa-solid fa-file-csv" style="color: #8C6262;"></i> Panduan Import Tamu
+    </div>
+    
+    <div style="font-size: 0.78rem; color: #444; line-height: 1.5;">
+      <p style="margin-bottom: 8px;">Untuk menambahkan banyak tamu sekaligus, kamu bisa mengunggah file berformat <b>.CSV</b>.</p>
+      
+      <div style="background: #FAF6EE; padding: 10px; border-radius: 10px; border: 1px solid #D8B4B4; margin-bottom: 10px;">
+        <b style="color: #8C6262; font-size: 0.75rem;">Aturan Susunan Kolom:</b>
+        <ul style="padding-left: 18px; margin-top: 4px; font-size: 0.72rem;">
+          <li><b>Kolom A:</b> Nama Tamu / Pasangan (Wajib)</li>
+          <li><b>Kolom B:</b> Nomor WhatsApp (Opsional)</li>
+        </ul>
+      </div>
+
+      <b style="font-size: 0.75rem; color: #8C6262;">Contoh Tampilan di Excel:</b>
+      <table style="width: 100%; border-collapse: collapse; margin: 6px 0 12px; font-size: 0.72rem; border: 1px solid #DDD;">
+        <tr style="background: #FAF6EE; font-weight: bold; color: #8C6262;">
+          <th style="border: 1px solid #DDD; padding: 4px;">Kolom A (Nama)</th>
+          <th style="border: 1px solid #DDD; padding: 4px;">Kolom B (WhatsApp)</th>
+        </tr>
+        <tr>
+          <td style="border: 1px solid #DDD; padding: 4px;">Rifa & R</td>
+          <td style="border: 1px solid #DDD; padding: 4px;">081234567890</td>
+        </tr>
+        <tr>
+          <td style="border: 1px solid #DDD; padding: 4px;">Kiki & Pasangan</td>
+          <td style="border: 1px solid #DDD; padding: 4px;">085712345678</td>
+        </tr>
+        <tr>
+          <td style="border: 1px solid #DDD; padding: 4px;">Upil & Dirga</td>
+          <td style="border: 1px solid #DDD; padding: 4px; color: #999; font-style: italic;">(Boleh kosong)</td>
+        </tr>
+      </table>
+
+      <b style="font-size: 0.75rem; color: #8C6262;">Cara Simpan dari Excel:</b>
+      <ol style="padding-left: 18px; margin: 4px 0 14px; font-size: 0.72rem;">
+        <li>Buka Excel / Google Sheets.</li>
+        <li>Isi data nama & nomor WhatsApp sesuai kolom.</li>
+        <li>Pilih menu <b>File > Save As / Download</b>.</li>
+        <li>Pilih format <b>CSV (Comma delimited) (*.csv)</b>.</li>
+      </ol>
+
+      <div style="display: flex; gap: 6px; margin-top: 10px;">
+        <button class="btn-batch-dl-msg" style="flex: 1; padding: 10px; font-size: 0.75rem;" onclick="downloadSampleCSV()">
+          <i class="fa-solid fa-download"></i> Contoh CSV
+        </button>
+        <button class="btn-add" style="flex: 1.2; padding: 10px; font-size: 0.75rem; border-radius: 8px;" onclick="triggerImportCSV()">
+          <i class="fa-solid fa-file-import"></i> Pilih File & Import
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <canvas id="exportCanvas"></canvas>
 
 <script>
@@ -703,7 +765,7 @@
   let editingGuestId = null;
   let guestViewMode = 'card';
   
-  // DEFAULT LINK UTAMA UNDANGAN
+  // DEFAULT LINK UTAMA UNDANGAN & TEMPLATE WA
   let baseInvitationUrl = "https://riyanardians.github.io/";
   let defaultWaTemplate = "Kepada Yth. Bapak/Ibu/Saudara/i {nama},\n\nTanpa mengurangi rasa hormat, perkenankan kami mengundang Anda untuk menghadiri acara pernikahan kami.\n\nBerikut link undangan digital kami:\n{link}\n\nMerupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu.\n\nTerima kasih,\nRiyan & Amelia";
 
@@ -1128,7 +1190,6 @@
     renderGuestList();
   }
 
-  // FUNGSI MEMBUAT LINK KUSTOM SECARA PRESISI DENGAN NAMA TAMU
   function getInvitationLink(guestName) {
     let cleanBase = baseInvitationUrl.trim();
     if (!cleanBase.endsWith('/')) {
@@ -1288,8 +1349,34 @@
     }
   }
 
-  // IMPORT CSV
+  // IMPORT CSV & PANDUAN
+  function openImportTutorialModal() {
+    document.getElementById('import-tutorial-modal').classList.remove('hidden');
+  }
+
+  function closeImportTutorialModal() {
+    document.getElementById('import-tutorial-modal').classList.add('hidden');
+  }
+
+  function downloadSampleCSV() {
+    const csvContent = "data:text/csv;charset=utf-8," 
+      + "Rifa & R,081234567890\n"
+      + "Kiki & Pasangan,085712345678\n"
+      + "Nong Ayu & Dani,\n"
+      + "Upil & Dirga,081399887766\n"
+      + "Ezri & Fiqma,081299001122";
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "contoh_daftar_tamu.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
   function triggerImportCSV() {
+    closeImportTutorialModal();
     document.getElementById('csv-file-input').click();
   }
 
