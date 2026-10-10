@@ -198,9 +198,7 @@
     .figma-card-item.hidden-left { transform: translateX(-120%) scale(0.65) rotate(-12deg); opacity: 0; z-index: 1; }
     .figma-card-item.hidden-right { transform: translateX(120%) scale(0.65) rotate(12deg); opacity: 0; z-index: 1; }
 
-    /* ========================================================== */
-    /* STAGE PRINTER PRESISI & POP-UP FOTO                       */
-    /* ========================================================== */
+    /* STAGE PRINTER PRESISI & POP-UP FOTO */
     .printer-lottie-stage {
       width: 100vw;
       min-height: 100vh;
@@ -653,7 +651,7 @@
   <div class="slider-header-box">
     <div class="section-label-fullscreen" id="card-theme-tag">ROYAL EDITION</div>
     <div class="slider-main-title" id="card-theme-name">Classic Royal (3 Foto)</div>
-    <div style="font-size:0.75rem; color:rgba(255,255,255,0.8); font-style:italic;">Geser layar ke kanan / kiri untuk memilih bingkai</div>
+    <div style="font-size:0.75rem; color:rgba(255,255,255,0.8); font-style:italic;">Geser atau ketuk bingkai untuk memilih</div>
   </div>
 
   <div class="slider-cards-viewport" id="slider-stack-box">
@@ -871,16 +869,58 @@
 
   function initFigmaSlider() {
     cardItems = Array.from(document.querySelectorAll('.figma-card-item'));
+    
+    // ATUR EVENT CLICK DENGAN MEMBEDAKAN SWIPE / DRAG DENGAN KLIK BIASA
+    cardItems.forEach((card, index) => {
+      let isDragging = false;
+      let startX = 0;
+
+      card.addEventListener('mousedown', (e) => {
+        isDragging = false;
+        startX = e.clientX;
+      });
+
+      card.addEventListener('mousemove', (e) => {
+        if (Math.abs(e.clientX - startX) > 5) {
+          isDragging = true;
+        }
+      });
+
+      card.addEventListener('touchstart', (e) => {
+        isDragging = false;
+        startX = e.touches[0].clientX;
+      }, { passive: true });
+
+      card.addEventListener('touchmove', (e) => {
+        if (Math.abs(e.touches[0].clientX - startX) > 5) {
+          isDragging = true;
+        }
+      }, { passive: true });
+
+      card.addEventListener('click', (e) => {
+        if (isDragging) return; // Jika gerakan swipe/drag, jangan trigget click
+
+        if (index === currentCardIndex) {
+          // KETIKA KARTU AKTIF (TENGAH) DIKLIK, LANGSUNG KE KAMERA
+          startCameraProcess();
+        } else {
+          // JIKA KARTU SAMPING DIKLIK, GESER KARTU TERSEBUT KE TENGAH
+          currentCardIndex = index;
+          updateFigmaSliderPositions();
+        }
+      });
+    });
+
     updateFigmaSliderPositions();
 
     const container = document.getElementById('slider-stack-box');
-    let startX = 0;
-    container.addEventListener('touchstart', e => { startX = e.touches[0].clientX; });
+    let touchStartX = 0;
+    container.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
     container.addEventListener('touchend', e => {
-      let endX = e.changedTouches[0].clientX;
-      if (startX - endX > 35) moveFigmaSlider(1);
-      else if (endX - startX > 35) moveFigmaSlider(-1);
-    });
+      let touchEndX = e.changedTouches[0].clientX;
+      if (touchStartX - touchEndX > 35) moveFigmaSlider(1);
+      else if (touchEndX - touchStartX > 35) moveFigmaSlider(-1);
+    }, { passive: true });
   }
 
   function moveFigmaSlider(dir) {
