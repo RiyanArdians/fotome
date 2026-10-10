@@ -302,9 +302,7 @@
     .gallery-grid-name { font-size: 0.65rem; font-weight: 700; color: #8C6262; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; text-align: center; }
     .gallery-grid-msg { font-size: 0.58rem; color: #777; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; text-align: center; font-style: italic; }
 
-    /* ========================================================= */
-    /* STYLE MODUL KELOLA TAMU UNDANGAN                          */
-    /* ========================================================= */
+    /* STYLE MODUL KELOLA TAMU UNDANGAN */
     .guest-tools-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -476,7 +474,7 @@
       background: #FFF;
       border-radius: 20px;
       padding: 20px;
-      max-width: 360px;
+      max-width: 380px;
       width: 100%;
       text-align: center;
       position: relative;
@@ -603,7 +601,7 @@
         <i class="fa-solid fa-file-import"></i> Import Tamu
       </button>
       <button class="btn-tool btn-tool-text" onclick="openTextTemplateModal()">
-        <i class="fa-solid fa-comment-dots"></i> Teks Pengantar
+        <i class="fa-solid fa-comment-dots"></i> Teks & Link
       </button>
       <button class="btn-tool btn-tool-danger" onclick="deleteAllGuests()">
         <i class="fa-solid fa-trash-can"></i> Hapus Semua
@@ -672,19 +670,27 @@
   </div>
 </div>
 
-<!-- MODAL TEKS PENGANTAR WA -->
+<!-- MODAL TEKS PENGANTAR WA & BASE LINK TUJUAN -->
 <div id="text-template-modal" class="modal-overlay hidden">
   <div class="modal-card">
     <button class="modal-close-btn" onclick="closeTextTemplateModal()">✕</button>
-    <div class="modal-user-name">Edit Teks Pengantar WA</div>
+    <div class="modal-user-name">Pengaturan Undangan & Link</div>
     <div style="margin-top: 12px; text-align: left;">
-      <p style="font-size: 0.72rem; color: #666; margin-bottom: 6px;">
+      <div class="form-group">
+        <label>Link Utama Tujuan Undangan</label>
+        <input type="text" id="input-base-url" placeholder="https://riyanardians.github.io/">
+      </div>
+
+      <p style="font-size: 0.72rem; color: #666; margin: 10px 0 6px;">
         Gunakan tag <b>{nama}</b> untuk menyisipkan nama tamu & <b>{link}</b> untuk link undangan otomatis.
       </p>
+      
       <div class="form-group">
-        <textarea id="input-text-template" rows="8" style="resize: vertical;"></textarea>
+        <label>Teks Pengantar WhatsApp</label>
+        <textarea id="input-text-template" rows="7" style="resize: vertical;"></textarea>
       </div>
-      <button class="btn-add" onclick="saveTextTemplate()">Simpan Template</button>
+
+      <button class="btn-add" onclick="saveTextTemplate()">Simpan Pengaturan</button>
     </div>
   </div>
 </div>
@@ -696,6 +702,9 @@
   let allGuests = [];
   let editingGuestId = null;
   let guestViewMode = 'card';
+  
+  // DEFAULT LINK UTAMA UNDANGAN
+  let baseInvitationUrl = "https://riyanardians.github.io/";
   let defaultWaTemplate = "Kepada Yth. Bapak/Ibu/Saudara/i {nama},\n\nTanpa mengurangi rasa hormat, perkenankan kami mengundang Anda untuk menghadiri acara pernikahan kami.\n\nBerikut link undangan digital kami:\n{link}\n\nMerupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu.\n\nTerima kasih,\nRiyan & Amelia";
 
   function formatFileName(name, msg, withMsg = false) {
@@ -1091,12 +1100,13 @@
   }
 
   // =========================================================
-  // 3. LOGIKA KELOLA TAMU UNDANGAN (FIREBASE REALTIME)
+  // 3. LOGIKA KELOLA TAMU UNDANGAN & BINDING LINK
   // =========================================================
   function loadGuestsAdmin() {
     db.collection('settings').doc('wa_template').get().then(doc => {
-      if (doc.exists && doc.data().text) {
-        defaultWaTemplate = doc.data().text;
+      if (doc.exists) {
+        if (doc.data().text) defaultWaTemplate = doc.data().text;
+        if (doc.data().baseUrl) baseInvitationUrl = doc.data().baseUrl;
       }
     });
 
@@ -1118,9 +1128,13 @@
     renderGuestList();
   }
 
+  // FUNGSI MEMBUAT LINK KUSTOM SECARA PRESISI DENGAN NAMA TAMU
   function getInvitationLink(guestName) {
-    const baseUrl = window.location.href.split('admin.html')[0];
-    return `${baseUrl}index.html?to=${encodeURIComponent(guestName)}`;
+    let cleanBase = baseInvitationUrl.trim();
+    if (!cleanBase.endsWith('/')) {
+      cleanBase += '/';
+    }
+    return `${cleanBase}?to=${encodeURIComponent(guestName)}`;
   }
 
   function renderGuestList() {
@@ -1314,8 +1328,9 @@
     reader.readAsText(file);
   }
 
-  // TEKS PENGANTAR WA
+  // MODAL TEKS PENGANTAR WA & EDIT BASE LINK
   function openTextTemplateModal() {
+    document.getElementById('input-base-url').value = baseInvitationUrl;
     document.getElementById('input-text-template').value = defaultWaTemplate;
     document.getElementById('text-template-modal').classList.remove('hidden');
   }
@@ -1325,13 +1340,21 @@
   }
 
   function saveTextTemplate() {
+    const newBaseUrl = document.getElementById('input-base-url').value.trim();
     const text = document.getElementById('input-text-template').value;
+    
+    if (newBaseUrl) baseInvitationUrl = newBaseUrl;
     defaultWaTemplate = text;
-    db.collection('settings').doc('wa_template').set({ text: text }, { merge: true })
-      .then(() => {
-        alert("Template pesan WhatsApp berhasil disimpan!");
-        closeTextTemplateModal();
-      });
+
+    db.collection('settings').doc('wa_template').set({
+      baseUrl: baseInvitationUrl,
+      text: text 
+    }, { merge: true })
+    .then(() => {
+      alert("Pengaturan link & template WhatsApp berhasil disimpan!");
+      closeTextTemplateModal();
+      renderGuestList();
+    });
   }
 
   function formatWaMessage(guestName) {
