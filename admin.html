@@ -23,7 +23,7 @@
 
     .admin-container {
       width: 100%;
-      max-width: 440px;
+      max-width: 460px;
       background: #FFF;
       border-radius: 24px;
       padding: 20px 14px;
@@ -49,7 +49,7 @@
     /* NAVIGASI TAB UTAMA ADMIN */
     .tab-header {
       display: flex;
-      gap: 8px;
+      gap: 6px;
       margin-bottom: 18px;
       border-bottom: 2px solid #FAF6EE;
       padding-bottom: 10px;
@@ -57,11 +57,11 @@
 
     .tab-btn {
       flex: 1;
-      padding: 10px;
+      padding: 10px 6px;
       border: none;
       background: #FAF6EE;
       border-radius: 12px;
-      font-size: 0.78rem;
+      font-size: 0.72rem;
       font-weight: 700;
       color: #8C6262;
       cursor: pointer;
@@ -77,7 +77,7 @@
     .tab-content { display: none; }
     .tab-content.active { display: block; }
 
-    /* FORM CARD TAMBAH PROJEK */
+    /* FORM CARD & ACTION BUTTONS */
     .form-card {
       background: #FAF6EE;
       border: 1px solid rgba(216, 180, 180, 0.4);
@@ -106,7 +106,7 @@
       margin-bottom: 3px;
     }
 
-    .form-group input {
+    .form-group input, .form-group textarea {
       width: 100%;
       padding: 8px 10px;
       border: 1px solid #D8B4B4;
@@ -130,7 +130,7 @@
       box-shadow: 0 4px 12px rgba(140, 98, 98, 0.2);
     }
 
-    /* KARTU ITEM PROJEK */
+    /* ITEM PROJEK */
     .event-card {
       border: 1px solid #EAE0E0;
       border-radius: 14px;
@@ -172,7 +172,7 @@
       margin-left: 6px;
     }
 
-    /* COUNTER SUMMARY BADGE */
+    /* GALERI */
     .gallery-stats-bar {
       display: flex;
       align-items: center;
@@ -198,7 +198,6 @@
       border: 1px solid #C8E6C9;
     }
 
-    /* BATCH ACTION BAR */
     .batch-bar {
       background: #FAF6EE;
       border: 1px solid rgba(216, 180, 180, 0.4);
@@ -239,52 +238,10 @@
       gap: 5px;
     }
 
-    .btn-batch-dl-plain {
-      background: #2E7D32;
-      color: #FFF;
-      border: none;
-      padding: 6px 4px;
-      border-radius: 8px;
-      font-size: 0.65rem;
-      font-weight: 700;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 3px;
-    }
+    .btn-batch-dl-plain { background: #2E7D32; color: #FFF; border: none; padding: 6px 4px; border-radius: 8px; font-size: 0.65rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 3px; }
+    .btn-batch-dl-msg { background: #1565C0; color: #FFF; border: none; padding: 6px 4px; border-radius: 8px; font-size: 0.65rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 3px; }
+    .btn-batch-del { background: #C62828; color: #FFF; border: none; padding: 6px 4px; border-radius: 8px; font-size: 0.65rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 3px; }
 
-    .btn-batch-dl-msg {
-      background: #1565C0;
-      color: #FFF;
-      border: none;
-      padding: 6px 4px;
-      border-radius: 8px;
-      font-size: 0.65rem;
-      font-weight: 700;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 3px;
-    }
-
-    .btn-batch-del {
-      background: #C62828;
-      color: #FFF;
-      border: none;
-      padding: 6px 4px;
-      border-radius: 8px;
-      font-size: 0.65rem;
-      font-weight: 700;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 3px;
-    }
-
-    /* GRID ADMIN RAPI SERAGAM */
     .gallery-grid-admin {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -342,29 +299,165 @@
       display: block;
     }
 
-    .gallery-grid-name {
-      font-size: 0.65rem;
+    .gallery-grid-name { font-size: 0.65rem; font-weight: 700; color: #8C6262; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; text-align: center; }
+    .gallery-grid-msg { font-size: 0.58rem; color: #777; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; text-align: center; font-style: italic; }
+
+    /* ========================================================= */
+    /* STYLE MODUL KELOLA TAMU UNDANGAN                          */
+    /* ========================================================= */
+    .guest-tools-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .btn-tool {
+      padding: 10px;
+      border-radius: 12px;
+      border: none;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #FFF;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+    }
+    .btn-tool-add { background: #00796B; }
+    .btn-tool-import { background: #004D40; }
+    .btn-tool-text { background: #F57C00; }
+    .btn-tool-danger { background: #D32F2F; }
+
+    .search-box-wrapper {
+      position: relative;
+      margin-bottom: 12px;
+    }
+
+    .search-box-wrapper input {
+      width: 100%;
+      padding: 10px 12px 10px 36px;
+      border: 1px solid #D8B4B4;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      outline: none;
+      background: #FAF6EE;
+    }
+
+    .search-box-wrapper i {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #8C6262;
+      font-size: 0.85rem;
+    }
+
+    .view-toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      background: #FAF6EE;
+      padding: 4px;
+      border-radius: 12px;
+    }
+
+    .btn-view-mode {
+      flex: 1;
+      padding: 8px;
+      border: none;
+      border-radius: 10px;
+      font-size: 0.72rem;
       font-weight: 700;
       color: #8C6262;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      width: 100%;
-      text-align: center;
+      background: transparent;
+      cursor: pointer;
     }
 
-    .gallery-grid-msg {
-      font-size: 0.58rem;
+    .btn-view-mode.active {
+      background: #00796B;
+      color: #FFF;
+    }
+
+    /* KARTU TAMU & TABEL TAMU */
+    .guest-card {
+      background: #FFF;
+      border: 1px solid #EAE0E0;
+      border-radius: 14px;
+      padding: 12px;
+      margin-bottom: 8px;
+      text-align: left;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+    }
+
+    .guest-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .guest-name {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #3D2B2B;
+    }
+
+    .guest-phone {
+      font-size: 0.72rem;
       color: #777;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      width: 100%;
-      text-align: center;
-      font-style: italic;
     }
 
-    /* MODAL POP-UP */
+    .guest-actions-row {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+    }
+
+    .btn-action-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      border: none;
+      color: #FFF;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.82rem;
+      transition: transform 0.1s;
+    }
+    .btn-action-icon:active { transform: scale(0.92); }
+
+    .btn-act-wa { background: #004D40; }
+    .btn-act-share { background: #00796B; }
+    .btn-act-link { background: #FBC02D; color: #3D2B2B; }
+    .btn-act-copy { background: #E0E0E0; color: #333; }
+    .btn-act-edit { background: #388E3C; }
+    .btn-act-del { background: #D32F2F; }
+
+    .guest-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.75rem;
+      text-align: left;
+    }
+
+    .guest-table th, .guest-table td {
+      padding: 8px 6px;
+      border-bottom: 1px solid #EAE0E0;
+    }
+
+    .guest-table th {
+      background: #FAF6EE;
+      color: #8C6262;
+      font-weight: 700;
+    }
+
+    /* MODAL POP-UP GENERAL */
     .hidden { display: none !important; }
 
     .modal-overlay {
@@ -406,80 +499,14 @@
       cursor: pointer;
     }
 
-    .modal-user-name {
-      font-size: 1rem;
-      font-weight: 700;
-      color: #8C6262;
-      margin-bottom: 2px;
-    }
+    .modal-user-name { font-size: 1rem; font-weight: 700; color: #8C6262; margin-bottom: 2px; }
+    .modal-img { width: 100%; border-radius: 12px; margin: 10px 0; }
+    .modal-msg { font-size: 0.82rem; color: #333; font-style: italic; background: #FAF6EE; padding: 10px; border-radius: 10px; line-height: 1.4; margin-bottom: 12px; }
+    .modal-actions-col { display: flex; flex-direction: column; gap: 6px; }
 
-    .modal-img {
-      width: 100%;
-      border-radius: 12px;
-      margin: 10px 0;
-    }
-
-    .modal-msg {
-      font-size: 0.82rem;
-      color: #333;
-      font-style: italic;
-      background: #FAF6EE;
-      padding: 10px;
-      border-radius: 10px;
-      line-height: 1.4;
-      margin-bottom: 12px;
-    }
-
-    .modal-actions-col {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .btn-modal-dl-plain {
-      background: #2E7D32;
-      color: #FFF;
-      border: none;
-      padding: 9px;
-      border-radius: 12px;
-      font-size: 0.75rem;
-      font-weight: 700;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-    }
-
-    .btn-modal-dl-msg {
-      background: #1565C0;
-      color: #FFF;
-      border: none;
-      padding: 9px;
-      border-radius: 12px;
-      font-size: 0.75rem;
-      font-weight: 700;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-    }
-
-    .btn-modal-del {
-      background: #C62828;
-      color: #FFF;
-      border: none;
-      padding: 9px;
-      border-radius: 12px;
-      font-size: 0.75rem;
-      font-weight: 700;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-    }
+    .btn-modal-dl-plain { background: #2E7D32; color: #FFF; border: none; padding: 9px; border-radius: 12px; font-size: 0.75rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
+    .btn-modal-dl-msg { background: #1565C0; color: #FFF; border: none; padding: 9px; border-radius: 12px; font-size: 0.75rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
+    .btn-modal-del { background: #C62828; color: #FFF; border: none; padding: 9px; border-radius: 12px; font-size: 0.75rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
 
     canvas { display: none; }
   </style>
@@ -491,16 +518,19 @@
 <body>
 
 <div class="admin-container">
-  <h2 class="main-title">Photobooth Control</h2>
-  <p class="sub-title">Kelola saklar akses & moderasi galeri foto ucapan.</p>
+  <h2 class="main-title">FOTOME Control Panel</h2>
+  <p class="sub-title">Kelola saklar event, galeri foto, dan daftar tamu undangan.</p>
 
-  <!-- TAB NAVIGASI -->
+  <!-- TAB NAVIGASI UTAMA -->
   <div class="tab-header">
     <button class="tab-btn active" onclick="switchTab('tab-projects', this)">
       <i class="fa-solid fa-toggle-on"></i> Saklar Event
     </button>
     <button class="tab-btn" onclick="switchTab('tab-gallery', this)">
       <i class="fa-solid fa-images"></i> Kelola Galeri
+    </button>
+    <button class="tab-btn" onclick="switchTab('tab-guests', this)">
+      <i class="fa-solid fa-users"></i> Tamu Undangan
     </button>
   </div>
 
@@ -527,14 +557,11 @@
 
   <!-- TAB 2: KELOLA GALERI -->
   <div id="tab-gallery" class="tab-content">
-    
-    <!-- STATS COUNTER BAR -->
     <div class="gallery-stats-bar">
       <span class="stat-badge-total" id="stat-total-photos">Total Foto: 0</span>
       <span class="stat-badge-selected" id="stat-selected-photos">Terpilih: 0</span>
     </div>
 
-    <!-- BARIS KONTROL AKSI MASAL -->
     <div class="batch-bar">
       <div class="batch-top-row">
         <label class="batch-select-all">
@@ -561,9 +588,50 @@
     </div>
   </div>
 
+  <!-- TAB 3: KELOLA TAMU UNDANGAN -->
+  <div id="tab-guests" class="tab-content">
+    <div style="font-size: 0.8rem; font-weight: 700; color: #8C6262; margin-bottom: 8px; text-align: left;" id="guest-count-label">
+      Bagikan Undangan (0 Tamu)
+    </div>
+
+    <!-- TOMBOL FITUR TAMU -->
+    <div class="guest-tools-grid">
+      <button class="btn-tool btn-tool-add" onclick="openAddGuestModal()">
+        <i class="fa-solid fa-user-plus"></i> Tambah Tamu
+      </button>
+      <button class="btn-tool btn-tool-import" onclick="triggerImportCSV()">
+        <i class="fa-solid fa-file-import"></i> Import Tamu
+      </button>
+      <button class="btn-tool btn-tool-text" onclick="openTextTemplateModal()">
+        <i class="fa-solid fa-comment-dots"></i> Teks Pengantar
+      </button>
+      <button class="btn-tool btn-tool-danger" onclick="deleteAllGuests()">
+        <i class="fa-solid fa-trash-can"></i> Hapus Semua
+      </button>
+    </div>
+    <input type="file" id="csv-file-input" accept=".csv" style="display: none;" onchange="handleImportCSV(this)">
+
+    <!-- SEARCH BAR -->
+    <div class="search-box-wrapper">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" id="search-guest-input" placeholder="Cari nama / WhatsApp..." oninput="renderGuestList()">
+    </div>
+
+    <!-- TOGGLE TAMPILAN TABEL / KARTU -->
+    <div class="view-toggle-row">
+      <button class="btn-view-mode" id="btn-view-table" onclick="setGuestViewMode('table')">Tabel</button>
+      <button class="btn-view-mode active" id="btn-view-card" onclick="setGuestViewMode('card')">Kartu</button>
+    </div>
+
+    <!-- CONTAINER DAFTAR TAMU -->
+    <div id="guest-list-container">
+      <p style="font-size: 0.75rem; color: #999;">Memuat daftar tamu...</p>
+    </div>
+  </div>
+
 </div>
 
-<!-- MODAL POP-UP INDIVIDUAL DENGAN 2 OPSI UNDUH -->
+<!-- MODAL POP-UP GALERI INDIVIDUAL -->
 <div id="admin-modal" class="modal-overlay hidden">
   <div class="modal-card">
     <button class="modal-close-btn" onclick="closeAdminModal()">✕</button>
@@ -585,10 +653,50 @@
   </div>
 </div>
 
+<!-- MODAL TAMBAH / EDIT TAMU -->
+<div id="guest-modal" class="modal-overlay hidden">
+  <div class="modal-card">
+    <button class="modal-close-btn" onclick="closeGuestModal()">✕</button>
+    <div class="modal-user-name" id="guest-modal-title">Tambah Tamu Baru</div>
+    <div style="margin-top: 15px;">
+      <div class="form-group">
+        <label>Nama Tamu / Pasangan</label>
+        <input type="text" id="input-guest-name" placeholder="Misal: Rifa & R">
+      </div>
+      <div class="form-group">
+        <label>Nomor WhatsApp (Opsional)</label>
+        <input type="text" id="input-guest-phone" placeholder="08123456789">
+      </div>
+      <button class="btn-add" style="margin-top: 10px;" onclick="saveGuestData()">Simpan Tamu</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL TEKS PENGANTAR WA -->
+<div id="text-template-modal" class="modal-overlay hidden">
+  <div class="modal-card">
+    <button class="modal-close-btn" onclick="closeTextTemplateModal()">✕</button>
+    <div class="modal-user-name">Edit Teks Pengantar WA</div>
+    <div style="margin-top: 12px; text-align: left;">
+      <p style="font-size: 0.72rem; color: #666; margin-bottom: 6px;">
+        Gunakan tag <b>{nama}</b> untuk menyisipkan nama tamu & <b>{link}</b> untuk link undangan otomatis.
+      </p>
+      <div class="form-group">
+        <textarea id="input-text-template" rows="8" style="resize: vertical;"></textarea>
+      </div>
+      <button class="btn-add" onclick="saveTextTemplate()">Simpan Template</button>
+    </div>
+  </div>
+</div>
+
 <canvas id="exportCanvas"></canvas>
 
 <script>
   let allGalleryPosts = []; 
+  let allGuests = [];
+  let editingGuestId = null;
+  let guestViewMode = 'card';
+  let defaultWaTemplate = "Kepada Yth. Bapak/Ibu/Saudara/i {nama},\n\nTanpa mengurangi rasa hormat, perkenankan kami mengundang Anda untuk menghadiri acara pernikahan kami.\n\nBerikut link undangan digital kami:\n{link}\n\nMerupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu.\n\nTerima kasih,\nRiyan & Amelia";
 
   function formatFileName(name, msg, withMsg = false) {
     const cleanName = (name || 'Tamu').replace(/[^\w\s-]/gi, '').trim() || 'Tamu';
@@ -601,7 +709,6 @@
     return `${cleanName}.jpg`;
   }
 
-  // FUNGSI HELPER: WORD-WRAP TEKS PANJANG DENGAN UKURAN HIGH-DPI
   function wrapCanvasText(ctx, text, maxWidth) {
     const words = text.split(" ");
     const lines = [];
@@ -621,7 +728,6 @@
     return lines;
   }
 
-  // FUNGSI MELUKIS DENGAN RESOLUSI MAKSIMAL ULTRA HD (3X HIGH-DPI)
   function generateImageWithText(photoUrl, name, message, callback) {
     const img = new Image();
     img.crossOrigin = "anonymous";
@@ -629,17 +735,13 @@
       const canvas = document.getElementById('exportCanvas');
       const ctx = canvas.getContext('2d');
 
-      // 1. Dapatkan resolusi asli foto (misal: 600px x 1800px)
       const baseWidth = img.naturalWidth || img.width || 600;
       const baseHeight = img.naturalHeight || img.height || 1800;
-
-      // 2. Tentukan FAKTOR SKALA ULTRA HD (2x lipat ketajaman piksel)
       const scale = 2; 
 
       const imgW = baseWidth * scale;
       const imgH = baseHeight * scale;
 
-      // Setting ukuran font & margin sesuai skala High-DPI
       const maxTextWidth = imgW - (120 * scale);
       const fontSizeName = Math.round(22 * scale);
       const fontSizeMsg = Math.round(17 * scale);
@@ -649,26 +751,20 @@
       const cleanMsg = (message && message !== '-') ? `"${message}"` : "";
       const msgLines = cleanMsg ? wrapCanvasText(ctx, cleanMsg, maxTextWidth) : [];
 
-      // Hitung kebutuhan tinggi footer
       let footerHeight = 0;
       if (name || msgLines.length > 0) {
         footerHeight = Math.round(70 * scale) + (name ? Math.round(35 * scale) : 0) + (msgLines.length * lineHeight);
       }
 
-      // Ukuran Canvas Fisik Ultra HD
       canvas.width = imgW;
       canvas.height = imgH + footerHeight;
 
-      // KUALITAS SMOOTHING MAKSIMAL (VECTOR LIKE)
       ctx.imageSmoothingEnabled = true;
       ctx.imageSmoothingQuality = 'high';
 
-      // 3. Gambar Foto Utama dengan Skala Resolusi Tinggi
       ctx.drawImage(img, 0, 0, imgW, imgH);
 
-      // 4. Gambar Area Footer Pesan
       if (footerHeight > 0) {
-        // Ambil sampel warna background paling bawah
         const pixelData = ctx.getImageData(10, imgH - 10, 1, 1).data;
         const bgColor = `rgb(${pixelData[0]}, ${pixelData[1]}, ${pixelData[2]})`;
 
@@ -679,7 +775,6 @@
 
         let currentY = imgH + (28 * scale);
 
-        // Garis Pemisah Rapi & Tajam
         ctx.strokeStyle = textColor;
         ctx.globalAlpha = 0.25;
         ctx.lineWidth = Math.round(1.5 * scale);
@@ -695,7 +790,6 @@
         ctx.lineTo(canvas.width - (50 * scale), currentY);
         ctx.stroke();
 
-        // Aksen Bintang
         ctx.globalAlpha = 0.6;
         ctx.fillStyle = textColor;
         ctx.font = `${Math.round(15 * scale)}px 'Plus Jakarta Sans', sans-serif`;
@@ -705,14 +799,12 @@
         ctx.globalAlpha = 1.0;
         currentY += Math.round(38 * scale);
 
-        // Cetak Nama Tamu (High Definition Font)
         if (name) {
           ctx.font = `bold ${fontSizeName}px 'Plus Jakarta Sans', sans-serif`;
           ctx.fillText(`From: ${name}`, canvas.width / 2, currentY);
           currentY += Math.round(32 * scale);
         }
 
-        // Cetak Pesan Ucapan Multi-baris
         if (msgLines.length > 0) {
           ctx.font = `italic ${fontSizeMsg}px 'Plus Jakarta Sans', sans-serif`;
           ctx.fillStyle = textColor;
@@ -725,7 +817,6 @@
         }
       }
 
-      // Export JPEG dengan Kualitas Kerapatan 100% (1.0)
       const finalDataUrl = canvas.toDataURL('image/jpeg', 1.0);
       callback(finalDataUrl);
     };
@@ -740,6 +831,8 @@
 
     if (tabId === 'tab-gallery') {
       loadGalleryAdmin();
+    } else if (tabId === 'tab-guests') {
+      loadGuestsAdmin();
     }
   }
 
@@ -892,7 +985,6 @@
     updateCounters();
   }
 
-  // UNDUH MASAL (POLOS ATAU DENGAN PESAN)
   function downloadSelectedPosts(withMessage) {
     const selectedCbs = document.querySelectorAll('.post-select-cb:checked');
     if (selectedCbs.length === 0) {
@@ -947,7 +1039,6 @@
     }
   }
 
-  // MODAL INDIVIDUAL
   let activePostId = null;
   let activePhotoUrl = "";
   let activeSenderName = "";
@@ -963,7 +1054,6 @@
     document.getElementById('modal-sender-msg').innerText = `"${message}"`;
     document.getElementById('modal-img-src').src = photoData;
 
-    // OPSI 1: UNDUH POLOS
     document.getElementById('btn-modal-dl-plain').onclick = () => {
       const fileName = formatFileName(activeSenderName, activeSenderMsg, false);
       const a = document.createElement('a');
@@ -972,7 +1062,6 @@
       a.click();
     };
 
-    // OPSI 2: UNDUH DENGAN PESAN
     document.getElementById('btn-modal-dl-msg').onclick = () => {
       generateImageWithText(activePhotoUrl, activeSenderName, activeSenderMsg, (finalDataUrl) => {
         const fileName = formatFileName(activeSenderName, activeSenderMsg, true);
@@ -999,6 +1088,299 @@
 
   function closeAdminModal() {
     document.getElementById('admin-modal').classList.add('hidden');
+  }
+
+  // =========================================================
+  // 3. LOGIKA KELOLA TAMU UNDANGAN (FIREBASE REALTIME)
+  // =========================================================
+  function loadGuestsAdmin() {
+    db.collection('settings').doc('wa_template').get().then(doc => {
+      if (doc.exists && doc.data().text) {
+        defaultWaTemplate = doc.data().text;
+      }
+    });
+
+    db.collection('guests').onSnapshot(snapshot => {
+      allGuests = [];
+      snapshot.forEach(doc => {
+        allGuests.push({ id: doc.id, ...doc.data() });
+      });
+
+      document.getElementById('guest-count-label').innerText = `Bagikan Undangan (${allGuests.length} Tamu)`;
+      renderGuestList();
+    });
+  }
+
+  function setGuestViewMode(mode) {
+    guestViewMode = mode;
+    document.getElementById('btn-view-table').classList.toggle('active', mode === 'table');
+    document.getElementById('btn-view-card').classList.toggle('active', mode === 'card');
+    renderGuestList();
+  }
+
+  function getInvitationLink(guestName) {
+    const baseUrl = window.location.href.split('admin.html')[0];
+    return `${baseUrl}index.html?to=${encodeURIComponent(guestName)}`;
+  }
+
+  function renderGuestList() {
+    const container = document.getElementById('guest-list-container');
+    const query = document.getElementById('search-guest-input').value.toLowerCase().trim();
+
+    const filtered = allGuests.filter(g => 
+      (g.name && g.name.toLowerCase().includes(query)) || 
+      (g.phone && g.phone.includes(query))
+    );
+
+    if (filtered.length === 0) {
+      container.innerHTML = '<p style="font-size: 0.75rem; color: #999; text-align: center; margin-top: 15px;">Belum ada tamu ditemukan.</p>';
+      return;
+    }
+
+    if (guestViewMode === 'card') {
+      let html = '';
+      filtered.forEach((guest, index) => {
+        const link = getInvitationLink(guest.name);
+        html += `
+          <div class="guest-card">
+            <div class="guest-card-header">
+              <div>
+                <div class="guest-name">${index + 1}. ${guest.name}</div>
+                ${guest.phone ? `<div class="guest-phone"><i class="fa-brands fa-whatsapp"></i> ${guest.phone}</div>` : ''}
+              </div>
+            </div>
+            <div class="guest-actions-row">
+              <button class="btn-action-icon btn-act-wa" title="Kirim WA" onclick="sendWhatsApp('${guest.name}', '${guest.phone}')">
+                <i class="fa-brands fa-whatsapp"></i>
+              </button>
+              <button class="btn-action-icon btn-act-share" title="Bagikan" onclick="shareInvitation('${guest.name}')">
+                <i class="fa-solid fa-share-nodes"></i>
+              </button>
+              <button class="btn-action-icon btn-act-link" title="Buka Link" onclick="window.open('${link}', '_blank')">
+                <i class="fa-solid fa-link"></i>
+              </button>
+              <button class="btn-action-icon btn-act-copy" title="Salin Teks" onclick="copyWaText('${guest.name}')">
+                <i class="fa-regular fa-copy"></i>
+              </button>
+              <button class="btn-action-icon btn-act-edit" title="Edit" onclick="openEditGuestModal('${guest.id}', '${guest.name}', '${guest.phone || ''}')">
+                <i class="fa-solid fa-pen"></i>
+              </button>
+              <button class="btn-action-icon btn-act-del" title="Hapus" onclick="deleteGuest('${guest.id}')">
+                <i class="fa-solid fa-trash"></i>
+              </button>
+            </div>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    } else {
+      let html = `
+        <table class="guest-table">
+          <thead>
+            <tr>
+              <th style="width: 30px;">NO</th>
+              <th>NAMA TAMU</th>
+              <th style="text-align: right;">AKSI</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+      filtered.forEach((guest, index) => {
+        const link = getInvitationLink(guest.name);
+        html += `
+          <tr>
+            <td>${index + 1}</td>
+            <td>
+              <b>${guest.name}</b>
+              ${guest.phone ? `<br><span style="font-size:0.65rem; color:#888;">${guest.phone}</span>` : ''}
+            </td>
+            <td style="text-align: right;">
+              <div style="display:flex; gap:3px; justify-content:flex-end;">
+                <button class="btn-action-icon btn-act-wa" style="width:26px; height:26px; font-size:0.7rem;" onclick="sendWhatsApp('${guest.name}', '${guest.phone}')"><i class="fa-brands fa-whatsapp"></i></button>
+                <button class="btn-action-icon btn-act-link" style="width:26px; height:26px; font-size:0.7rem;" onclick="window.open('${link}', '_blank')"><i class="fa-solid fa-link"></i></button>
+                <button class="btn-action-icon btn-act-del" style="width:26px; height:26px; font-size:0.7rem;" onclick="deleteGuest('${guest.id}')"><i class="fa-solid fa-trash"></i></button>
+              </div>
+            </td>
+          </tr>
+        `;
+      });
+      html += '</tbody></table>';
+      container.innerHTML = html;
+    }
+  }
+
+  // TAMBAH / EDIT TAMU
+  function openAddGuestModal() {
+    editingGuestId = null;
+    document.getElementById('guest-modal-title').innerText = 'Tambah Tamu Baru';
+    document.getElementById('input-guest-name').value = '';
+    document.getElementById('input-guest-phone').value = '';
+    document.getElementById('guest-modal').classList.remove('hidden');
+  }
+
+  function openEditGuestModal(id, name, phone) {
+    editingGuestId = id;
+    document.getElementById('guest-modal-title').innerText = 'Edit Data Tamu';
+    document.getElementById('input-guest-name').value = name;
+    document.getElementById('input-guest-phone').value = phone;
+    document.getElementById('guest-modal').classList.remove('hidden');
+  }
+
+  function closeGuestModal() {
+    document.getElementById('guest-modal').classList.add('hidden');
+  }
+
+  function saveGuestData() {
+    const name = document.getElementById('input-guest-name').value.trim();
+    const phone = document.getElementById('input-guest-phone').value.trim();
+
+    if (!name) {
+      alert("Harap isi nama tamu!");
+      return;
+    }
+
+    const payload = {
+      name: name,
+      phone: phone || "",
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    };
+
+    if (editingGuestId) {
+      db.collection('guests').doc(editingGuestId).update(payload).then(() => {
+        closeGuestModal();
+      });
+    } else {
+      payload.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+      db.collection('guests').add(payload).then(() => {
+        closeGuestModal();
+      });
+    }
+  }
+
+  function deleteGuest(id) {
+    if (confirm("Hapus tamu ini dari daftar?")) {
+      db.collection('guests').doc(id).delete();
+    }
+  }
+
+  function deleteAllGuests() {
+    if (allGuests.length === 0) return;
+    if (confirm(`Apakah kamu yakin ingin menghapus SELURUH (${allGuests.length}) data tamu?`)) {
+      const batch = db.batch();
+      allGuests.forEach(g => {
+        batch.delete(db.collection('guests').doc(g.id));
+      });
+      batch.commit().then(() => alert("Semua tamu berhasil dihapus!"));
+    }
+  }
+
+  // IMPORT CSV
+  function triggerImportCSV() {
+    document.getElementById('csv-file-input').click();
+  }
+
+  function handleImportCSV(input) {
+    const file = input.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const lines = e.target.result.split('\n');
+      const batch = db.batch();
+      let count = 0;
+
+      lines.forEach(line => {
+        const cols = line.split(',');
+        if (cols[0] && cols[0].trim()) {
+          const name = cols[0].trim();
+          const phone = cols[1] ? cols[1].trim() : "";
+          const docRef = db.collection('guests').doc();
+          batch.set(docRef, {
+            name: name,
+            phone: phone,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+          });
+          count++;
+        }
+      });
+
+      if (count > 0) {
+        batch.commit().then(() => {
+          alert(`Berhasil mengimpor ${count} data tamu!`);
+          input.value = '';
+        });
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  // TEKS PENGANTAR WA
+  function openTextTemplateModal() {
+    document.getElementById('input-text-template').value = defaultWaTemplate;
+    document.getElementById('text-template-modal').classList.remove('hidden');
+  }
+
+  function closeTextTemplateModal() {
+    document.getElementById('text-template-modal').classList.add('hidden');
+  }
+
+  function saveTextTemplate() {
+    const text = document.getElementById('input-text-template').value;
+    defaultWaTemplate = text;
+    db.collection('settings').doc('wa_template').set({ text: text }, { merge: true })
+      .then(() => {
+        alert("Template pesan WhatsApp berhasil disimpan!");
+        closeTextTemplateModal();
+      });
+  }
+
+  function formatWaMessage(guestName) {
+    const link = getInvitationLink(guestName);
+    return defaultWaTemplate.replace(/{nama}/g, guestName).replace(/{link}/g, link);
+  }
+
+  function sendWhatsApp(name, phone) {
+    const message = formatWaMessage(name);
+    let targetPhone = (phone || '').replace(/[^\d]/g, '');
+    if (targetPhone.startsWith('0')) {
+      targetPhone = '62' + targetPhone.substring(1);
+    }
+    const url = targetPhone ? 
+      `https://wa.me/${targetPhone}?text=${encodeURIComponent(message)}` : 
+      `https://wa.me/?text=${encodeURIComponent(message)}`;
+    window.open(url, '_blank');
+  }
+
+  function shareInvitation(name) {
+    const message = formatWaMessage(name);
+    if (navigator.share) {
+      navigator.share({
+        title: 'Wedding Invitation Riyan & Amelia',
+        text: message
+      });
+    } else {
+      copyToClipboard(message);
+      alert("Teks undangan berhasil disalin!");
+    }
+  }
+
+  function copyWaText(name) {
+    const message = formatWaMessage(name);
+    copyToClipboard(message);
+    alert("Teks undangan berhasil disalin!");
+  }
+
+  function copyToClipboard(text) {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(text);
+    } else {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+    }
   }
 </script>
 
