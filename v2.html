@@ -21,7 +21,7 @@
       --bg-cream: #FAF6F0;
       --text-dark: #2B1E1E;
       --card-white: #FFFFFF;
-      --current-card-bg: #8C2331; /* Dynamic background color */
+      --current-card-bg: #8C2331;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -34,13 +34,14 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 15px 10px 40px;
+      padding: 0;
     }
 
     .font-serif { font-family: 'Cormorant Garamond', serif; }
     .font-script { font-family: 'Alex Brush', cursive; }
     .hidden { display: none !important; }
 
+    /* CARD BIASA UNTUK STEP 1, 3, 4 */
     .app-card {
       width: 100%;
       max-width: 430px;
@@ -51,6 +52,22 @@
       border: 1px solid rgba(212, 175, 55, 0.25);
       text-align: center;
       position: relative;
+      margin: 15px 10px 40px;
+    }
+
+    /* CONTAINER FULL SCREEN KHUSUS STEP 2 (SLIDER FIGMA) */
+    .fullscreen-slider-wrapper {
+      width: 100vw;
+      min-height: 100vh;
+      background: var(--current-card-bg);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      padding: 24px 16px;
+      transition: background 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+      position: relative;
+      overflow: hidden;
     }
 
     .brand-subtitle {
@@ -85,14 +102,14 @@
       font-weight: 700;
       border-radius: 30px;
       cursor: pointer;
-      box-shadow: 0 6px 18px rgba(122, 28, 40, 0.2);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
       width: 100%;
+      max-width: 380px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
       transition: all 0.2s ease;
-      margin-top: 10px;
     }
 
     .btn-primary-v2:active { transform: scale(0.98); }
@@ -117,7 +134,7 @@
 
     .btn-outline-v2 {
       background: transparent;
-      color: #888;
+      color: rgba(255, 255, 255, 0.8);
       border: none;
       padding: 10px 18px;
       font-size: 0.8rem;
@@ -131,83 +148,69 @@
       gap: 6px;
     }
 
-    /* SLIDER DYNAMIC CHARACTER CARD ALA FIGMA VIDEO */
-    .section-label {
-      font-size: 0.75rem;
-      font-weight: 700;
-      color: var(--gold-accent);
+    /* HEADER SLIDER ELEGAN */
+    .slider-header-box {
       text-align: center;
-      margin: 6px 0 4px;
-      text-transform: uppercase;
-      letter-spacing: 2px;
+      z-index: 10;
+      width: 100%;
+      max-width: 380px;
+      margin-top: 10px;
     }
 
-    .section-subtitle-text {
-      font-size: 0.8rem;
-      color: #6E5353;
-      margin-bottom: 16px;
+    .section-label-fullscreen {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--gold-accent);
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      margin-bottom: 4px;
+    }
+
+    .slider-main-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #FFFFFF;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+      line-height: 1.2;
+      margin-bottom: 4px;
+      padding: 0 10px;
+    }
+
+    .slider-sub-instruction {
+      font-size: 0.75rem;
+      color: rgba(255, 255, 255, 0.8);
       font-style: italic;
     }
 
-    .dynamic-slider-container {
+    /* AREA KARTU FIGMA SLIDER FULLSCREEN */
+    .slider-cards-viewport {
       position: relative;
       width: 100%;
-      max-width: 320px;
-      height: 380px;
-      margin: 0 auto 16px;
-      border-radius: 28px;
-      background: var(--current-card-bg);
-      padding: 20px 15px;
-      transition: background 0.5s ease-in-out;
-      overflow: hidden;
-      box-shadow: 0 15px 30px rgba(0,0,0,0.15);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .slider-header-title {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.8rem;
-      font-weight: 700;
-      color: #FFFFFF;
-      text-shadow: 0 2px 6px rgba(0,0,0,0.3);
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      margin-top: 5px;
-      transition: opacity 0.3s;
-    }
-
-    .slider-header-sub {
-      font-size: 0.75rem;
-      color: rgba(255,255,255,0.85);
-      letter-spacing: 2px;
-      text-transform: uppercase;
-    }
-
-    .slider-cards-wrapper {
-      position: relative;
-      width: 100%;
-      height: 250px;
+      max-width: 380px;
+      height: 52vh;
+      min-height: 320px;
       display: flex;
       align-items: center;
       justify-content: center;
+      margin: 10px 0;
     }
 
     .figma-card-item {
       position: absolute;
-      width: 180px;
-      height: 240px;
-      border-radius: 18px;
-      background: rgba(255,255,255,0.15);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255,255,255,0.3);
+      width: 200px;
+      height: 100%;
+      max-height: 400px;
+      border-radius: 22px;
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 10px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      padding: 12px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
       transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
       cursor: pointer;
       user-select: none;
@@ -217,11 +220,11 @@
       width: 100%;
       height: 100%;
       object-fit: contain;
-      filter: drop-shadow(0 8px 15px rgba(0,0,0,0.3));
+      filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.35));
       transition: transform 0.3s ease;
     }
 
-    /* POSISI STACK SLIDER ALA VIDEO FIGMA */
+    /* POSISI SLIDER STACK FULLSCREEN */
     .figma-card-item.active {
       transform: translateX(0) scale(1.05) rotate(0deg);
       opacity: 1;
@@ -229,47 +232,39 @@
     }
 
     .figma-card-item.next {
-      transform: translateX(65%) scale(0.85) rotate(6deg);
-      opacity: 0.6;
+      transform: translateX(68%) scale(0.82) rotate(6deg);
+      opacity: 0.55;
       z-index: 5;
     }
 
     .figma-card-item.prev {
-      transform: translateX(-65%) scale(0.85) rotate(-6deg);
-      opacity: 0.6;
+      transform: translateX(-68%) scale(0.82) rotate(-6deg);
+      opacity: 0.55;
       z-index: 5;
     }
 
     .figma-card-item.hidden-left {
-      transform: translateX(-120%) scale(0.7) rotate(-12deg);
+      transform: translateX(-120%) scale(0.65) rotate(-12deg);
       opacity: 0;
       z-index: 1;
     }
 
     .figma-card-item.hidden-right {
-      transform: translateX(120%) scale(0.7) rotate(12deg);
+      transform: translateX(120%) scale(0.65) rotate(12deg);
       opacity: 0;
       z-index: 1;
     }
 
-    .action-fab-btn {
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      background: #FFFFFF;
-      color: var(--primary-crimson);
-      border: none;
-      font-size: 1.1rem;
+    .slider-bottom-controls {
+      width: 100%;
+      max-width: 380px;
       display: flex;
+      flex-direction: column;
       align-items: center;
-      justify-content: center;
-      box-shadow: 0 6px 16px rgba(0,0,0,0.2);
-      cursor: pointer;
-      transition: transform 0.2s;
-      margin-bottom: 5px;
+      gap: 4px;
+      z-index: 10;
+      margin-bottom: 10px;
     }
-
-    .action-fab-btn:active { transform: scale(0.9); }
 
     /* AREA KAMERA & KONTROL */
     .camera-wrapper {
@@ -428,6 +423,7 @@
       width: 100%;
       max-width: 430px;
       margin-top: 25px;
+      padding: 0 10px;
     }
 
     .feed-header {
@@ -576,85 +572,73 @@
 </head>
 <body>
 
-<div class="app-card">
+<!-- STEP 1: WELCOME SCREEN -->
+<div id="step-welcome" class="app-card">
+  <p class="brand-subtitle">WEDDING MEMORIES OF</p>
+  <h1 class="font-script event-main-title" id="display-event-title">Riyan & Amelia</h1>
+  <p class="event-date-text">06 DESEMBER 2026</p>
 
-  <!-- STEP 1: WELCOME SCREEN -->
-  <div id="step-welcome">
-    <p class="brand-subtitle">WEDDING MEMORIES OF</p>
-    <h1 class="font-script event-main-title" id="display-event-title">Riyan & Amelia</h1>
-    <p class="event-date-text">06 DESEMBER 2026</p>
-
-    <div style="background: #FAF6F0; padding: 16px; border-radius: 16px; margin-bottom: 18px; border: 1px solid rgba(212,175,55,0.3);">
-      <p style="font-size: 0.82rem; color: #555; line-height: 1.5; font-style: italic;">
-        "Abadikan momen kebahagiaanmu bersama kami & tinggalkan pesan ucapan manis di galeri kenangan!"
-      </p>
-    </div>
-
-    <button class="btn-primary-v2" onclick="goToStep(2)">
-      <i class="fa-solid fa-camera"></i> Mulai Berfoto
-    </button>
+  <div style="background: #FAF6F0; padding: 16px; border-radius: 16px; margin-bottom: 18px; border: 1px solid rgba(212,175,55,0.3);">
+    <p style="font-size: 0.82rem; color: #555; line-height: 1.5; font-style: italic;">
+      "Abadikan momen kebahagiaanmu bersama kami & tinggalkan pesan ucapan manis di galeri kenangan!"
+    </p>
   </div>
 
-  <!-- STEP 2: SLIDER FIGMA ANIMATION CARD -->
-  <div id="step-template" class="hidden">
-    <h2 class="font-serif" style="color: var(--primary-crimson); font-size: 1.8rem;">Pilih Desain Bingkai</h2>
-    <div class="section-label">KOLEKSI BINGKAI EKSKLUSIF</div>
-    <p class="section-subtitle-text">Geser ke kanan / kiri untuk memilih bingkai</p>
+  <button class="btn-primary-v2" onclick="goToStep(2)">
+    <i class="fa-solid fa-camera"></i> Mulai Berfoto
+  </button>
+</div>
 
-    <!-- CONTAINER CONTAINER SLIDER EKSKLUSIF -->
-    <div class="dynamic-slider-container" id="dynamic-slider-box">
-      
-      <div style="text-align: center;">
-        <div class="slider-header-sub" id="card-theme-tag">ROYAL EDITION</div>
-        <div class="slider-header-title" id="card-theme-name">Classic 3 Photo</div>
-      </div>
+<!-- STEP 2: SLIDER FIGMA FULL SCREEN -->
+<div id="step-template" class="fullscreen-slider-wrapper hidden">
+  
+  <div class="slider-header-box">
+    <div class="section-label-fullscreen" id="card-theme-tag">ROYAL EDITION</div>
+    <div class="slider-main-title" id="card-theme-name">Classic Royal (3 Foto)</div>
+    <div class="slider-sub-instruction">Geser layar ke kanan / kiri untuk memilih bingkai</div>
+  </div>
 
-      <div class="slider-cards-wrapper" id="slider-stack-box">
+  <div class="slider-cards-viewport" id="slider-stack-box">
 
-        <div class="figma-card-item" data-path="./assets/v2/dsg3.png" data-count="3" data-name="Classic Royal (3 Foto)" data-tag="ROYAL EDITION" data-color="#7A1C28">
-          <img src="./assets/v2/dsg3.png" alt="Desain 3">
-        </div>
-
-        <div class="figma-card-item" data-path="./assets/v2/dsg2.png" data-count="2" data-name="Classic Royal (2 Foto)" data-tag="ROYAL EDITION" data-color="#5B1620">
-          <img src="./assets/v2/dsg2.png" alt="Desain 2">
-        </div>
-
-        <div class="figma-card-item" data-path="./assets/v2/dsg1.png" data-count="1" data-name="Classic Royal (1 Foto)" data-tag="ROYAL EDITION" data-color="#8C2331">
-          <img src="./assets/v2/dsg1.png" alt="Desain 1">
-        </div>
-
-        <div class="figma-card-item" data-path="./assets/v2/flower3.png" data-count="3" data-name="Floral Romance (3 Foto)" data-tag="FLORAL COLLECTION" data-color="#4A5D4E">
-          <img src="./assets/v2/flower3.png" alt="Flower 3">
-        </div>
-
-        <div class="figma-card-item" data-path="./assets/v2/flower2.png" data-count="2" data-name="Floral Romance (2 Foto)" data-tag="FLORAL COLLECTION" data-color="#3D4E41">
-          <img src="./assets/v2/flower2.png" alt="Flower 2">
-        </div>
-
-        <div class="figma-card-item" data-path="./assets/v2/flower1.png" data-count="1" data-name="Floral Romance (1 Foto)" data-tag="FLORAL COLLECTION" data-color="#556B5A">
-          <img src="./assets/v2/flower1.png" alt="Flower 1">
-        </div>
-
-        <div class="figma-card-item" data-path="./assets/v2/line 3.png" data-count="3" data-name="Minimalist Modern (3 Foto)" data-tag="MINIMALIST STYLE" data-color="#2C3E50">
-          <img src="./assets/v2/line 3.png" alt="Line 3">
-        </div>
-
-        <div class="figma-card-item" data-path="./assets/v2/line 2.png" data-count="2" data-name="Minimalist Modern (2 Foto)" data-tag="MINIMALIST STYLE" data-color="#1A252F">
-          <img src="./assets/v2/line 2.png" alt="Line 2">
-        </div>
-
-        <div class="figma-card-item" data-path="./assets/v2/line 1.png" data-count="1" data-name="Minimalist Modern (1 Foto)" data-tag="MINIMALIST STYLE" data-color="#34495E">
-          <img src="./assets/v2/line 1.png" alt="Line 1">
-        </div>
-
-      </div>
-
-      <button class="action-fab-btn" onclick="startCameraProcess()" title="Gunakan Bingkai Ini">
-        <i class="fa-solid fa-arrow-right"></i>
-      </button>
-
+    <div class="figma-card-item" data-path="./assets/v2/dsg3.png" data-count="3" data-name="Classic Royal (3 Foto)" data-tag="ROYAL EDITION" data-color="#7A1C28">
+      <img src="./assets/v2/dsg3.png" alt="Desain 3">
     </div>
 
+    <div class="figma-card-item" data-path="./assets/v2/dsg2.png" data-count="2" data-name="Classic Royal (2 Foto)" data-tag="ROYAL EDITION" data-color="#5B1620">
+      <img src="./assets/v2/dsg2.png" alt="Desain 2">
+    </div>
+
+    <div class="figma-card-item" data-path="./assets/v2/dsg1.png" data-count="1" data-name="Classic Royal (1 Foto)" data-tag="ROYAL EDITION" data-color="#8C2331">
+      <img src="./assets/v2/dsg1.png" alt="Desain 1">
+    </div>
+
+    <div class="figma-card-item" data-path="./assets/v2/flower3.png" data-count="3" data-name="Floral Romance (3 Foto)" data-tag="FLORAL COLLECTION" data-color="#4A5D4E">
+      <img src="./assets/v2/flower3.png" alt="Flower 3">
+    </div>
+
+    <div class="figma-card-item" data-path="./assets/v2/flower2.png" data-count="2" data-name="Floral Romance (2 Foto)" data-tag="FLORAL COLLECTION" data-color="#3D4E41">
+      <img src="./assets/v2/flower2.png" alt="Flower 2">
+    </div>
+
+    <div class="figma-card-item" data-path="./assets/v2/flower1.png" data-count="1" data-name="Floral Romance (1 Foto)" data-tag="FLORAL COLLECTION" data-color="#556B5A">
+      <img src="./assets/v2/flower1.png" alt="Flower 1">
+    </div>
+
+    <div class="figma-card-item" data-path="./assets/v2/line 3.png" data-count="3" data-name="Minimalist Modern (3 Foto)" data-tag="MINIMALIST STYLE" data-color="#2C3E50">
+      <img src="./assets/v2/line 3.png" alt="Line 3">
+    </div>
+
+    <div class="figma-card-item" data-path="./assets/v2/line 2.png" data-count="2" data-name="Minimalist Modern (2 Foto)" data-tag="MINIMALIST STYLE" data-color="#1A252F">
+      <img src="./assets/v2/line 2.png" alt="Line 2">
+    </div>
+
+    <div class="figma-card-item" data-path="./assets/v2/line 1.png" data-count="1" data-name="Minimalist Modern (1 Foto)" data-tag="MINIMALIST STYLE" data-color="#34495E">
+      <img src="./assets/v2/line 1.png" alt="Line 1">
+    </div>
+
+  </div>
+
+  <div class="slider-bottom-controls">
     <button class="btn-primary-v2" onclick="startCameraProcess()">
       Gunakan Bingkai Ini &amp; Mulai Foto &rarr;
     </button>
@@ -663,76 +647,76 @@
     </button>
   </div>
 
-  <!-- STEP 3: AREA KAMERA -->
-  <div id="step-camera" class="hidden">
-    <div style="font-size: 0.85rem; font-weight: 700; color: var(--primary-crimson); margin-bottom: 8px;" id="cam-progress-text">Foto 1 dari 3</div>
+</div>
 
-    <div class="camera-wrapper">
-      <video id="video" class="mirror" autoplay playsinline></video>
-      <div id="countdown-overlay" class="countdown-overlay hidden">3</div>
-      <div id="flash-overlay" class="flash-overlay"></div>
-    </div>
+<!-- STEP 3: AREA KAMERA -->
+<div id="step-camera" class="app-card hidden">
+  <div style="font-size: 0.85rem; font-weight: 700; color: var(--primary-crimson); margin-bottom: 8px;" id="cam-progress-text">Foto 1 dari 3</div>
 
-    <div class="cam-controls-grid">
-      <button class="cam-btn-icon" id="btn-timer" onclick="toggleTimerSetting()">
-        <i class="fa-solid fa-stopwatch"></i> Timer: 3s
-      </button>
-      <button class="cam-btn-icon" id="btn-zoom" onclick="toggleZoomSetting()">
-        <i class="fa-solid fa-magnifying-glass-plus"></i> Zoom: 1x
-      </button>
-      <button class="cam-btn-icon" onclick="switchCamera()">
-        <i class="fa-solid fa-camera-rotate"></i> Switch
-      </button>
-      <button class="cam-btn-icon" id="btn-mirror" onclick="toggleMirror()">
-        <i class="fa-solid fa-arrows-left-right"></i> Mirror: ON
-      </button>
-    </div>
+  <div class="camera-wrapper">
+    <video id="video" class="mirror" autoplay playsinline></video>
+    <div id="countdown-overlay" class="countdown-overlay hidden">3</div>
+    <div id="flash-overlay" class="flash-overlay"></div>
+  </div>
 
-    <select id="camera-select" class="cam-select-box" onchange="onCameraSelectChange(this.value)"></select>
-
-    <button id="btn-snap" class="btn-primary-v2" onclick="takePhotoSnap()">
-      <i class="fa-solid fa-camera"></i> Ambil Foto
+  <div class="cam-controls-grid">
+    <button class="cam-btn-icon" id="btn-timer" onclick="toggleTimerSetting()">
+      <i class="fa-solid fa-stopwatch"></i> Timer: 3s
     </button>
-    <button class="btn-outline-v2" onclick="stopCameraAndGoBack()">
-      Batal / Ubah Bingkai
+    <button class="cam-btn-icon" id="btn-zoom" onclick="toggleZoomSetting()">
+      <i class="fa-solid fa-magnifying-glass-plus"></i> Zoom: 1x
+    </button>
+    <button class="cam-btn-icon" onclick="switchCamera()">
+      <i class="fa-solid fa-camera-rotate"></i> Switch
+    </button>
+    <button class="cam-btn-icon" id="btn-mirror" onclick="toggleMirror()">
+      <i class="fa-solid fa-arrows-left-right"></i> Mirror: ON
     </button>
   </div>
 
-  <!-- STEP 4: HASIL FOTO POLAROID SLIDE & INPUT PESAN -->
-  <div id="step-result" class="hidden">
-    <h2 class="font-serif" style="color: var(--primary-crimson); font-size: 1.7rem;">Hasil Foto Kamu</h2>
+  <select id="camera-select" class="cam-select-box" onchange="onCameraSelectChange(this.value)"></select>
 
-    <div class="polaroid-chamber">
-      <div class="polaroid-lens-dot"></div>
-      <div class="polaroid-slot"></div>
-      <div class="polaroid-paper-wrapper">
-        <div id="polaroid-slide-elem" class="polaroid-paper-slide">
-          <img id="result-img" style="width: 100%; border-radius: 10px; box-shadow: 0 8px 20px rgba(0,0,0,0.15);" alt="Hasil Photobooth">
-        </div>
+  <button id="btn-snap" class="btn-primary-v2" onclick="takePhotoSnap()">
+    <i class="fa-solid fa-camera"></i> Ambil Foto
+  </button>
+  <button class="btn-outline-v2" style="color:#888;" onclick="stopCameraAndGoBack()">
+    Batal / Ubah Bingkai
+  </button>
+</div>
+
+<!-- STEP 4: HASIL FOTO POLAROID SLIDE & INPUT PESAN -->
+<div id="step-result" class="app-card hidden">
+  <h2 class="font-serif" style="color: var(--primary-crimson); font-size: 1.7rem;">Hasil Foto Kamu</h2>
+
+  <div class="polaroid-chamber">
+    <div class="polaroid-lens-dot"></div>
+    <div class="polaroid-slot"></div>
+    <div class="polaroid-paper-wrapper">
+      <div id="polaroid-slide-elem" class="polaroid-paper-slide">
+        <img id="result-img" style="width: 100%; border-radius: 10px; box-shadow: 0 8px 20px rgba(0,0,0,0.15);" alt="Hasil Photobooth">
       </div>
     </div>
-
-    <div class="wish-form-box">
-      <label>Nama Kamu / Inisial</label>
-      <input type="text" id="input-sender-name" placeholder="Misal: Budi & Sarah">
-
-      <label>Pesan / Ucapan Doa Kamu</label>
-      <textarea id="input-sender-message" rows="2" placeholder="Tuliskan ucapan manismu di sini..."></textarea>
-    </div>
-
-    <button class="btn-primary-v2" onclick="saveAndShareToFeed()">
-      <i class="fa-solid fa-paper-plane"></i> Unduh & Posting ke Galeri Tamu
-    </button>
-
-    <button class="btn-secondary-v2" onclick="savePrivateOnly()">
-      <i class="fa-solid fa-download"></i> Simpan Sendiri (Privat Ke HP)
-    </button>
-
-    <button class="btn-outline-v2" onclick="goToStep(2)">
-      <i class="fa-solid fa-rotate-right"></i> Foto Ulang
-    </button>
   </div>
 
+  <div class="wish-form-box">
+    <label>Nama Kamu / Inisial</label>
+    <input type="text" id="input-sender-name" placeholder="Misal: Budi & Sarah">
+
+    <label>Pesan / Ucapan Doa Kamu</label>
+    <textarea id="input-sender-message" rows="2" placeholder="Tuliskan ucapan manismu di sini..."></textarea>
+  </div>
+
+  <button class="btn-primary-v2" onclick="saveAndShareToFeed()">
+    <i class="fa-solid fa-paper-plane"></i> Unduh & Posting ke Galeri Tamu
+  </button>
+
+  <button class="btn-secondary-v2" onclick="savePrivateOnly()">
+    <i class="fa-solid fa-download"></i> Simpan Sendiri (Privat Ke HP)
+  </button>
+
+  <button class="btn-outline-v2" style="color:#888;" onclick="goToStep(2)">
+    <i class="fa-solid fa-rotate-right"></i> Foto Ulang
+  </button>
 </div>
 
 <!-- FEED GALERI PUBLIK (IG STYLE) -->
@@ -828,7 +812,7 @@
         // Update Text & Color Theme Smoothly
         document.getElementById('card-theme-tag').innerText = card.getAttribute('data-tag');
         document.getElementById('card-theme-name').innerText = card.getAttribute('data-name');
-        document.getElementById('dynamic-slider-box').style.backgroundColor = card.getAttribute('data-color');
+        document.getElementById('step-template').style.backgroundColor = card.getAttribute('data-color');
       } else if (i === (currentCardIndex + 1) % cardItems.length) {
         card.classList.add('next');
       } else if (i === (currentCardIndex - 1 + cardItems.length) % cardItems.length) {
