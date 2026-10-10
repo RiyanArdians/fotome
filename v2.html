@@ -42,7 +42,7 @@
     .font-script { font-family: 'Alex Brush', cursive; }
     .hidden { display: none !important; }
 
-    /* LAYOUT FULLSCREEN CONTAINER (TIDAK TERBUNGKUS CARD) */
+    /* LAYOUT FULLSCREEN CONTAINER */
     .page-fullscreen {
       width: 100vw;
       min-height: 100vh;
@@ -50,7 +50,7 @@
       flex-direction: column;
       justify-content: space-between;
       align-items: center;
-      padding: 30px 20px 24px;
+      padding: 24px 20px;
       position: relative;
       background-color: var(--bg-cream);
     }
@@ -61,12 +61,12 @@
       transition: background-color 0.5s ease;
     }
 
-    /* TOMBOL STYLES MEWAH DAN PROFESIONAL (TANPA PANAH) */
+    /* TOMBOL STYLES MEWAH */
     .btn-primary-v2 {
       background: linear-gradient(135deg, #8C2331 0%, var(--primary-crimson) 100%);
       color: #FFFFFF;
       border: 1px solid var(--gold-accent);
-      padding: 15px 24px;
+      padding: 14px 24px;
       font-size: 0.85rem;
       font-weight: 700;
       letter-spacing: 2px;
@@ -144,9 +144,9 @@
 
     .btn-back-styled:active { transform: scale(0.94); background: rgba(255, 255, 255, 0.25); }
 
-    /* ------------------------------------ */
-    /* 1. AMPLOP PRESISI & RAPI             */
-    /* ------------------------------------ */
+    /* ---------------------------------------------------- */
+    /* 1. ANIMASI AMPLOP & KARTU MEMPELAI KHAS WEDDING INVITATION */
+    /* ---------------------------------------------------- */
     .envelope-screen {
       position: fixed;
       top: 0; left: 0; width: 100vw; height: 100vh;
@@ -159,91 +159,121 @@
       padding: 20px;
       cursor: pointer;
       overflow: hidden;
-      transition: transform 0.8s cubic-bezier(0.7, 0, 0.3, 1), opacity 0.8s ease;
+      transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.7, 0, 0.3, 1);
     }
 
     .envelope-screen.zoom-out-fade {
-      transform: scale(1.8);
+      transform: scale(1.4);
       opacity: 0;
       pointer-events: none;
     }
 
     .envelope-wrapper {
       position: relative;
-      width: 300px;
-      height: 200px;
+      width: 310px;
+      height: 210px;
       background: var(--deep-crimson);
-      border-radius: 12px;
-      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.4);
+      border-radius: 14px;
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.45);
       border: 1px solid rgba(212, 175, 55, 0.35);
-      margin: 25px 0;
-      overflow: hidden;
+      margin: 20px 0;
       display: flex;
       align-items: center;
       justify-content: center;
+      perspective: 1000px;
     }
 
-    /* SEGITIGA ATAS TERTUTUP RAPI */
     .envelope-flap-top {
       position: absolute;
       top: 0; left: 0;
       width: 0; height: 0;
-      border-left: 150px solid transparent;
-      border-right: 150px solid transparent;
-      border-top: 115px solid #8C2331;
+      border-left: 155px solid transparent;
+      border-right: 155px solid transparent;
+      border-top: 120px solid #8C2331;
       transform-origin: top;
-      transition: transform 0.6s ease-in-out;
+      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
       z-index: 5;
       filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
     }
 
+    .envelope-gold-seal {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 48px; height: 48px;
+      background: linear-gradient(135deg, #F3E5AB 0%, #D4AF37 50%, #AA7C11 100%);
+      border-radius: 50%;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+      border: 1.5px solid #FFF;
+      z-index: 10;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+
+    /* KARTU UNDANGAN MEMPELAI DI DALAM AMPLOP */
+    .envelope-card-inside {
+      position: absolute;
+      width: 275px;
+      height: 180px;
+      background: #FAF6F0;
+      border-radius: 10px;
+      border: 1px solid var(--gold-accent);
+      padding: 18px 15px;
+      text-align: center;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+      z-index: 2;
+      transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* TRIGER ANIMASI KELUAR KARTU */
     .envelope-wrapper.open .envelope-flap-top {
       transform: rotateX(180deg);
       z-index: 1;
     }
 
-    /* SEAL BULATAN POLOS EMAS */
-    .envelope-gold-seal {
-      position: absolute;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      width: 46px; height: 46px;
-      background: linear-gradient(135deg, #F3E5AB 0%, #D4AF37 50%, #AA7C11 100%);
-      border-radius: 50%;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35), inset 0 2px 4px rgba(255,255,255,0.6);
-      border: 1.5px solid #FFF;
-      z-index: 10;
-      transition: transform 0.3s ease;
+    .envelope-wrapper.open .envelope-gold-seal {
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(0.5);
     }
 
-    .envelope-wrapper:hover .envelope-gold-seal {
-      transform: translate(-50%, -50%) scale(1.08);
+    .envelope-wrapper.open .envelope-card-inside {
+      transform: translateY(-80px) scale(1.05);
+      z-index: 8;
     }
 
-    /* ------------------------------------ */
-    /* 2. WELCOME HERO IMAGE                */
-    /* ------------------------------------ */
+    /* ---------------------------------------------------- */
+    /* 2. HERO PHOTO DI PERBAIKI (TIDAK KEPOTONG)           */
+    /* ---------------------------------------------------- */
     .hero-photo-container {
       width: 100%;
-      max-width: 320px;
-      aspect-ratio: 4/5;
-      border-radius: 24px;
+      max-width: 330px;
+      max-height: 48vh;
+      border-radius: 20px;
       overflow: hidden;
-      margin: 20px auto;
-      border: 2px solid var(--gold-accent);
-      box-shadow: 0 15px 35px rgba(122, 28, 40, 0.18);
+      margin: 15px auto;
+      border: 1px solid var(--gold-accent);
+      box-shadow: 0 12px 30px rgba(122, 28, 40, 0.12);
       background: #FAF6F0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px;
     }
 
     .hero-photo-container img {
       width: 100%;
       height: 100%;
-      object-fit: cover;
+      max-height: 46vh;
+      object-fit: contain; /* PRESISI FULL AGAR TIDAK KEPOTONG */
+      border-radius: 14px;
     }
 
-    /* ------------------------------------ */
-    /* 3. INPUT NAMA ELEGAN                 */
-    /* ------------------------------------ */
+    /* ---------------------------------------------------- */
+    /* 3. INPUT NAMA ELEGAN                                 */
+    /* ---------------------------------------------------- */
     .stylish-underline-input {
       width: 100%;
       max-width: 320px;
@@ -263,9 +293,93 @@
     .stylish-underline-input::placeholder { color: rgba(255, 255, 255, 0.45); font-style: italic; font-size: 0.95rem; }
     .stylish-underline-input:focus { border-bottom-color: var(--gold-accent); }
 
-    /* ------------------------------------ */
-    /* 4. KAMERA FULLSCREEN VIEW FINDER     */
-    /* ------------------------------------ */
+    /* ---------------------------------------------------- */
+    /* 4. PERBAIKAN SLIDER FIGMA PILIH FRAME                */
+    /* ---------------------------------------------------- */
+    .slider-header-box {
+      text-align: center;
+      z-index: 10;
+      width: 100%;
+      max-width: 380px;
+      margin-top: 5px;
+    }
+
+    .section-label-fullscreen {
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--gold-accent);
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      margin-bottom: 2px;
+    }
+
+    .slider-main-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #FFFFFF;
+      line-height: 1.2;
+      margin-bottom: 2px;
+    }
+
+    .slider-cards-viewport {
+      position: relative;
+      width: 100%;
+      max-width: 360px;
+      height: 52vh;
+      min-height: 320px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 10px 0;
+    }
+
+    .figma-card-item {
+      position: absolute;
+      width: 190px;
+      height: 100%;
+      max-height: 400px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.25);
+      transition: all 0.45s cubic-bezier(0.25, 1, 0.5, 1);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .figma-card-item img {
+      width: 100%;
+      height: 100%;
+      max-height: 380px;
+      object-fit: contain; /* PERBAIKAN: AGAR TAMPILAN BINGKAI TIDAK RAKSASA/TERPOTONG */
+    }
+
+    .figma-card-item.active { transform: translateX(0) scale(1) rotate(0deg); opacity: 1; z-index: 10; }
+    .figma-card-item.next { transform: translateX(65%) scale(0.82) rotate(6deg); opacity: 0.55; z-index: 5; }
+    .figma-card-item.prev { transform: translateX(-65%) scale(0.82) rotate(-6deg); opacity: 0.55; z-index: 5; }
+    .figma-card-item.hidden-left { transform: translateX(-120%) scale(0.65) rotate(-12deg); opacity: 0; z-index: 1; }
+    .figma-card-item.hidden-right { transform: translateX(120%) scale(0.65) rotate(12deg); opacity: 0; z-index: 1; }
+
+    .figma-card-item.card-pressed {
+      animation: frameClickBounce 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
+    @keyframes frameClickBounce {
+      0% { transform: translateX(0) scale(1); }
+      40% { transform: translateX(0) scale(0.92); }
+      100% { transform: translateX(0) scale(1.05); opacity: 0.9; }
+    }
+
+    /* ---------------------------------------------------- */
+    /* 5. KAMERA FULLSCREEN VIEW FINDER                     */
+    /* ---------------------------------------------------- */
     .camera-fullscreen-stage {
       position: fixed;
       top: 0; left: 0;
@@ -288,7 +402,6 @@
 
     .camera-video-fit.mirror { transform: scaleX(-1); }
 
-    /* CONTROLS OVERLAY FLOATING */
     .cam-top-bar {
       position: relative;
       z-index: 10;
@@ -340,8 +453,6 @@
       gap: 5px;
     }
 
-    .cam-tool-btn:active { background: rgba(255,255,255,0.2); }
-
     .cam-snap-trigger {
       width: 72px; height: 72px;
       border-radius: 50%;
@@ -368,9 +479,9 @@
     .flash-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: #FFF; opacity: 0; pointer-events: none; transition: opacity 0.1s; z-index: 30; }
     .flash-overlay.active { opacity: 1; }
 
-    /* ------------------------------------ */
-    /* 5. PRINTER STAGE & POPUP FOTO        */
-    /* ------------------------------------ */
+    /* ---------------------------------------------------- */
+    /* 6. PRINTER STAGE & POPUP FOTO                        */
+    /* ---------------------------------------------------- */
     .printer-lottie-stage {
       width: 100vw; min-height: 100vh; background: #FFFFFF;
       display: flex; flex-direction: column; align-items: center; justify-content: space-between;
@@ -431,9 +542,9 @@
     .printer-bottom-actions { width: 100%; max-width: 360px; margin-top: 15px; display: flex; flex-direction: column; gap: 8px; z-index: 20; opacity: 0; transform: translateY(15px); transition: all 0.5s ease; }
     .printer-bottom-actions.visible { opacity: 1; transform: translateY(0); }
 
-    /* ------------------------------------ */
-    /* 6. GALERI TERPISAH                   */
-    /* ------------------------------------ */
+    /* ---------------------------------------------------- */
+    /* 7. GALERI TERPISAH                                   */
+    /* ---------------------------------------------------- */
     .feed-container { width: 100%; max-width: 420px; margin: 0 auto; }
     .gallery-intro-box { background: #FAF6F0; border: 1px solid rgba(212, 175, 55, 0.3); border-radius: 18px; padding: 20px 16px; margin-bottom: 22px; text-align: center; }
     .ig-grid-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
@@ -460,9 +571,9 @@
 </head>
 <body>
 
-<!-- 0. AMPLOP TERTUTUP PRESISI -->
+<!-- 0. AMPLOP TERTUTUP PRESISI & ANIMASI KARTU UNDANGAN -->
 <div id="envelope-screen" class="envelope-screen" onclick="openEnvelopeAnimation()">
-  <div style="text-align:center; color:#FFF;">
+  <div style="text-align:center; color:#FFF; margin-bottom:10px;">
     <div style="font-size:0.75rem; letter-spacing:3px; color:var(--gold-accent); font-weight:700; margin-bottom:4px;">KENANGAN PERNIKAHAN</div>
     <div class="font-script" style="font-size:2.8rem; color:#FFF; line-height:1;" id="envelope-names">Riyan & Amelia</div>
   </div>
@@ -470,26 +581,33 @@
   <div class="envelope-wrapper" id="envelope-wrapper">
     <div class="envelope-flap-top"></div>
     <div class="envelope-gold-seal"></div>
+
+    <!-- KARTU MEMPELAI DARI DALAM AMPLOP -->
+    <div class="envelope-card-inside">
+      <div style="font-size:0.62rem; color:var(--gold-accent); font-weight:700; letter-spacing:2px; text-transform:uppercase;">You Are Invited</div>
+      <div class="font-script" style="font-size:2rem; color:var(--primary-crimson); line-height:1.1; margin:4px 0;" id="inside-card-names">Riyan & Amelia</div>
+      <div style="font-size:0.7rem; color:#666; font-style:italic;">Virtual Photobooth & Guestbook</div>
+    </div>
   </div>
 
-  <div style="font-size:0.8rem; color:rgba(255,255,255,0.8); font-style:italic; display:flex; align-items:center; gap:8px;">
+  <div style="font-size:0.8rem; color:rgba(255,255,255,0.85); font-style:italic; display:flex; align-items:center; gap:8px; margin-top:15px;">
     <i class="fa-solid fa-hand-pointer"></i> Ketuk amplop untuk membuka
   </div>
 </div>
 
-<!-- STEP 1: WELCOME SCREEN (HERO PHOTO) -->
+<!-- STEP 1: WELCOME SCREEN (HERO PHOTO UTUH) -->
 <div id="step-welcome" class="page-fullscreen">
   <div style="width:100%; text-align:center;">
     <p style="font-size:0.72rem; color:var(--gold-accent); letter-spacing:3px; font-weight:700; margin-bottom:4px;">KENANGAN PERNIKAHAN</p>
     <h1 class="font-script" style="font-size:2.8rem; color:var(--primary-crimson); line-height:1.1;" id="display-event-title">Riyan & Amelia</h1>
-    <p style="font-size:0.78rem; color:#6E5353; letter-spacing:1px; margin-bottom:10px;">06 DESEMBER 2026</p>
+    <p style="font-size:0.78rem; color:#6E5353; letter-spacing:1px; margin-bottom:6px;">06 DESEMBER 2026</p>
 
-    <!-- FOTO PASANGAN / HERO IMAGE -->
+    <!-- FOTO PASANGAN PRESISI FULL -->
     <div class="hero-photo-container">
       <img src="./assets/v2/hero.png" alt="Hero Pengantin" id="welcome-couple-img" onerror="this.src='./assets/v2/dsg1.png'">
     </div>
 
-    <p style="font-size:0.82rem; color:#555; font-style:italic; line-height:1.5; padding:0 15px; margin-bottom:20px;">
+    <p style="font-size:0.82rem; color:#555; font-style:italic; line-height:1.4; padding:0 15px; margin-bottom:18px;">
       "Satu foto menyimpan sejuta kenangan. Terima kasih telah menjadi bagian dari hari bahagia kami!"
     </p>
 
@@ -539,7 +657,7 @@
   </div>
 </div>
 
-<!-- STEP 2: SLIDER FRAME FULLSCREEN -->
+<!-- STEP 2: SLIDER FRAME FULLSCREEN (PERBAIKAN ERROR PROPUSI) -->
 <div id="step-template" class="page-fullscreen dark-bg hidden">
   <div class="slider-header-box">
     <div class="section-label-fullscreen" id="card-theme-tag">ROYAL EDITION</div>
@@ -774,6 +892,7 @@
     initFigmaSlider();
   });
 
+  // ANIMASI AMPLOP TERBUKA & KARTU KELUAR
   function openEnvelopeAnimation() {
     const envelopeWrapper = document.getElementById('envelope-wrapper');
     const envelopeScreen = document.getElementById('envelope-screen');
@@ -785,7 +904,7 @@
       setTimeout(() => {
         envelopeScreen.style.display = 'none';
       }, 750);
-    }, 500);
+    }, 1100);
   }
 
   function goToStep(targetId) {
@@ -973,11 +1092,13 @@
           const t1 = document.getElementById('display-event-title');
           const t2 = document.getElementById('ask-event-title');
           const t3 = document.getElementById('envelope-names');
-          const t4 = document.getElementById('gallery-couple-sub');
+          const t4 = document.getElementById('inside-card-names');
+          const t5 = document.getElementById('gallery-couple-sub');
           if (t1) t1.innerText = data.title;
           if (t2) t2.innerText = data.title;
           if (t3) t3.innerText = data.title;
-          if (t4) t4.innerText = `— ${data.title.toUpperCase()}`;
+          if (t4) t4.innerText = data.title;
+          if (t5) t5.innerText = `— ${data.title.toUpperCase()}`;
         }
 
         let lockOverlay = document.getElementById('lock-overlay');
