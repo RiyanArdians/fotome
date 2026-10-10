@@ -341,7 +341,6 @@
       font-weight: 600;
       color: rgba(255, 255, 255, 0.7);
       letter-spacing: 1px;
-      text-transform: lowercase;
     }
 
     .printer-door-tray {
@@ -588,6 +587,16 @@
       text-align: center;
       font-style: italic;
       background: #FFF;
+    }
+
+    .app-footer {
+      text-align: center;
+      padding: 20px 10px;
+      font-size: 0.75rem;
+      color: #8C6262;
+      border-top: 1px dashed rgba(216, 180, 180, 0.4);
+      margin-top: 20px;
+      width: 100%;
     }
 
     /* MODAL LIGHTBOX & ALERT */
@@ -848,6 +857,10 @@
   <div id="ig-grid-box" class="ig-grid-container">
     <p style="font-size: 0.8rem; color: #999; grid-column: span 3; text-align: center;">Memuat ucapan & foto tamu...</p>
   </div>
+
+  <div class="app-footer">
+    Fotome by Riyan Ardiansyah
+  </div>
 </div>
 
 <!-- MODAL LIGHTBOX FOTO TAMU -->
@@ -930,7 +943,6 @@
         if (isDragging) return;
 
         if (index === currentCardIndex) {
-          // EFEK ANIMASI KLIK FRAME DULU SEBELUM BUKA KAMERA
           card.classList.add('card-pressed');
           setTimeout(() => {
             card.classList.remove('card-pressed');
@@ -1071,7 +1083,6 @@
       const spinner = document.getElementById('spinner-icon');
       const actionsBox = document.getElementById('printer-bottom-actions');
 
-      // Reset tampilan awal
       printerUnit.classList.remove('fade-out-printer');
       popupBox.classList.remove('show-popup');
       inputPaper.classList.remove('pulled-in');
@@ -1083,27 +1094,22 @@
       statusText.innerText = "Memproses foto kamu...";
       statusSub.innerText = "Kertas ditarik masuk ke mesin...";
 
-      // Tahap 1: Kertas atas ditarik masuk (1.8s)
       setTimeout(() => {
         inputPaper.classList.add('pulled-in');
         statusText.innerText = "Mencetak foto kenangan...";
         statusSub.innerText = "Sedang dicetak perlahan...";
       }, 500);
 
-      // Tahap 2: Foto meluncur keluar perlahan (5s)
       setTimeout(() => {
         ejectedPhoto.classList.add('fully-printed');
       }, 2000);
 
-      // Tahap 3: Cetak Selesai -> Printer Fade Out -> Pop Up Foto Tampil
       setTimeout(() => {
         ledRed.classList.remove('blinking');
         ledGreen.classList.remove('blinking');
         
-        // Hilangkan Mesin Printer
         printerUnit.classList.add('fade-out-printer');
 
-        // Tampilkan Popup Foto Besar + Form Ucapan
         setTimeout(() => {
           popupBox.classList.add('show-popup');
           spinner.style.display = 'none';
