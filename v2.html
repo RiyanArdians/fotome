@@ -48,7 +48,7 @@
       max-width: 430px;
       background: var(--card-white);
       border-radius: 28px;
-      padding: 28px 20px;
+      padding: 28px 20px 20px;
       box-shadow: 0 15px 35px rgba(122, 28, 40, 0.08);
       border: 1px solid rgba(212, 175, 55, 0.25);
       text-align: center;
@@ -63,7 +63,7 @@
       flex-direction: column;
       justify-content: space-between;
       align-items: center;
-      padding: 24px 16px 30px;
+      padding: 24px 16px 20px;
       position: relative;
       overflow: hidden;
     }
@@ -191,8 +191,8 @@
       position: relative;
       width: 100%;
       max-width: 380px;
-      height: 54vh;
-      min-height: 330px;
+      height: 52vh;
+      min-height: 320px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -251,8 +251,8 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: flex-start;
-      padding: 20px 16px 30px;
+      justify-content: space-between;
+      padding: 20px 16px 20px;
       position: relative;
     }
 
@@ -589,14 +589,22 @@
       background: #FFF;
     }
 
-    .app-footer {
+    /* FOOTER WEB RESMI DENGAN COPYRIGHT */
+    .app-official-footer {
       text-align: center;
-      padding: 20px 10px;
-      font-size: 0.75rem;
+      padding: 14px 10px 6px;
+      font-size: 0.7rem;
       color: #8C6262;
       border-top: 1px dashed rgba(216, 180, 180, 0.4);
-      margin-top: 20px;
+      margin-top: 18px;
       width: 100%;
+      letter-spacing: 0.5px;
+    }
+
+    .app-official-footer.light-text {
+      color: rgba(255, 255, 255, 0.65);
+      border-top: 1px dashed rgba(255, 255, 255, 0.2);
+      margin-top: 10px;
     }
 
     /* MODAL LIGHTBOX & ALERT */
@@ -692,6 +700,10 @@
   <button class="btn-primary-v2" onclick="goToStep(2)">
     <i class="fa-solid fa-camera"></i> Mulai Berfoto
   </button>
+
+  <div class="app-official-footer">
+    © 2026 FOTOME by Riyan. All rights reserved.
+  </div>
 </div>
 
 <!-- STEP 2: SLIDER FIGMA FULL SCREEN -->
@@ -743,10 +755,13 @@
 
   </div>
 
-  <div style="width:100%; max-width:380px; display:flex; justify-content:center; z-index:10; margin-bottom:12px;">
+  <div style="width:100%; max-width:380px; display:flex; flex-direction:column; align-items:center; z-index:10; margin-bottom:6px;">
     <button class="btn-back-styled" onclick="goToStep(1)">
       Kembali
     </button>
+    <div class="app-official-footer light-text">
+      © 2026 FOTOME by Riyan. All rights reserved.
+    </div>
   </div>
 
 </div>
@@ -784,6 +799,10 @@
   <button class="btn-outline-v2" style="color:#888;" onclick="stopCameraAndGoBack()">
     Batal / Ubah Bingkai
   </button>
+
+  <div class="app-official-footer">
+    © 2026 FOTOME by Riyan. All rights reserved.
+  </div>
 </div>
 
 <!-- STEP 4: ANIMASI PRINTER DENGAN POPUP FOTO FINAL -->
@@ -796,7 +815,7 @@
       <div class="printer-panel-top">
         <div class="led-dot led-red" id="led-red"></div>
         <div class="led-dot led-green" id="led-green"></div>
-        <div class="printer-brand-tag">Fotome by Riyan</div>
+        <div class="printer-brand-tag">FOTOME by Riyan</div>
       </div>
 
       <div class="printer-door-tray">
@@ -845,6 +864,10 @@
     </button>
   </div>
 
+  <div class="app-official-footer" style="max-width: 380px;">
+    © 2026 FOTOME by Riyan. All rights reserved.
+  </div>
+
 </div>
 
 <!-- FEED GALERI PUBLIK (IG STYLE) -->
@@ -858,8 +881,8 @@
     <p style="font-size: 0.8rem; color: #999; grid-column: span 3; text-align: center;">Memuat ucapan & foto tamu...</p>
   </div>
 
-  <div class="app-footer">
-    Fotome by Riyan Ardiansyah
+  <div class="app-official-footer">
+    © 2026 FOTOME by Riyan. All rights reserved.
   </div>
 </div>
 
@@ -1070,7 +1093,6 @@
       updateFigmaSliderPositions();
     }
 
-    // ANIMASI CETAK DENGAN EFEK PRINTER HILANG & POP-UP FOTO
     if (step === 4) {
       const printerUnit = document.getElementById('main-printer-unit');
       const popupBox = document.getElementById('popup-photo-box');
