@@ -342,7 +342,7 @@
 
     .flash-overlay.active { opacity: 1; }
 
-    /* ANIMASI POLAROID */
+    /* ANIMASI KEDIP LAMPU & KELUAR PRINTING MESIN POLAROID ALA VIDEO */
     .polaroid-chamber {
       position: relative;
       width: 100%;
@@ -360,6 +360,23 @@
       border-radius: 50%;
       margin: 0 auto 8px;
       box-shadow: inset 0 2px 4px rgba(0,0,0,0.4);
+      transition: all 0.2s ease;
+    }
+
+    /* Efek Animasi Kedip Lampu Kuning Gold saat Keluar Print */
+    .polaroid-lens-dot.blinking {
+      animation: flashBlink 0.3s infinite alternate;
+    }
+
+    @keyframes flashBlink {
+      0% {
+        background: #FFF;
+        box-shadow: 0 0 15px #FFD700, 0 0 25px #FFD700;
+      }
+      100% {
+        background: var(--gold-accent);
+        box-shadow: inset 0 2px 4px rgba(0,0,0,0.4);
+      }
     }
 
     .polaroid-slot {
@@ -381,7 +398,7 @@
 
     .polaroid-paper-slide {
       transform: translateY(-100%);
-      transition: transform 1.8s cubic-bezier(0.25, 1, 0.5, 1);
+      transition: transform 2.2s cubic-bezier(0.25, 1, 0.5, 1);
     }
 
     .polaroid-paper-slide.printed {
@@ -689,7 +706,7 @@
   <h2 class="font-serif" style="color: var(--primary-crimson); font-size: 1.7rem;">Hasil Foto Kamu</h2>
 
   <div class="polaroid-chamber">
-    <div class="polaroid-lens-dot"></div>
+    <div class="polaroid-lens-dot" id="polaroid-flash-dot"></div>
     <div class="polaroid-slot"></div>
     <div class="polaroid-paper-wrapper">
       <div id="polaroid-slide-elem" class="polaroid-paper-slide">
@@ -802,14 +819,13 @@
 
   function updateFigmaSliderPositions() {
     cardItems.forEach((card, i) => {
-      card.className = 'figma-card-item'; // Reset class
+      card.className = 'figma-card-item';
 
       if (i === currentCardIndex) {
         card.classList.add('active');
         selectedFramePath = card.getAttribute('data-path');
         requiredPhotoCount = parseInt(card.getAttribute('data-count')) || 3;
 
-        // Update Text & Color Theme Smoothly
         document.getElementById('card-theme-tag').innerText = card.getAttribute('data-tag');
         document.getElementById('card-theme-name').innerText = card.getAttribute('data-name');
         document.getElementById('step-template').style.backgroundColor = card.getAttribute('data-color');
@@ -897,10 +913,23 @@
       updateFigmaSliderPositions();
     }
 
+    // ANIMASI PRINT KELUAR & LAMPU BERKEDIP DI STEP 4
     if (step === 4) {
       const slide = document.getElementById('polaroid-slide-elem');
+      const flashDot = document.getElementById('polaroid-flash-dot');
+
+      // Reset posisi tersembunyi
       slide.classList.remove('printed');
-      setTimeout(() => { slide.classList.add('printed'); }, 100);
+      flashDot.classList.add('blinking'); // Nyalakan lampu kedip saat mulai mencetak
+
+      setTimeout(() => { 
+        slide.classList.add('printed'); // Kertas meluncur keluar
+      }, 150);
+
+      // Matikan lampu kedip begitu kertas foto selesai meluncur keluar (2.2 detik)
+      setTimeout(() => {
+        flashDot.classList.remove('blinking');
+      }, 2350);
     }
   }
 
