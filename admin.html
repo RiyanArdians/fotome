@@ -302,7 +302,7 @@
     .gallery-grid-name { font-size: 0.65rem; font-weight: 700; color: #8C6262; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; text-align: center; }
     .gallery-grid-msg { font-size: 0.58rem; color: #777; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; text-align: center; font-style: italic; }
 
-    /* STYLE MODUL KELOLA TAMU UNDANGAN (DISESUAIKAN TEMA DUSTY ROSE & MOCHA) */
+    /* STYLE MODUL KELOLA TAMU UNDANGAN */
     .guest-tools-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -327,9 +327,9 @@
     }
     .btn-tool:active { transform: scale(0.96); }
 
-    .btn-tool-add { background: #8C6262; } /* Dusty Rose Dark */
-    .btn-tool-import { background: #B3927A; } /* Soft Mocha */
-    .btn-tool-text { background: #614141; } /* Deep Mocha */
+    .btn-tool-add { background: #8C6262; }
+    .btn-tool-import { background: #B3927A; }
+    .btn-tool-text { background: #614141; }
     .btn-tool-danger { background: #C62828; }
 
     .search-box-wrapper {
@@ -464,7 +464,7 @@
     .modal-overlay {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.85);
+      background: rgba(0, 0, 0, 0.7);
       backdrop-filter: blur(4px);
       display: flex;
       align-items: center;
@@ -508,6 +508,110 @@
     .btn-modal-dl-plain { background: #B3927A; color: #FFF; border: none; padding: 9px; border-radius: 12px; font-size: 0.75rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
     .btn-modal-dl-msg { background: #8C6262; color: #FFF; border: none; padding: 9px; border-radius: 12px; font-size: 0.75rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
     .btn-modal-del { background: #C62828; color: #FFF; border: none; padding: 9px; border-radius: 12px; font-size: 0.75rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
+
+    /* ========================================================= */
+    /* CUSTOM DIALOG POPUP MENGGANTIKAN ALERT & CONFIRM BROWSER  */
+    /* ========================================================= */
+    .admin-dialog-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100vh;
+      background: rgba(61, 43, 43, 0.65);
+      backdrop-filter: blur(5px);
+      z-index: 999999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .admin-dialog-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .admin-dialog-card {
+      background: #FFFFFF;
+      border-radius: 20px;
+      padding: 24px 20px;
+      max-width: 320px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 15px 35px rgba(140, 98, 98, 0.25);
+      border: 1px solid rgba(216, 180, 180, 0.5);
+      transform: scale(0.88);
+      transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .admin-dialog-overlay.active .admin-dialog-card {
+      transform: scale(1);
+    }
+
+    .admin-dialog-icon {
+      width: 50px;
+      height: 50px;
+      background: #FAF6EE;
+      color: #8C6262;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      margin: 0 auto 12px;
+      border: 1px solid #D8B4B4;
+    }
+
+    .admin-dialog-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #8C6262;
+      margin-bottom: 6px;
+    }
+
+    .admin-dialog-msg {
+      font-size: 0.8rem;
+      color: #444;
+      margin-bottom: 18px;
+      line-height: 1.45;
+    }
+
+    .admin-dialog-actions {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+    }
+
+    .btn-dialog-cancel {
+      flex: 1;
+      background: #FAF6EE;
+      color: #8C6262;
+      border: 1px solid #D8B4B4;
+      padding: 10px;
+      border-radius: 12px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .btn-dialog-confirm {
+      flex: 1;
+      background: #8C6262;
+      color: #FFFFFF;
+      border: none;
+      padding: 10px;
+      border-radius: 12px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(140, 98, 98, 0.2);
+    }
+
+    .btn-dialog-confirm.danger {
+      background: #C62828;
+      box-shadow: 0 4px 12px rgba(198, 40, 40, 0.2);
+    }
 
     canvas { display: none; }
   </style>
@@ -757,6 +861,21 @@
   </div>
 </div>
 
+<!-- CUSTOM DIALOG OVERLAY (ALERT & CONFIRM DUSTY ROSE) -->
+<div id="admin-dialog" class="admin-dialog-overlay">
+  <div class="admin-dialog-card">
+    <div id="admin-dialog-icon" class="admin-dialog-icon">
+      <i class="fa-solid fa-circle-info"></i>
+    </div>
+    <div id="admin-dialog-title" class="admin-dialog-title">Pemberitahuan</div>
+    <div id="admin-dialog-msg" class="admin-dialog-msg">Pesan dialog...</div>
+    <div class="admin-dialog-actions">
+      <button id="btn-dialog-cancel" class="btn-dialog-cancel hidden" onclick="closeAdminDialog(false)">Batal</button>
+      <button id="btn-dialog-confirm" class="btn-dialog-confirm" onclick="closeAdminDialog(true)">Oke</button>
+    </div>
+  </div>
+</div>
+
 <canvas id="exportCanvas"></canvas>
 
 <script>
@@ -764,10 +883,49 @@
   let allGuests = [];
   let editingGuestId = null;
   let guestViewMode = 'card';
+  let onDialogCallback = null;
   
   // DEFAULT LINK UTAMA UNDANGAN & TEMPLATE WA
   let baseInvitationUrl = "https://riyanardians.github.io/";
   let defaultWaTemplate = "Kepada Yth. Bapak/Ibu/Saudara/i {nama},\n\nTanpa mengurangi rasa hormat, perkenankan kami mengundang Anda untuk menghadiri acara pernikahan kami.\n\nBerikut link undangan digital kami:\n{link}\n\nMerupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu.\n\nTerima kasih,\nRiyan & Amelia";
+
+  // SISTEM CUSTOM DIALOG MENGGANTIKAN ALERT & CONFIRM
+  function showAdminAlert(title, message, iconClass = "fa-solid fa-circle-info") {
+    document.getElementById('admin-dialog-title').innerText = title;
+    document.getElementById('admin-dialog-msg').innerText = message;
+    document.getElementById('admin-dialog-icon').innerHTML = `<i class="${iconClass}"></i>`;
+    document.getElementById('btn-dialog-cancel').classList.add('hidden');
+    
+    const confirmBtn = document.getElementById('btn-dialog-confirm');
+    confirmBtn.innerText = "Oke";
+    confirmBtn.className = "btn-dialog-confirm";
+
+    onDialogCallback = null;
+    document.getElementById('admin-dialog').classList.add('active');
+  }
+
+  function showAdminConfirm(title, message, callback, isDanger = false, iconClass = "fa-solid fa-circle-question") {
+    document.getElementById('admin-dialog-title').innerText = title;
+    document.getElementById('admin-dialog-msg').innerText = message;
+    document.getElementById('admin-dialog-icon').innerHTML = `<i class="${iconClass}"></i>`;
+    document.getElementById('btn-dialog-cancel').classList.remove('hidden');
+    
+    const confirmBtn = document.getElementById('btn-dialog-confirm');
+    confirmBtn.innerText = "Ya, Lanjutkan";
+    confirmBtn.className = isDanger ? "btn-dialog-confirm danger" : "btn-dialog-confirm";
+
+    onDialogCallback = callback;
+    document.getElementById('admin-dialog').classList.add('active');
+  }
+
+  function closeAdminDialog(result) {
+    document.getElementById('admin-dialog').classList.remove('active');
+    if (onDialogCallback) {
+      const cb = onDialogCallback;
+      onDialogCallback = null;
+      cb(result);
+    }
+  }
 
   function formatFileName(name, msg, withMsg = false) {
     const cleanName = (name || 'Tamu').replace(/[^\w\s-]/gi, '').trim() || 'Tamu';
@@ -949,7 +1107,7 @@
     const docId = document.getElementById('input-docid').value.trim();
 
     if (!fileName || !docId) {
-      alert("Harap isi Nama File dan ID Dokumen!");
+      showAdminAlert("Peringatan", "Harap isi Nama File dan ID Dokumen!", "fa-solid fa-triangle-exclamation");
       return;
     }
 
@@ -962,6 +1120,7 @@
     .then(() => {
       document.getElementById('input-filename').value = '';
       document.getElementById('input-docid').value = '';
+      showAdminAlert("Berhasil", `Projek "${docId}" telah ditambahkan.`, "fa-solid fa-circle-check");
     });
   }
 
@@ -970,9 +1129,11 @@
   }
 
   function deleteProject(docId) {
-    if (confirm(`Hapus projek "${docId}"?`)) {
-      db.collection('settings').doc(docId).delete();
-    }
+    showAdminConfirm("Hapus Projek", `Hapus projek "${docId}" dari database?`, (confirmed) => {
+      if (confirmed) {
+        db.collection('settings').doc(docId).delete();
+      }
+    }, true, "fa-solid fa-trash");
   }
 
   // 2. KELOLA GALERI
@@ -1059,11 +1220,11 @@
   function downloadSelectedPosts(withMessage) {
     const selectedCbs = document.querySelectorAll('.post-select-cb:checked');
     if (selectedCbs.length === 0) {
-      alert("Harap pilih/centang minimal 1 foto untuk diunduh!");
+      showAdminAlert("Pilih Foto", "Harap pilih/centang minimal 1 foto untuk diunduh!", "fa-solid fa-hand-pointer");
       return;
     }
 
-    alert(`Mulai memproses dan mengunduh ${selectedCbs.length} foto terpilih...`);
+    showAdminAlert("Memproses Unduhan", `Mulai memproses dan mengunduh ${selectedCbs.length} foto terpilih...`, "fa-solid fa-download");
 
     selectedCbs.forEach((cb, idx) => {
       const postId = cb.value;
@@ -1093,21 +1254,23 @@
   function deleteSelectedPosts() {
     const selectedCbs = document.querySelectorAll('.post-select-cb:checked');
     if (selectedCbs.length === 0) {
-      alert("Harap pilih/centang minimal 1 foto untuk dihapus!");
+      showAdminAlert("Pilih Foto", "Harap pilih/centang minimal 1 foto untuk dihapus!", "fa-solid fa-hand-pointer");
       return;
     }
 
-    if (confirm(`Apakah kamu yakin ingin menghapus ${selectedCbs.length} foto terpilih sekaligus dari galeri?`)) {
-      const batch = db.batch();
-      selectedCbs.forEach(cb => {
-        const docRef = db.collection('posts').doc(cb.value);
-        batch.delete(docRef);
-      });
+    showAdminConfirm("Hapus Foto Terpilih", `Apakah kamu yakin ingin menghapus ${selectedCbs.length} foto terpilih sekaligus dari galeri?`, (confirmed) => {
+      if (confirmed) {
+        const batch = db.batch();
+        selectedCbs.forEach(cb => {
+          const docRef = db.collection('posts').doc(cb.value);
+          batch.delete(docRef);
+        });
 
-      batch.commit()
-        .then(() => alert(`${selectedCbs.length} foto berhasil dihapus!`))
-        .catch(err => alert("Gagal menghapus: " + err.message));
-    }
+        batch.commit()
+          .then(() => showAdminAlert("Berhasil", `${selectedCbs.length} foto berhasil dihapus!`, "fa-solid fa-circle-check"))
+          .catch(err => showAdminAlert("Gagal", "Gagal menghapus: " + err.message, "fa-solid fa-circle-exclamation"));
+      }
+    }, true, "fa-solid fa-trash");
   }
 
   let activePostId = null;
@@ -1144,14 +1307,16 @@
     };
 
     document.getElementById('btn-modal-delete').onclick = () => {
-      if (confirm(`Apakah kamu yakin ingin menghapus foto ucapan dari "${activeSenderName}" ini?`)) {
-        db.collection('posts').doc(activePostId).delete()
-          .then(() => {
-            alert("Foto berhasil dihapus!");
-            closeAdminModal();
-          })
-          .catch(err => alert("Gagal menghapus: " + err.message));
-      }
+      showAdminConfirm("Hapus Foto", `Apakah kamu yakin ingin menghapus foto ucapan dari "${activeSenderName}" ini?`, (confirmed) => {
+        if (confirmed) {
+          db.collection('posts').doc(activePostId).delete()
+            .then(() => {
+              showAdminAlert("Berhasil", "Foto berhasil dihapus!", "fa-solid fa-circle-check");
+              closeAdminModal();
+            })
+            .catch(err => showAdminAlert("Gagal", "Gagal menghapus: " + err.message, "fa-solid fa-circle-exclamation"));
+        }
+      }, true, "fa-solid fa-trash");
     };
 
     document.getElementById('admin-modal').classList.remove('hidden');
@@ -1310,7 +1475,7 @@
     const phone = document.getElementById('input-guest-phone').value.trim();
 
     if (!name) {
-      alert("Harap isi nama tamu!");
+      showAdminAlert("Peringatan", "Harap isi nama tamu!", "fa-solid fa-triangle-exclamation");
       return;
     }
 
@@ -1323,30 +1488,42 @@
     if (editingGuestId) {
       db.collection('guests').doc(editingGuestId).update(payload).then(() => {
         closeGuestModal();
+        showAdminAlert("Berhasil", "Data tamu telah diperbarui.", "fa-solid fa-circle-check");
       });
     } else {
       payload.createdAt = firebase.firestore.FieldValue.serverTimestamp();
       db.collection('guests').add(payload).then(() => {
         closeGuestModal();
+        showAdminAlert("Berhasil", "Tamu baru telah ditambahkan.", "fa-solid fa-user-check");
       });
     }
   }
 
   function deleteGuest(id) {
-    if (confirm("Hapus tamu ini dari daftar?")) {
-      db.collection('guests').doc(id).delete();
-    }
+    showAdminConfirm("Hapus Tamu", "Hapus tamu ini dari daftar?", (confirmed) => {
+      if (confirmed) {
+        db.collection('guests').doc(id).delete().then(() => {
+          showAdminAlert("Berhasil", "Tamu telah dihapus.", "fa-solid fa-circle-check");
+        });
+      }
+    }, true, "fa-solid fa-user-minus");
   }
 
   function deleteAllGuests() {
-    if (allGuests.length === 0) return;
-    if (confirm(`Apakah kamu yakin ingin menghapus SELURUH (${allGuests.length}) data tamu?`)) {
-      const batch = db.batch();
-      allGuests.forEach(g => {
-        batch.delete(db.collection('guests').doc(g.id));
-      });
-      batch.commit().then(() => alert("Semua tamu berhasil dihapus!"));
+    if (allGuests.length === 0) {
+      showAdminAlert("Info", "Daftar tamu masih kosong.", "fa-solid fa-circle-info");
+      return;
     }
+
+    showAdminConfirm("Hapus Semua Tamu", `Apakah kamu yakin ingin menghapus SELURUH (${allGuests.length}) data tamu?`, (confirmed) => {
+      if (confirmed) {
+        const batch = db.batch();
+        allGuests.forEach(g => {
+          batch.delete(db.collection('guests').doc(g.id));
+        });
+        batch.commit().then(() => showAdminAlert("Berhasil", "Semua tamu berhasil dihapus!", "fa-solid fa-trash-can"));
+      }
+    }, true, "fa-solid fa-triangle-exclamation");
   }
 
   // IMPORT CSV & PANDUAN
@@ -1407,7 +1584,7 @@
 
       if (count > 0) {
         batch.commit().then(() => {
-          alert(`Berhasil mengimpor ${count} data tamu!`);
+          showAdminAlert("Berhasil", `Berhasil mengimpor ${count} data tamu!`, "fa-solid fa-file-circle-check");
           input.value = '';
         });
       }
@@ -1438,7 +1615,7 @@
       text: text 
     }, { merge: true })
     .then(() => {
-      alert("Pengaturan link & template WhatsApp berhasil disimpan!");
+      showAdminAlert("Berhasil", "Pengaturan link & template WhatsApp berhasil disimpan!", "fa-solid fa-floppy-disk");
       closeTextTemplateModal();
       renderGuestList();
     });
@@ -1470,14 +1647,14 @@
       });
     } else {
       copyToClipboard(message);
-      alert("Teks undangan berhasil disalin!");
+      showAdminAlert("Teks Disalin", "Teks undangan berhasil disalin ke clipboard!", "fa-regular fa-copy");
     }
   }
 
   function copyWaText(name) {
     const message = formatWaMessage(name);
     copyToClipboard(message);
-    alert("Teks undangan berhasil disalin!");
+    showAdminAlert("Teks Disalin", "Teks undangan berhasil disalin ke clipboard!", "fa-regular fa-copy");
   }
 
   function copyToClipboard(text) {
