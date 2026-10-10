@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Virtual Photobooth & Guestbook - FOTOME</title>
   
   <!-- Google Fonts & Font Awesome -->
@@ -17,80 +17,69 @@
   <style>
     :root {
       --primary-crimson: #7A1C28;
+      --deep-crimson: #5C131D;
       --gold-accent: #D4AF37;
       --bg-cream: #FAF6F0;
       --text-dark: #2B1E1E;
-      --card-white: #FFFFFF;
-      --current-card-bg: #8C2331;
+      --current-card-bg: #7A1C28;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
     body {
       font-family: 'Plus Jakarta Sans', sans-serif;
       background-color: var(--bg-cream);
       color: var(--text-dark);
       min-height: 100vh;
+      width: 100vw;
+      overflow-x: hidden;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 0;
-      overflow-x: hidden;
     }
 
     .font-serif { font-family: 'Cormorant Garamond', serif; }
     .font-script { font-family: 'Alex Brush', cursive; }
     .hidden { display: none !important; }
 
-    /* CARD CONTAINER UMUM */
-    .app-card {
-      width: 100%;
-      max-width: 430px;
-      background: var(--card-white);
-      border-radius: 28px;
-      padding: 28px 20px 20px;
-      box-shadow: 0 15px 35px rgba(122, 28, 40, 0.08);
-      border: 1px solid rgba(212, 175, 55, 0.25);
-      text-align: center;
-      position: relative;
-      margin: 15px 10px 40px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      min-height: 80vh;
-    }
-
-    .fullscreen-wrapper {
+    /* LAYOUT FULLSCREEN CONTAINER (TIDAK TERBUNGKUS CARD) */
+    .page-fullscreen {
       width: 100vw;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       align-items: center;
-      padding: 24px 16px 20px;
+      padding: 30px 20px 24px;
       position: relative;
-      overflow: hidden;
+      background-color: var(--bg-cream);
     }
 
-    /* TOMBOL STYLES MEWAH */
+    .page-fullscreen.dark-bg {
+      background-color: var(--current-card-bg);
+      color: #FFFFFF;
+      transition: background-color 0.5s ease;
+    }
+
+    /* TOMBOL STYLES MEWAH DAN PROFESIONAL (TANPA PANAH) */
     .btn-primary-v2 {
       background: linear-gradient(135deg, #8C2331 0%, var(--primary-crimson) 100%);
       color: #FFFFFF;
       border: 1px solid var(--gold-accent);
-      padding: 14px 20px;
-      font-size: 0.82rem;
+      padding: 15px 24px;
+      font-size: 0.85rem;
       font-weight: 700;
       letter-spacing: 2px;
       text-transform: uppercase;
-      border-radius: 30px;
+      border-radius: 35px;
       cursor: pointer;
-      box-shadow: 0 6px 18px rgba(122, 28, 40, 0.25);
+      box-shadow: 0 8px 20px rgba(122, 28, 40, 0.25);
       width: 100%;
-      max-width: 380px;
+      max-width: 360px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
+      gap: 10px;
       transition: all 0.25s ease;
     }
 
@@ -100,20 +89,20 @@
       background: transparent;
       color: var(--primary-crimson);
       border: 1.5px solid var(--primary-crimson);
-      padding: 12px 18px;
-      font-size: 0.78rem;
+      padding: 13px 22px;
+      font-size: 0.8rem;
       font-weight: 700;
       letter-spacing: 2px;
       text-transform: uppercase;
-      border-radius: 30px;
+      border-radius: 35px;
       cursor: pointer;
-      margin-top: 8px;
+      margin-top: 10px;
       width: 100%;
-      max-width: 380px;
+      max-width: 360px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
+      gap: 10px;
       transition: all 0.2s ease;
     }
 
@@ -123,13 +112,13 @@
       background: transparent;
       color: rgba(255, 255, 255, 0.85);
       border: none;
-      padding: 8px 16px;
-      font-size: 0.78rem;
+      padding: 10px 16px;
+      font-size: 0.8rem;
       font-weight: 600;
       cursor: pointer;
-      margin-top: 4px;
+      margin-top: 6px;
       width: 100%;
-      max-width: 380px;
+      max-width: 360px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -142,31 +131,26 @@
       -webkit-backdrop-filter: blur(8px);
       color: #FFFFFF;
       border: 1px solid rgba(255, 255, 255, 0.3);
-      padding: 10px 28px;
+      padding: 12px 32px;
       font-size: 0.82rem;
       font-weight: 600;
-      border-radius: 25px;
+      border-radius: 30px;
       cursor: pointer;
-      letter-spacing: 1px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
       transition: all 0.3s ease;
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-      animation: subtlePulse 2.8s infinite ease-in-out;
     }
 
     .btn-back-styled:active { transform: scale(0.94); background: rgba(255, 255, 255, 0.25); }
 
-    @keyframes subtlePulse {
-      0%, 100% { box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); border-color: rgba(255, 255, 255, 0.3); }
-      50% { box-shadow: 0 6px 20px rgba(255, 255, 255, 0.2); border-color: rgba(255, 255, 255, 0.55); }
-    }
-
     /* ------------------------------------ */
-    /* 1. ANIMASI ENVELOPE (AMPLOP OPENING) */
+    /* 1. AMPLOP PRESISI & RAPI             */
     /* ------------------------------------ */
     .envelope-screen {
       position: fixed;
       top: 0; left: 0; width: 100vw; height: 100vh;
-      background: var(--current-card-bg);
+      background: var(--primary-crimson);
       z-index: 99999;
       display: flex;
       flex-direction: column;
@@ -184,127 +168,82 @@
       pointer-events: none;
     }
 
-    .envelope-header {
-      text-align: center;
-      margin-bottom: 25px;
-      color: #FFF;
-    }
-
-    .envelope-box {
+    .envelope-wrapper {
       position: relative;
-      width: 290px;
-      height: 190px;
-      background: #6A1822;
+      width: 300px;
+      height: 200px;
+      background: var(--deep-crimson);
       border-radius: 12px;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-      border: 1px solid rgba(212, 175, 55, 0.4);
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(212, 175, 55, 0.35);
+      margin: 25px 0;
+      overflow: hidden;
       display: flex;
       align-items: center;
       justify-content: center;
-      perspective: 1000px;
     }
 
-    .envelope-flap {
+    /* SEGITIGA ATAS TERTUTUP RAPI */
+    .envelope-flap-top {
       position: absolute;
-      top: 0; left: 0; width: 0; height: 0;
-      border-left: 145px solid transparent;
-      border-right: 145px solid transparent;
-      border-top: 105px solid #8C2331;
+      top: 0; left: 0;
+      width: 0; height: 0;
+      border-left: 150px solid transparent;
+      border-right: 150px solid transparent;
+      border-top: 115px solid #8C2331;
       transform-origin: top;
       transition: transform 0.6s ease-in-out;
       z-index: 5;
-      filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
     }
 
-    .envelope-box.open .envelope-flap {
+    .envelope-wrapper.open .envelope-flap-top {
       transform: rotateX(180deg);
       z-index: 1;
     }
 
-    .envelope-seal-btn {
+    /* SEAL BULATAN POLOS EMAS */
+    .envelope-gold-seal {
       position: absolute;
-      width: 52px;
-      height: 52px;
-      background: linear-gradient(135deg, #D4AF37 0%, #AA7C11 100%);
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 46px; height: 46px;
+      background: linear-gradient(135deg, #F3E5AB 0%, #D4AF37 50%, #AA7C11 100%);
       border-radius: 50%;
-      border: 2px solid #FFF;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #7A1C28;
-      font-family: 'Alex Brush', cursive;
-      font-size: 1.8rem;
-      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35), inset 0 2px 4px rgba(255,255,255,0.6);
+      border: 1.5px solid #FFF;
       z-index: 10;
-      transition: all 0.3s ease;
+      transition: transform 0.3s ease;
     }
 
-    .envelope-box:hover .envelope-seal-btn { transform: scale(1.1); }
-
-    .envelope-letter-preview {
-      position: absolute;
-      width: 260px;
-      height: 160px;
-      background: #FAF6F0;
-      border-radius: 8px;
-      bottom: 10px;
-      z-index: 2;
-      transition: transform 0.7s ease-in-out;
-      padding: 15px;
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    }
-
-    .envelope-box.open .envelope-letter-preview {
-      transform: translateY(-50px);
+    .envelope-wrapper:hover .envelope-gold-seal {
+      transform: translate(-50%, -50%) scale(1.08);
     }
 
     /* ------------------------------------ */
-    /* 2. PAGE WELCOME (DENGAN FOTO PENGANTIN) */
+    /* 2. WELCOME HERO IMAGE                */
     /* ------------------------------------ */
-    .groom-bride-photo-frame {
+    .hero-photo-container {
       width: 100%;
-      max-width: 280px;
+      max-width: 320px;
       aspect-ratio: 4/5;
-      border-radius: 20px;
+      border-radius: 24px;
       overflow: hidden;
-      margin: 15px auto 20px;
+      margin: 20px auto;
       border: 2px solid var(--gold-accent);
-      box-shadow: 0 12px 30px rgba(122, 28, 40, 0.15);
-      position: relative;
+      box-shadow: 0 15px 35px rgba(122, 28, 40, 0.18);
       background: #FAF6F0;
     }
 
-    .groom-bride-photo-frame img {
+    .hero-photo-container img {
       width: 100%;
       height: 100%;
       object-fit: cover;
     }
 
     /* ------------------------------------ */
-    /* 3. PAGE INPUT NAMA ("DARI SIAPA KENANGAN INI?") */
+    /* 3. INPUT NAMA ELEGAN                 */
     /* ------------------------------------ */
-    .name-input-card {
-      background: var(--current-card-bg);
-      color: #FFF;
-      border: 1px solid rgba(212,175,55,0.3);
-      padding: 40px 20px 25px;
-      border-radius: 28px;
-      width: 100%;
-      max-width: 430px;
-      min-height: 80vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      align-items: center;
-      text-align: center;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
-    }
-
     .stylish-underline-input {
       width: 100%;
       max-width: 320px;
@@ -312,311 +251,206 @@
       border: none;
       border-bottom: 1.5px solid rgba(255, 255, 255, 0.5);
       color: #FFFFFF;
-      font-size: 1.15rem;
+      font-size: 1.2rem;
       text-align: center;
-      padding: 10px 5px;
+      padding: 12px 5px;
       outline: none;
       font-family: 'Plus Jakarta Sans', sans-serif;
       transition: border-color 0.3s ease;
-      margin: 30px 0;
+      margin: 35px 0;
     }
 
     .stylish-underline-input::placeholder { color: rgba(255, 255, 255, 0.45); font-style: italic; font-size: 0.95rem; }
     .stylish-underline-input:focus { border-bottom-color: var(--gold-accent); }
 
     /* ------------------------------------ */
-    /* 4. STEP 2 SLIDER FIGMA FULLSCREEN    */
+    /* 4. KAMERA FULLSCREEN VIEW FINDER     */
     /* ------------------------------------ */
-    .slider-header-box {
-      text-align: center;
+    .camera-fullscreen-stage {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: #000;
+      z-index: 9000;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      padding: 25px 20px 30px;
+    }
+
+    .camera-video-fit {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+    }
+
+    .camera-video-fit.mirror { transform: scaleX(-1); }
+
+    /* CONTROLS OVERLAY FLOATING */
+    .cam-top-bar {
+      position: relative;
       z-index: 10;
       width: 100%;
-      max-width: 380px;
-      margin-top: 10px;
+      max-width: 400px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(0,0,0,0.4);
+      backdrop-filter: blur(8px);
+      padding: 10px 16px;
+      border-radius: 30px;
+      color: #FFF;
+      border: 1px solid rgba(255,255,255,0.2);
     }
 
-    .section-label-fullscreen {
-      font-size: 0.72rem;
-      font-weight: 700;
-      color: var(--gold-accent);
-      text-transform: uppercase;
-      letter-spacing: 3px;
-      margin-bottom: 4px;
-    }
-
-    .slider-main-title {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: #FFFFFF;
-      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-      line-height: 1.2;
-      margin-bottom: 4px;
-    }
-
-    .slider-cards-viewport {
+    .cam-bottom-bar {
       position: relative;
+      z-index: 10;
       width: 100%;
-      max-width: 380px;
-      height: 52vh;
-      min-height: 320px;
+      max-width: 400px;
       display: flex;
+      flex-direction: column;
       align-items: center;
-      justify-content: center;
-      margin: 10px 0;
+      gap: 12px;
     }
 
-    .figma-card-item {
-      position: absolute;
-      width: 200px;
-      height: 100%;
-      max-height: 410px;
-      border-radius: 22px;
-      background: rgba(255, 255, 255, 0.12);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.3);
+    .cam-floating-tools {
       display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 12px;
-      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
-      transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+      gap: 10px;
+      background: rgba(0,0,0,0.45);
+      backdrop-filter: blur(8px);
+      padding: 8px 14px;
+      border-radius: 25px;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .cam-tool-btn {
+      background: transparent;
+      border: none;
+      color: #FFF;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 6px 10px;
+      border-radius: 15px;
       cursor: pointer;
-      user-select: none;
+      display: flex;
+      align-items: center;
+      gap: 5px;
     }
 
-    .figma-card-item img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.35));
+    .cam-tool-btn:active { background: rgba(255,255,255,0.2); }
+
+    .cam-snap-trigger {
+      width: 72px; height: 72px;
+      border-radius: 50%;
+      background: #FFF;
+      border: 4px solid var(--gold-accent);
+      box-shadow: 0 0 20px rgba(0,0,0,0.5);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary-crimson);
+      font-size: 1.5rem;
+      transition: transform 0.15s ease;
     }
 
-    .figma-card-item.active { transform: translateX(0) scale(1.05) rotate(0deg); opacity: 1; z-index: 10; }
-    .figma-card-item.next { transform: translateX(68%) scale(0.82) rotate(6deg); opacity: 0.55; z-index: 5; }
-    .figma-card-item.prev { transform: translateX(-68%) scale(0.82) rotate(-6deg); opacity: 0.55; z-index: 5; }
-    .figma-card-item.hidden-left { transform: translateX(-120%) scale(0.65) rotate(-12deg); opacity: 0; z-index: 1; }
-    .figma-card-item.hidden-right { transform: translateX(120%) scale(0.65) rotate(12deg); opacity: 0; z-index: 1; }
+    .cam-snap-trigger:active { transform: scale(0.9); }
 
-    .figma-card-item.card-pressed {
-      animation: frameClickBounce 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    .countdown-overlay {
+      position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.45); color: #FFF; font-size: 5rem; font-weight: 700;
+      display: flex; align-items: center; justify-content: center; z-index: 20;
     }
 
-    @keyframes frameClickBounce {
-      0% { transform: translateX(0) scale(1.05); }
-      40% { transform: translateX(0) scale(0.94); }
-      100% { transform: translateX(0) scale(1.08); opacity: 0.9; }
-    }
+    .flash-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: #FFF; opacity: 0; pointer-events: none; transition: opacity 0.1s; z-index: 30; }
+    .flash-overlay.active { opacity: 1; }
 
     /* ------------------------------------ */
     /* 5. PRINTER STAGE & POPUP FOTO        */
     /* ------------------------------------ */
     .printer-lottie-stage {
-      width: 100vw;
-      min-height: 100vh;
-      background: #FFFFFF;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: space-between;
-      padding: 20px 16px 20px;
-      position: relative;
+      width: 100vw; min-height: 100vh; background: #FFFFFF;
+      display: flex; flex-direction: column; align-items: center; justify-content: space-between;
+      padding: 30px 20px 24px; position: relative;
     }
 
     .vector-printer-wrapper {
-      position: relative;
-      width: 310px;
-      margin-top: 10px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative; width: 310px; margin-top: 15px;
+      display: flex; flex-direction: column; align-items: center; transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .vector-printer-wrapper.fade-out-printer {
-      opacity: 0;
-      transform: translateY(-30px) scale(0.85);
-      pointer-events: none;
-      height: 0;
-      margin: 0;
-      overflow: hidden;
+      opacity: 0; transform: translateY(-30px) scale(0.85); pointer-events: none; height: 0; margin: 0; overflow: hidden;
     }
 
     .paper-tray-input {
-      width: 150px;
-      height: 80px;
-      background: #FFFFFF;
-      border: 2px solid #E0E0E0;
-      border-bottom: none;
-      border-radius: 8px 8px 0 0;
-      margin-bottom: -15px;
-      box-shadow: 0 -3px 8px rgba(0,0,0,0.03);
-      transition: transform 2s cubic-bezier(0.4, 0, 0.2, 1);
-      z-index: 1;
+      width: 150px; height: 80px; background: #FFFFFF; border: 2px solid #E0E0E0; border-bottom: none;
+      border-radius: 8px 8px 0 0; margin-bottom: -15px; box-shadow: 0 -3px 8px rgba(0,0,0,0.03); transition: transform 2s cubic-bezier(0.4, 0, 0.2, 1); z-index: 1;
     }
 
     .paper-tray-input.pulled-in { transform: translateY(75px); }
 
     .flat-printer-body {
-      width: 290px;
-      height: 110px;
-      background: #3B444B;
-      border-radius: 20px;
-      position: relative;
-      z-index: 10;
-      box-shadow: 0 12px 25px rgba(0,0,0,0.18);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      padding: 12px 16px;
+      width: 290px; height: 110px; background: #3B444B; border-radius: 20px;
+      position: relative; z-index: 10; box-shadow: 0 12px 25px rgba(0,0,0,0.18);
+      display: flex; flex-direction: column; justify-content: space-between; padding: 12px 16px;
     }
 
     .printer-panel-top { display: flex; align-items: center; gap: 8px; }
-
     .led-dot { width: 10px; height: 10px; border-radius: 50%; transition: all 0.2s ease; }
     .led-red { background: #E74C3C; }
     .led-green { background: #2ECC71; }
-
     .led-red.blinking { animation: ledBlinkRed 0.3s infinite alternate; }
     .led-green.blinking { animation: ledBlinkGreen 0.3s infinite alternate; }
 
-    @keyframes ledBlinkRed {
-      0% { background: #FF7675; box-shadow: 0 0 10px #E74C3C; }
-      100% { background: #7F1D1D; box-shadow: none; }
-    }
+    @keyframes ledBlinkRed { 0% { background: #FF7675; } 100% { background: #7F1D1D; } }
+    @keyframes ledBlinkGreen { 0% { background: #55E6C1; } 100% { background: #145A32; } }
 
-    @keyframes ledBlinkGreen {
-      0% { background: #55E6C1; box-shadow: 0 0 10px #2ECC71; }
-      100% { background: #145A32; box-shadow: none; }
-    }
+    .printer-brand-tag { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.68rem; font-weight: 600; color: rgba(255, 255, 255, 0.7); letter-spacing: 1px; }
 
-    .printer-brand-tag {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 0.68rem;
-      font-weight: 600;
-      color: rgba(255, 255, 255, 0.7);
-      letter-spacing: 1px;
-    }
-
-    .printer-door-tray {
-      width: 100%; height: 42px; background: #2C3539; border-radius: 10px;
-      box-shadow: inset 0 2px 5px rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center;
-    }
-
+    .printer-door-tray { width: 100%; height: 42px; background: #2C3539; border-radius: 10px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; }
     .printer-slot-gap { width: 88%; height: 8px; background: #111; border-radius: 4px; }
 
-    .printer-output-paper-container {
-      position: relative; width: 180px; margin-top: -10px; overflow: hidden; z-index: 5; display: flex; justify-content: center; padding-top: 8px;
-    }
+    .printer-output-paper-container { position: relative; width: 180px; margin-top: -10px; overflow: hidden; z-index: 5; display: flex; justify-content: center; padding-top: 8px; }
 
-    .ejected-photo-sheet {
-      width: 100%; transform: translateY(-100%); transition: transform 5s cubic-bezier(0.22, 1, 0.36, 1); filter: drop-shadow(0 8px 18px rgba(0,0,0,0.15));
-    }
-
+    .ejected-photo-sheet { width: 100%; transform: translateY(-100%); transition: transform 5s cubic-bezier(0.22, 1, 0.36, 1); filter: drop-shadow(0 8px 18px rgba(0,0,0,0.15)); }
     .ejected-photo-sheet.fully-printed { transform: translateY(0); }
     .ejected-photo-sheet img { width: 100%; border-radius: 10px; display: block; margin: 0 auto; }
 
-    .popup-photo-container {
-      width: 100%; max-width: 260px; margin: 15px auto 10px; opacity: 0; transform: scale(0.6); transition: all 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-
+    .popup-photo-container { width: 100%; max-width: 260px; margin: 15px auto 10px; opacity: 0; transform: scale(0.6); transition: all 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
     .popup-photo-container.show-popup { opacity: 1; transform: scale(1); }
     .popup-photo-container img { width: 100%; border-radius: 14px; box-shadow: 0 15px 35px rgba(0,0,0,0.2); }
 
     .printer-status-text-box { margin-top: 15px; text-align: center; z-index: 20; }
-
-    .status-main-label {
-      font-size: 0.9rem; font-weight: 700; color: var(--primary-crimson); display: flex; align-items: center; justify-content: center; gap: 6px;
-    }
-
+    .status-main-label { font-size: 0.9rem; font-weight: 700; color: var(--primary-crimson); display: flex; align-items: center; justify-content: center; gap: 6px; }
     .status-sub-label { font-size: 0.75rem; color: #777; margin-top: 2px; font-style: italic; }
 
-    .printer-bottom-actions {
-      width: 100%; max-width: 380px; margin-top: 15px; display: flex; flex-direction: column; gap: 8px; z-index: 20; opacity: 0; transform: translateY(15px); transition: all 0.5s ease;
-    }
-
+    .printer-bottom-actions { width: 100%; max-width: 360px; margin-top: 15px; display: flex; flex-direction: column; gap: 8px; z-index: 20; opacity: 0; transform: translateY(15px); transition: all 0.5s ease; }
     .printer-bottom-actions.visible { opacity: 1; transform: translateY(0); }
 
     /* ------------------------------------ */
-    /* 6. KAMERA CONTROLS                   */
+    /* 6. GALERI TERPISAH                   */
     /* ------------------------------------ */
-    .camera-wrapper {
-      position: relative; width: 100%; aspect-ratio: 4/3; border-radius: 18px; overflow: hidden; background: #000; margin-bottom: 10px;
-    }
-
-    video { width: 100%; height: 100%; object-fit: cover; }
-    video.mirror { transform: scaleX(-1); }
-
-    .cam-controls-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 10px; }
-
-    .cam-btn-icon {
-      background: #FAF6F0; border: 1px solid rgba(212,175,55,0.4); color: var(--primary-crimson); padding: 8px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; justify-content: center;
-    }
-
-    .cam-select-box {
-      width: 100%; padding: 8px 10px; border: 1px solid #D8B4B4; border-radius: 10px; font-size: 0.75rem; background: #FFF; outline: none; margin-bottom: 10px;
-    }
-
-    .countdown-overlay {
-      position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); color: #FFF; font-size: 4.5rem; font-weight: 700; display: flex; align-items: center; justify-content: center;
-    }
-
-    .flash-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: #FFF; opacity: 0; pointer-events: none; transition: opacity 0.1s; }
-    .flash-overlay.active { opacity: 1; }
-
-    /* ------------------------------------ */
-    /* 7. PAGE GALERI KENANGAN TERPISAH     */
-    /* ------------------------------------ */
-    .feed-container {
-      width: 100%; max-width: 430px; margin: 15px auto 40px; padding: 25px 20px 20px; background: #FFF; border-radius: 28px; border: 1px solid rgba(212, 175, 55, 0.25); box-shadow: 0 15px 35px rgba(122, 28, 40, 0.08); text-align: center;
-    }
-
-    .gallery-intro-box {
-      background: #FAF6F0; border: 1px solid rgba(212, 175, 55, 0.3); border-radius: 18px; padding: 20px 16px; margin-bottom: 22px; text-align: center;
-    }
-
+    .feed-container { width: 100%; max-width: 420px; margin: 0 auto; }
+    .gallery-intro-box { background: #FAF6F0; border: 1px solid rgba(212, 175, 55, 0.3); border-radius: 18px; padding: 20px 16px; margin-bottom: 22px; text-align: center; }
     .ig-grid-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-
-    .ig-grid-item {
-      background: #FFF; border-radius: 12px; overflow: hidden; border: 1px solid rgba(212,175,55,0.25); cursor: pointer; display: flex; flex-direction: column; box-shadow: 0 4px 12px rgba(0,0,0,0.05); transition: transform 0.2s ease;
-    }
-
-    .ig-grid-item:active { transform: scale(0.96); }
-
-    .ig-item-name {
-      font-size: 0.65rem; font-weight: 700; color: var(--primary-crimson); padding: 5px 4px 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; background: #FFFDF9;
-    }
-
+    .ig-grid-item { background: #FFF; border-radius: 12px; overflow: hidden; border: 1px solid rgba(212,175,55,0.25); cursor: pointer; display: flex; flex-direction: column; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+    .ig-item-name { font-size: 0.65rem; font-weight: 700; color: var(--primary-crimson); padding: 5px 4px 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; background: #FFFDF9; }
     .ig-item-img-box { width: 100%; aspect-ratio: 1/1; overflow: hidden; background: #FAF6F0; }
     .ig-item-img-box img { width: 100%; height: 100%; object-fit: cover; }
-
-    .ig-item-msg {
-      font-size: 0.62rem; color: #555; padding: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; font-style: italic; background: #FFF;
-    }
+    .ig-item-msg { font-size: 0.62rem; color: #555; padding: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; font-style: italic; background: #FFF; }
 
     /* FOOTER RESMI OFFISIAL */
-    .app-official-footer {
-      text-align: center; padding: 14px 10px 6px; font-size: 0.7rem; color: #8C6262; border-top: 1px dashed rgba(216, 180, 180, 0.4); margin-top: 18px; width: 100%; letter-spacing: 0.5px;
-    }
-
-    .app-official-footer.light-text {
-      color: rgba(255, 255, 255, 0.65); border-top: 1px dashed rgba(255, 255, 255, 0.2); margin-top: 10px;
-    }
+    .app-official-footer { text-align: center; padding: 14px 10px 6px; font-size: 0.72rem; color: #8C6262; border-top: 1px dashed rgba(216, 180, 180, 0.4); margin-top: 20px; width: 100%; letter-spacing: 0.5px; }
+    .app-official-footer.light-text { color: rgba(255, 255, 255, 0.65); border-top: 1px dashed rgba(255, 255, 255, 0.2); }
 
     /* MODAL LIGHTBOX & ALERT */
-    .modal-overlay {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(5px); display: flex; align-items: center; justify-content: center; z-index: 99999; padding: 15px;
-    }
-
-    .modal-card {
-      background: #FFF; border-radius: 20px; padding: 20px 16px 16px; max-width: 360px; width: 100%; text-align: center; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.4); border: 1px solid rgba(212, 175, 55, 0.3); max-height: 90vh; display: flex; flex-direction: column; overflow-y: auto;
-    }
-
-    .modal-close-btn {
-      position: absolute; top: 10px; right: 12px; background: #7A1C28; color: #FFF; border: none; width: 32px; height: 32px; border-radius: 50%; font-weight: 700; font-size: 0.9rem; cursor: pointer; z-index: 100;
-    }
-
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(5px); display: flex; align-items: center; justify-content: center; z-index: 99999; padding: 15px; }
+    .modal-card { background: #FFF; border-radius: 20px; padding: 20px 16px 16px; max-width: 360px; width: 100%; text-align: center; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.4); border: 1px solid rgba(212, 175, 55, 0.3); max-height: 90vh; display: flex; flex-direction: column; overflow-y: auto; }
+    .modal-close-btn { position: absolute; top: 10px; right: 12px; background: #7A1C28; color: #FFF; border: none; width: 32px; height: 32px; border-radius: 50%; font-weight: 700; font-size: 0.9rem; cursor: pointer; z-index: 100; }
     .modal-user-name { font-size: 1rem; font-weight: 700; color: var(--primary-crimson); margin-bottom: 2px; padding-right: 25px; }
     .modal-img { width: 100%; max-height: 60vh; object-fit: contain; border-radius: 12px; margin: 10px 0; background: #FAF6F0; }
     .modal-msg { font-size: 0.82rem; color: #333; font-style: italic; background: #FAF6F0; padding: 10px 12px; border-radius: 10px; line-height: 1.4; word-break: break-word; }
@@ -626,45 +460,39 @@
 </head>
 <body>
 
-<!-- 0. SCREEN ENVELOPE OPENING (Pertama Kali Muncul) -->
+<!-- 0. AMPLOP TERTUTUP PRESISI -->
 <div id="envelope-screen" class="envelope-screen" onclick="openEnvelopeAnimation()">
-  <div class="envelope-header">
+  <div style="text-align:center; color:#FFF;">
     <div style="font-size:0.75rem; letter-spacing:3px; color:var(--gold-accent); font-weight:700; margin-bottom:4px;">KENANGAN PERNIKAHAN</div>
     <div class="font-script" style="font-size:2.8rem; color:#FFF; line-height:1;" id="envelope-names">Riyan & Amelia</div>
   </div>
 
-  <div class="envelope-box" id="envelope-box">
-    <div class="envelope-flap"></div>
-    <div class="envelope-seal-btn" id="envelope-seal">R&A</div>
-    <div class="envelope-letter-preview">
-      <div style="font-size:0.65rem; color:var(--gold-accent); font-weight:700; letter-spacing:2px;">UNDANGAN DIGITAL</div>
-      <div class="font-serif" style="font-size:1.1rem; color:var(--primary-crimson); font-weight:700; margin:4px 0;">Virtual Photobooth</div>
-      <div style="font-size:0.7rem; color:#666;">Ketuk untuk membuka pesan</div>
-    </div>
+  <div class="envelope-wrapper" id="envelope-wrapper">
+    <div class="envelope-flap-top"></div>
+    <div class="envelope-gold-seal"></div>
   </div>
 
-  <div style="font-size:0.78rem; color:rgba(255,255,255,0.75); margin-top:35px; font-style:italic;">
-    <i class="fa-solid fa-hand-pointer"></i> Ketuk amplop untuk masuk
+  <div style="font-size:0.8rem; color:rgba(255,255,255,0.8); font-style:italic; display:flex; align-items:center; gap:8px;">
+    <i class="fa-solid fa-hand-pointer"></i> Ketuk amplop untuk membuka
   </div>
 </div>
 
-<!-- STEP 1: WELCOME SCREEN (Page 1 Dengan Foto Pengantin) -->
-<div id="step-welcome" class="app-card">
-  <div>
+<!-- STEP 1: WELCOME SCREEN (HERO PHOTO) -->
+<div id="step-welcome" class="page-fullscreen">
+  <div style="width:100%; text-align:center;">
     <p style="font-size:0.72rem; color:var(--gold-accent); letter-spacing:3px; font-weight:700; margin-bottom:4px;">KENANGAN PERNIKAHAN</p>
-    <h1 class="font-script" style="font-size:2.8rem; color:var(--primary-crimson); line-height:1.1; margin-bottom:4px;" id="display-event-title">Riyan & Amelia</h1>
-    <p style="font-size:0.78rem; color:#6E5353; letter-spacing:1px; margin-bottom:12px;">06 DESEMBER 2026</p>
+    <h1 class="font-script" style="font-size:2.8rem; color:var(--primary-crimson); line-height:1.1;" id="display-event-title">Riyan & Amelia</h1>
+    <p style="font-size:0.78rem; color:#6E5353; letter-spacing:1px; margin-bottom:10px;">06 DESEMBER 2026</p>
 
-    <!-- FOTO PENGANTIN / SLIDESHOW WELCOME -->
-    <div class="groom-bride-photo-frame">
-      <img src="./assets/v2/dsg1.png" alt="Foto Pengantin Riyan & Amelia" id="welcome-couple-img">
+    <!-- FOTO PASANGAN / HERO IMAGE -->
+    <div class="hero-photo-container">
+      <img src="./assets/v2/hero.png" alt="Hero Pengantin" id="welcome-couple-img" onerror="this.src='./assets/v2/dsg1.png'">
     </div>
 
-    <p style="font-size:0.8rem; color:#555; font-style:italic; line-height:1.5; padding:0 10px; margin-bottom:20px;">
+    <p style="font-size:0.82rem; color:#555; font-style:italic; line-height:1.5; padding:0 15px; margin-bottom:20px;">
       "Satu foto menyimpan sejuta kenangan. Terima kasih telah menjadi bagian dari hari bahagia kami!"
     </p>
 
-    <!-- TOMBOL UTAMA & GALERI TERPISAH -->
     <button class="btn-primary-v2" onclick="goToStep('step-ask-name')">
       <i class="fa-solid fa-camera"></i> Tambahkan Momen
     </button>
@@ -680,15 +508,15 @@
 </div>
 
 <!-- PAGE BARU: INPUT NAMA "DARI SIAPA KENANGAN INI?" -->
-<div id="step-ask-name" class="name-input-card hidden">
-  <div style="width:100%;">
+<div id="step-ask-name" class="page-fullscreen dark-bg hidden">
+  <div style="width:100%; text-align:center;">
     <p style="font-size:0.7rem; color:var(--gold-accent); letter-spacing:3px; font-weight:700; margin-bottom:4px;">KENANGAN PERNIKAHAN</p>
-    <h2 class="font-script" style="font-size:2.4rem; color:#FFF; margin-bottom:2px;" id="ask-event-title">Riyan & Amelia</h2>
+    <h2 class="font-script" style="font-size:2.5rem; color:#FFF;" id="ask-event-title">Riyan & Amelia</h2>
     <p style="font-size:0.75rem; color:rgba(255,255,255,0.7); letter-spacing:1px;">06 DESEMBER 2026</p>
 
-    <div style="margin-top:50px;">
-      <div style="width:50px; height:1px; background:var(--gold-accent); margin:0 auto 20px;"></div>
-      <h3 class="font-serif" style="font-size:1.6rem; letter-spacing:2px; font-weight:600; color:#FFF; line-height:1.3;">
+    <div style="margin-top:60px;">
+      <div style="width:40px; height:1px; background:var(--gold-accent); margin:0 auto 20px;"></div>
+      <h3 class="font-serif" style="font-size:1.7rem; letter-spacing:2px; font-weight:600; color:#FFF; line-height:1.3;">
         DARI SIAPA<br>KENANGAN INI?
       </h3>
 
@@ -696,13 +524,13 @@
     </div>
   </div>
 
-  <div style="width:100%;">
+  <div style="width:100%; text-align:center;">
     <button class="btn-primary-v2" style="background: linear-gradient(135deg, #D4AF37 0%, #AA7C11 100%); color:#2B1E1E; border:none;" onclick="submitGuestNameAndNext()">
-      Selanjutnya &rarr;
+      Selanjutnya
     </button>
     
     <button class="btn-outline-v2" style="margin-top:10px;" onclick="goToStep('step-welcome')">
-      &larr; Kembali
+      Kembali
     </button>
 
     <div class="app-official-footer light-text">
@@ -711,9 +539,8 @@
   </div>
 </div>
 
-<!-- STEP 2: SLIDER FIGMA FULL SCREEN (PILIH FRAME) -->
-<div id="step-template" class="fullscreen-wrapper hidden" style="background: var(--current-card-bg); transition: background 0.6s ease;">
-  
+<!-- STEP 2: SLIDER FRAME FULLSCREEN -->
+<div id="step-template" class="page-fullscreen dark-bg hidden">
   <div class="slider-header-box">
     <div class="section-label-fullscreen" id="card-theme-tag">ROYAL EDITION</div>
     <div class="slider-main-title" id="card-theme-name">Classic Royal (3 Foto)</div>
@@ -721,46 +548,36 @@
   </div>
 
   <div class="slider-cards-viewport" id="slider-stack-box">
-
     <div class="figma-card-item" data-path="./assets/v2/dsg3.png" data-count="3" data-name="Classic Royal (3 Foto)" data-tag="ROYAL EDITION" data-color="#7A1C28">
       <img src="./assets/v2/dsg3.png" alt="Desain 3">
     </div>
-
     <div class="figma-card-item" data-path="./assets/v2/dsg2.png" data-count="2" data-name="Classic Royal (2 Foto)" data-tag="ROYAL EDITION" data-color="#5B1620">
       <img src="./assets/v2/dsg2.png" alt="Desain 2">
     </div>
-
     <div class="figma-card-item" data-path="./assets/v2/dsg1.png" data-count="1" data-name="Classic Royal (1 Foto)" data-tag="ROYAL EDITION" data-color="#8C2331">
       <img src="./assets/v2/dsg1.png" alt="Desain 1">
     </div>
-
     <div class="figma-card-item" data-path="./assets/v2/flower3.png" data-count="3" data-name="Floral Romance (3 Foto)" data-tag="FLORAL COLLECTION" data-color="#4A5D4E">
       <img src="./assets/v2/flower3.png" alt="Flower 3">
     </div>
-
     <div class="figma-card-item" data-path="./assets/v2/flower2.png" data-count="2" data-name="Floral Romance (2 Foto)" data-tag="FLORAL COLLECTION" data-color="#3D4E41">
       <img src="./assets/v2/flower2.png" alt="Flower 2">
     </div>
-
     <div class="figma-card-item" data-path="./assets/v2/flower1.png" data-count="1" data-name="Floral Romance (1 Foto)" data-tag="FLORAL COLLECTION" data-color="#556B5A">
       <img src="./assets/v2/flower1.png" alt="Flower 1">
     </div>
-
     <div class="figma-card-item" data-path="./assets/v2/line 3.png" data-count="3" data-name="Minimalist Modern (3 Foto)" data-tag="MINIMALIST STYLE" data-color="#2C3E50">
       <img src="./assets/v2/line 3.png" alt="Line 3">
     </div>
-
     <div class="figma-card-item" data-path="./assets/v2/line 2.png" data-count="2" data-name="Minimalist Modern (2 Foto)" data-tag="MINIMALIST STYLE" data-color="#1A252F">
       <img src="./assets/v2/line 2.png" alt="Line 2">
     </div>
-
     <div class="figma-card-item" data-path="./assets/v2/line 1.png" data-count="1" data-name="Minimalist Modern (1 Foto)" data-tag="MINIMALIST STYLE" data-color="#34495E">
       <img src="./assets/v2/line 1.png" alt="Line 1">
     </div>
-
   </div>
 
-  <div style="width:100%; max-width:380px; display:flex; flex-direction:column; align-items:center; z-index:10; margin-bottom:6px;">
+  <div style="width:100%; text-align:center;">
     <button class="btn-back-styled" onclick="goToStep('step-ask-name')">
       Kembali
     </button>
@@ -768,68 +585,62 @@
       © 2026 FOTOME by Riyan. All rights reserved.
     </div>
   </div>
-
 </div>
 
-<!-- STEP 3: AREA KAMERA -->
-<div id="step-camera" class="app-card hidden">
-  <div>
-    <div style="font-size: 0.85rem; font-weight: 700; color: var(--primary-crimson); margin-bottom: 8px;" id="cam-progress-text">Foto 1 dari 3</div>
+<!-- STEP 3: KAMERA FULLSCREEN VIEW FINDER -->
+<div id="step-camera" class="camera-fullscreen-stage hidden">
+  <video id="video" class="camera-video-fit mirror" autoplay playsinline></video>
+  <div id="countdown-overlay" class="countdown-overlay hidden">3</div>
+  <div id="flash-overlay" class="flash-overlay"></div>
 
-    <div class="camera-wrapper">
-      <video id="video" class="mirror" autoplay playsinline></video>
-      <div id="countdown-overlay" class="countdown-overlay hidden">3</div>
-      <div id="flash-overlay" class="flash-overlay"></div>
-    </div>
-
-    <div class="cam-controls-grid">
-      <button class="cam-btn-icon" id="btn-timer" onclick="toggleTimerSetting()">
-        <i class="fa-solid fa-stopwatch"></i> Timer: 3s
-      </button>
-      <button class="cam-btn-icon" id="btn-zoom" onclick="toggleZoomSetting()">
-        <i class="fa-solid fa-magnifying-glass-plus"></i> Zoom: 1x
-      </button>
-      <button class="cam-btn-icon" onclick="switchCamera()">
-        <i class="fa-solid fa-camera-rotate"></i> Switch
-      </button>
-      <button class="cam-btn-icon" id="btn-mirror" onclick="toggleMirror()">
-        <i class="fa-solid fa-arrows-left-right"></i> Mirror: ON
-      </button>
-    </div>
-
-    <select id="camera-select" class="cam-select-box" onchange="onCameraSelectChange(this.value)"></select>
-
-    <button id="btn-snap" class="btn-primary-v2" onclick="takePhotoSnap()">
-      <i class="fa-solid fa-camera"></i> Ambil Foto
-    </button>
-    <button class="btn-outline-v2" style="color:#888;" onclick="stopCameraAndGoBack()">
-      Batal / Ubah Bingkai
+  <!-- FLOATING TOP BAR -->
+  <div class="cam-top-bar">
+    <span style="font-size:0.8rem; font-weight:700;" id="cam-progress-text">Foto 1 dari 3</span>
+    <button class="btn-outline-v2" style="width:auto; margin:0; padding:4px 8px;" onclick="stopCameraAndGoBack()">
+      <i class="fa-solid fa-xmark"></i> Batal
     </button>
   </div>
 
-  <div class="app-official-footer">
-    © 2026 FOTOME by Riyan. All rights reserved.
+  <!-- FLOATING BOTTOM CONTROLS -->
+  <div class="cam-bottom-bar">
+    <div class="cam-floating-tools">
+      <button class="cam-tool-btn" id="btn-timer" onclick="toggleTimerSetting()">
+        <i class="fa-solid fa-stopwatch"></i> <span id="label-timer">3s</span>
+      </button>
+      <button class="cam-tool-btn" id="btn-zoom" onclick="toggleZoomSetting()">
+        <i class="fa-solid fa-magnifying-glass-plus"></i> <span id="label-zoom">1x</span>
+      </button>
+      <button class="cam-tool-btn" onclick="switchCamera()">
+        <i class="fa-solid fa-camera-rotate"></i> Switch
+      </button>
+      <button class="cam-tool-btn" id="btn-mirror" onclick="toggleMirror()">
+        <i class="fa-solid fa-arrows-left-right"></i> <span id="label-mirror">ON</span>
+      </button>
+    </div>
+
+    <!-- TRIGGER AMBIL FOTO -->
+    <div class="cam-snap-trigger" id="btn-snap" onclick="takePhotoSnap()">
+      <i class="fa-solid fa-camera"></i>
+    </div>
+
+    <select id="camera-select" class="cam-select-box hidden" onchange="onCameraSelectChange(this.value)"></select>
   </div>
 </div>
 
 <!-- STEP 4: ANIMASI PRINTER DENGAN POPUP FOTO FINAL -->
 <div id="step-result" class="printer-lottie-stage hidden">
-  
   <div class="vector-printer-wrapper" id="main-printer-unit">
     <div class="paper-tray-input" id="paper-input-sheet"></div>
-
     <div class="flat-printer-body">
       <div class="printer-panel-top">
         <div class="led-dot led-red" id="led-red"></div>
         <div class="led-dot led-green" id="led-green"></div>
         <div class="printer-brand-tag">FOTOME by Riyan</div>
       </div>
-
       <div class="printer-door-tray">
         <div class="printer-slot-gap"></div>
       </div>
     </div>
-
     <div class="printer-output-paper-container">
       <div id="ejected-photo-sheet" class="ejected-photo-sheet">
         <img class="result-img-target" alt="Hasil Photobooth">
@@ -850,64 +661,65 @@
   </div>
 
   <div class="printer-bottom-actions" id="printer-bottom-actions">
-    <div style="background: #FAF6F0; border: 1px solid rgba(212,175,55,0.3); border-radius: 12px; padding: 10px 12px; text-align: left;">
-      <label style="display:block; font-size:0.68rem; font-weight:700; color:var(--primary-crimson); margin-bottom:2px;">Nama Kamu</label>
-      <input type="text" id="input-sender-name" style="width:100%; padding:6px 8px; border:1px solid #D8B4B4; border-radius:6px; font-size:0.75rem; outline:none; margin-bottom:6px; background:#FFF;" placeholder="Misal: Budi &amp; Sarah">
+    <div style="background: #FAF6F0; border: 1px solid rgba(212,175,55,0.3); border-radius: 14px; padding: 12px; text-align: left;">
+      <label style="display:block; font-size:0.7rem; font-weight:700; color:var(--primary-crimson); margin-bottom:2px;">Nama Kamu</label>
+      <input type="text" id="input-sender-name" style="width:100%; padding:8px; border:1px solid #D8B4B4; border-radius:8px; font-size:0.8rem; outline:none; margin-bottom:8px; background:#FFF;" placeholder="Misal: Budi &amp; Sarah">
 
-      <label style="display:block; font-size:0.68rem; font-weight:700; color:var(--primary-crimson); margin-bottom:2px;">Pesan / Ucapan Doa Kamu</label>
-      <textarea id="input-sender-message" rows="2" style="width:100%; padding:6px 8px; border:1px solid #D8B4B4; border-radius:6px; font-size:0.75rem; outline:none; background:#FFF;" placeholder="Tuliskan ucapan manismu di sini..."></textarea>
+      <label style="display:block; font-size:0.7rem; font-weight:700; color:var(--primary-crimson); margin-bottom:2px;">Pesan / Ucapan Doa Kamu</label>
+      <textarea id="input-sender-message" rows="2" style="width:100%; padding:8px; border:1px solid #D8B4B4; border-radius:8px; font-size:0.8rem; outline:none; background:#FFF;" placeholder="Tuliskan ucapan manismu di sini..."></textarea>
     </div>
 
-    <button class="btn-primary-v2" style="max-width:100%; padding: 12px 14px;" onclick="saveAndShareToFeed()">
-      <i class="fa-solid fa-paper-plane"></i> Unduh &amp; Posting ke Galeri Tamu
+    <button class="btn-primary-v2" style="max-width:100%;" onclick="saveAndShareToFeed()">
+      <i class="fa-solid fa-paper-plane"></i> Unduh &amp; Posting ke Galeri
     </button>
 
-    <button class="btn-secondary-v2" style="max-width:100%; padding: 10px 14px;" onclick="savePrivateOnly()">
-      <i class="fa-solid fa-download"></i> Simpan Sendiri (Privat Ke HP)
+    <button class="btn-secondary-v2" style="max-width:100%;" onclick="savePrivateOnly()">
+      <i class="fa-solid fa-download"></i> Simpan Privat Ke HP
     </button>
 
-    <button class="btn-outline-v2" style="color:#888; max-width:100%; padding: 6px 14px;" onclick="goToStep('step-template')">
+    <button class="btn-outline-v2" style="color:#888; max-width:100%;" onclick="goToStep('step-template')">
       <i class="fa-solid fa-rotate-right"></i> Foto Ulang
     </button>
   </div>
 
-  <div class="app-official-footer" style="max-width: 380px;">
+  <div class="app-official-footer" style="max-width: 360px;">
     © 2026 FOTOME by Riyan. All rights reserved.
   </div>
-
 </div>
 
 <!-- PAGE TERPISAH: GALERI KENANGAN TAMU -->
-<div id="step-gallery-page" class="feed-container hidden">
-  <div style="text-align:center; margin-bottom:15px;">
-    <p style="font-size:0.7rem; color:var(--gold-accent); letter-spacing:3px; font-weight:700; margin-bottom:4px;">GALERI KENANGAN</p>
-    <h2 class="font-script" style="font-size:2.5rem; color:var(--primary-crimson); line-height:1;">Jejak Kebahagiaan</h2>
-  </div>
-
-  <!-- NARASI KATA-KATA ELEGAN & PROFESIONAL DI ATAS GALERI -->
-  <div class="gallery-intro-box">
-    <i class="fa-solid fa-quote-left" style="color:var(--gold-accent); font-size:1.2rem; margin-bottom:8px; display:block;"></i>
-    <p class="font-serif" style="font-size:0.95rem; color:#4A3B3B; line-height:1.6; font-style:italic;">
-      "Terima kasih telah melangkah bersama kami dan mengukir kehangatan dalam setiap senyuman. Setiap foto dan doa yang tertulis di sini adalah hadiah terindah yang akan selalu kami kenang sepanjang masa."
-    </p>
-    <div style="font-size:0.72rem; font-weight:700; color:var(--primary-crimson); margin-top:8px; letter-spacing:1px;" id="gallery-couple-sub">
-      — RIYAN &amp; AMELIA
+<div id="step-gallery-page" class="page-fullscreen hidden">
+  <div class="feed-container">
+    <div style="text-align:center; margin-bottom:15px;">
+      <p style="font-size:0.7rem; color:var(--gold-accent); letter-spacing:3px; font-weight:700; margin-bottom:4px;">GALERI KENANGAN</p>
+      <h2 class="font-script" style="font-size:2.8rem; color:var(--primary-crimson); line-height:1;">Jejak Kebahagiaan</h2>
     </div>
-  </div>
 
-  <div class="feed-header">
-    <span><i class="fa-solid fa-border-all"></i> Kiriman Tamu</span>
-    <span style="font-size: 0.72rem; color: #888;" id="total-posts-count">0 Kiriman</span>
-  </div>
+    <!-- NARASI ELEGAN GALERI TAMU -->
+    <div class="gallery-intro-box">
+      <i class="fa-solid fa-quote-left" style="color:var(--gold-accent); font-size:1.2rem; margin-bottom:8px; display:block;"></i>
+      <p class="font-serif" style="font-size:0.95rem; color:#4A3B3B; line-height:1.6; font-style:italic;">
+        "Terima kasih telah melangkah bersama kami dan mengukir kehangatan dalam setiap senyuman. Setiap foto dan doa yang tertulis di sini adalah hadiah terindah yang akan selalu kami kenang sepanjang masa."
+      </p>
+      <div style="font-size:0.72rem; font-weight:700; color:var(--primary-crimson); margin-top:8px; letter-spacing:1px;" id="gallery-couple-sub">
+        — RIYAN &amp; AMELIA
+      </div>
+    </div>
 
-  <div id="ig-grid-box" class="ig-grid-container">
-    <p style="font-size: 0.8rem; color: #999; grid-column: span 3; text-align: center;">Memuat ucapan &amp; foto tamu...</p>
-  </div>
+    <div style="font-size:0.9rem; font-weight:700; color:var(--primary-crimson); margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
+      <span><i class="fa-solid fa-border-all"></i> Kiriman Tamu</span>
+      <span style="font-size:0.72rem; color:#888;" id="total-posts-count">0 Kiriman</span>
+    </div>
 
-  <div style="margin-top:25px;">
-    <button class="btn-primary-v2" onclick="goToStep('step-welcome')">
-      &larr; Kembali ke Beranda
-    </button>
+    <div id="ig-grid-box" class="ig-grid-container">
+      <p style="font-size: 0.8rem; color: #999; grid-column: span 3; text-align: center;">Memuat ucapan &amp; foto tamu...</p>
+    </div>
+
+    <div style="margin-top:25px;">
+      <button class="btn-primary-v2" onclick="goToStep('step-welcome')">
+        Kembali ke Beranda
+      </button>
+    </div>
   </div>
 
   <div class="app-official-footer">
@@ -962,19 +774,18 @@
     initFigmaSlider();
   });
 
-  // ANIMASI AMPLOP TERBUKA DENGAN EFEK ZOOM IN
   function openEnvelopeAnimation() {
-    const envelopeBox = document.getElementById('envelope-box');
+    const envelopeWrapper = document.getElementById('envelope-wrapper');
     const envelopeScreen = document.getElementById('envelope-screen');
 
-    envelopeBox.classList.add('open');
+    envelopeWrapper.classList.add('open');
 
     setTimeout(() => {
       envelopeScreen.classList.add('zoom-out-fade');
       setTimeout(() => {
         envelopeScreen.style.display = 'none';
       }, 750);
-    }, 600);
+    }, 500);
   }
 
   function goToStep(targetId) {
@@ -991,7 +802,6 @@
       updateFigmaSliderPositions();
     }
 
-    // ANIMASI CETAK PRINTER PADA STEP RESULT
     if (targetId === 'step-result') {
       const printerUnit = document.getElementById('main-printer-unit');
       const popupBox = document.getElementById('popup-photo-box');
@@ -1046,7 +856,7 @@
   function submitGuestNameAndNext() {
     const inputName = document.getElementById('guest-initial-name').value.trim();
     if (!inputName) {
-      showAlert("Harap isi nama atau inisial kamu terlebih dahulu!", "Nama Masih Kosong", "✍️");
+      showAlert("Harap isi nama kamu terlebih dahulu!", "Nama Masih Kosong", "✍️");
       return;
     }
     currentGuestName = inputName;
@@ -1235,19 +1045,15 @@
       const select = document.getElementById('camera-select');
       select.innerHTML = '';
 
-      if (videoDevices.length === 0) {
-        select.style.display = 'none';
-        return;
-      }
+      if (videoDevices.length === 0) return;
 
       const frontCam = videoDevices.find(d => d.label.toLowerCase().includes('front') || d.label.toLowerCase().includes('depan')) || videoDevices[0];
       const backCam = videoDevices.find(d => d.label.toLowerCase().includes('back') || d.label.toLowerCase().includes('belakang')) || videoDevices[videoDevices.length - 1];
 
       const filtered = [];
-      if (frontCam) filtered.push({ mode: 'user', label: '📷 Kamera Depan (Front)' });
-      if (backCam && backCam !== frontCam) filtered.push({ mode: 'environment', label: '📷 Kamera Belakang (Back)' });
+      if (frontCam) filtered.push({ mode: 'user', label: 'Kamera Depan' });
+      if (backCam && backCam !== frontCam) filtered.push({ mode: 'environment', label: 'Kamera Belakang' });
 
-      select.style.display = 'block';
       filtered.forEach(cam => {
         const option = document.createElement('option');
         option.value = cam.mode;
@@ -1266,7 +1072,7 @@
   function toggleMirror() {
     isMirror = !isMirror;
     applyZoomTransform();
-    document.getElementById('btn-mirror').innerHTML = `<i class="fa-solid fa-arrows-left-right"></i> Mirror: ${isMirror ? 'ON' : 'OFF'}`;
+    document.getElementById('label-mirror').innerText = isMirror ? 'ON' : 'OFF';
   }
 
   function toggleTimerSetting() {
@@ -1274,7 +1080,7 @@
     else if (timerDuration === 5) timerDuration = 0;
     else timerDuration = 3;
 
-    document.getElementById('btn-timer').innerHTML = `<i class="fa-solid fa-stopwatch"></i> Timer: ${timerDuration === 0 ? 'OFF' : timerDuration + 's'}`;
+    document.getElementById('label-timer').innerText = timerDuration === 0 ? 'OFF' : timerDuration + 's';
   }
 
   function toggleZoomSetting() {
@@ -1284,7 +1090,7 @@
     else zoomLevel = 1;
 
     applyZoomTransform();
-    document.getElementById('btn-zoom').innerHTML = `<i class="fa-solid fa-magnifying-glass-plus"></i> Zoom: ${zoomLevel}x`;
+    document.getElementById('label-zoom').innerText = `${zoomLevel}x`;
   }
 
   function applyZoomTransform() {
@@ -1307,7 +1113,7 @@
   }
 
   function takePhotoSnap() {
-    document.getElementById('btn-snap').disabled = true;
+    document.getElementById('btn-snap').style.pointerEvents = 'none';
 
     if (timerDuration === 0) {
       executeSnapCapture();
@@ -1363,13 +1169,13 @@
 
     if (capturedPhotos.length < requiredPhotoCount) {
       document.getElementById('cam-progress-text').innerText = `Foto ${capturedPhotos.length + 1} dari ${requiredPhotoCount}`;
-      setTimeout(() => { document.getElementById('btn-snap').disabled = false; }, 800);
+      setTimeout(() => { document.getElementById('btn-snap').style.pointerEvents = 'auto'; }, 800);
     } else {
       if (videoStream) {
         videoStream.getTracks().forEach(track => track.stop());
       }
       renderPhotostripWithFigmaFrame();
-      document.getElementById('btn-snap').disabled = false;
+      document.getElementById('btn-snap').style.pointerEvents = 'auto';
     }
   }
 
