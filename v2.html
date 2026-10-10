@@ -6,7 +6,7 @@
   <title>Virtual Photobooth & Guestbook - FOTOME</title>
   
   <!-- Google Fonts & Font Awesome -->
-  <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <!-- Firebase Compat SDK -->
@@ -42,7 +42,7 @@
     .font-script { font-family: 'Alex Brush', cursive; }
     .hidden { display: none !important; }
 
-    /* CARD BIASA UNTUK STEP 1, 3 */
+    /* CARD CONTAINER UMUM */
     .app-card {
       width: 100%;
       max-width: 430px;
@@ -54,6 +54,10 @@
       text-align: center;
       position: relative;
       margin: 15px 10px 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 80vh;
     }
 
     .fullscreen-wrapper {
@@ -68,16 +72,42 @@
       overflow: hidden;
     }
 
+    /* TOMBOL STYLES MEWAH */
     .btn-primary-v2 {
       background: linear-gradient(135deg, #8C2331 0%, var(--primary-crimson) 100%);
       color: #FFFFFF;
       border: 1px solid var(--gold-accent);
-      padding: 12px 18px;
-      font-size: 0.85rem;
+      padding: 14px 20px;
+      font-size: 0.82rem;
       font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
       border-radius: 30px;
       cursor: pointer;
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+      box-shadow: 0 6px 18px rgba(122, 28, 40, 0.25);
+      width: 100%;
+      max-width: 380px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.25s ease;
+    }
+
+    .btn-primary-v2:active { transform: scale(0.97); }
+
+    .btn-secondary-v2 {
+      background: transparent;
+      color: var(--primary-crimson);
+      border: 1.5px solid var(--primary-crimson);
+      padding: 12px 18px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      border-radius: 30px;
+      cursor: pointer;
+      margin-top: 8px;
       width: 100%;
       max-width: 380px;
       display: inline-flex;
@@ -87,26 +117,7 @@
       transition: all 0.2s ease;
     }
 
-    .btn-primary-v2:active { transform: scale(0.98); }
-
-    .btn-secondary-v2 {
-      background: #FFF;
-      color: var(--primary-crimson);
-      border: 1.5px solid var(--primary-crimson);
-      padding: 10px 16px;
-      font-size: 0.82rem;
-      font-weight: 700;
-      border-radius: 30px;
-      cursor: pointer;
-      margin-top: 6px;
-      width: 100%;
-      max-width: 380px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.03);
-    }
+    .btn-secondary-v2:active { transform: scale(0.97); background: rgba(122, 28, 40, 0.05); }
 
     .btn-outline-v2 {
       background: transparent;
@@ -125,7 +136,6 @@
       gap: 6px;
     }
 
-    /* CUSTOM STYLING TOMBOL BACK DI STEP 2 */
     .btn-back-styled {
       background: rgba(255, 255, 255, 0.12);
       backdrop-filter: blur(8px);
@@ -138,28 +148,185 @@
       border-radius: 25px;
       cursor: pointer;
       letter-spacing: 1px;
-      transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+      transition: all 0.3s ease;
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
       animation: subtlePulse 2.8s infinite ease-in-out;
     }
 
-    .btn-back-styled:active {
-      transform: scale(0.94);
-      background: rgba(255, 255, 255, 0.25);
-    }
+    .btn-back-styled:active { transform: scale(0.94); background: rgba(255, 255, 255, 0.25); }
 
     @keyframes subtlePulse {
-      0%, 100% {
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        border-color: rgba(255, 255, 255, 0.3);
-      }
-      50% {
-        box-shadow: 0 6px 20px rgba(255, 255, 255, 0.2);
-        border-color: rgba(255, 255, 255, 0.55);
-      }
+      0%, 100% { box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); border-color: rgba(255, 255, 255, 0.3); }
+      50% { box-shadow: 0 6px 20px rgba(255, 255, 255, 0.2); border-color: rgba(255, 255, 255, 0.55); }
     }
 
-    /* STEP 2 SLIDER FIGMA FULLSCREEN */
+    /* ------------------------------------ */
+    /* 1. ANIMASI ENVELOPE (AMPLOP OPENING) */
+    /* ------------------------------------ */
+    .envelope-screen {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: var(--current-card-bg);
+      z-index: 99999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      cursor: pointer;
+      overflow: hidden;
+      transition: transform 0.8s cubic-bezier(0.7, 0, 0.3, 1), opacity 0.8s ease;
+    }
+
+    .envelope-screen.zoom-out-fade {
+      transform: scale(1.8);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .envelope-header {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #FFF;
+    }
+
+    .envelope-box {
+      position: relative;
+      width: 290px;
+      height: 190px;
+      background: #6A1822;
+      border-radius: 12px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(212, 175, 55, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      perspective: 1000px;
+    }
+
+    .envelope-flap {
+      position: absolute;
+      top: 0; left: 0; width: 0; height: 0;
+      border-left: 145px solid transparent;
+      border-right: 145px solid transparent;
+      border-top: 105px solid #8C2331;
+      transform-origin: top;
+      transition: transform 0.6s ease-in-out;
+      z-index: 5;
+      filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
+    }
+
+    .envelope-box.open .envelope-flap {
+      transform: rotateX(180deg);
+      z-index: 1;
+    }
+
+    .envelope-seal-btn {
+      position: absolute;
+      width: 52px;
+      height: 52px;
+      background: linear-gradient(135deg, #D4AF37 0%, #AA7C11 100%);
+      border-radius: 50%;
+      border: 2px solid #FFF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #7A1C28;
+      font-family: 'Alex Brush', cursive;
+      font-size: 1.8rem;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+      z-index: 10;
+      transition: all 0.3s ease;
+    }
+
+    .envelope-box:hover .envelope-seal-btn { transform: scale(1.1); }
+
+    .envelope-letter-preview {
+      position: absolute;
+      width: 260px;
+      height: 160px;
+      background: #FAF6F0;
+      border-radius: 8px;
+      bottom: 10px;
+      z-index: 2;
+      transition: transform 0.7s ease-in-out;
+      padding: 15px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .envelope-box.open .envelope-letter-preview {
+      transform: translateY(-50px);
+    }
+
+    /* ------------------------------------ */
+    /* 2. PAGE WELCOME (DENGAN FOTO PENGANTIN) */
+    /* ------------------------------------ */
+    .groom-bride-photo-frame {
+      width: 100%;
+      max-width: 280px;
+      aspect-ratio: 4/5;
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 15px auto 20px;
+      border: 2px solid var(--gold-accent);
+      box-shadow: 0 12px 30px rgba(122, 28, 40, 0.15);
+      position: relative;
+      background: #FAF6F0;
+    }
+
+    .groom-bride-photo-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* ------------------------------------ */
+    /* 3. PAGE INPUT NAMA ("DARI SIAPA KENANGAN INI?") */
+    /* ------------------------------------ */
+    .name-input-card {
+      background: var(--current-card-bg);
+      color: #FFF;
+      border: 1px solid rgba(212,175,55,0.3);
+      padding: 40px 20px 25px;
+      border-radius: 28px;
+      width: 100%;
+      max-width: 430px;
+      min-height: 80vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      text-align: center;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+    }
+
+    .stylish-underline-input {
+      width: 100%;
+      max-width: 320px;
+      background: transparent;
+      border: none;
+      border-bottom: 1.5px solid rgba(255, 255, 255, 0.5);
+      color: #FFFFFF;
+      font-size: 1.15rem;
+      text-align: center;
+      padding: 10px 5px;
+      outline: none;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      transition: border-color 0.3s ease;
+      margin: 30px 0;
+    }
+
+    .stylish-underline-input::placeholder { color: rgba(255, 255, 255, 0.45); font-style: italic; font-size: 0.95rem; }
+    .stylish-underline-input:focus { border-bottom-color: var(--gold-accent); }
+
+    /* ------------------------------------ */
+    /* 4. STEP 2 SLIDER FIGMA FULLSCREEN    */
+    /* ------------------------------------ */
     .slider-header-box {
       text-align: center;
       z-index: 10;
@@ -232,7 +399,6 @@
     .figma-card-item.hidden-left { transform: translateX(-120%) scale(0.65) rotate(-12deg); opacity: 0; z-index: 1; }
     .figma-card-item.hidden-right { transform: translateX(120%) scale(0.65) rotate(12deg); opacity: 0; z-index: 1; }
 
-    /* ANIMASI KLIK FRAME TENGAH */
     .figma-card-item.card-pressed {
       animation: frameClickBounce 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
     }
@@ -243,7 +409,9 @@
       100% { transform: translateX(0) scale(1.08); opacity: 0.9; }
     }
 
-    /* STAGE PRINTER PRESISI & POP-UP FOTO */
+    /* ------------------------------------ */
+    /* 5. PRINTER STAGE & POPUP FOTO        */
+    /* ------------------------------------ */
     .printer-lottie-stage {
       width: 100vw;
       min-height: 100vh;
@@ -288,9 +456,7 @@
       z-index: 1;
     }
 
-    .paper-tray-input.pulled-in {
-      transform: translateY(75px);
-    }
+    .paper-tray-input.pulled-in { transform: translateY(75px); }
 
     .flat-printer-body {
       width: 290px;
@@ -306,19 +472,9 @@
       padding: 12px 16px;
     }
 
-    .printer-panel-top {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
+    .printer-panel-top { display: flex; align-items: center; gap: 8px; }
 
-    .led-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      transition: all 0.2s ease;
-    }
-
+    .led-dot { width: 10px; height: 10px; border-radius: 50%; transition: all 0.2s ease; }
     .led-red { background: #E74C3C; }
     .led-green { background: #2ECC71; }
 
@@ -344,375 +500,224 @@
     }
 
     .printer-door-tray {
-      width: 100%;
-      height: 42px;
-      background: #2C3539;
-      border-radius: 10px;
-      box-shadow: inset 0 2px 5px rgba(0,0,0,0.4);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      width: 100%; height: 42px; background: #2C3539; border-radius: 10px;
+      box-shadow: inset 0 2px 5px rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center;
     }
 
-    .printer-slot-gap {
-      width: 88%;
-      height: 8px;
-      background: #111;
-      border-radius: 4px;
-    }
+    .printer-slot-gap { width: 88%; height: 8px; background: #111; border-radius: 4px; }
 
     .printer-output-paper-container {
-      position: relative;
-      width: 180px;
-      margin-top: -10px;
-      overflow: hidden;
-      z-index: 5;
-      display: flex;
-      justify-content: center;
-      padding-top: 8px;
+      position: relative; width: 180px; margin-top: -10px; overflow: hidden; z-index: 5; display: flex; justify-content: center; padding-top: 8px;
     }
 
     .ejected-photo-sheet {
-      width: 100%;
-      transform: translateY(-100%);
-      transition: transform 5s cubic-bezier(0.22, 1, 0.36, 1);
-      filter: drop-shadow(0 8px 18px rgba(0,0,0,0.15));
+      width: 100%; transform: translateY(-100%); transition: transform 5s cubic-bezier(0.22, 1, 0.36, 1); filter: drop-shadow(0 8px 18px rgba(0,0,0,0.15));
     }
 
-    .ejected-photo-sheet.fully-printed {
-      transform: translateY(0);
-    }
-
-    .ejected-photo-sheet img {
-      width: 100%;
-      border-radius: 10px;
-      display: block;
-      margin: 0 auto;
-    }
+    .ejected-photo-sheet.fully-printed { transform: translateY(0); }
+    .ejected-photo-sheet img { width: 100%; border-radius: 10px; display: block; margin: 0 auto; }
 
     .popup-photo-container {
-      width: 100%;
-      max-width: 260px;
-      margin: 15px auto 10px;
-      opacity: 0;
-      transform: scale(0.6);
-      transition: all 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      width: 100%; max-width: 260px; margin: 15px auto 10px; opacity: 0; transform: scale(0.6); transition: all 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
-    .popup-photo-container.show-popup {
-      opacity: 1;
-      transform: scale(1);
-    }
+    .popup-photo-container.show-popup { opacity: 1; transform: scale(1); }
+    .popup-photo-container img { width: 100%; border-radius: 14px; box-shadow: 0 15px 35px rgba(0,0,0,0.2); }
 
-    .popup-photo-container img {
-      width: 100%;
-      border-radius: 14px;
-      box-shadow: 0 15px 35px rgba(0,0,0,0.2);
-    }
-
-    .printer-status-text-box {
-      margin-top: 15px;
-      text-align: center;
-      z-index: 20;
-    }
+    .printer-status-text-box { margin-top: 15px; text-align: center; z-index: 20; }
 
     .status-main-label {
-      font-size: 0.9rem;
-      font-weight: 700;
-      color: var(--primary-crimson);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
+      font-size: 0.9rem; font-weight: 700; color: var(--primary-crimson); display: flex; align-items: center; justify-content: center; gap: 6px;
     }
 
-    .status-sub-label {
-      font-size: 0.75rem;
-      color: #777;
-      margin-top: 2px;
-      font-style: italic;
-    }
+    .status-sub-label { font-size: 0.75rem; color: #777; margin-top: 2px; font-style: italic; }
 
     .printer-bottom-actions {
-      width: 100%;
-      max-width: 380px;
-      margin-top: 15px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      z-index: 20;
-      opacity: 0;
-      transform: translateY(15px);
-      transition: all 0.5s ease;
+      width: 100%; max-width: 380px; margin-top: 15px; display: flex; flex-direction: column; gap: 8px; z-index: 20; opacity: 0; transform: translateY(15px); transition: all 0.5s ease;
     }
 
-    .printer-bottom-actions.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
+    .printer-bottom-actions.visible { opacity: 1; transform: translateY(0); }
 
-    /* KAMERA CONTROLS */
+    /* ------------------------------------ */
+    /* 6. KAMERA CONTROLS                   */
+    /* ------------------------------------ */
     .camera-wrapper {
-      position: relative;
-      width: 100%;
-      aspect-ratio: 4/3;
-      border-radius: 18px;
-      overflow: hidden;
-      background: #000;
-      margin-bottom: 10px;
+      position: relative; width: 100%; aspect-ratio: 4/3; border-radius: 18px; overflow: hidden; background: #000; margin-bottom: 10px;
     }
 
     video { width: 100%; height: 100%; object-fit: cover; }
     video.mirror { transform: scaleX(-1); }
 
-    .cam-controls-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 8px;
-      margin-bottom: 10px;
-    }
+    .cam-controls-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 10px; }
 
     .cam-btn-icon {
-      background: #FAF6F0;
-      border: 1px solid rgba(212,175,55,0.4);
-      color: var(--primary-crimson);
-      padding: 8px 10px;
-      border-radius: 12px;
-      font-size: 0.75rem;
-      font-weight: 700;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      justify-content: center;
+      background: #FAF6F0; border: 1px solid rgba(212,175,55,0.4); color: var(--primary-crimson); padding: 8px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; justify-content: center;
     }
 
     .cam-select-box {
-      width: 100%;
-      padding: 8px 10px;
-      border: 1px solid #D8B4B4;
-      border-radius: 10px;
-      font-size: 0.75rem;
-      background: #FFF;
-      outline: none;
-      margin-bottom: 10px;
+      width: 100%; padding: 8px 10px; border: 1px solid #D8B4B4; border-radius: 10px; font-size: 0.75rem; background: #FFF; outline: none; margin-bottom: 10px;
     }
 
     .countdown-overlay {
-      position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.4);
-      color: #FFF;
-      font-size: 4.5rem;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); color: #FFF; font-size: 4.5rem; font-weight: 700; display: flex; align-items: center; justify-content: center;
     }
 
-    .flash-overlay {
-      position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: #FFF;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.1s;
-    }
-
+    .flash-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: #FFF; opacity: 0; pointer-events: none; transition: opacity 0.1s; }
     .flash-overlay.active { opacity: 1; }
 
-    /* GALERI EXPLORE IG */
+    /* ------------------------------------ */
+    /* 7. PAGE GALERI KENANGAN TERPISAH     */
+    /* ------------------------------------ */
     .feed-container {
-      width: 100%;
-      max-width: 430px;
-      margin-top: 25px;
-      padding: 0 10px 40px;
+      width: 100%; max-width: 430px; margin: 15px auto 40px; padding: 25px 20px 20px; background: #FFF; border-radius: 28px; border: 1px solid rgba(212, 175, 55, 0.25); box-shadow: 0 15px 35px rgba(122, 28, 40, 0.08); text-align: center;
     }
 
-    .feed-header {
-      font-size: 1.05rem;
-      font-weight: 700;
-      color: var(--primary-crimson);
-      margin-bottom: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+    .gallery-intro-box {
+      background: #FAF6F0; border: 1px solid rgba(212, 175, 55, 0.3); border-radius: 18px; padding: 20px 16px; margin-bottom: 22px; text-align: center;
     }
 
-    .ig-grid-container {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 6px;
-    }
+    .ig-grid-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
 
     .ig-grid-item {
-      background: #FFF;
-      border-radius: 10px;
-      overflow: hidden;
-      border: 1px solid rgba(212,175,55,0.25);
-      cursor: pointer;
-      display: flex;
-      flex-direction: column;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      background: #FFF; border-radius: 12px; overflow: hidden; border: 1px solid rgba(212,175,55,0.25); cursor: pointer; display: flex; flex-direction: column; box-shadow: 0 4px 12px rgba(0,0,0,0.05); transition: transform 0.2s ease;
     }
+
+    .ig-grid-item:active { transform: scale(0.96); }
 
     .ig-item-name {
-      font-size: 0.65rem;
-      font-weight: 700;
-      color: var(--primary-crimson);
-      padding: 4px 4px 2px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      text-align: center;
-      background: #FFFDF9;
+      font-size: 0.65rem; font-weight: 700; color: var(--primary-crimson); padding: 5px 4px 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; background: #FFFDF9;
     }
 
-    .ig-item-img-box {
-      width: 100%;
-      aspect-ratio: 1/1;
-      overflow: hidden;
-      background: #FAF6F0;
-    }
-
+    .ig-item-img-box { width: 100%; aspect-ratio: 1/1; overflow: hidden; background: #FAF6F0; }
     .ig-item-img-box img { width: 100%; height: 100%; object-fit: cover; }
 
     .ig-item-msg {
-      font-size: 0.62rem;
-      color: #555;
-      padding: 3px 4px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      text-align: center;
-      font-style: italic;
-      background: #FFF;
+      font-size: 0.62rem; color: #555; padding: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; font-style: italic; background: #FFF;
     }
 
-    /* FOOTER WEB RESMI DENGAN COPYRIGHT */
+    /* FOOTER RESMI OFFISIAL */
     .app-official-footer {
-      text-align: center;
-      padding: 14px 10px 6px;
-      font-size: 0.7rem;
-      color: #8C6262;
-      border-top: 1px dashed rgba(216, 180, 180, 0.4);
-      margin-top: 18px;
-      width: 100%;
-      letter-spacing: 0.5px;
+      text-align: center; padding: 14px 10px 6px; font-size: 0.7rem; color: #8C6262; border-top: 1px dashed rgba(216, 180, 180, 0.4); margin-top: 18px; width: 100%; letter-spacing: 0.5px;
     }
 
     .app-official-footer.light-text {
-      color: rgba(255, 255, 255, 0.65);
-      border-top: 1px dashed rgba(255, 255, 255, 0.2);
-      margin-top: 10px;
+      color: rgba(255, 255, 255, 0.65); border-top: 1px dashed rgba(255, 255, 255, 0.2); margin-top: 10px;
     }
 
     /* MODAL LIGHTBOX & ALERT */
     .modal-overlay {
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.85);
-      backdrop-filter: blur(5px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 99999;
-      padding: 15px;
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(5px); display: flex; align-items: center; justify-content: center; z-index: 99999; padding: 15px;
     }
 
     .modal-card {
-      background: #FFF;
-      border-radius: 20px;
-      padding: 20px 16px 16px;
-      max-width: 360px;
-      width: 100%;
-      text-align: center;
-      position: relative;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-      border: 1px solid rgba(212, 175, 55, 0.3);
-      max-height: 90vh;
-      display: flex;
-      flex-direction: column;
-      overflow-y: auto;
+      background: #FFF; border-radius: 20px; padding: 20px 16px 16px; max-width: 360px; width: 100%; text-align: center; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.4); border: 1px solid rgba(212, 175, 55, 0.3); max-height: 90vh; display: flex; flex-direction: column; overflow-y: auto;
     }
 
     .modal-close-btn {
-      position: absolute;
-      top: 10px;
-      right: 12px;
-      background: #7A1C28;
-      color: #FFF;
-      border: none;
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      font-weight: 700;
-      font-size: 0.9rem;
-      cursor: pointer;
-      z-index: 100;
+      position: absolute; top: 10px; right: 12px; background: #7A1C28; color: #FFF; border: none; width: 32px; height: 32px; border-radius: 50%; font-weight: 700; font-size: 0.9rem; cursor: pointer; z-index: 100;
     }
 
-    .modal-user-name {
-      font-size: 1rem;
-      font-weight: 700;
-      color: var(--primary-crimson);
-      margin-bottom: 2px;
-      padding-right: 25px;
-    }
-
-    .modal-img {
-      width: 100%;
-      max-height: 60vh;
-      object-fit: contain;
-      border-radius: 12px;
-      margin: 10px 0;
-      background: #FAF6F0;
-    }
-
-    .modal-msg {
-      font-size: 0.82rem;
-      color: #333;
-      font-style: italic;
-      background: #FAF6F0;
-      padding: 10px 12px;
-      border-radius: 10px;
-      line-height: 1.4;
-      word-break: break-word;
-    }
+    .modal-user-name { font-size: 1rem; font-weight: 700; color: var(--primary-crimson); margin-bottom: 2px; padding-right: 25px; }
+    .modal-img { width: 100%; max-height: 60vh; object-fit: contain; border-radius: 12px; margin: 10px 0; background: #FAF6F0; }
+    .modal-msg { font-size: 0.82rem; color: #333; font-style: italic; background: #FAF6F0; padding: 10px 12px; border-radius: 10px; line-height: 1.4; word-break: break-word; }
 
     canvas { display: none; }
   </style>
 </head>
 <body>
 
-<!-- STEP 1: WELCOME SCREEN -->
-<div id="step-welcome" class="app-card">
-  <p style="font-size:0.72rem; color:var(--gold-accent); letter-spacing:3px; font-weight:700; margin-bottom:6px;">WEDDING MEMORIES OF</p>
-  <h1 class="font-script" style="font-size:2.5rem; color:var(--primary-crimson); line-height:1.1; margin-bottom:12px;" id="display-event-title">Riyan & Amelia</h1>
-  <p style="font-size:0.8rem; color:#6E5353; margin-bottom:20px; letter-spacing:1px;">06 DESEMBER 2026</p>
-
-  <div style="background: #FAF6F0; padding: 16px; border-radius: 16px; margin-bottom: 18px; border: 1px solid rgba(212,175,55,0.3);">
-    <p style="font-size: 0.82rem; color: #555; line-height: 1.5; font-style: italic;">
-      "Abadikan momen kebahagiaanmu bersama kami & tinggalkan pesan ucapan manis di galeri kenangan!"
-    </p>
+<!-- 0. SCREEN ENVELOPE OPENING (Pertama Kali Muncul) -->
+<div id="envelope-screen" class="envelope-screen" onclick="openEnvelopeAnimation()">
+  <div class="envelope-header">
+    <div style="font-size:0.75rem; letter-spacing:3px; color:var(--gold-accent); font-weight:700; margin-bottom:4px;">KENANGAN PERNIKAHAN</div>
+    <div class="font-script" style="font-size:2.8rem; color:#FFF; line-height:1;" id="envelope-names">Riyan & Amelia</div>
   </div>
 
-  <button class="btn-primary-v2" onclick="goToStep(2)">
-    <i class="fa-solid fa-camera"></i> Mulai Berfoto
-  </button>
+  <div class="envelope-box" id="envelope-box">
+    <div class="envelope-flap"></div>
+    <div class="envelope-seal-btn" id="envelope-seal">R&A</div>
+    <div class="envelope-letter-preview">
+      <div style="font-size:0.65rem; color:var(--gold-accent); font-weight:700; letter-spacing:2px;">UNDANGAN DIGITAL</div>
+      <div class="font-serif" style="font-size:1.1rem; color:var(--primary-crimson); font-weight:700; margin:4px 0;">Virtual Photobooth</div>
+      <div style="font-size:0.7rem; color:#666;">Ketuk untuk membuka pesan</div>
+    </div>
+  </div>
+
+  <div style="font-size:0.78rem; color:rgba(255,255,255,0.75); margin-top:35px; font-style:italic;">
+    <i class="fa-solid fa-hand-pointer"></i> Ketuk amplop untuk masuk
+  </div>
+</div>
+
+<!-- STEP 1: WELCOME SCREEN (Page 1 Dengan Foto Pengantin) -->
+<div id="step-welcome" class="app-card">
+  <div>
+    <p style="font-size:0.72rem; color:var(--gold-accent); letter-spacing:3px; font-weight:700; margin-bottom:4px;">KENANGAN PERNIKAHAN</p>
+    <h1 class="font-script" style="font-size:2.8rem; color:var(--primary-crimson); line-height:1.1; margin-bottom:4px;" id="display-event-title">Riyan & Amelia</h1>
+    <p style="font-size:0.78rem; color:#6E5353; letter-spacing:1px; margin-bottom:12px;">06 DESEMBER 2026</p>
+
+    <!-- FOTO PENGANTIN / SLIDESHOW WELCOME -->
+    <div class="groom-bride-photo-frame">
+      <img src="./assets/v2/dsg1.png" alt="Foto Pengantin Riyan & Amelia" id="welcome-couple-img">
+    </div>
+
+    <p style="font-size:0.8rem; color:#555; font-style:italic; line-height:1.5; padding:0 10px; margin-bottom:20px;">
+      "Satu foto menyimpan sejuta kenangan. Terima kasih telah menjadi bagian dari hari bahagia kami!"
+    </p>
+
+    <!-- TOMBOL UTAMA & GALERI TERPISAH -->
+    <button class="btn-primary-v2" onclick="goToStep('step-ask-name')">
+      <i class="fa-solid fa-camera"></i> Tambahkan Momen
+    </button>
+
+    <button class="btn-secondary-v2" onclick="goToStep('step-gallery-page')">
+      <i class="fa-solid fa-images"></i> Jelajahi Kenangan
+    </button>
+  </div>
 
   <div class="app-official-footer">
     © 2026 FOTOME by Riyan. All rights reserved.
   </div>
 </div>
 
-<!-- STEP 2: SLIDER FIGMA FULL SCREEN -->
+<!-- PAGE BARU: INPUT NAMA "DARI SIAPA KENANGAN INI?" -->
+<div id="step-ask-name" class="name-input-card hidden">
+  <div style="width:100%;">
+    <p style="font-size:0.7rem; color:var(--gold-accent); letter-spacing:3px; font-weight:700; margin-bottom:4px;">KENANGAN PERNIKAHAN</p>
+    <h2 class="font-script" style="font-size:2.4rem; color:#FFF; margin-bottom:2px;" id="ask-event-title">Riyan & Amelia</h2>
+    <p style="font-size:0.75rem; color:rgba(255,255,255,0.7); letter-spacing:1px;">06 DESEMBER 2026</p>
+
+    <div style="margin-top:50px;">
+      <div style="width:50px; height:1px; background:var(--gold-accent); margin:0 auto 20px;"></div>
+      <h3 class="font-serif" style="font-size:1.6rem; letter-spacing:2px; font-weight:600; color:#FFF; line-height:1.3;">
+        DARI SIAPA<br>KENANGAN INI?
+      </h3>
+
+      <input type="text" id="guest-initial-name" class="stylish-underline-input" placeholder="Nama kamu..." autocomplete="off">
+    </div>
+  </div>
+
+  <div style="width:100%;">
+    <button class="btn-primary-v2" style="background: linear-gradient(135deg, #D4AF37 0%, #AA7C11 100%); color:#2B1E1E; border:none;" onclick="submitGuestNameAndNext()">
+      Selanjutnya &rarr;
+    </button>
+    
+    <button class="btn-outline-v2" style="margin-top:10px;" onclick="goToStep('step-welcome')">
+      &larr; Kembali
+    </button>
+
+    <div class="app-official-footer light-text">
+      © 2026 FOTOME by Riyan. All rights reserved.
+    </div>
+  </div>
+</div>
+
+<!-- STEP 2: SLIDER FIGMA FULL SCREEN (PILIH FRAME) -->
 <div id="step-template" class="fullscreen-wrapper hidden" style="background: var(--current-card-bg); transition: background 0.6s ease;">
   
   <div class="slider-header-box">
     <div class="section-label-fullscreen" id="card-theme-tag">ROYAL EDITION</div>
     <div class="slider-main-title" id="card-theme-name">Classic Royal (3 Foto)</div>
-    <div style="font-size:0.75rem; color:rgba(255,255,255,0.8); font-style:italic;">Ketuk bingkai untuk memilih & memulai</div>
+    <div style="font-size:0.75rem; color:rgba(255,255,255,0.8); font-style:italic;">Ketuk bingkai untuk memilih &amp; memulai</div>
   </div>
 
   <div class="slider-cards-viewport" id="slider-stack-box">
@@ -756,7 +761,7 @@
   </div>
 
   <div style="width:100%; max-width:380px; display:flex; flex-direction:column; align-items:center; z-index:10; margin-bottom:6px;">
-    <button class="btn-back-styled" onclick="goToStep(1)">
+    <button class="btn-back-styled" onclick="goToStep('step-ask-name')">
       Kembali
     </button>
     <div class="app-official-footer light-text">
@@ -768,37 +773,39 @@
 
 <!-- STEP 3: AREA KAMERA -->
 <div id="step-camera" class="app-card hidden">
-  <div style="font-size: 0.85rem; font-weight: 700; color: var(--primary-crimson); margin-bottom: 8px;" id="cam-progress-text">Foto 1 dari 3</div>
+  <div>
+    <div style="font-size: 0.85rem; font-weight: 700; color: var(--primary-crimson); margin-bottom: 8px;" id="cam-progress-text">Foto 1 dari 3</div>
 
-  <div class="camera-wrapper">
-    <video id="video" class="mirror" autoplay playsinline></video>
-    <div id="countdown-overlay" class="countdown-overlay hidden">3</div>
-    <div id="flash-overlay" class="flash-overlay"></div>
+    <div class="camera-wrapper">
+      <video id="video" class="mirror" autoplay playsinline></video>
+      <div id="countdown-overlay" class="countdown-overlay hidden">3</div>
+      <div id="flash-overlay" class="flash-overlay"></div>
+    </div>
+
+    <div class="cam-controls-grid">
+      <button class="cam-btn-icon" id="btn-timer" onclick="toggleTimerSetting()">
+        <i class="fa-solid fa-stopwatch"></i> Timer: 3s
+      </button>
+      <button class="cam-btn-icon" id="btn-zoom" onclick="toggleZoomSetting()">
+        <i class="fa-solid fa-magnifying-glass-plus"></i> Zoom: 1x
+      </button>
+      <button class="cam-btn-icon" onclick="switchCamera()">
+        <i class="fa-solid fa-camera-rotate"></i> Switch
+      </button>
+      <button class="cam-btn-icon" id="btn-mirror" onclick="toggleMirror()">
+        <i class="fa-solid fa-arrows-left-right"></i> Mirror: ON
+      </button>
+    </div>
+
+    <select id="camera-select" class="cam-select-box" onchange="onCameraSelectChange(this.value)"></select>
+
+    <button id="btn-snap" class="btn-primary-v2" onclick="takePhotoSnap()">
+      <i class="fa-solid fa-camera"></i> Ambil Foto
+    </button>
+    <button class="btn-outline-v2" style="color:#888;" onclick="stopCameraAndGoBack()">
+      Batal / Ubah Bingkai
+    </button>
   </div>
-
-  <div class="cam-controls-grid">
-    <button class="cam-btn-icon" id="btn-timer" onclick="toggleTimerSetting()">
-      <i class="fa-solid fa-stopwatch"></i> Timer: 3s
-    </button>
-    <button class="cam-btn-icon" id="btn-zoom" onclick="toggleZoomSetting()">
-      <i class="fa-solid fa-magnifying-glass-plus"></i> Zoom: 1x
-    </button>
-    <button class="cam-btn-icon" onclick="switchCamera()">
-      <i class="fa-solid fa-camera-rotate"></i> Switch
-    </button>
-    <button class="cam-btn-icon" id="btn-mirror" onclick="toggleMirror()">
-      <i class="fa-solid fa-arrows-left-right"></i> Mirror: ON
-    </button>
-  </div>
-
-  <select id="camera-select" class="cam-select-box" onchange="onCameraSelectChange(this.value)"></select>
-
-  <button id="btn-snap" class="btn-primary-v2" onclick="takePhotoSnap()">
-    <i class="fa-solid fa-camera"></i> Ambil Foto
-  </button>
-  <button class="btn-outline-v2" style="color:#888;" onclick="stopCameraAndGoBack()">
-    Batal / Ubah Bingkai
-  </button>
 
   <div class="app-official-footer">
     © 2026 FOTOME by Riyan. All rights reserved.
@@ -844,22 +851,22 @@
 
   <div class="printer-bottom-actions" id="printer-bottom-actions">
     <div style="background: #FAF6F0; border: 1px solid rgba(212,175,55,0.3); border-radius: 12px; padding: 10px 12px; text-align: left;">
-      <label style="display:block; font-size:0.68rem; font-weight:700; color:var(--primary-crimson); margin-bottom:2px;">Nama Kamu / Inisial</label>
-      <input type="text" id="input-sender-name" style="width:100%; padding:6px 8px; border:1px solid #D8B4B4; border-radius:6px; font-size:0.75rem; outline:none; margin-bottom:6px; background:#FFF;" placeholder="Misal: Budi & Sarah">
+      <label style="display:block; font-size:0.68rem; font-weight:700; color:var(--primary-crimson); margin-bottom:2px;">Nama Kamu</label>
+      <input type="text" id="input-sender-name" style="width:100%; padding:6px 8px; border:1px solid #D8B4B4; border-radius:6px; font-size:0.75rem; outline:none; margin-bottom:6px; background:#FFF;" placeholder="Misal: Budi &amp; Sarah">
 
       <label style="display:block; font-size:0.68rem; font-weight:700; color:var(--primary-crimson); margin-bottom:2px;">Pesan / Ucapan Doa Kamu</label>
       <textarea id="input-sender-message" rows="2" style="width:100%; padding:6px 8px; border:1px solid #D8B4B4; border-radius:6px; font-size:0.75rem; outline:none; background:#FFF;" placeholder="Tuliskan ucapan manismu di sini..."></textarea>
     </div>
 
-    <button class="btn-primary-v2" style="max-width:100%; padding: 10px 14px;" onclick="saveAndShareToFeed()">
-      <i class="fa-solid fa-paper-plane"></i> Unduh & Posting ke Galeri Tamu
+    <button class="btn-primary-v2" style="max-width:100%; padding: 12px 14px;" onclick="saveAndShareToFeed()">
+      <i class="fa-solid fa-paper-plane"></i> Unduh &amp; Posting ke Galeri Tamu
     </button>
 
-    <button class="btn-secondary-v2" style="max-width:100%; padding: 8px 14px;" onclick="savePrivateOnly()">
+    <button class="btn-secondary-v2" style="max-width:100%; padding: 10px 14px;" onclick="savePrivateOnly()">
       <i class="fa-solid fa-download"></i> Simpan Sendiri (Privat Ke HP)
     </button>
 
-    <button class="btn-outline-v2" style="color:#888; max-width:100%; padding: 6px 14px;" onclick="goToStep(2)">
+    <button class="btn-outline-v2" style="color:#888; max-width:100%; padding: 6px 14px;" onclick="goToStep('step-template')">
       <i class="fa-solid fa-rotate-right"></i> Foto Ulang
     </button>
   </div>
@@ -870,15 +877,37 @@
 
 </div>
 
-<!-- FEED GALERI PUBLIK (IG STYLE) -->
-<div class="feed-container" id="main-gallery-section">
+<!-- PAGE TERPISAH: GALERI KENANGAN TAMU -->
+<div id="step-gallery-page" class="feed-container hidden">
+  <div style="text-align:center; margin-bottom:15px;">
+    <p style="font-size:0.7rem; color:var(--gold-accent); letter-spacing:3px; font-weight:700; margin-bottom:4px;">GALERI KENANGAN</p>
+    <h2 class="font-script" style="font-size:2.5rem; color:var(--primary-crimson); line-height:1;">Jejak Kebahagiaan</h2>
+  </div>
+
+  <!-- NARASI KATA-KATA ELEGAN & PROFESIONAL DI ATAS GALERI -->
+  <div class="gallery-intro-box">
+    <i class="fa-solid fa-quote-left" style="color:var(--gold-accent); font-size:1.2rem; margin-bottom:8px; display:block;"></i>
+    <p class="font-serif" style="font-size:0.95rem; color:#4A3B3B; line-height:1.6; font-style:italic;">
+      "Terima kasih telah melangkah bersama kami dan mengukir kehangatan dalam setiap senyuman. Setiap foto dan doa yang tertulis di sini adalah hadiah terindah yang akan selalu kami kenang sepanjang masa."
+    </p>
+    <div style="font-size:0.72rem; font-weight:700; color:var(--primary-crimson); margin-top:8px; letter-spacing:1px;" id="gallery-couple-sub">
+      — RIYAN &amp; AMELIA
+    </div>
+  </div>
+
   <div class="feed-header">
-    <span><i class="fa-solid fa-border-all"></i> Galeri Kenangan Tamu</span>
+    <span><i class="fa-solid fa-border-all"></i> Kiriman Tamu</span>
     <span style="font-size: 0.72rem; color: #888;" id="total-posts-count">0 Kiriman</span>
   </div>
 
   <div id="ig-grid-box" class="ig-grid-container">
-    <p style="font-size: 0.8rem; color: #999; grid-column: span 3; text-align: center;">Memuat ucapan & foto tamu...</p>
+    <p style="font-size: 0.8rem; color: #999; grid-column: span 3; text-align: center;">Memuat ucapan &amp; foto tamu...</p>
+  </div>
+
+  <div style="margin-top:25px;">
+    <button class="btn-primary-v2" onclick="goToStep('step-welcome')">
+      &larr; Kembali ke Beranda
+    </button>
   </div>
 
   <div class="app-official-footer">
@@ -913,6 +942,7 @@
   const EVENT_DOC_ID = 'v2_event'; 
 
   let eventTitle = "Riyan & Amelia";
+  let currentGuestName = "";
   let selectedFramePath = './assets/v2/dsg3.png';
   let requiredPhotoCount = 3; 
   let capturedPhotos = [];
@@ -925,13 +955,104 @@
   let zoomLevel = 1;      
   let onAlertCloseCallback = null;
 
-  // DYNAMIC FIGMA SLIDER LOGIC
   let cardItems = [];
   let currentCardIndex = 0;
 
   document.addEventListener("DOMContentLoaded", () => {
     initFigmaSlider();
   });
+
+  // ANIMASI AMPLOP TERBUKA DENGAN EFEK ZOOM IN
+  function openEnvelopeAnimation() {
+    const envelopeBox = document.getElementById('envelope-box');
+    const envelopeScreen = document.getElementById('envelope-screen');
+
+    envelopeBox.classList.add('open');
+
+    setTimeout(() => {
+      envelopeScreen.classList.add('zoom-out-fade');
+      setTimeout(() => {
+        envelopeScreen.style.display = 'none';
+      }, 750);
+    }, 600);
+  }
+
+  function goToStep(targetId) {
+    const steps = ['step-welcome', 'step-ask-name', 'step-template', 'step-camera', 'step-result', 'step-gallery-page'];
+    steps.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.classList.add('hidden');
+    });
+
+    const targetEl = document.getElementById(targetId);
+    if (targetEl) targetEl.classList.remove('hidden');
+
+    if (targetId === 'step-template') {
+      updateFigmaSliderPositions();
+    }
+
+    // ANIMASI CETAK PRINTER PADA STEP RESULT
+    if (targetId === 'step-result') {
+      const printerUnit = document.getElementById('main-printer-unit');
+      const popupBox = document.getElementById('popup-photo-box');
+      const inputPaper = document.getElementById('paper-input-sheet');
+      const ejectedPhoto = document.getElementById('ejected-photo-sheet');
+      const ledRed = document.getElementById('led-red');
+      const ledGreen = document.getElementById('led-green');
+      const statusText = document.getElementById('printer-status-text');
+      const statusSub = document.getElementById('printer-status-sub');
+      const spinner = document.getElementById('spinner-icon');
+      const actionsBox = document.getElementById('printer-bottom-actions');
+
+      printerUnit.classList.remove('fade-out-printer');
+      popupBox.classList.remove('show-popup');
+      inputPaper.classList.remove('pulled-in');
+      ejectedPhoto.classList.remove('fully-printed');
+      actionsBox.classList.remove('visible');
+      ledRed.classList.add('blinking');
+      ledGreen.classList.add('blinking');
+      spinner.style.display = 'inline-block';
+      statusText.innerText = "Memproses foto kamu...";
+      statusSub.innerText = "Kertas ditarik masuk ke mesin...";
+
+      setTimeout(() => {
+        inputPaper.classList.add('pulled-in');
+        statusText.innerText = "Mencetak foto kenangan...";
+        statusSub.innerText = "Sedang dicetak perlahan...";
+      }, 500);
+
+      setTimeout(() => {
+        ejectedPhoto.classList.add('fully-printed');
+      }, 2000);
+
+      setTimeout(() => {
+        ledRed.classList.remove('blinking');
+        ledGreen.classList.remove('blinking');
+        
+        printerUnit.classList.add('fade-out-printer');
+
+        setTimeout(() => {
+          popupBox.classList.add('show-popup');
+          spinner.style.display = 'none';
+          statusText.innerHTML = '<i class="fa-solid fa-circle-check" style="color:#2ECC71;"></i> Cetak Selesai!';
+          statusSub.innerText = "Foto kamu sudah siap disimpan!";
+          actionsBox.classList.add('visible');
+        }, 400);
+
+      }, 6800);
+    }
+  }
+
+  function submitGuestNameAndNext() {
+    const inputName = document.getElementById('guest-initial-name').value.trim();
+    if (!inputName) {
+      showAlert("Harap isi nama atau inisial kamu terlebih dahulu!", "Nama Masih Kosong", "✍️");
+      return;
+    }
+    currentGuestName = inputName;
+    document.getElementById('input-sender-name').value = inputName;
+    goToStep('step-template');
+  }
 
   function initFigmaSlider() {
     cardItems = Array.from(document.querySelectorAll('.figma-card-item'));
@@ -946,9 +1067,7 @@
       });
 
       card.addEventListener('mousemove', (e) => {
-        if (Math.abs(e.clientX - startX) > 5) {
-          isDragging = true;
-        }
+        if (Math.abs(e.clientX - startX) > 5) isDragging = true;
       });
 
       card.addEventListener('touchstart', (e) => {
@@ -957,9 +1076,7 @@
       }, { passive: true });
 
       card.addEventListener('touchmove', (e) => {
-        if (Math.abs(e.touches[0].clientX - startX) > 5) {
-          isDragging = true;
-        }
+        if (Math.abs(e.touches[0].clientX - startX) > 5) isDragging = true;
       }, { passive: true });
 
       card.addEventListener('click', (e) => {
@@ -1043,8 +1160,14 @@
         const data = doc.data();
         if (data.title) {
           eventTitle = data.title;
-          const t = document.getElementById('display-event-title');
-          if (t) t.innerText = data.title;
+          const t1 = document.getElementById('display-event-title');
+          const t2 = document.getElementById('ask-event-title');
+          const t3 = document.getElementById('envelope-names');
+          const t4 = document.getElementById('gallery-couple-sub');
+          if (t1) t1.innerText = data.title;
+          if (t2) t2.innerText = data.title;
+          if (t3) t3.innerText = data.title;
+          if (t4) t4.innerText = `— ${data.title.toUpperCase()}`;
         }
 
         let lockOverlay = document.getElementById('lock-overlay');
@@ -1075,77 +1198,8 @@
     loadRealtimeFeedIG();
   }
 
-  function goToStep(step) {
-    ['step-welcome', 'step-template', 'step-camera', 'step-result'].forEach(id => {
-      document.getElementById(id).classList.add('hidden');
-    });
-    const map = {1:'step-welcome', 2:'step-template', 3:'step-camera', 4:'step-result'};
-    document.getElementById(map[step]).classList.remove('hidden');
-
-    const gallerySection = document.getElementById('main-gallery-section');
-    if (step === 1) {
-      gallerySection.classList.remove('hidden');
-    } else {
-      gallerySection.classList.add('hidden');
-    }
-
-    if (step === 2) {
-      updateFigmaSliderPositions();
-    }
-
-    if (step === 4) {
-      const printerUnit = document.getElementById('main-printer-unit');
-      const popupBox = document.getElementById('popup-photo-box');
-      const inputPaper = document.getElementById('paper-input-sheet');
-      const ejectedPhoto = document.getElementById('ejected-photo-sheet');
-      const ledRed = document.getElementById('led-red');
-      const ledGreen = document.getElementById('led-green');
-      const statusText = document.getElementById('printer-status-text');
-      const statusSub = document.getElementById('printer-status-sub');
-      const spinner = document.getElementById('spinner-icon');
-      const actionsBox = document.getElementById('printer-bottom-actions');
-
-      printerUnit.classList.remove('fade-out-printer');
-      popupBox.classList.remove('show-popup');
-      inputPaper.classList.remove('pulled-in');
-      ejectedPhoto.classList.remove('fully-printed');
-      actionsBox.classList.remove('visible');
-      ledRed.classList.add('blinking');
-      ledGreen.classList.add('blinking');
-      spinner.style.display = 'inline-block';
-      statusText.innerText = "Memproses foto kamu...";
-      statusSub.innerText = "Kertas ditarik masuk ke mesin...";
-
-      setTimeout(() => {
-        inputPaper.classList.add('pulled-in');
-        statusText.innerText = "Mencetak foto kenangan...";
-        statusSub.innerText = "Sedang dicetak perlahan...";
-      }, 500);
-
-      setTimeout(() => {
-        ejectedPhoto.classList.add('fully-printed');
-      }, 2000);
-
-      setTimeout(() => {
-        ledRed.classList.remove('blinking');
-        ledGreen.classList.remove('blinking');
-        
-        printerUnit.classList.add('fade-out-printer');
-
-        setTimeout(() => {
-          popupBox.classList.add('show-popup');
-          spinner.style.display = 'none';
-          statusText.innerHTML = '<i class="fa-solid fa-circle-check" style="color:#2ECC71;"></i> Cetak Selesai!';
-          statusSub.innerText = "Foto kamu sudah siap disimpan!";
-          actionsBox.classList.add('visible');
-        }, 400);
-
-      }, 6800);
-    }
-  }
-
   function startCameraProcess() {
-    goToStep(3);
+    goToStep('step-camera');
     capturedPhotos = [];
     document.getElementById('cam-progress-text').innerText = `Foto 1 dari ${requiredPhotoCount}`;
     initCameraStream();
@@ -1249,7 +1303,7 @@
     if (videoStream) {
       videoStream.getTracks().forEach(track => track.stop());
     }
-    goToStep(2);
+    goToStep('step-template');
   }
 
   function takePhotoSnap() {
@@ -1412,7 +1466,7 @@
         img.src = generatedDataUrl;
       });
 
-      goToStep(4);
+      goToStep('step-result');
     });
   }
 
@@ -1428,7 +1482,7 @@
   }
 
   function saveAndShareToFeed() {
-    const senderName = document.getElementById('input-sender-name').value.trim() || "Tamu Undangan";
+    const senderName = document.getElementById('input-sender-name').value.trim() || currentGuestName || "Tamu Undangan";
     const senderMessage = document.getElementById('input-sender-message').value.trim() || "Selamat untuk kebahagiaan kalian! 💐";
 
     downloadImageToPhone(senderName);
@@ -1442,19 +1496,18 @@
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       }).then(() => {
         showAlert("Foto berhasil diunduh dan diposting ke Galeri!", "Berhasil Ditambahkan", "📸", () => {
-          document.getElementById('input-sender-name').value = '';
           document.getElementById('input-sender-message').value = '';
-          goToStep(1);
+          goToStep('step-welcome');
         });
       });
     }
   }
 
   function savePrivateOnly() {
-    const senderName = document.getElementById('input-sender-name').value.trim() || "Tamu";
+    const senderName = document.getElementById('input-sender-name').value.trim() || currentGuestName || "Tamu";
     downloadImageToPhone(senderName);
     showAlert("Foto berhasil disimpan secara privat ke HP kamu!", "Tersimpan Privat", "📥", () => {
-      goToStep(1);
+      goToStep('step-welcome');
     });
   }
 
