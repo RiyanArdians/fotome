@@ -35,13 +35,14 @@
       flex-direction: column;
       align-items: center;
       padding: 0;
+      overflow-x: hidden;
     }
 
     .font-serif { font-family: 'Cormorant Garamond', serif; }
     .font-script { font-family: 'Alex Brush', cursive; }
     .hidden { display: none !important; }
 
-    /* CARD BIASA UNTUK STEP 1, 3, 4 */
+    /* CARD BIASA UNTUK STEP 1, 3 */
     .app-card {
       width: 100%;
       max-width: 430px;
@@ -55,42 +56,17 @@
       margin: 15px 10px 40px;
     }
 
-    /* CONTAINER FULL SCREEN KHUSUS STEP 2 (SLIDER FIGMA) */
-    .fullscreen-slider-wrapper {
+    /* FULLSCREEN CONTAINER UNTUK STEP 2 & STEP 4 */
+    .fullscreen-wrapper {
       width: 100vw;
       min-height: 100vh;
-      background: var(--current-card-bg);
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       align-items: center;
-      padding: 24px 16px;
-      transition: background 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+      padding: 20px 16px;
       position: relative;
       overflow: hidden;
-    }
-
-    .brand-subtitle {
-      font-size: 0.72rem;
-      color: var(--gold-accent);
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      font-weight: 700;
-      margin-bottom: 6px;
-    }
-
-    .event-main-title {
-      font-size: 2.5rem;
-      color: var(--primary-crimson);
-      line-height: 1.1;
-      margin-bottom: 12px;
-    }
-
-    .event-date-text {
-      font-size: 0.8rem;
-      color: #6E5353;
-      margin-bottom: 20px;
-      letter-spacing: 1px;
     }
 
     .btn-primary-v2 {
@@ -125,6 +101,7 @@
       cursor: pointer;
       margin-top: 8px;
       width: 100%;
+      max-width: 380px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -134,7 +111,7 @@
 
     .btn-outline-v2 {
       background: transparent;
-      color: rgba(255, 255, 255, 0.8);
+      color: rgba(255, 255, 255, 0.85);
       border: none;
       padding: 10px 18px;
       font-size: 0.8rem;
@@ -142,13 +119,14 @@
       cursor: pointer;
       margin-top: 6px;
       width: 100%;
+      max-width: 380px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 6px;
     }
 
-    /* HEADER SLIDER ELEGAN */
+    /* STEP 2 SLIDER FIGMA FULLSCREEN */
     .slider-header-box {
       text-align: center;
       z-index: 10;
@@ -174,16 +152,8 @@
       text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
       line-height: 1.2;
       margin-bottom: 4px;
-      padding: 0 10px;
     }
 
-    .slider-sub-instruction {
-      font-size: 0.75rem;
-      color: rgba(255, 255, 255, 0.8);
-      font-style: italic;
-    }
-
-    /* AREA KARTU FIGMA SLIDER FULLSCREEN */
     .slider-cards-viewport {
       position: relative;
       width: 100%;
@@ -221,52 +191,157 @@
       height: 100%;
       object-fit: contain;
       filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.35));
-      transition: transform 0.3s ease;
     }
 
-    /* POSISI SLIDER STACK FULLSCREEN */
-    .figma-card-item.active {
-      transform: translateX(0) scale(1.05) rotate(0deg);
-      opacity: 1;
-      z-index: 10;
-    }
+    .figma-card-item.active { transform: translateX(0) scale(1.05) rotate(0deg); opacity: 1; z-index: 10; }
+    .figma-card-item.next { transform: translateX(68%) scale(0.82) rotate(6deg); opacity: 0.55; z-index: 5; }
+    .figma-card-item.prev { transform: translateX(-68%) scale(0.82) rotate(-6deg); opacity: 0.55; z-index: 5; }
+    .figma-card-item.hidden-left { transform: translateX(-120%) scale(0.65) rotate(-12deg); opacity: 0; z-index: 1; }
+    .figma-card-item.hidden-right { transform: translateX(120%) scale(0.65) rotate(12deg); opacity: 0; z-index: 1; }
 
-    .figma-card-item.next {
-      transform: translateX(68%) scale(0.82) rotate(6deg);
-      opacity: 0.55;
-      z-index: 5;
-    }
-
-    .figma-card-item.prev {
-      transform: translateX(-68%) scale(0.82) rotate(-6deg);
-      opacity: 0.55;
-      z-index: 5;
-    }
-
-    .figma-card-item.hidden-left {
-      transform: translateX(-120%) scale(0.65) rotate(-12deg);
-      opacity: 0;
-      z-index: 1;
-    }
-
-    .figma-card-item.hidden-right {
-      transform: translateX(120%) scale(0.65) rotate(12deg);
-      opacity: 0;
-      z-index: 1;
-    }
-
-    .slider-bottom-controls {
-      width: 100%;
-      max-width: 380px;
+    /* STEP 4: FULLSCREEN PRINTER MACHINE STYLE ALA VIDEO */
+    .printer-screen-bg {
+      background: linear-gradient(180deg, #1E1B1B 0%, #2D1A1E 100%);
+      min-height: 100vh;
+      width: 100vw;
+      padding: 20px 16px 30px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 4px;
-      z-index: 10;
-      margin-bottom: 10px;
+      justify-content: space-between;
     }
 
-    /* AREA KAMERA & KONTROL */
+    /* KEPALA MESIN PRINTER ATAS */
+    .printer-head-unit {
+      width: 100%;
+      max-width: 380px;
+      background: #110E0E;
+      border: 1px solid rgba(212, 175, 55, 0.3);
+      border-radius: 20px 20px 10px 10px;
+      padding: 16px 20px 12px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      position: relative;
+      z-index: 20;
+      text-align: center;
+    }
+
+    .printer-brand-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--gold-accent);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .printer-led-bar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .printer-led-light {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #444;
+      transition: all 0.2s ease;
+    }
+
+    /* EFK KEDIP LAMPU LED SAMBIL MENCETAK */
+    .printer-led-light.active-blink {
+      animation: ledBlink 0.35s infinite alternate;
+    }
+
+    @keyframes ledBlink {
+      0% { background: #FFD700; box-shadow: 0 0 12px #FFD700; }
+      100% { background: #333; box-shadow: none; }
+    }
+
+    /* CELAH SLOT TEMPAT KELUAR FOTO */
+    .printer-output-slot {
+      width: 90%;
+      height: 12px;
+      background: #000;
+      border-radius: 6px;
+      margin: 12px auto 0;
+      box-shadow: inset 0 3px 8px rgba(0,0,0,0.9);
+      position: relative;
+    }
+
+    /* AREA WADAH KERTAS FOTO SLIDE DOWN */
+    .printer-paper-ejector-box {
+      position: relative;
+      width: 100%;
+      max-width: 340px;
+      height: 52vh;
+      min-height: 340px;
+      overflow: hidden;
+      margin-top: -6px; /* Menempel persis di celah slot */
+      z-index: 10;
+      display: flex;
+      justify-content: center;
+    }
+
+    .printable-photo-sheet {
+      width: 82%;
+      max-width: 280px;
+      transform: translateY(-100%); /* Sembunyi penuh di atas celah */
+      transition: transform 2.5s cubic-bezier(0.25, 1, 0.5, 1);
+      filter: drop-shadow(0 15px 30px rgba(0,0,0,0.6));
+    }
+
+    .printable-photo-sheet.ejected {
+      transform: translateY(0); /* Meluncur keluar penuh */
+    }
+
+    .printable-photo-sheet img {
+      width: 100%;
+      border-radius: 12px;
+      display: block;
+    }
+
+    /* CONTAINER FORM UCAPAN DI KAKI PRINTER */
+    .printer-footer-controls {
+      width: 100%;
+      max-width: 380px;
+      z-index: 30;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .wish-form-box-dark {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 16px;
+      padding: 14px;
+      text-align: left;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    }
+
+    .wish-form-box-dark label {
+      display: block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--primary-crimson);
+      margin-bottom: 4px;
+    }
+
+    .wish-form-box-dark input, .wish-form-box-dark textarea {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid #D8B4B4;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 0.8rem;
+      outline: none;
+      margin-bottom: 8px;
+      background: #FFF;
+    }
+
+    /* KAMERA CONTROLS */
     .camera-wrapper {
       position: relative;
       width: 100%;
@@ -277,13 +352,7 @@
       margin-bottom: 10px;
     }
 
-    video {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: transform 0.2s ease;
-    }
-
+    video { width: 100%; height: 100%; object-fit: cover; }
     video.mirror { transform: scaleX(-1); }
 
     .cam-controls-grid {
@@ -342,105 +411,12 @@
 
     .flash-overlay.active { opacity: 1; }
 
-    /* ANIMASI KEDIP LAMPU & KELUAR PRINTING MESIN POLAROID ALA VIDEO */
-    .polaroid-chamber {
-      position: relative;
-      width: 100%;
-      background: #2B1E1E;
-      border-radius: 18px 18px 8px 8px;
-      padding: 12px 16px 8px;
-      margin: 10px 0 16px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-    }
-
-    .polaroid-lens-dot {
-      width: 14px;
-      height: 14px;
-      background: var(--gold-accent);
-      border-radius: 50%;
-      margin: 0 auto 8px;
-      box-shadow: inset 0 2px 4px rgba(0,0,0,0.4);
-      transition: all 0.2s ease;
-    }
-
-    /* Efek Animasi Kedip Lampu Kuning Gold saat Keluar Print */
-    .polaroid-lens-dot.blinking {
-      animation: flashBlink 0.3s infinite alternate;
-    }
-
-    @keyframes flashBlink {
-      0% {
-        background: #FFF;
-        box-shadow: 0 0 15px #FFD700, 0 0 25px #FFD700;
-      }
-      100% {
-        background: var(--gold-accent);
-        box-shadow: inset 0 2px 4px rgba(0,0,0,0.4);
-      }
-    }
-
-    .polaroid-slot {
-      background: #111;
-      height: 10px;
-      border-radius: 5px;
-      width: 80%;
-      margin: 0 auto;
-      box-shadow: inset 0 3px 6px #000;
-      position: relative;
-      z-index: 2;
-    }
-
-    .polaroid-paper-wrapper {
-      overflow: hidden;
-      padding-top: 4px;
-      margin-top: -5px;
-    }
-
-    .polaroid-paper-slide {
-      transform: translateY(-100%);
-      transition: transform 2.2s cubic-bezier(0.25, 1, 0.5, 1);
-    }
-
-    .polaroid-paper-slide.printed {
-      transform: translateY(0);
-    }
-
-    /* FORM UCAPAN */
-    .wish-form-box {
-      background: #FAF6F0;
-      border: 1px solid rgba(212,175,55,0.3);
-      border-radius: 16px;
-      padding: 14px;
-      margin-top: 15px;
-      text-align: left;
-    }
-
-    .wish-form-box label {
-      display: block;
-      font-size: 0.72rem;
-      font-weight: 700;
-      color: var(--primary-crimson);
-      margin-bottom: 4px;
-    }
-
-    .wish-form-box input, .wish-form-box textarea {
-      width: 100%;
-      padding: 8px 10px;
-      border: 1px solid #D8B4B4;
-      border-radius: 8px;
-      font-family: inherit;
-      font-size: 0.8rem;
-      outline: none;
-      margin-bottom: 8px;
-      background: #FFF;
-    }
-
     /* GALERI EXPLORE IG */
     .feed-container {
       width: 100%;
       max-width: 430px;
       margin-top: 25px;
-      padding: 0 10px;
+      padding: 0 10px 40px;
     }
 
     .feed-header {
@@ -468,10 +444,7 @@
       display: flex;
       flex-direction: column;
       box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-      transition: transform 0.2s;
     }
-
-    .ig-grid-item:active { transform: scale(0.96); }
 
     .ig-item-name {
       font-size: 0.65rem;
@@ -492,11 +465,7 @@
       background: #FAF6F0;
     }
 
-    .ig-item-img-box img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
+    .ig-item-img-box img { width: 100%; height: 100%; object-fit: cover; }
 
     .ig-item-msg {
       font-size: 0.62rem;
@@ -553,7 +522,6 @@
       font-size: 0.9rem;
       cursor: pointer;
       z-index: 100;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
     }
 
     .modal-user-name {
@@ -591,9 +559,9 @@
 
 <!-- STEP 1: WELCOME SCREEN -->
 <div id="step-welcome" class="app-card">
-  <p class="brand-subtitle">WEDDING MEMORIES OF</p>
-  <h1 class="font-script event-main-title" id="display-event-title">Riyan & Amelia</h1>
-  <p class="event-date-text">06 DESEMBER 2026</p>
+  <p style="font-size:0.72rem; color:var(--gold-accent); letter-spacing:3px; font-weight:700; margin-bottom:6px;">WEDDING MEMORIES OF</p>
+  <h1 class="font-script" style="font-size:2.5rem; color:var(--primary-crimson); line-height:1.1; margin-bottom:12px;" id="display-event-title">Riyan & Amelia</h1>
+  <p style="font-size:0.8rem; color:#6E5353; margin-bottom:20px; letter-spacing:1px;">06 DESEMBER 2026</p>
 
   <div style="background: #FAF6F0; padding: 16px; border-radius: 16px; margin-bottom: 18px; border: 1px solid rgba(212,175,55,0.3);">
     <p style="font-size: 0.82rem; color: #555; line-height: 1.5; font-style: italic;">
@@ -607,12 +575,12 @@
 </div>
 
 <!-- STEP 2: SLIDER FIGMA FULL SCREEN -->
-<div id="step-template" class="fullscreen-slider-wrapper hidden">
+<div id="step-template" class="fullscreen-wrapper hidden" style="background: var(--current-card-bg); transition: background 0.6s ease;">
   
   <div class="slider-header-box">
     <div class="section-label-fullscreen" id="card-theme-tag">ROYAL EDITION</div>
     <div class="slider-main-title" id="card-theme-name">Classic Royal (3 Foto)</div>
-    <div class="slider-sub-instruction">Geser layar ke kanan / kiri untuk memilih bingkai</div>
+    <div style="font-size:0.75rem; color:rgba(255,255,255,0.8); font-style:italic;">Geser layar ke kanan / kiri untuk memilih bingkai</div>
   </div>
 
   <div class="slider-cards-viewport" id="slider-stack-box">
@@ -655,7 +623,7 @@
 
   </div>
 
-  <div class="slider-bottom-controls">
+  <div style="width:100%; max-width:380px; display:flex; flex-direction:column; align-items:center; z-index:10; margin-bottom:10px;">
     <button class="btn-primary-v2" onclick="startCameraProcess()">
       Gunakan Bingkai Ini &amp; Mulai Foto &rarr;
     </button>
@@ -701,39 +669,51 @@
   </button>
 </div>
 
-<!-- STEP 4: HASIL FOTO POLAROID SLIDE & INPUT PESAN -->
-<div id="step-result" class="app-card hidden">
-  <h2 class="font-serif" style="color: var(--primary-crimson); font-size: 1.7rem;">Hasil Foto Kamu</h2>
+<!-- STEP 4: FULLSCREEN PRINTER MACHINE ANIMATED PRINTING -->
+<div id="step-result" class="printer-screen-bg hidden">
+  
+  <!-- KEPALA MESIN PRINTER ATAS -->
+  <div class="printer-head-unit">
+    <div class="printer-brand-text">FOTOME PRINTER UNIT</div>
+    <div style="font-size:0.68rem; color:#AAA; margin-top:2px;">Mencetak Kenangan Kebahagiaan...</div>
+    <div class="printer-led-bar">
+      <div class="printer-led-light" id="led-indicator"></div>
+      <span style="font-size: 0.65rem; color: #D4AF37; font-weight: 700;">PRINTING</span>
+    </div>
+    <!-- Slot Celah Tempat Keluar Foto -->
+    <div class="printer-output-slot"></div>
+  </div>
 
-  <div class="polaroid-chamber">
-    <div class="polaroid-lens-dot" id="polaroid-flash-dot"></div>
-    <div class="polaroid-slot"></div>
-    <div class="polaroid-paper-wrapper">
-      <div id="polaroid-slide-elem" class="polaroid-paper-slide">
-        <img id="result-img" style="width: 100%; border-radius: 10px; box-shadow: 0 8px 20px rgba(0,0,0,0.15);" alt="Hasil Photobooth">
-      </div>
+  <!-- AREA KERTAS FOTO MELUNCUR KELUAR DARI SLOT -->
+  <div class="printer-paper-ejector-box">
+    <div id="polaroid-slide-elem" class="printable-photo-sheet">
+      <img id="result-img" alt="Hasil Photobooth">
     </div>
   </div>
 
-  <div class="wish-form-box">
-    <label>Nama Kamu / Inisial</label>
-    <input type="text" id="input-sender-name" placeholder="Misal: Budi & Sarah">
+  <!-- FORM UCAPAN & TOMBOL DILAYAR BANTALAN PRINTER -->
+  <div class="printer-footer-controls">
+    <div class="wish-form-box-dark">
+      <label>Nama Kamu / Inisial</label>
+      <input type="text" id="input-sender-name" placeholder="Misal: Budi & Sarah">
 
-    <label>Pesan / Ucapan Doa Kamu</label>
-    <textarea id="input-sender-message" rows="2" placeholder="Tuliskan ucapan manismu di sini..."></textarea>
+      <label>Pesan / Ucapan Doa Kamu</label>
+      <textarea id="input-sender-message" rows="2" placeholder="Tuliskan ucapan manismu di sini..."></textarea>
+    </div>
+
+    <button class="btn-primary-v2" onclick="saveAndShareToFeed()">
+      <i class="fa-solid fa-paper-plane"></i> Unduh & Posting ke Galeri Tamu
+    </button>
+
+    <button class="btn-secondary-v2" onclick="savePrivateOnly()">
+      <i class="fa-solid fa-download"></i> Simpan Sendiri (Privat Ke HP)
+    </button>
+
+    <button class="btn-outline-v2" onclick="goToStep(2)">
+      <i class="fa-solid fa-rotate-right"></i> Foto Ulang
+    </button>
   </div>
 
-  <button class="btn-primary-v2" onclick="saveAndShareToFeed()">
-    <i class="fa-solid fa-paper-plane"></i> Unduh & Posting ke Galeri Tamu
-  </button>
-
-  <button class="btn-secondary-v2" onclick="savePrivateOnly()">
-    <i class="fa-solid fa-download"></i> Simpan Sendiri (Privat Ke HP)
-  </button>
-
-  <button class="btn-outline-v2" style="color:#888;" onclick="goToStep(2)">
-    <i class="fa-solid fa-rotate-right"></i> Foto Ulang
-  </button>
 </div>
 
 <!-- FEED GALERI PUBLIK (IG STYLE) -->
@@ -799,7 +779,6 @@
     cardItems = Array.from(document.querySelectorAll('.figma-card-item'));
     updateFigmaSliderPositions();
 
-    // Touch Swipe Gesture
     const container = document.getElementById('slider-stack-box');
     let startX = 0;
     container.addEventListener('touchstart', e => { startX = e.touches[0].clientX; });
@@ -913,23 +892,23 @@
       updateFigmaSliderPositions();
     }
 
-    // ANIMASI PRINT KELUAR & LAMPU BERKEDIP DI STEP 4
+    // EFEK PRINTER FULL SCREEN KELUAR DARI CELAH MESIN + LAMPU LED BERKEDIP
     if (step === 4) {
-      const slide = document.getElementById('polaroid-slide-elem');
-      const flashDot = document.getElementById('polaroid-flash-dot');
+      const photoSheet = document.getElementById('polaroid-slide-elem');
+      const led = document.getElementById('led-indicator');
 
-      // Reset posisi tersembunyi
-      slide.classList.remove('printed');
-      flashDot.classList.add('blinking'); // Nyalakan lampu kedip saat mulai mencetak
+      // Reset posisi foto ke dalam slot mesin printer
+      photoSheet.classList.remove('ejected');
+      led.classList.add('active-blink'); // Nyalakan lampu led berkedip
 
       setTimeout(() => { 
-        slide.classList.add('printed'); // Kertas meluncur keluar
-      }, 150);
+        photoSheet.classList.add('ejected'); // Foto meluncur keluar dari celah printer
+      }, 200);
 
-      // Matikan lampu kedip begitu kertas foto selesai meluncur keluar (2.2 detik)
+      // Matikan lampu kedip begitu proses cetak selesai (2.5 detik)
       setTimeout(() => {
-        flashDot.classList.remove('blinking');
-      }, 2350);
+        led.classList.remove('active-blink');
+      }, 2700);
     }
   }
 
