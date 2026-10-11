@@ -5,9 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Virtual Photobooth & Guestbook - FOTOME</title>
   
-  <!-- Google Fonts & Font Awesome -->
+  <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <!-- Firebase Compat SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -16,14 +15,14 @@
 
   <style>
     :root {
-      --primary-crimson: #8C4A52;
-      --deep-crimson: #6B343B;
+      --primary-crimson: #7A3D44;
+      --deep-crimson: #5C2B32;
       --gold-accent: #D4AF37;
       --gold-light: #F8F1E5;
       --bg-cream: #FDFBF7;
-      --text-dark: #3A2E2E;
-      --card-glass: rgba(255, 255, 255, 0.18);
-      --card-border: rgba(212, 175, 55, 0.3);
+      --text-dark: #2C2223;
+      --card-glass: rgba(255, 255, 255, 0.12);
+      --card-border: rgba(212, 175, 55, 0.35);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -33,8 +32,8 @@
       height: 100%;
       overflow-x: hidden;
       font-family: 'Plus Jakarta Sans', sans-serif;
-      background-color: var(--bg-cream);
-      color: var(--text-dark);
+      background: linear-gradient(180deg, #7A3D44 0%, #5C2B32 100%);
+      color: #FFFFFF;
     }
 
     .font-serif { font-family: 'Cormorant Garamond', serif; }
@@ -50,28 +49,24 @@
       align-items: center;
       padding: 16px;
       position: relative;
-      background-color: var(--bg-cream);
+      background: linear-gradient(180deg, #7A3D44 0%, #5C2B32 100%);
+      color: #FFFFFF;
       overflow: hidden;
     }
 
-    .page-fullscreen.dark-bg {
-      background: linear-gradient(180deg, #7A3D44 0%, #5C2B32 100%);
-      color: #FFFFFF;
-      transition: background 0.5s ease;
-    }
-
+    /* TOMBOL ELEGAN KHUSUS */
     .btn-primary-v2 {
-      background: linear-gradient(135deg, #9E5660 0%, var(--primary-crimson) 100%);
+      background: linear-gradient(135deg, #8C4A52 0%, var(--primary-crimson) 100%);
       color: #FFFFFF;
       border: 1px solid var(--gold-accent);
       padding: 13px 20px;
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       font-weight: 700;
-      letter-spacing: 1.5px;
+      letter-spacing: 2px;
       text-transform: uppercase;
       border-radius: 35px;
       cursor: pointer;
-      box-shadow: 0 6px 18px rgba(140, 74, 82, 0.25);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
       width: 100%;
       max-width: 320px;
       display: flex;
@@ -80,20 +75,20 @@
       transition: transform 0.15s ease, box-shadow 0.15s ease;
     }
 
-    .btn-primary-v2:active { transform: scale(0.95); box-shadow: 0 2px 8px rgba(140, 74, 82, 0.2); }
+    .btn-primary-v2:active { transform: scale(0.96); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); }
 
     .btn-gold-v2 {
       background: linear-gradient(135deg, #E2C275 0%, #C39B38 100%);
-      color: #2B1E1E;
+      color: #2A1A1C;
       border: 1px solid #FFF;
       padding: 13px 20px;
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       font-weight: 700;
-      letter-spacing: 1.5px;
+      letter-spacing: 2px;
       text-transform: uppercase;
       border-radius: 35px;
       cursor: pointer;
-      box-shadow: 0 6px 18px rgba(195, 155, 56, 0.25);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
       width: 100%;
       max-width: 320px;
       display: flex;
@@ -102,16 +97,16 @@
       transition: transform 0.15s ease, box-shadow 0.15s ease;
     }
 
-    .btn-gold-v2:active { transform: scale(0.95); box-shadow: 0 2px 8px rgba(195, 155, 56, 0.2); }
+    .btn-gold-v2:active { transform: scale(0.96); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); }
 
     .btn-secondary-v2 {
-      background: transparent;
-      color: var(--primary-crimson);
-      border: 1.5px solid var(--primary-crimson);
+      background: rgba(255, 255, 255, 0.08);
+      color: #FFFFFF;
+      border: 1px solid rgba(255, 255, 255, 0.4);
       padding: 11px 18px;
-      font-size: 0.78rem;
+      font-size: 0.75rem;
       font-weight: 700;
-      letter-spacing: 1.5px;
+      letter-spacing: 2px;
       text-transform: uppercase;
       border-radius: 35px;
       cursor: pointer;
@@ -124,15 +119,17 @@
       transition: transform 0.15s ease, background 0.2s ease;
     }
 
-    .btn-secondary-v2:active { transform: scale(0.95); background: rgba(140, 74, 82, 0.08); }
+    .btn-secondary-v2:active { transform: scale(0.96); background: rgba(255, 255, 255, 0.18); }
 
     .btn-outline-v2 {
       background: transparent;
-      color: rgba(255, 255, 255, 0.85);
+      color: rgba(255, 255, 255, 0.8);
       border: none;
       padding: 6px 12px;
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
       cursor: pointer;
       width: 100%;
       max-width: 320px;
@@ -145,25 +142,24 @@
     .btn-outline-v2:active { transform: scale(0.94); opacity: 0.7; }
 
     .btn-back-styled {
-      background: rgba(255, 255, 255, 0.15);
+      background: rgba(255, 255, 255, 0.12);
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
       color: #FFFFFF;
       border: 1px solid rgba(255, 255, 255, 0.3);
       padding: 10px 28px;
-      font-size: 0.78rem;
+      font-size: 0.75rem;
       font-weight: 600;
       border-radius: 30px;
       cursor: pointer;
-      letter-spacing: 1.5px;
+      letter-spacing: 2px;
       text-transform: uppercase;
       transition: transform 0.15s ease, background 0.2s ease;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
 
-    .btn-back-styled:active { transform: scale(0.94); background: rgba(255, 255, 255, 0.25); }
+    .btn-back-styled:active { transform: scale(0.94); background: rgba(255, 255, 255, 0.22); }
 
-    /* AMPLOP ANIMASI SOFT */
+    /* DESIGN AMPLOP REALISTIK ELEGAN */
     .envelope-screen {
       position: fixed;
       top: 0; left: 0; width: 100vw; height: 100dvh;
@@ -181,55 +177,91 @@
 
     .envelope-wrapper {
       position: relative;
-      width: 290px;
-      height: 185px;
-      background: var(--deep-crimson);
-      border-radius: 12px;
-      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.3);
-      border: 1px solid var(--card-border);
-      margin: 15px 0;
+      width: 300px;
+      height: 195px;
+      background: #4F242A;
+      border-radius: 8px;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.45);
+      border: 1px solid rgba(212, 175, 55, 0.3);
+      margin: 20px 0;
       display: flex;
       align-items: center;
       justify-content: center;
       perspective: 1000px;
     }
 
-    .envelope-flap-top {
+    /* Lipatan Kiri & Kanan Amplop */
+    .envelope-wrapper::before {
+      content: "";
       position: absolute;
-      top: -1px; left: -1px;
+      top: 0; left: 0;
       width: 0; height: 0;
-      border-left: 144px solid transparent;
-      border-right: 144px solid transparent;
-      border-top: 105px solid #8C4A52;
-      transform-origin: top;
-      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-      z-index: 5;
-      filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2));
+      border-top: 97px solid transparent;
+      border-bottom: 98px solid transparent;
+      border-left: 150px solid #5A2A30;
+      z-index: 3;
     }
 
+    .envelope-wrapper::after {
+      content: "";
+      position: absolute;
+      top: 0; right: 0;
+      width: 0; height: 0;
+      border-top: 97px solid transparent;
+      border-bottom: 98px solid transparent;
+      border-right: 150px solid #52252B;
+      z-index: 3;
+    }
+
+    .envelope-flap-top {
+      position: absolute;
+      top: 0; left: 0;
+      width: 0; height: 0;
+      border-left: 150px solid transparent;
+      border-right: 150px solid transparent;
+      border-top: 110px solid #6A333A;
+      transform-origin: top;
+      transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 5;
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+    }
+
+    /* Segel Wax Emas Stamp */
     .envelope-gold-seal {
       position: absolute;
       top: 50%; left: 50%;
       transform: translate(-50%, -50%);
-      width: 42px; height: 42px;
-      background: linear-gradient(135deg, #F8F1E5 0%, #D4AF37 50%, #C39B38 100%);
+      width: 46px; height: 46px;
+      background: radial-gradient(circle, #E2C275 0%, #C39B38 70%, #906F1E 100%);
       border-radius: 50%;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-      border: 1.5px solid #FFF;
+      box-shadow: inset 0 2px 4px rgba(255,255,255,0.6), 0 6px 16px rgba(0, 0, 0, 0.4);
+      border: 1px solid #FFF;
       z-index: 10;
       transition: transform 0.3s ease, opacity 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .envelope-gold-seal::after {
+      content: "F";
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: #3D2605;
+      text-shadow: 0 1px 1px rgba(255,255,255,0.4);
     }
 
     .envelope-card-inside {
       position: absolute;
-      width: 258px;
-      height: 162px;
+      width: 268px;
+      height: 168px;
       background: #FDFBF7;
-      border-radius: 10px;
+      border-radius: 6px;
       border: 1px solid var(--gold-accent);
-      padding: 14px 10px;
+      padding: 16px 12px;
       text-align: center;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
       z-index: 2;
       transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.5s ease;
       display: flex;
@@ -242,8 +274,8 @@
 
     .envelope-wrapper.step-open-flap .envelope-flap-top { transform: rotateX(180deg); z-index: 1; }
     .envelope-wrapper.step-open-flap .envelope-gold-seal { opacity: 0; transform: translate(-50%, -50%) scale(0.4); }
-    .envelope-wrapper.step-lift-up .envelope-card-inside { opacity: 1; transform: translateY(-110px) scale(1); z-index: 8; }
-    .envelope-wrapper.step-zoom-center .envelope-card-inside { transform: translateY(0) scale(1.28); z-index: 99; box-shadow: 0 25px 60px rgba(0,0,0,0.35); }
+    .envelope-wrapper.step-lift-up .envelope-card-inside { opacity: 1; transform: translateY(-115px) scale(1); z-index: 8; }
+    .envelope-wrapper.step-zoom-center .envelope-card-inside { transform: translateY(0) scale(1.28); z-index: 99; box-shadow: 0 25px 60px rgba(0,0,0,0.4); }
 
     /* FRAME HERO BULAT */
     .hero-pill-frame-pure {
@@ -256,8 +288,8 @@
       border: 2px solid var(--gold-accent);
       padding: 5px;
       margin: 8px auto;
-      background: #FFF;
-      box-shadow: 0 10px 25px rgba(140, 74, 82, 0.1);
+      background: rgba(255, 255, 255, 0.1);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -290,20 +322,20 @@
       -webkit-backdrop-filter: blur(12px);
       border: 1px solid var(--card-border);
       border-radius: 22px;
-      padding: 24px 20px 20px;
+      padding: 26px 20px 22px;
       width: 100%;
       max-width: 320px;
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
       text-align: center;
     }
 
     .stylish-underline-input {
       width: 100%;
-      background: rgba(0, 0, 0, 0.15);
+      background: rgba(0, 0, 0, 0.2);
       border: 1px solid rgba(212, 175, 55, 0.5);
       border-radius: 30px;
       color: #FFFFFF;
-      font-size: 1rem;
+      font-size: 0.95rem;
       text-align: center;
       padding: 12px 16px;
       outline: none;
@@ -312,8 +344,8 @@
       margin: 16px 0 4px;
     }
 
-    .stylish-underline-input::placeholder { color: rgba(255, 255, 255, 0.6); font-style: italic; font-size: 0.88rem; }
-    .stylish-underline-input:focus { border-color: var(--gold-accent); box-shadow: 0 0 12px rgba(212, 175, 55, 0.3); background: rgba(0, 0, 0, 0.25); }
+    .stylish-underline-input::placeholder { color: rgba(255, 255, 255, 0.55); font-style: italic; font-size: 0.85rem; }
+    .stylish-underline-input:focus { border-color: var(--gold-accent); box-shadow: 0 0 12px rgba(212, 175, 55, 0.3); background: rgba(0, 0, 0, 0.3); }
 
     /* SLIDER FIGMA PILIH FRAME */
     .slider-header-box { text-align: center; z-index: 10; width: 100%; max-width: 360px; margin-top: 2px; }
@@ -327,9 +359,9 @@
 
     .figma-card-item {
       position: absolute; width: 170px; height: 100%; max-height: 340px;
-      border-radius: 18px; background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.3); display: flex; align-items: center; justify-content: center;
-      padding: 8px; box-shadow: 0 12px 25px rgba(0, 0, 0, 0.2); transition: all 0.45s cubic-bezier(0.25, 1, 0.5, 1); cursor: pointer; user-select: none;
+      border-radius: 18px; background: rgba(255, 255, 255, 0.12); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.25); display: flex; align-items: center; justify-content: center;
+      padding: 8px; box-shadow: 0 12px 25px rgba(0, 0, 0, 0.25); transition: all 0.45s cubic-bezier(0.25, 1, 0.5, 1); cursor: pointer; user-select: none;
     }
 
     .figma-card-item img { width: 100%; height: 100%; max-height: 320px; object-fit: contain; }
@@ -358,13 +390,13 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      background: rgba(255, 255, 255, 0.15);
+      background: rgba(255, 255, 255, 0.12);
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
       padding: 8px 16px;
       border-radius: 25px;
       color: #FFF;
-      border: 1px solid rgba(255, 255, 255, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.2);
     }
 
     .camera-viewfinder-box {
@@ -430,12 +462,12 @@
     .cam-floating-tools {
       display: flex;
       gap: 6px;
-      background: rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.1);
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
       padding: 6px 12px;
       border-radius: 25px;
-      border: 1px solid rgba(255, 255, 255, 0.22);
+      border: 1px solid rgba(255, 255, 255, 0.2);
       margin-bottom: 8px;
       width: 100%;
       max-width: 340px;
@@ -480,15 +512,21 @@
       border-radius: 50%;
       background: #FFF;
       border: 4px solid var(--gold-accent);
-      box-shadow: 0 0 18px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 0 18px rgba(0, 0, 0, 0.35);
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: var(--primary-crimson);
-      font-size: 1.4rem;
       transition: transform 0.15s ease;
     }
+    
+    .cam-snap-trigger-inner {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--primary-crimson);
+    }
+
     .cam-snap-trigger:active { transform: scale(0.88); }
 
     .countdown-overlay {
@@ -523,12 +561,12 @@
     }
 
     .review-delete-btn {
-      position: absolute; top: 5px; right: 5px; background: rgba(217, 83, 79, 0.95); color: #FFF; border: none; width: 22px; height: 22px; border-radius: 50%; font-weight: 700; font-size: 0.75rem; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.3); z-index: 10;
+      position: absolute; top: 5px; right: 5px; background: rgba(122, 61, 68, 0.95); color: #FFF; border: 1px solid var(--gold-accent); width: 22px; height: 22px; border-radius: 50%; font-weight: 700; font-size: 0.72rem; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.3); z-index: 10;
     }
 
-    /* PRINTER STAGE */
+    /* PRINTER STAGE (SEMAKIN ELEGAN HARMONIS) */
     .printer-lottie-stage {
-      width: 100vw; min-height: 100dvh; background: #FFFFFF; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 16px 14px 20px; position: relative; overflow-y: auto;
+      width: 100vw; min-height: 100dvh; background: linear-gradient(180deg, #7A3D44 0%, #5C2B32 100%); color: #FFF; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 16px 14px 20px; position: relative; overflow-y: auto;
     }
 
     .vector-printer-wrapper {
@@ -538,13 +576,13 @@
     .vector-printer-wrapper.fade-out-printer { opacity: 0; transform: translateY(-30px) scale(0.85); pointer-events: none; height: 0; margin: 0; overflow: hidden; }
 
     .paper-tray-input {
-      width: 110px; height: 50px; background: #FFFFFF; border: 2px solid #E0E0E0; border-bottom: none; border-radius: 8px 8px 0 0; margin-bottom: -12px; box-shadow: 0 -3px 8px rgba(0,0,0,0.03); transition: transform 2s cubic-bezier(0.4, 0, 0.2, 1); z-index: 1;
+      width: 110px; height: 50px; background: #FDFBF7; border: 2px solid var(--gold-accent); border-bottom: none; border-radius: 8px 8px 0 0; margin-bottom: -12px; box-shadow: 0 -3px 8px rgba(0,0,0,0.2); transition: transform 2s cubic-bezier(0.4, 0, 0.2, 1); z-index: 1;
     }
 
     .paper-tray-input.pulled-in { transform: translateY(45px); }
 
     .flat-printer-body {
-      width: 220px; height: 80px; background: #4A3E3E; border-radius: 14px; position: relative; z-index: 10; box-shadow: 0 8px 20px rgba(0,0,0,0.15); display: flex; flex-direction: column; justify-content: space-between; padding: 6px 10px;
+      width: 220px; height: 80px; background: #3D1C21; border: 1px solid var(--gold-accent); border-radius: 14px; position: relative; z-index: 10; box-shadow: 0 10px 25px rgba(0,0,0,0.35); display: flex; flex-direction: column; justify-content: space-between; padding: 8px 12px;
     }
 
     .printer-panel-top { display: flex; align-items: center; gap: 6px; }
@@ -557,14 +595,14 @@
     @keyframes ledBlinkRed { 0% { background: #FF7675; } 100% { background: #7F1D1D; } }
     @keyframes ledBlinkGreen { 0% { background: #55E6C1; } 100% { background: #145A32; } }
 
-    .printer-brand-tag { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.58rem; font-weight: 600; color: rgba(255, 255, 255, 0.7); letter-spacing: 1px; }
+    .printer-brand-tag { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.58rem; font-weight: 700; color: var(--gold-accent); letter-spacing: 1.5px; text-transform: uppercase; }
 
-    .printer-door-tray { width: 100%; height: 28px; background: #322828; border-radius: 6px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; }
-    .printer-slot-gap { width: 88%; height: 6px; background: #111; border-radius: 3px; }
+    .printer-door-tray { width: 100%; height: 26px; background: #281115; border-radius: 6px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; }
+    .printer-slot-gap { width: 88%; height: 5px; background: #000; border-radius: 3px; }
 
     .printer-output-paper-container { position: relative; width: 130px; margin-top: -8px; overflow: hidden; z-index: 5; display: flex; justify-content: center; padding-top: 4px; }
 
-    .ejected-photo-sheet { width: 100%; transform: translateY(-100%); transition: transform 5s cubic-bezier(0.22, 1, 0.36, 1); filter: drop-shadow(0 6px 15px rgba(0,0,0,0.12)); }
+    .ejected-photo-sheet { width: 100%; transform: translateY(-100%); transition: transform 5s cubic-bezier(0.22, 1, 0.36, 1); filter: drop-shadow(0 6px 15px rgba(0,0,0,0.3)); }
     .ejected-photo-sheet.fully-printed { transform: translateY(0); }
     .ejected-photo-sheet img { width: 100%; border-radius: 6px; display: block; margin: 0 auto; }
 
@@ -572,57 +610,56 @@
       width: 100%; max-width: 165px; margin: 2px auto; opacity: 0; transform: scale(0.6); transition: all 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
     }
     .popup-photo-container.show-popup { opacity: 1; transform: scale(1); }
-    .popup-photo-container img { width: 100%; max-height: 36vh; object-fit: contain; border-radius: 10px; box-shadow: 0 8px 22px rgba(0,0,0,0.15); }
+    .popup-photo-container img { width: 100%; max-height: 36vh; object-fit: contain; border-radius: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.35); border: 1px solid var(--gold-accent); }
 
-    .printer-status-text-box { margin-top: 2px; text-align: center; z-index: 20; }
-    .status-main-label { font-size: 0.82rem; font-weight: 700; color: var(--primary-crimson); display: flex; align-items: center; justify-content: center; gap: 5px; }
-    .status-sub-label { font-size: 0.68rem; color: #777; margin-top: 1px; font-style: italic; }
+    .printer-status-text-box { margin-top: 4px; text-align: center; z-index: 20; }
+    .status-main-label { font-size: 0.85rem; font-weight: 700; color: var(--gold-accent); letter-spacing: 1px; display: flex; align-items: center; justify-content: center; gap: 5px; }
+    .status-sub-label { font-size: 0.7rem; color: rgba(255,255,255,0.75); margin-top: 2px; font-style: italic; }
 
     .printer-bottom-actions { 
       width: 100%; max-width: 320px; margin-top: 6px; display: flex; flex-direction: column; gap: 6px; z-index: 20; opacity: 0; transform: translateY(10px); transition: all 0.5s ease; 
     }
     .printer-bottom-actions.visible { opacity: 1; transform: translateY(0); }
 
-    /* GALERI RINGAN */
+    /* GALERI BERSIH ELEGAN */
     .feed-container { width: 100%; max-width: 420px; margin: 0 auto; }
-    .gallery-intro-box { background: #FDFBF7; border: 1px solid rgba(212, 175, 55, 0.3); border-radius: 16px; padding: 14px 10px; margin-bottom: 16px; text-align: center; }
-    .ig-grid-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+    .gallery-intro-box { background: rgba(255, 255, 255, 0.1); border: 1px solid var(--card-border); backdrop-filter: blur(10px); border-radius: 16px; padding: 16px 12px; margin-bottom: 16px; text-align: center; }
+    .ig-grid-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
     
     .ig-grid-item { 
-      background: #FFF; border-radius: 12px; overflow: hidden; border: 1px solid rgba(212,175,55,0.25); cursor: pointer; display: flex; flex-direction: column; box-shadow: 0 4px 10px rgba(0,0,0,0.04); transition: transform 0.15s ease; 
+      background: rgba(255, 255, 255, 0.08); border-radius: 12px; overflow: hidden; border: 1px solid var(--card-border); cursor: pointer; display: flex; flex-direction: column; box-shadow: 0 4px 12px rgba(0,0,0,0.15); transition: transform 0.15s ease; 
     }
     .ig-grid-item:active { transform: scale(0.96); }
 
-    .ig-item-header { display: flex; flex-direction: column; align-items: center; padding: 5px 3px 3px; background: #FFFDF9; border-bottom: 1px solid rgba(212,175,55,0.15); }
-    .ig-item-name { font-size: 0.62rem; font-weight: 700; color: var(--primary-crimson); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; text-align: center; }
-    .ig-item-date { font-size: 0.52rem; color: #888; margin-top: 1px; }
+    .ig-item-header { display: flex; flex-direction: column; align-items: center; padding: 6px 4px; background: rgba(0, 0, 0, 0.2); border-bottom: 1px solid rgba(212,175,55,0.2); }
+    .ig-item-name { font-size: 0.65rem; font-weight: 700; color: var(--gold-accent); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; text-align: center; }
+    .ig-item-date { font-size: 0.52rem; color: rgba(255,255,255,0.6); margin-top: 1px; }
 
-    .ig-item-img-box { width: 100%; aspect-ratio: 1/1; overflow: hidden; background: #FDFBF7; }
+    .ig-item-img-box { width: 100%; aspect-ratio: 1/1; overflow: hidden; background: #1A0D0F; }
     .ig-item-img-box img { width: 100%; height: 100%; object-fit: cover; }
-    .ig-item-msg { font-size: 0.6rem; color: #555; padding: 5px 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; font-style: italic; background: #FFF; }
+    .ig-item-msg { font-size: 0.6rem; color: rgba(255,255,255,0.85); padding: 6px 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; font-style: italic; background: rgba(0, 0, 0, 0.15); }
 
     /* FOOTER OFFICIAL */
-    .app-official-footer { text-align: center; padding: 8px 10px 2px; font-size: 0.65rem; color: #9A7B7E; border-top: 1px dashed rgba(216, 180, 180, 0.4); margin-top: 8px; width: 100%; letter-spacing: 0.5px; }
-    .app-official-footer.light-text { color: rgba(255, 255, 255, 0.65); border-top: 1px dashed rgba(255, 255, 255, 0.2); }
+    .app-official-footer { text-align: center; padding: 8px 10px 2px; font-size: 0.65rem; color: rgba(255, 255, 255, 0.65); border-top: 1px dashed rgba(255, 255, 255, 0.2); margin-top: 8px; width: 100%; letter-spacing: 0.5px; }
 
     /* MODAL LIGHTBOX & ALERT */
-    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(5px); display: flex; align-items: center; justify-content: center; z-index: 99999; padding: 15px; }
-    .modal-card { background: #FFF; border-radius: 18px; padding: 18px 14px 14px; max-width: 330px; width: 100%; text-align: center; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.3); border: 1px solid rgba(212, 175, 55, 0.3); max-height: 90vh; display: flex; flex-direction: column; overflow-y: auto; }
-    .modal-close-btn { position: absolute; top: 8px; right: 10px; background: var(--primary-crimson); color: #FFF; border: none; width: 28px; height: 28px; border-radius: 50%; font-weight: 700; font-size: 0.85rem; cursor: pointer; z-index: 100; }
-    .modal-user-name { font-size: 0.92rem; font-weight: 700; color: var(--primary-crimson); margin-bottom: 1px; padding-right: 25px; }
-    .modal-user-date { font-size: 0.65rem; color: #888; margin-bottom: 4px; }
-    .modal-img { width: 100%; max-height: 52vh; object-fit: contain; border-radius: 10px; margin: 6px 0; background: #FDFBF7; }
-    .modal-msg { font-size: 0.78rem; color: #333; font-style: italic; background: #FDFBF7; padding: 8px 10px; border-radius: 8px; line-height: 1.35; word-break: break-word; }
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 99999; padding: 15px; }
+    .modal-card { background: linear-gradient(180deg, #7A3D44 0%, #5C2B32 100%); color: #FFF; border-radius: 20px; padding: 20px 16px 16px; max-width: 330px; width: 100%; text-align: center; position: relative; box-shadow: 0 15px 35px rgba(0,0,0,0.5); border: 1px solid var(--gold-accent); max-height: 90vh; display: flex; flex-direction: column; overflow-y: auto; }
+    .modal-close-btn { position: absolute; top: 10px; right: 12px; background: rgba(0,0,0,0.3); color: var(--gold-accent); border: 1px solid var(--gold-accent); width: 28px; height: 28px; border-radius: 50%; font-weight: 700; font-size: 0.8rem; cursor: pointer; z-index: 100; }
+    .modal-user-name { font-size: 0.95rem; font-weight: 700; color: var(--gold-accent); margin-bottom: 1px; padding-right: 25px; letter-spacing: 1px; }
+    .modal-user-date { font-size: 0.65rem; color: rgba(255,255,255,0.65); margin-bottom: 6px; }
+    .modal-img { width: 100%; max-height: 52vh; object-fit: contain; border-radius: 10px; margin: 6px 0; background: rgba(0,0,0,0.2); border: 1px solid rgba(212,175,55,0.3); }
+    .modal-msg { font-size: 0.78rem; color: #FFF; font-style: italic; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 10px; line-height: 1.4; word-break: break-word; border: 1px solid rgba(255,255,255,0.1); }
 
     canvas { display: none; }
   </style>
 </head>
 <body>
 
-<!-- 0. AMPLOP TERTUTUP -->
+<!-- 0. AMPLOP TERTUTUP REALISTIS -->
 <div id="envelope-screen" class="envelope-screen" onclick="openEnvelopeAnimation()">
   <div style="text-align:center; color:#FFF; margin-bottom:10px;">
-    <div style="font-size:0.72rem; letter-spacing:3px; color:var(--gold-accent); font-weight:700; margin-bottom:4px;">KENANGAN PERNIKAHAN</div>
+    <div style="font-size:0.7rem; letter-spacing:3px; color:var(--gold-accent); font-weight:700; margin-bottom:4px; text-transform:uppercase;">Kenangan Pernikahan</div>
     <div class="font-script" style="font-size:2.8rem; color:#FFF; line-height:1;" id="envelope-names">Riyan & Amelia</div>
   </div>
 
@@ -637,7 +674,7 @@
     </div>
   </div>
 
-  <div style="font-size:0.78rem; color:rgba(255,255,255,0.85); font-style:italic; display:flex; align-items:center; gap:8px; margin-top:12px;">
+  <div style="font-size:0.75rem; color:rgba(255,255,255,0.85); font-style:italic; letter-spacing:1px; margin-top:12px;">
     Ketuk amplop untuk membuka
   </div>
 </div>
@@ -646,18 +683,18 @@
 <div id="step-welcome" class="page-fullscreen">
   <div style="width:100%; text-align:center; display:flex; flex-direction:column; align-items:center;">
     <p style="font-size:0.7rem; color:var(--gold-accent); letter-spacing:2.5px; font-weight:700; margin-bottom:1px;">KENANGAN PERNIKAHAN</p>
-    <h1 class="font-script" style="font-size:2.6rem; color:var(--primary-crimson); line-height:1.05;" id="display-event-title">Riyan & Amelia</h1>
-    <p style="font-size:0.72rem; color:#8C6267; letter-spacing:1px; margin-bottom:4px;">06 DESEMBER 2026</p>
+    <h1 class="font-script" style="font-size:2.6rem; color:#FFF; line-height:1.05;" id="display-event-title">Riyan & Amelia</h1>
+    <p style="font-size:0.72rem; color:rgba(255,255,255,0.8); letter-spacing:1px; margin-bottom:4px;">06 DESEMBER 2026</p>
 
     <div class="hero-pill-frame-pure">
       <img src="./assets/v2/hero.png" alt="Hero Pengantin" id="welcome-couple-img" onerror="this.src='./assets/v2/dsg1.png'">
     </div>
 
-    <p style="font-size:0.75rem; color:#665557; font-style:italic; line-height:1.35; max-width:310px; margin:4px 0 10px;">
+    <p style="font-size:0.75rem; color:rgba(255,255,255,0.85); font-style:italic; line-height:1.35; max-width:310px; margin:4px 0 10px;">
       "Satu foto menyimpan sejuta kenangan. Terima kasih telah menjadi bagian dari hari bahagia kami!"
     </p>
 
-    <button class="btn-primary-v2" onclick="goToStep('step-ask-name')">
+    <button class="btn-gold-v2" onclick="goToStep('step-ask-name')">
       TAMBAHKAN MOMEN
     </button>
 
@@ -672,7 +709,7 @@
 </div>
 
 <!-- PAGE: INPUT NAMA -->
-<div id="step-ask-name" class="page-fullscreen dark-bg hidden">
+<div id="step-ask-name" class="page-fullscreen hidden">
   <div style="width:100%; text-align:center; padding-top:4px;">
     <p style="font-size:0.68rem; color:var(--gold-accent); letter-spacing:2.5px; font-weight:700; margin-bottom:2px;">KENANGAN PERNIKAHAN</p>
     <h2 class="font-script" style="font-size:2.4rem; color:#FFF;" id="ask-event-title">Riyan & Amelia</h2>
@@ -681,11 +718,10 @@
 
   <div class="ask-page-center-wrapper">
     <div class="glass-card-ask">
-      <i class="fa-solid fa-feather-pointed" style="color:var(--gold-accent); font-size:1.8rem; margin-bottom:8px; display:block;"></i>
       <h3 class="font-serif" style="font-size:1.45rem; letter-spacing:1.5px; font-weight:600; color:#FFF; line-height:1.2;">
         DARI SIAPA<br>KENANGAN INI?
       </h3>
-      <p style="font-size:0.72rem; color:rgba(255,255,255,0.8); margin-top:4px;">Tuliskan nama/panggilanmu untuk dicantumkan pada foto kenangan</p>
+      <p style="font-size:0.72rem; color:rgba(255,255,255,0.8); margin-top:6px;">Tuliskan nama/panggilanmu untuk dicantumkan pada foto kenangan</p>
 
       <input type="text" id="guest-initial-name" class="stylish-underline-input" placeholder="Misal: Budi & Sarah" autocomplete="off">
     </div>
@@ -700,14 +736,14 @@
       Kembali
     </button>
 
-    <div class="app-official-footer light-text">
+    <div class="app-official-footer">
       © 2026 FOTOME by Riyan. All rights reserved.
     </div>
   </div>
 </div>
 
 <!-- STEP 2: SLIDER FIGMA PILIH FRAME -->
-<div id="step-template" class="page-fullscreen dark-bg hidden">
+<div id="step-template" class="page-fullscreen hidden">
   <div class="slider-header-box">
     <div class="section-label-fullscreen" id="card-theme-tag">ROYAL EDITION</div>
     <div class="slider-main-title" id="card-theme-name">Classic Royal (3 Foto)</div>
@@ -715,31 +751,31 @@
   </div>
 
   <div class="slider-cards-viewport" id="slider-stack-box">
-    <div class="figma-card-item" data-path="./assets/v2/dsg3.png" data-count="3" data-name="Classic Royal (3 Foto)" data-tag="ROYAL EDITION" data-color="#8C4A52">
+    <div class="figma-card-item" data-path="./assets/v2/dsg3.png" data-count="3" data-name="Classic Royal (3 Foto)" data-tag="ROYAL EDITION">
       <img src="./assets/v2/dsg3.png" alt="Desain 3">
     </div>
-    <div class="figma-card-item" data-path="./assets/v2/dsg2.png" data-count="2" data-name="Classic Royal (2 Foto)" data-tag="ROYAL EDITION" data-color="#723A41">
+    <div class="figma-card-item" data-path="./assets/v2/dsg2.png" data-count="2" data-name="Classic Royal (2 Foto)" data-tag="ROYAL EDITION">
       <img src="./assets/v2/dsg2.png" alt="Desain 2">
     </div>
-    <div class="figma-card-item" data-path="./assets/v2/dsg1.png" data-count="1" data-name="Classic Royal (1 Foto)" data-tag="ROYAL EDITION" data-color="#9E5660">
+    <div class="figma-card-item" data-path="./assets/v2/dsg1.png" data-count="1" data-name="Classic Royal (1 Foto)" data-tag="ROYAL EDITION">
       <img src="./assets/v2/dsg1.png" alt="Desain 1">
     </div>
-    <div class="figma-card-item" data-path="./assets/v2/flower3.png" data-count="3" data-name="Floral Romance (3 Foto)" data-tag="FLORAL COLLECTION" data-color="#5B7062">
+    <div class="figma-card-item" data-path="./assets/v2/flower3.png" data-count="3" data-name="Floral Romance (3 Foto)" data-tag="FLORAL COLLECTION">
       <img src="./assets/v2/flower3.png" alt="Flower 3">
     </div>
-    <div class="figma-card-item" data-path="./assets/v2/flower2.png" data-count="2" data-name="Floral Romance (2 Foto)" data-tag="FLORAL COLLECTION" data-color="#4B5E52">
+    <div class="figma-card-item" data-path="./assets/v2/flower2.png" data-count="2" data-name="Floral Romance (2 Foto)" data-tag="FLORAL COLLECTION">
       <img src="./assets/v2/flower2.png" alt="Flower 2">
     </div>
-    <div class="figma-card-item" data-path="./assets/v2/flower1.png" data-count="1" data-name="Floral Romance (1 Foto)" data-tag="FLORAL COLLECTION" data-color="#6B8273">
+    <div class="figma-card-item" data-path="./assets/v2/flower1.png" data-count="1" data-name="Floral Romance (1 Foto)" data-tag="FLORAL COLLECTION">
       <img src="./assets/v2/flower1.png" alt="Flower 1">
     </div>
-    <div class="figma-card-item" data-path="./assets/v2/line 3.png" data-count="3" data-name="Minimalist Modern (3 Foto)" data-tag="MINIMALIST STYLE" data-color="#4B5868">
+    <div class="figma-card-item" data-path="./assets/v2/line 3.png" data-count="3" data-name="Minimalist Modern (3 Foto)" data-tag="MINIMALIST STYLE">
       <img src="./assets/v2/line 3.png" alt="Line 3">
     </div>
-    <div class="figma-card-item" data-path="./assets/v2/line 2.png" data-count="2" data-name="Minimalist Modern (2 Foto)" data-tag="MINIMALIST STYLE" data-color="#3B4654">
+    <div class="figma-card-item" data-path="./assets/v2/line 2.png" data-count="2" data-name="Minimalist Modern (2 Foto)" data-tag="MINIMALIST STYLE">
       <img src="./assets/v2/line 2.png" alt="Line 2">
     </div>
-    <div class="figma-card-item" data-path="./assets/v2/line 1.png" data-count="1" data-name="Minimalist Modern (1 Foto)" data-tag="MINIMALIST STYLE" data-color="#5C6C7E">
+    <div class="figma-card-item" data-path="./assets/v2/line 1.png" data-count="1" data-name="Minimalist Modern (1 Foto)" data-tag="MINIMALIST STYLE">
       <img src="./assets/v2/line 1.png" alt="Line 1">
     </div>
   </div>
@@ -748,14 +784,14 @@
     <button class="btn-back-styled" onclick="goToStep('step-ask-name')">
       Kembali
     </button>
-    <div class="app-official-footer light-text">
+    <div class="app-official-footer">
       © 2026 FOTOME by Riyan. All rights reserved.
     </div>
   </div>
 </div>
 
 <!-- STEP 3: SESI KAMERA RESPONSIF -->
-<div id="step-camera" class="page-fullscreen dark-bg hidden">
+<div id="step-camera" class="page-fullscreen hidden">
   <div class="camera-stage-container">
     
     <div class="camera-top-status">
@@ -790,15 +826,15 @@
 
     <!-- AREA BAWAH: SELECTOR KAMERA & JEPET FOTO -->
     <div class="cam-bottom-action-row">
-      <!-- SELECT DROPDOWN HANYA TAMPILKAN KAMERA UTAMA & EXTERNAL -->
+      <!-- SELECT DROPDOWN KAMERA -->
       <div style="width: 100%; max-width: 280px; position: relative;">
         <select id="camera-select-dropdown" onchange="onCameraSelectChange(this.value)" style="width: 100%; background: rgba(0,0,0,0.4); color: #FFF; border: 1px solid var(--gold-accent); padding: 8px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; text-align: center; outline: none; backdrop-filter: blur(8px); cursor: pointer;">
-          <option value="">🔍 Memindai Kamera...</option>
+          <option value="">Memindai Kamera...</option>
         </select>
       </div>
 
       <div class="cam-snap-trigger" id="btn-snap" onclick="takePhotoSnap()">
-        <i class="fa-solid fa-camera"></i>
+        <div class="cam-snap-trigger-inner"></div>
       </div>
     </div>
 
@@ -806,7 +842,7 @@
 </div>
 
 <!-- STEP 3B: HALAMAN PREVIEW HASIL FOTO -->
-<div id="step-review-photos" class="page-fullscreen dark-bg hidden">
+<div id="step-review-photos" class="page-fullscreen hidden">
   <div style="width:100%; text-align:center; padding-top:10px;">
     <p style="font-size:0.68rem; color:var(--gold-accent); letter-spacing:2.5px; font-weight:700; margin-bottom:2px;">REVIEW HASIL FOTO</p>
     <h2 class="font-serif" style="font-size:1.4rem; color:#FFF;">Apakah foto kamu sudah pas?</h2>
@@ -824,7 +860,7 @@
       Foto Ulang Semua
     </button>
 
-    <div class="app-official-footer light-text">
+    <div class="app-official-footer">
       © 2026 FOTOME by Riyan. All rights reserved.
     </div>
   </div>
@@ -858,23 +894,22 @@
 
   <div class="printer-status-text-box">
     <div class="status-main-label" id="printer-status-main">
-      <i class="fa-solid fa-spinner fa-spin" id="spinner-icon"></i>
       <span id="printer-status-text">Memproses foto kamu...</span>
     </div>
     <div class="status-sub-label" id="printer-status-sub">Harap tunggu sebentar</div>
   </div>
 
-  <!-- FORM UCAPAN -->
+  <!-- FORM UCAPAN ELEGAN HARMONIS -->
   <div class="printer-bottom-actions" id="printer-bottom-actions">
-    <div style="background: #FDFBF7; border: 1px solid rgba(212,175,55,0.35); border-radius: 14px; padding: 10px; text-align: left; box-shadow:0 4px 12px rgba(0,0,0,0.05);">
-      <label style="display:block; font-size:0.68rem; font-weight:700; color:var(--primary-crimson); margin-bottom:3px;">Dari (Pengirim)</label>
-      <input type="text" id="input-sender-name" style="width:100%; padding:6px 8px; border:1px solid #D8B4B4; border-radius:6px; font-size:0.8rem; outline:none; margin-bottom:6px; background:#FFFDF9; font-family:'Plus Jakarta Sans', sans-serif; font-weight:600; color:#4A3B3B;" readonly>
+    <div style="background: rgba(255, 255, 255, 0.1); border: 1px solid var(--gold-accent); border-radius: 14px; padding: 12px; text-align: left; box-shadow: 0 8px 20px rgba(0,0,0,0.2); backdrop-filter: blur(8px);">
+      <label style="display:block; font-size:0.68rem; font-weight:700; color:var(--gold-accent); margin-bottom:3px; letter-spacing:1px; text-transform:uppercase;">Dari (Pengirim)</label>
+      <input type="text" id="input-sender-name" style="width:100%; padding:8px 10px; border:1px solid rgba(212,175,55,0.4); border-radius:8px; font-size:0.8rem; outline:none; margin-bottom:8px; background:rgba(0,0,0,0.25); font-family:'Plus Jakarta Sans', sans-serif; font-weight:600; color:#FFF;" readonly>
 
-      <label style="display:block; font-size:0.68rem; font-weight:700; color:var(--primary-crimson); margin-bottom:3px;">Pesan / Ucapan Doa Kamu</label>
-      <textarea id="input-sender-message" rows="2" style="width:100%; padding:6px 8px; border:1px solid #D8B4B4; border-radius:6px; font-size:0.8rem; outline:none; background:#FFF; font-family:'Plus Jakarta Sans', sans-serif;" placeholder="Tuliskan ucapan manismu di sini..."></textarea>
+      <label style="display:block; font-size:0.68rem; font-weight:700; color:var(--gold-accent); margin-bottom:3px; letter-spacing:1px; text-transform:uppercase;">Pesan / Ucapan Doa Kamu</label>
+      <textarea id="input-sender-message" rows="2" style="width:100%; padding:8px 10px; border:1px solid rgba(212,175,55,0.4); border-radius:8px; font-size:0.8rem; outline:none; background:rgba(0,0,0,0.25); color:#FFF; font-family:'Plus Jakarta Sans', sans-serif;" placeholder="Tuliskan ucapan manismu di sini..."></textarea>
     </div>
 
-    <button class="btn-primary-v2" style="max-width:100%;" onclick="saveAndShareToFeed()">
+    <button class="btn-gold-v2" style="max-width:100%; margin-top:4px;" onclick="saveAndShareToFeed()">
       UNDUH &amp; POSTING KE GALERI
     </button>
 
@@ -882,7 +917,7 @@
       SIMPAN PRIVAT KE HP
     </button>
 
-    <button class="btn-outline-v2" style="color:#777; max-width:100%; padding:4px;" onclick="goToStep('step-template')">
+    <button class="btn-outline-v2" style="color:rgba(255,255,255,0.7); max-width:100%; padding:4px;" onclick="goToStep('step-template')">
       Foto Ulang Semua
     </button>
 
@@ -898,30 +933,29 @@
   <div class="feed-container">
     <div style="text-align:center; margin-bottom:12px;">
       <p style="font-size:0.68rem; color:var(--gold-accent); letter-spacing:2.5px; font-weight:700; margin-bottom:2px;">GALERI KENANGAN</p>
-      <h2 class="font-script" style="font-size:2.6rem; color:var(--primary-crimson); line-height:1;">Jejak Kebahagiaan</h2>
+      <h2 class="font-script" style="font-size:2.6rem; color:#FFF; line-height:1;">Jejak Kebahagiaan</h2>
     </div>
 
     <div class="gallery-intro-box">
-      <i class="fa-solid fa-quote-left" style="color:var(--gold-accent); font-size:1.1rem; margin-bottom:6px; display:block;"></i>
-      <p class="font-serif" style="font-size:0.9rem; color:#4A3B3B; line-height:1.5; font-style:italic;">
+      <p class="font-serif" style="font-size:0.92rem; color:#FFF; line-height:1.5; font-style:italic;">
         "Terima kasih telah melangkah bersama kami dan mengukir kehangatan dalam setiap senyuman. Setiap foto dan doa yang tertulis di sini adalah hadiah terindah yang akan selalu kami kenang sepanjang masa."
       </p>
-      <div style="font-size:0.7rem; font-weight:700; color:var(--primary-crimson); margin-top:6px; letter-spacing:1px;" id="gallery-couple-sub">
+      <div style="font-size:0.7rem; font-weight:700; color:var(--gold-accent); margin-top:8px; letter-spacing:1.5px;" id="gallery-couple-sub">
         — RIYAN &amp; AMELIA
       </div>
     </div>
 
-    <div style="font-size:0.85rem; font-weight:700; color:var(--primary-crimson); margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
-      <span>Kiriman Tamu</span>
-      <span style="font-size:0.7rem; color:#888;" id="total-posts-count">0 Kiriman</span>
+    <div style="font-size:0.85rem; font-weight:700; color:var(--gold-accent); margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; letter-spacing:1px;">
+      <span>KIRIMAN TAMU</span>
+      <span style="font-size:0.7rem; color:rgba(255,255,255,0.7);" id="total-posts-count">0 Kiriman</span>
     </div>
 
     <div id="ig-grid-box" class="ig-grid-container">
-      <p style="font-size: 0.8rem; color: #999; grid-column: span 3; text-align: center;">Memuat ucapan &amp; foto tamu...</p>
+      <p style="font-size: 0.8rem; color: rgba(255,255,255,0.6); grid-column: span 3; text-align: center;">Memuat ucapan &amp; foto tamu...</p>
     </div>
 
     <div style="margin-top:20px;">
-      <button class="btn-primary-v2" style="max-width:100%;" onclick="goToStep('step-welcome')">
+      <button class="btn-gold-v2" style="max-width:100%;" onclick="goToStep('step-welcome')">
         KEMBALI KE BERANDA
       </button>
     </div>
@@ -943,13 +977,12 @@
   </div>
 </div>
 
-<!-- MODAL ALERT -->
+<!-- MODAL ALERT BERSIH -->
 <div id="alert-modal" class="modal-overlay hidden">
   <div class="modal-card">
-    <div style="font-size: 2rem; margin-bottom: 6px;" id="alert-icon">✨</div>
-    <div style="font-size: 0.9rem; font-weight: 700; color: #8C4A52; margin-bottom: 6px;" id="alert-title">Pemberitahuan</div>
-    <div style="font-size: 0.8rem; color: #555; line-height: 1.4; margin-bottom: 16px;" id="alert-text">Pesan...</div>
-    <button class="btn-primary-v2" style="margin-top:0;" onclick="closeAlertModal()">OK</button>
+    <div style="font-size: 0.95rem; font-weight: 700; color: var(--gold-accent); margin-bottom: 8px; letter-spacing: 1px;" id="alert-title">PEMBERITAHUAN</div>
+    <div style="font-size: 0.82rem; color: rgba(255,255,255,0.9); line-height: 1.4; margin-bottom: 18px;" id="alert-text">Pesan...</div>
+    <button class="btn-gold-v2" style="margin-top:0;" onclick="closeAlertModal()">OK</button>
   </div>
 </div>
 
@@ -1031,7 +1064,6 @@
       const ledGreen = document.getElementById('led-green');
       const statusText = document.getElementById('printer-status-text');
       const statusSub = document.getElementById('printer-status-sub');
-      const spinner = document.getElementById('spinner-icon');
       const actionsBox = document.getElementById('printer-bottom-actions');
 
       printerUnit.classList.remove('fade-out-printer');
@@ -1041,7 +1073,6 @@
       actionsBox.classList.remove('visible');
       ledRed.classList.add('blinking');
       ledGreen.classList.add('blinking');
-      spinner.style.display = 'inline-block';
       statusText.innerText = "Memproses foto kamu...";
       statusSub.innerText = "Kertas ditarik masuk ke mesin...";
 
@@ -1063,7 +1094,6 @@
 
         setTimeout(() => {
           popupBox.classList.add('show-popup');
-          spinner.style.display = 'none';
           statusText.innerHTML = 'Cetak Selesai!';
           statusSub.innerText = "Foto kamu sudah siap disimpan!";
           actionsBox.classList.add('visible');
@@ -1081,7 +1111,7 @@
   function submitGuestNameAndNext() {
     const inputName = document.getElementById('guest-initial-name').value.trim();
     if (!inputName) {
-      showAlert("Harap isi nama kamu terlebih dahulu!", "Nama Masih Kosong", "✍️");
+      showAlert("Harap isi nama kamu terlebih dahulu!", "NAMA MASIH KOSONG");
       return;
     }
     currentGuestName = inputName;
@@ -1167,7 +1197,6 @@
 
         document.getElementById('card-theme-tag').innerText = card.getAttribute('data-tag');
         document.getElementById('card-theme-name').innerText = card.getAttribute('data-name');
-        document.getElementById('step-template').style.backgroundColor = card.getAttribute('data-color');
       } else if (i === (currentCardIndex + 1) % cardItems.length) {
         card.classList.add('next');
       } else if (i === (currentCardIndex - 1 + cardItems.length) % cardItems.length) {
@@ -1180,8 +1209,7 @@
     });
   }
 
-  function showAlert(message, title = "Pemberitahuan", icon = "📸", callback = null) {
-    document.getElementById('alert-icon').innerText = icon;
+  function showAlert(message, title = "PEMBERITAHUAN", callback = null) {
     document.getElementById('alert-title').innerText = title;
     document.getElementById('alert-text').innerText = message;
     onAlertCloseCallback = callback;
@@ -1220,12 +1248,11 @@
             lockOverlay = document.createElement('div');
             lockOverlay.id = 'lock-overlay';
             lockOverlay.innerHTML = `
-              <div style="min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; font-family: 'Plus Jakarta Sans', sans-serif; background-color: #FDFBF7; color: #3A2E2E;">
-                <div style="background: #FFF; padding: 40px 25px; border-radius: 24px; box-shadow: 0 15px 35px rgba(140, 74, 82, 0.1); border: 1px solid rgba(212, 175, 55, 0.3); max-width: 400px; width: 100%;">
-                  <div style="font-size: 3rem; margin-bottom: 10px;">🔒</div>
-                  <h2 style="font-family: 'Cormorant Garamond', serif; color: #8C4A52; font-size: 2rem; margin-bottom: 10px;">Photobooth Ditutup</h2>
-                  <p style="color: #6E5353; font-size: 0.9rem; line-height: 1.6; margin-bottom: 20px;">Sesi virtual photobooth saat ini sedang tidak aktif.</p>
-                  <div style="font-family: 'Alex Brush', cursive; font-size: 2.2rem; color: #8C4A52;">${eventTitle}</div>
+              <div style="min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; font-family: 'Plus Jakarta Sans', sans-serif; background: linear-gradient(180deg, #7A3D44 0%, #5C2B32 100%); color: #FFF;">
+                <div style="background: rgba(255,255,255,0.1); padding: 40px 25px; border-radius: 24px; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4); border: 1px solid var(--gold-accent); max-width: 400px; width: 100%;">
+                  <h2 style="font-family: 'Cormorant Garamond', serif; color: var(--gold-accent); font-size: 2rem; margin-bottom: 10px;">Photobooth Ditutup</h2>
+                  <p style="color: rgba(255,255,255,0.8); font-size: 0.9rem; line-height: 1.6; margin-bottom: 20px;">Sesi virtual photobooth saat ini sedang tidak aktif.</p>
+                  <div style="font-family: 'Alex Brush', cursive; font-size: 2.4rem; color: #FFF;">${eventTitle}</div>
                 </div>
               </div>
             `;
@@ -1260,9 +1287,9 @@
         const label = (dev.label || `Kamera ${idx + 1}`).toLowerCase();
         
         if (label.includes('external') || label.includes('usb') || label.includes('webcam')) {
-          externalCameras.push({ deviceId: dev.deviceId, label: dev.label || `🔌 Kamera Eksternal ${externalCameras.length + 1}` });
+          externalCameras.push({ deviceId: dev.deviceId, label: dev.label || `Kamera Eksternal ${externalCameras.length + 1}` });
         } else if (label.includes('front') || label.includes('user') || label.includes('facing front')) {
-          frontCameras.push({ deviceId: dev.deviceId, label: '📷 Kamera Depan' });
+          frontCameras.push({ deviceId: dev.deviceId, label: 'Kamera Depan' });
         } else if (label.includes('back') || label.includes('rear') || label.includes('environment')) {
           backCameras.push({ deviceId: dev.deviceId, label: dev.label });
         } else {
@@ -1273,14 +1300,14 @@
       if (frontCameras.length > 0) {
         filteredCameras.push(frontCameras[0]);
       } else {
-        filteredCameras.push({ deviceId: 'user_default', label: '📷 Kamera Depan' });
+        filteredCameras.push({ deviceId: 'user_default', label: 'Kamera Depan' });
       }
 
       if (backCameras.length > 0) {
         const mainBack = backCameras.find(c => c.label.toLowerCase().includes('0') || c.label.toLowerCase().includes('main')) || backCameras[0];
-        filteredCameras.push({ deviceId: mainBack.deviceId, label: '📸 Kamera Belakang' });
+        filteredCameras.push({ deviceId: mainBack.deviceId, label: 'Kamera Belakang' });
       } else {
-        filteredCameras.push({ deviceId: 'environment_default', label: '📸 Kamera Belakang' });
+        filteredCameras.push({ deviceId: 'environment_default', label: 'Kamera Belakang' });
       }
 
       externalCameras.forEach(ext => filteredCameras.push(ext));
@@ -1301,8 +1328,8 @@
     } catch (err) {
       console.warn("Gagal memindai perangkat kamera:", err);
       selectEl.innerHTML = `
-        <option value="user_default">📷 Kamera Depan</option>
-        <option value="environment_default">📸 Kamera Belakang</option>
+        <option value="user_default">Kamera Depan</option>
+        <option value="environment_default">Kamera Belakang</option>
       `;
     }
   }
@@ -1364,7 +1391,7 @@
         await populateCameraDevices();
       } catch (finalErr) {
         console.error("Kamera gagal dibuka:", finalErr);
-        showAlert("Gagal membuka kamera. Pastikan izin akses kamera sudah diberikan.", "Kamera Error", "📷");
+        showAlert("Gagal membuka kamera. Pastikan izin akses kamera sudah diberikan.", "KAMERA ERROR");
       }
     }
   }
@@ -1703,7 +1730,7 @@
         photoData: generatedDataUrl,
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       }).then(() => {
-        showAlert("Foto berhasil diunduh dan diposting ke Galeri!", "Berhasil Ditambahkan", "📸", () => {
+        showAlert("Foto berhasil diunduh dan diposting ke Galeri!", "BERHASIL DITAMBAHKAN", () => {
           document.getElementById('input-sender-message').value = '';
           goToStep('step-welcome');
         });
@@ -1714,7 +1741,7 @@
   function savePrivateOnly() {
     const senderName = document.getElementById('input-sender-name').value.trim() || currentGuestName || "Tamu";
     downloadImageToPhone(senderName);
-    showAlert("Foto berhasil disimpan secara privat ke HP kamu!", "Tersimpan Privat", "📥", () => {
+    showAlert("Foto berhasil disimpan secara privat ke HP kamu!", "TERSIMPAN PRIVAT", () => {
       goToStep('step-welcome');
     });
   }
@@ -1743,7 +1770,7 @@
         const countSpan = document.getElementById('total-posts-count');
         
         if (snapshot.empty) {
-          gridBox.innerHTML = '<p style="font-size: 0.8rem; color: #999; grid-column: span 3; text-align: center;">Belum ada foto di galeri. Tampil pertama di sini!</p>';
+          gridBox.innerHTML = '<p style="font-size: 0.8rem; color: rgba(255,255,255,0.6); grid-column: span 3; text-align: center;">Belum ada foto di galeri. Tampil pertama di sini!</p>';
           countSpan.innerText = '0 Kiriman';
           return;
         }
