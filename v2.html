@@ -346,7 +346,7 @@
       position: relative;
       width: 100%;
       max-width: 320px;
-      height: 42dvh;
+      height: 48dvh;
       border-radius: 18px;
       overflow: hidden;
       background: #000;
@@ -416,6 +416,57 @@
 
     .flash-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: #FFF; opacity: 0; pointer-events: none; transition: opacity 0.1s; z-index: 30; }
     .flash-overlay.active { opacity: 1; }
+
+    /* ---------------------------------------------------- */
+    /* 5B. STYLES BARU KHUSUS HALAMAN REVIEW HASIL FOTO     */
+    /* ---------------------------------------------------- */
+    .review-grid-box {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      max-width: 340px;
+      margin: 15px 0;
+    }
+
+    .review-photo-card {
+      position: relative;
+      width: 90px;
+      height: 120px;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 2px solid var(--gold-accent);
+      box-shadow: 0 8px 18px rgba(0,0,0,0.3);
+      background: #000;
+    }
+
+    .review-photo-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .review-delete-btn {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      background: rgba(231, 76, 60, 0.95);
+      color: #FFF;
+      border: none;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      font-weight: 700;
+      font-size: 0.75rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+      z-index: 10;
+    }
 
     /* ---------------------------------------------------- */
     /* 6. PRINTER STAGE & POPUP FOTO                        */
@@ -676,8 +727,7 @@
         </button>
       </div>
 
-      <!-- CONTAINER UTAMA TOMBOL DI BAWAH KAMERA -->
-      <div id="cam-action-btn-container" style="margin-top:2px; width:100%; min-height:60px; display:flex; justify-content:center; align-items:center;">
+      <div style="margin-top:2px; width:100%; min-height:60px; display:flex; justify-content:center; align-items:center;">
         <div class="cam-snap-trigger" id="btn-snap" onclick="takePhotoSnap()">
           <i class="fa-solid fa-camera"></i>
         </div>
@@ -686,6 +736,33 @@
 
     <select id="camera-select" class="cam-select-box hidden" onchange="onCameraSelectChange(this.value)"></select>
 
+  </div>
+</div>
+
+<!-- STEP 3B: HALAMAN BARU KHUSUS PREVIEW & KONFIRMASI HASIL FOTO -->
+<div id="step-review-photos" class="page-fullscreen dark-bg hidden">
+  <div style="width:100%; text-align:center; padding-top:10px;">
+    <p style="font-size:0.68rem; color:var(--gold-accent); letter-spacing:2.5px; font-weight:700; margin-bottom:2px;">REVIEW HASIL FOTO</p>
+    <h2 class="font-serif" style="font-size:1.4rem; color:#FFF;">Apakah foto kamu sudah pas?</h2>
+    <p style="font-size:0.72rem; color:rgba(255,255,255,0.7); margin-top:2px;">Tekan tombol ✕ pada foto jika ingin mengambil foto ulang</p>
+  </div>
+
+  <div class="review-grid-box" id="review-grid-box">
+    <!-- Diisi otomatis oleh JavaScript -->
+  </div>
+
+  <div style="width:100%; text-align:center; margin-bottom:10px;">
+    <button class="btn-primary-v2" style="background: linear-gradient(135deg, #D4AF37 0%, #AA7C11 100%); color:#2B1E1E; border:none; padding:14px; font-size:0.85rem;" onclick="proceedToRenderStrip()">
+      Lanjutkan ke Cetak ✨ &rarr;
+    </button>
+    
+    <button class="btn-outline-v2" style="margin-top:8px;" onclick="goToCameraToRetakeAll()">
+      Foto Ulang Semua
+    </button>
+
+    <div class="app-official-footer light-text">
+      © 2026 FOTOME by Riyan. All rights reserved.
+    </div>
   </div>
 </div>
 
@@ -767,7 +844,7 @@
       </div>
     </div>
 
-    <div style="font-size:0.85rem; font-weight:700; color:var(--primary-crimson); margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
+    <div style="font-size:0.85rem; font-weight:700; color:var(--primary-crimson); margin-bottom:10px; display:flex; justify-content:space-between; align-align:center;">
       <span><i class="fa-solid fa-border-all"></i> Kiriman Tamu</span>
       <span style="font-size:0.7rem; color:#888;" id="total-posts-count">0 Kiriman</span>
     </div>
@@ -863,7 +940,7 @@
   }
 
   function goToStep(targetId) {
-    const steps = ['step-welcome', 'step-ask-name', 'step-template', 'step-camera', 'step-result', 'step-gallery-page'];
+    const steps = ['step-welcome', 'step-ask-name', 'step-template', 'step-camera', 'step-review-photos', 'step-result', 'step-gallery-page'];
     steps.forEach(id => {
       const el = document.getElementById(id);
       if (el) el.classList.add('hidden');
@@ -874,6 +951,10 @@
 
     if (targetId === 'step-template') {
       updateFigmaSliderPositions();
+    }
+
+    if (targetId === 'step-review-photos') {
+      renderReviewPhotosUI();
     }
 
     if (targetId === 'step-result') {
@@ -1129,7 +1210,6 @@
 
   function startCameraProcess() {
     goToStep('step-camera');
-    capturedPhotos = [];
     isTakingPhoto = false;
 
     const activeCard = cardItems[currentCardIndex];
@@ -1147,8 +1227,6 @@
 
   function updatePhotosStripUI() {
     const stripBox = document.getElementById('cam-photos-strip');
-    const toolsBox = document.getElementById('cam-floating-tools');
-    const actionContainer = document.getElementById('cam-action-btn-container');
     const progressText = document.getElementById('cam-progress-text');
 
     const totalNeeded = parseInt(requiredPhotoCount, 10) || 3;
@@ -1161,10 +1239,7 @@
       
       if (capturedPhotos[i]) {
         thumbBox.className = 'photo-thumb-box';
-        thumbBox.innerHTML = `
-          <img src="${capturedPhotos[i]}" alt="Foto ${i+1}">
-          <button class="delete-thumb-btn" onclick="deletePhotoAtIndex(${i})">✕</button>
-        `;
+        thumbBox.innerHTML = `<img src="${capturedPhotos[i]}" alt="Foto ${i+1}">`;
       } else {
         thumbBox.className = 'photo-thumb-box empty-slot';
         thumbBox.innerText = `#${i + 1}`;
@@ -1172,37 +1247,7 @@
       stripBox.appendChild(thumbBox);
     }
 
-    // GANTI ELEMEN HTML SECARA DIRECT DAN PASTI
-    if (currentCapturedCount >= totalNeeded) {
-      progressText.innerText = `Foto ${totalNeeded} dari ${totalNeeded} (Selesai)`;
-      toolsBox.style.display = 'none';
-      
-      actionContainer.innerHTML = `
-        <button class="btn-primary-v2" style="background: linear-gradient(135deg, #D4AF37 0%, #AA7C11 100%); color:#2B1E1E; border:none; padding:12px 24px; font-size:0.85rem; width:100%; max-width:320px;" onclick="proceedToRenderStrip()">
-          LANJUTKAN KE CETAK ✨ &rarr;
-        </button>
-      `;
-    } else {
-      progressText.innerText = `Foto ${currentCapturedCount + 1} dari ${totalNeeded}`;
-      toolsBox.style.display = 'flex';
-      
-      actionContainer.innerHTML = `
-        <div class="cam-snap-trigger" id="btn-snap" onclick="takePhotoSnap()">
-          <i class="fa-solid fa-camera"></i>
-        </div>
-      `;
-    }
-  }
-
-  function deletePhotoAtIndex(index) {
-    capturedPhotos.splice(index, 1);
-    isTakingPhoto = false;
-
-    if (!videoStream || !videoStream.active) {
-      initCameraStreamDirectlyOnUserInteraction();
-    }
-
-    updatePhotosStripUI();
+    progressText.innerText = `Foto ${currentCapturedCount + 1} dari ${totalNeeded}`;
   }
 
   function enumerateFrontBackCameras() {
@@ -1348,19 +1393,52 @@
 
     isTakingPhoto = false;
 
+    const btnSnap = document.getElementById('btn-snap');
+    if (btnSnap) btnSnap.style.opacity = '1';
+
     updatePhotosStripUI();
 
-    // LANGSUNG PANGGUL RENDER SECARA INSTAN TANPA MENUNGGU LAMA
+    // JIKA SELURUH FOTO SUDAH LENGKAP, BEBASTAMPILAN KE HALAMAN REVIEW FOTO BARU
     if (capturedPhotos.length >= totalNeeded) {
-      proceedToRenderStrip();
+      if (videoStream) {
+        videoStream.getTracks().forEach(track => track.stop());
+        videoStream = null;
+      }
+      setTimeout(() => {
+        goToStep('step-review-photos');
+      }, 200);
     }
   }
 
+  /* ---------------------------------------------------- */
+  /* LOGIKA UNTUK HALAMAN REVIEW FOTO                     */
+  /* ---------------------------------------------------- */
+  function renderReviewPhotosUI() {
+    const gridBox = document.getElementById('review-grid-box');
+    gridBox.innerHTML = '';
+
+    capturedPhotos.forEach((src, idx) => {
+      const card = document.createElement('div');
+      card.className = 'review-photo-card';
+      card.innerHTML = `
+        <img src="${src}" alt="Foto ${idx + 1}">
+        <button class="review-delete-btn" onclick="deletePhotoInReview(${idx})">✕</button>
+      `;
+      gridBox.appendChild(card);
+    });
+  }
+
+  function deletePhotoInReview(index) {
+    capturedPhotos.splice(index, 1);
+    startCameraProcess();
+  }
+
+  function goToCameraToRetakeAll() {
+    capturedPhotos = [];
+    startCameraProcess();
+  }
+
   function proceedToRenderStrip() {
-    if (videoStream) {
-      videoStream.getTracks().forEach(track => track.stop());
-      videoStream = null;
-    }
     renderPhotostripWithFigmaFrame();
   }
 
