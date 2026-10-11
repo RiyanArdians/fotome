@@ -339,6 +339,7 @@
     .figma-card-item.prev { transform: translateX(-62%) scale(0.82) rotate(-6deg); opacity: 0.55; z-index: 5; }
     .figma-card-item.hidden-left { transform: translateX(-115%) scale(0.65) rotate(-12deg); opacity: 0; z-index: 1; }
     .figma-card-item.hidden-right { transform: translateX(115%) scale(0.65) rotate(12deg); opacity: 0; z-index: 1; }
+    .figma-card-item.card-pressed { transform: scale(0.92) !important; }
 
     /* KAMERA VIEWFINDER & KONTROL LEGA */
     .camera-stage-container {
@@ -389,6 +390,7 @@
       object-fit: cover;
       display: block;
       background: #000;
+      transition: transform 0.2s ease-out;
     }
     .camera-video-element.mirror { transform: scaleX(-1); }
 
@@ -945,7 +947,7 @@
   let videoStream = null;
   let generatedDataUrl = "";
 
-  /* KAMERA DAN KONTROL DEPAN / BELAKANG AMAN */
+  /* STATUS KAMERA DAN OPSI */
   let currentFacingMode = "user";
   let isMirror = true;
   let timerDuration = 3;
@@ -1220,69 +1222,57 @@
     loadRealtimeFeedIG();
   }
 
-  /* KODE PENANGANAN KAMERA BEBAS ERROR DENGAN FALLBACK AMAN */
+  /* LOGIKA KAMERA BEBAS ERROR DENGAN PEMBERSIHAN TOTAL MEMORI STREAM */
+  async function stopCurrentStream() {
+    if (videoStream) {
+      try {
+        videoStream.getTracks().forEach(track => track.stop());
+      } catch (e) {
+        console.warn(e);
+      }
+      videoStream = null;
+    }
+    const video = document.getElementById('video');
+    if (video) video.srcObject = null;
+    // Berikan jeda 150ms agar hardware kamera selesai melepaskan resource di Android Chrome
+    await new Promise(resolve => setTimeout(resolve, 150));
+  }
+
   async function initCameraStream() {
     const video = document.getElementById('video');
     if (!video) return;
 
-    if (videoStream) {
-      videoStream.getTracks().forEach(track => track.stop());
-      videoStream = null;
-    }
-    video.srcObject = null;
+    await stopCurrentStream();
 
     isMirror = (currentFacingMode === "user");
     const labelMirror = document.getElementById('label-mirror');
     if (labelMirror) labelMirror.innerText = isMirror ? 'ON' : 'OFF';
 
-    // Cari daftar kamera fisik jika ada
-    let targetDeviceId = null;
-    try {
-      const devices = await navigator.mediaDevices.enumerateDevices();
-      const videoDevices = devices.filter(d => d.kind === 'videoinput');
-      
-      if (videoDevices.length > 0) {
-        if (currentFacingMode === 'environment') {
-          const backCam = videoDevices.find(d => d.label.toLowerCase().includes('back') || d.label.toLowerCase().includes('belakang') || d.label.toLowerCase().includes('environment'));
-          if (backCam) targetDeviceId = backCam.deviceId;
-          else if (videoDevices.length > 1) targetDeviceId = videoDevices[videoDevices.length - 1].deviceId;
-        } else {
-          const frontCam = videoDevices.find(d => d.label.toLowerCase().includes('front') || d.label.toLowerCase().includes('depan') || d.label.toLowerCase().includes('user'));
-          if (frontCam) targetDeviceId = frontCam.deviceId;
-          else targetDeviceId = videoDevices[0].deviceId;
-        }
-      }
-    } catch(e) {
-      console.warn("Gagal membaca daftar perangkat kamera:", e);
-    }
-
-    const constraints = {
-      video: targetDeviceId ? { deviceId: { exact: targetDeviceId } } : { facingMode: { ideal: currentFacingMode } },
+    // Opsi penanganan permintaan akses kamera
+    const primaryOptions = {
+      video: { facingMode: { ideal: currentFacingMode } },
       audio: false
     };
 
-    navigator.mediaDevices.getUserMedia(constraints)
-      .then(async stream => {
-        videoStream = stream;
-        video.srcObject = stream;
-        await video.play();
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia(primaryOptions);
+      videoStream = stream;
+      video.srcObject = stream;
+      await video.play().catch(e => console.warn(e));
+      applyZoomTransform();
+    } catch (err) {
+      console.warn("Mencoba fallback kamera umum tanpa constraint...", err);
+      try {
+        const fallbackStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+        videoStream = fallbackStream;
+        video.srcObject = fallbackStream;
+        await video.play().catch(e => console.warn(e));
         applyZoomTransform();
-      })
-      .catch(err => {
-        console.warn("Retrying fallback kamera umum...", err);
-        // Fallback jika constraint deviceId/facingMode ditolak HP
-        navigator.mediaDevices.getUserMedia({ video: { facingMode: currentFacingMode }, audio: false })
-          .then(async stream => {
-            videoStream = stream;
-            video.srcObject = stream;
-            await video.play();
-            applyZoomTransform();
-          })
-          .catch(fallbackErr => {
-            console.error("Kamera error:", fallbackErr);
-            showAlert("Tidak dapat membuka kamera. Pastikan izin kamera diizinkan.", "Kamera Error", "📷");
-          });
-      });
+      } catch (fallbackErr) {
+        console.error("Gagal membuka kamera:", fallbackErr);
+        showAlert("Tidak dapat membuka kamera. Pastikan izin kamera telah diizinkan pada browser.", "Kamera Error", "📷");
+      }
+    }
   }
 
   function switchCameraNext() {
@@ -1358,16 +1348,14 @@
 
   function applyZoomTransform() {
     const video = document.getElementById('video');
+    if (!video) return;
     let transformStr = `scale(${zoomLevel})`;
     if (isMirror) transformStr += ` scaleX(-1)`;
     video.style.transform = transformStr;
   }
 
-  function stopCameraAndGoBack() {
-    if (videoStream) {
-      videoStream.getTracks().forEach(track => track.stop());
-      videoStream = null;
-    }
+  async function stopCameraAndGoBack() {
+    await stopCurrentStream();
     goToStep('step-template');
   }
 
@@ -1455,10 +1443,7 @@
     updatePhotosStripUI();
 
     if (capturedPhotos.length >= totalNeeded) {
-      if (videoStream) {
-        videoStream.getTracks().forEach(track => track.stop());
-        videoStream = null;
-      }
+      stopCurrentStream();
       setTimeout(() => {
         goToStep('step-review-photos');
       }, 200);
