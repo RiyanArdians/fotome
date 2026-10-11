@@ -956,8 +956,8 @@
   let generatedDataUrl = "";
 
   /* VARIABEL KAMERA INDEX MULTI-DEVICE */
+  let isBackCamera = false;
   let cameraDevicesList = [];
-  let currentCameraIndex = 0;
   let isSwitchingCamera = false;
   let isMirror = false; 
   let timerDuration = 3;
@@ -1232,7 +1232,7 @@
     loadRealtimeFeedIG();
   }
 
-  /* SISTEM PEMBERSAHAN KAMERA TOTAL & PERPINDAHAN KAMERA BERBASIS INDEX */
+  /* FITUR PEMBACAAN KAMERA SENSOR UTAMA (1X KLIK SWITCH) */
   async function stopCurrentStream() {
     if (videoStream) {
       try {
@@ -1245,17 +1245,7 @@
       video.pause();
       video.srcObject = null;
     }
-    // Delay 500ms agar Android melepaskan resource kuncian kamera
-    await new Promise(resolve => setTimeout(resolve, 500));
-  }
-
-  async function loadAvailableCameras() {
-    try {
-      const devices = await navigator.mediaDevices.enumerateDevices();
-      cameraDevicesList = devices.filter(d => d.kind === 'videoinput');
-    } catch (e) {
-      console.warn("Gagal memindai daftar kamera:", e);
-    }
+    await new Promise(resolve => setTimeout(resolve, 400));
   }
 
   async function initCameraStream() {
@@ -1264,26 +1254,46 @@
 
     await stopCurrentStream();
 
-    // Minta izin awal sederhana
-    if (cameraDevicesList.length === 0) {
-      try {
-        const dummyStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
-        dummyStream.getTracks().forEach(t => t.stop());
-        await loadAvailableCameras();
-      } catch (e) {
-        console.warn("Izin awal tidak diberikan:", e);
-      }
+    try {
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      cameraDevicesList = devices.filter(d => d.kind === 'videoinput');
+    } catch (e) {
+      console.warn("Gagal memindai daftar kamera:", e);
     }
 
-    let videoConfig = true;
+    let videoConfig = {};
 
     if (cameraDevicesList.length > 0) {
-      const selectedDev = cameraDevicesList[currentCameraIndex % cameraDevicesList.length];
-      if (selectedDev && selectedDev.deviceId) {
-        videoConfig = { deviceId: { ideal: selectedDev.deviceId } };
+      const backCameras = cameraDevicesList.filter(d => 
+        d.label.toLowerCase().includes('back') || 
+        d.label.toLowerCase().includes('rear') || 
+        d.label.toLowerCase().includes('environment') ||
+        d.label.toLowerCase().includes('0')
+      );
+      
+      const frontCameras = cameraDevicesList.filter(d => 
+        d.label.toLowerCase().includes('front') || 
+        d.label.toLowerCase().includes('user') ||
+        d.label.toLowerCase().includes('facing')
+      );
+
+      if (isBackCamera) {
+        const selectedBack = backCameras[0] || cameraDevicesList[cameraDevicesList.length - 1];
+        if (selectedBack && selectedBack.deviceId) {
+          videoConfig = { deviceId: { exact: selectedBack.deviceId } };
+        } else {
+          videoConfig = { facingMode: { exact: "environment" } };
+        }
+      } else {
+        const selectedFront = frontCameras[0] || cameraDevicesList[0];
+        if (selectedFront && selectedFront.deviceId) {
+          videoConfig = { deviceId: { exact: selectedFront.deviceId } };
+        } else {
+          videoConfig = { facingMode: "user" };
+        }
       }
     } else {
-      videoConfig = { facingMode: "user" };
+      videoConfig = { facingMode: isBackCamera ? "environment" : "user" };
     }
 
     try {
@@ -1296,19 +1306,19 @@
       await video.play().catch(e => console.warn(e));
       applyZoomTransform();
     } catch (err) {
-      console.warn("Gagal dengan konfigurasi ideal, coba fallback umum...", err);
+      console.warn("Fallback tanpa exact deviceId...", err);
       try {
         const fallbackStream = await navigator.mediaDevices.getUserMedia({
           audio: false,
-          video: true
+          video: { facingMode: isBackCamera ? "environment" : "user" }
         });
         videoStream = fallbackStream;
         video.srcObject = fallbackStream;
         await video.play().catch(e => console.warn(e));
         applyZoomTransform();
       } catch (finalErr) {
-        console.error("Kamera tidak dapat dibuka:", finalErr);
-        showAlert("Tidak dapat membuka kamera. Mohon izinkan akses kamera di pengaturan browser.", "Kamera Error", "📷");
+        console.error("Kamera gagal dibuka:", finalErr);
+        showAlert("Gagal membuka kamera. Pastikan izin kamera sudah diberikan pada browser.", "Kamera Error", "📷");
       }
     }
   }
@@ -1317,14 +1327,9 @@
     if (isSwitchingCamera) return;
     isSwitchingCamera = true;
 
-    // Jika daftar belum ada, panggil ulang
-    if (cameraDevicesList.length === 0) {
-      await loadAvailableCameras();
-    }
+    // Balikkan mode kamera langsung
+    isBackCamera = !isBackCamera;
 
-    // Pindah ke index kamera selanjutnya
-    currentCameraIndex++;
-    
     await initCameraStream();
     isSwitchingCamera = false;
   }
