@@ -426,29 +426,30 @@
     .photo-thumb-box img { width: 100%; height: 100%; object-fit: cover; object-position: center; }
     .photo-thumb-box.empty-slot { border: 1.5px dashed rgba(255, 255, 255, 0.35); color: rgba(255, 255, 255, 0.6); font-size: 0.8rem; font-weight: 600; }
 
-    /* DESAIN TOMBOL KONTROL DIPISAH DEPAN / BELAKANG */
+    /* DESAIN TOMBOL KONTROL PAS LENGKAP */
     .cam-floating-tools {
       display: flex;
       gap: 6px;
       background: rgba(255, 255, 255, 0.12);
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
-      padding: 6px 12px;
+      padding: 6px 10px;
       border-radius: 25px;
       border: 1px solid rgba(255, 255, 255, 0.22);
       margin-bottom: 12px;
       width: 100%;
       max-width: 350px;
       justify-content: space-between;
+      align-items: center;
     }
 
     .cam-tool-btn {
       background: rgba(255, 255, 255, 0.08);
       border: 1px solid rgba(255, 255, 255, 0.2);
       color: #FFF;
-      font-size: 0.72rem;
+      font-size: 0.7rem;
       font-weight: 600;
-      padding: 6px 10px;
+      padding: 6px 9px;
       border-radius: 16px;
       cursor: pointer;
       display: flex;
@@ -459,7 +460,6 @@
     }
 
     .cam-tool-btn:active { transform: scale(0.92); }
-    .cam-tool-btn.active-cam { background: var(--gold-accent); color: #2B1E1E; border-color: #FFF; font-weight: 700; }
 
     .cam-snap-trigger {
       width: 68px;
@@ -762,7 +762,7 @@
     <!-- PREVIEW THUMBNAIL FOTO -->
     <div class="cam-photos-preview-strip" id="cam-photos-strip"></div>
 
-    <!-- KONTROL KAMERA DENGAN TOMBOL KAMERA DIPISAH -->
+    <!-- KONTROL KAMERA RINGKAS TERHUBUNG LENGKAP -->
     <div class="cam-floating-tools" id="cam-tools-box">
       <button class="cam-tool-btn" id="btn-timer" onclick="toggleTimerSetting()">
         Timer: <span id="label-timer">3s</span>
@@ -771,12 +771,9 @@
         Zoom: <span id="label-zoom">1x</span>
       </button>
 
-      <!-- TOMBOL DEPAN DAN BELAKANG SEPARATE -->
-      <button class="cam-tool-btn active-cam" id="btn-cam-user" onclick="setCameraMode('user')">
-        Depan
-      </button>
-      <button class="cam-tool-btn" id="btn-cam-env" onclick="setCameraMode('environment')">
-        Belakang
+      <!-- TOMBOL SWITCH KAMERA KANONIS DENGAN LABEL DINAMIS -->
+      <button class="cam-tool-btn" id="btn-toggle-cam" onclick="switchCameraToggle()">
+        <i class="fa-solid fa-arrows-rotate"></i> <span id="label-cam-mode">Depan</span>
       </button>
 
       <button class="cam-tool-btn" id="btn-mirror" onclick="toggleMirror()">
@@ -956,7 +953,7 @@
   let generatedDataUrl = "";
 
   /* STATUS KAMERA DAN OPSI */
-  let activeFacingMode = "user"; // "user" (Depan) atau "environment" (Belakang)
+  let activeFacingMode = "user"; // "user" (Depan) / "environment" (Belakang)
   let isMirror = false; 
   let timerDuration = 3;
   let zoomLevel = 1;      
@@ -1230,7 +1227,7 @@
     loadRealtimeFeedIG();
   }
 
-  /* SISTEM PEMISAHAN TOMBOL KAMERA DENGAN PENANGANAN ERROR BERSIH */
+  /* FUNGSI SWITCH KAMERA UNIVERSAL DENGAN PEMBERSIHAN LEPAS KUNCI HARDWARE */
   async function stopCurrentStream() {
     if (videoStream) {
       try {
@@ -1240,7 +1237,7 @@
     }
     const video = document.getElementById('video');
     if (video) video.srcObject = null;
-    await new Promise(resolve => setTimeout(resolve, 150));
+    await new Promise(resolve => setTimeout(resolve, 200));
   }
 
   async function initCameraStream() {
@@ -1249,39 +1246,54 @@
 
     await stopCurrentStream();
 
-    const constraints = {
-      video: { facingMode: { ideal: activeFacingMode } },
+    // Menggunakan strategi penanganan bertingkat
+    const modeConstraint = (activeFacingMode === "user") ? "user" : "environment";
+    
+    let options = {
+      video: { facingMode: { ideal: modeConstraint } },
       audio: false
     };
 
     try {
-      const stream = await navigator.mediaDevices.getUserMedia(constraints);
+      const stream = await navigator.mediaDevices.getUserMedia(options);
       videoStream = stream;
       video.srcObject = stream;
       await video.play().catch(e => console.warn(e));
       applyZoomTransform();
     } catch (err) {
-      console.warn("Fallback ke standar media Stream...", err);
+      console.warn("Mencoba fallback mode kamera standar...", err);
       try {
-        const fallbackStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+        const fallbackStream = await navigator.mediaDevices.getUserMedia({ 
+          video: { facingMode: modeConstraint }, 
+          audio: false 
+        });
         videoStream = fallbackStream;
         video.srcObject = fallbackStream;
         await video.play().catch(e => console.warn(e));
         applyZoomTransform();
       } catch (fallbackErr) {
-        console.error("Gagal memuat kamera:", fallbackErr);
-        showAlert("Tidak dapat membuka kamera. Pastikan izin kamera telah diizinkan.", "Kamera Error", "📷");
+        console.warn("Gagal membuka mode spesifik, membuka kamera standar...", fallbackErr);
+        try {
+          const genStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+          videoStream = genStream;
+          video.srcObject = genStream;
+          await video.play().catch(e => console.warn(e));
+          applyZoomTransform();
+        } catch (eFinal) {
+          console.error("Kamera Error:", eFinal);
+          showAlert("Tidak dapat membuka kamera. Pastikan izin kamera telah diizinkan pada browser.", "Kamera Error", "📷");
+        }
       }
     }
   }
 
-  function setCameraMode(mode) {
-    if (activeFacingMode === mode && videoStream && videoStream.active) return;
+  function switchCameraToggle() {
+    activeFacingMode = (activeFacingMode === "user") ? "environment" : "user";
     
-    activeFacingMode = mode;
-
-    document.getElementById('btn-cam-user').classList.toggle('active-cam', mode === 'user');
-    document.getElementById('btn-cam-env').classList.toggle('active-cam', mode === 'environment');
+    const labelCam = document.getElementById('label-cam-mode');
+    if (labelCam) {
+      labelCam.innerText = (activeFacingMode === "user") ? "Depan" : "Belakang";
+    }
 
     initCameraStream();
   }
