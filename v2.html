@@ -330,7 +330,7 @@
     @keyframes frameClickBounce { 0% { transform: translateX(0) scale(1); } 40% { transform: translateX(0) scale(0.92); } 100% { transform: translateX(0) scale(1.05); opacity: 0.9; } }
 
     /* ---------------------------------------------------- */
-    /* 5. KAMERA STABEL & TOMBOL KAMERA SELALU AKTIF        */
+    /* 5. KAMERA STABEL & KONTROL HARMONIS                  */
     /* ---------------------------------------------------- */
     .camera-stage-container {
       width: 100%; max-width: 380px; height: 100%;
@@ -504,7 +504,7 @@
 </head>
 <body>
 
-<!-- 0. AMPLOP TERTUTUP PRESISI & ANIMASI TINGKAT EMPAT -->
+<!-- 0. AMPLOP TERTUTUP PRESISI & ANIMASI EMPAT TAHAP -->
 <div id="envelope-screen" class="envelope-screen" onclick="openEnvelopeAnimation()">
   <div style="text-align:center; color:#FFF; margin-bottom:10px;">
     <div style="font-size:0.75rem; letter-spacing:3px; color:var(--gold-accent); font-weight:700; margin-bottom:4px;">KENANGAN PERNIKAHAN</div>
@@ -515,7 +515,6 @@
     <div class="envelope-flap-top"></div>
     <div class="envelope-gold-seal"></div>
 
-    <!-- KARTU MEMPELAI DI DALAM AMPLOP -->
     <div class="envelope-card-inside">
       <div style="font-size:0.62rem; color:var(--gold-accent); font-weight:700; letter-spacing:2px; text-transform:uppercase;">Pernikahan Kami</div>
       <div class="font-script" style="font-size:2.2rem; color:var(--primary-crimson); line-height:1.1; margin:4px 0;" id="inside-card-names">Riyan & Amelia</div>
@@ -640,7 +639,7 @@
   </div>
 </div>
 
-<!-- STEP 3: SESI KAMERA RESPONSIF (FIX JEPRETNAN) -->
+<!-- STEP 3: SESI KAMERA RESPONSIF -->
 <div id="step-camera" class="page-fullscreen dark-bg hidden" style="background:#000;">
   <div class="camera-stage-container">
     
@@ -677,10 +676,14 @@
         </button>
       </div>
 
+      <!-- KONTROL UTAMA: TOMBOL JEPRET & TOMBOL LANJUT SINKRON TOTAL -->
       <div id="cam-action-btn-container" style="margin-top:2px; width:100%; display:flex; justify-content:center;">
         <div class="cam-snap-trigger" id="btn-snap" onclick="takePhotoSnap()">
           <i class="fa-solid fa-camera"></i>
         </div>
+        <button id="btn-proceed-render" class="btn-primary-v2 hidden" style="background: linear-gradient(135deg, #D4AF37 0%, #AA7C11 100%); color:#2B1E1E; border:none;" onclick="proceedToRenderStrip()">
+          Lanjutkan ke Cetak &rarr;
+        </button>
       </div>
     </div>
 
@@ -1131,6 +1134,14 @@
     goToStep('step-camera');
     capturedPhotos = [];
     isTakingPhoto = false;
+
+    // AMBIL ULANG DARI ITEM CARD TERPILIH AGAR SINKRON SEMPURNA
+    const activeCard = cardItems[currentCardIndex];
+    if (activeCard) {
+      requiredPhotoCount = parseInt(activeCard.getAttribute('data-count'), 10) || 3;
+      selectedFramePath = activeCard.getAttribute('data-path');
+    }
+
     updatePhotosStripUI();
 
     if (!videoStream || !videoStream.active) {
@@ -1141,7 +1152,8 @@
   function updatePhotosStripUI() {
     const stripBox = document.getElementById('cam-photos-strip');
     const toolsBox = document.getElementById('cam-floating-tools');
-    const actionContainer = document.getElementById('cam-action-btn-container');
+    const btnSnap = document.getElementById('btn-snap');
+    const btnProceed = document.getElementById('btn-proceed-render');
     const progressText = document.getElementById('cam-progress-text');
 
     const totalNeeded = parseInt(requiredPhotoCount, 10) || 3;
@@ -1165,22 +1177,17 @@
       stripBox.appendChild(thumbBox);
     }
 
+    // UPDATE HEADER ATAS SESUAI JUMLAH TERPILIH
     if (currentCapturedCount >= totalNeeded) {
+      progressText.innerText = `Foto ${totalNeeded} dari ${totalNeeded} (Selesai)`;
       toolsBox.style.display = 'none';
-      progressText.innerText = "Foto Lengkap! Memproses...";
-      actionContainer.innerHTML = `
-        <div style="color:var(--gold-accent); font-weight:700; font-size:0.85rem; padding:10px;">
-          <i class="fa-solid fa-spinner fa-spin"></i> Menyiapkan hasil cetak...
-        </div>
-      `;
+      btnSnap.classList.add('hidden');
+      btnProceed.classList.remove('hidden');
     } else {
-      toolsBox.style.display = 'flex';
       progressText.innerText = `Foto ${currentCapturedCount + 1} dari ${totalNeeded}`;
-      actionContainer.innerHTML = `
-        <div class="cam-snap-trigger" id="btn-snap" onclick="takePhotoSnap()">
-          <i class="fa-solid fa-camera"></i>
-        </div>
-      `;
+      toolsBox.style.display = 'flex';
+      btnSnap.classList.remove('hidden');
+      btnProceed.classList.add('hidden');
     }
   }
 
@@ -1336,15 +1343,15 @@
 
     const totalNeeded = parseInt(requiredPhotoCount, 10) || 3;
 
-    updatePhotosStripUI();
-
-    // RESET STATUS UNTUK FOTO BERIKUTNYA
+    // PASTI BISA JEPRETLAGI / DI-RESET STATUSNYA
     isTakingPhoto = false;
 
     const btnSnap = document.getElementById('btn-snap');
     if (btnSnap) btnSnap.style.opacity = '1';
 
-    // JIKA SELURUH FOTO SUDAH TERPENUHI
+    updatePhotosStripUI();
+
+    // JIKA SELURUH FOTO SUDAH TERPENUHI, OTOMATIS RENDERING KE CETAK
     if (capturedPhotos.length >= totalNeeded) {
       if (videoStream) {
         videoStream.getTracks().forEach(track => track.stop());
@@ -1352,11 +1359,15 @@
       }
       setTimeout(() => {
         proceedToRenderStrip();
-      }, 300);
+      }, 350);
     }
   }
 
   function proceedToRenderStrip() {
+    if (videoStream) {
+      videoStream.getTracks().forEach(track => track.stop());
+      videoStream = null;
+    }
     renderPhotostripWithFigmaFrame();
   }
 
