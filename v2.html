@@ -330,7 +330,7 @@
     @keyframes frameClickBounce { 0% { transform: translateX(0) scale(1); } 40% { transform: translateX(0) scale(0.92); } 100% { transform: translateX(0) scale(1.05); opacity: 0.9; } }
 
     /* ---------------------------------------------------- */
-    /* 5. KAMERA SELALU TERBUKA DENGAN PREVIEW STRIP DI BAWAH */
+    /* 5. KAMERA STABEL & TOMBOL LANJUT PASTI MUNCUL         */
     /* ---------------------------------------------------- */
     .camera-stage-container {
       width: 100%; max-width: 380px; height: 100%;
@@ -370,7 +370,7 @@
 
     .cam-photos-preview-strip {
       display: flex; gap: 8px; justify-content: center; align-items: center;
-      background: rgba(255,255,255,0.08); backdrop-filter: blur(8px); padding: 6px 10px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.2); width: 100%; margin-bottom: 4px;
+      background: rgba(255,255,255,0.08); backdrop-filter: blur(8px); padding: 6px 10px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.2); width: 100%; margin-bottom: 6px;
     }
 
     .photo-thumb-box {
@@ -392,7 +392,7 @@
     }
 
     .cam-floating-tools {
-      display: flex; gap: 6px; background: rgba(255,255,255,0.1); backdrop-filter: blur(8px); padding: 4px 10px; border-radius: 18px; border: 1px solid rgba(255,255,255,0.2);
+      display: flex; gap: 6px; background: rgba(255,255,255,0.1); backdrop-filter: blur(8px); padding: 4px 10px; border-radius: 18px; border: 1px solid rgba(255,255,255,0.2); margin-bottom: 4px;
     }
 
     .cam-tool-btn {
@@ -642,7 +642,7 @@
   </div>
 </div>
 
-<!-- STEP 3: SESI KAMERA RESPONSIF (KAMERA DIPANTAU SANGAT DIRECT TERBUKA & PREVIEW SLOTS TETAP TAMPIL DI BAWAH) -->
+<!-- STEP 3: SESI KAMERA TERBUKA DENGAN TOMBOL LANJUT SANGAT RESPONSIF -->
 <div id="step-camera" class="page-fullscreen dark-bg hidden" style="background:#000;">
   <div class="camera-stage-container">
     
@@ -653,7 +653,7 @@
       </button>
     </div>
 
-    <!-- VIEWFINDER KAMERA SELALU AKTIF DAN TIDAK PERNAH DIHIDDEN ATAU MINIMIZED -->
+    <!-- VIEWFINDER KAMERA SELALU TERBUKA -->
     <div class="camera-viewfinder-box" id="cam-viewfinder-box">
       <video id="video" class="camera-video-element mirror" autoplay playsinline webkit-playsinline muted></video>
       <div id="countdown-overlay" class="countdown-overlay hidden">3</div>
@@ -679,7 +679,7 @@
         </button>
       </div>
 
-      <div id="cam-action-btn-container" style="margin-top:2px;">
+      <div id="cam-action-btn-container" style="margin-top:2px; width:100%; display:flex; justify-content:center;">
         <div class="cam-snap-trigger" id="btn-snap" onclick="takePhotoSnap()">
           <i class="fa-solid fa-camera"></i>
         </div>
@@ -973,7 +973,6 @@
         if (index === currentCardIndex) {
           card.classList.add('card-pressed');
           
-          // LANGSUNG MEMANGGIL STREAM SINKRONUS DARI INTERAKSI USER
           initCameraStreamDirectlyOnUserInteraction();
 
           setTimeout(() => {
@@ -1092,9 +1091,6 @@
     loadRealtimeFeedIG();
   }
 
-  /* ---------------------------------------------------- */
-  /* STRATEGI PENYALAN KAMERA INSTAN DARI KLIK PENGGUNA  */
-  /* ---------------------------------------------------- */
   function initCameraStreamDirectlyOnUserInteraction() {
     if (videoStream) {
       videoStream.getTracks().forEach(track => track.stop());
@@ -1117,7 +1113,6 @@
         }).catch(err => console.log("Play catch:", err));
       })
       .catch(err => {
-        // Fallback constraint paling ringan jika facingMode ditolak HP
         navigator.mediaDevices.getUserMedia({ video: true, audio: false })
           .then(stream => {
             videoStream = stream;
@@ -1143,15 +1138,19 @@
     }
   }
 
+  /* KUNCI PERBAIKAN: MEMASTIKAN JUMLAH FOTO DIPERIKSA SECARA NOMINAL PATEN */
   function updatePhotosStripUI() {
     const stripBox = document.getElementById('cam-photos-strip');
     const toolsBox = document.getElementById('cam-floating-tools');
     const actionContainer = document.getElementById('cam-action-btn-container');
     const progressText = document.getElementById('cam-progress-text');
 
+    const totalNeeded = parseInt(requiredPhotoCount) || 3;
+    const currentCapturedCount = capturedPhotos.length;
+
     stripBox.innerHTML = '';
 
-    for (let i = 0; i < requiredPhotoCount; i++) {
+    for (let i = 0; i < totalNeeded; i++) {
       const thumbBox = document.createElement('div');
       
       if (capturedPhotos[i]) {
@@ -1167,17 +1166,18 @@
       stripBox.appendChild(thumbBox);
     }
 
-    if (capturedPhotos.length >= requiredPhotoCount) {
+    // JIKA FOTO SUDAH TERPENUHI (MISAL 3 DARI 3 FOTO)
+    if (currentCapturedCount >= totalNeeded) {
       toolsBox.style.display = 'none';
-      progressText.innerText = "Foto kamu sudah lengkap!";
+      progressText.innerText = "Foto Lengkap!";
       actionContainer.innerHTML = `
-        <button class="btn-primary-v2" style="background: linear-gradient(135deg, #D4AF37 0%, #AA7C11 100%); color:#2B1E1E; border:none; padding:10px 26px; font-size:0.82rem;" onclick="proceedToRenderStrip()">
+        <button class="btn-primary-v2" style="background: linear-gradient(135deg, #D4AF37 0%, #AA7C11 100%); color:#2B1E1E; border:none; padding:12px 28px; font-size:0.85rem; width:100%; max-width:280px; box-shadow:0 8px 20px rgba(212,175,55,0.4);" onclick="proceedToRenderStrip()">
           LANJUTKAN CETAK &rarr;
         </button>
       `;
     } else {
       toolsBox.style.display = 'flex';
-      progressText.innerText = `Foto ${capturedPhotos.length + 1} dari ${requiredPhotoCount}`;
+      progressText.innerText = `Foto ${currentCapturedCount + 1} dari ${totalNeeded}`;
       actionContainer.innerHTML = `
         <div class="cam-snap-trigger" id="btn-snap" onclick="takePhotoSnap()">
           <i class="fa-solid fa-camera"></i>
@@ -1332,14 +1332,16 @@
       const btnSnap = document.getElementById('btn-snap');
       if (btnSnap) btnSnap.style.opacity = '1';
       updatePhotosStripUI();
-    }, 300);
 
-    if (capturedPhotos.length >= requiredPhotoCount) {
-      if (videoStream) {
-        videoStream.getTracks().forEach(track => track.stop());
-        videoStream = null;
+      // JIKA SUDAH MENCAPAI KUOTA FOTO, HENTIKAN STREAM KAMERA DAN CEK OTOMATIS
+      const totalNeeded = parseInt(requiredPhotoCount) || 3;
+      if (capturedPhotos.length >= totalNeeded) {
+        if (videoStream) {
+          videoStream.getTracks().forEach(track => track.stop());
+          videoStream = null;
+        }
       }
-    }
+    }, 300);
   }
 
   function proceedToRenderStrip() {
