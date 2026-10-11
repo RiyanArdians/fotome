@@ -330,7 +330,7 @@
     @keyframes frameClickBounce { 0% { transform: translateX(0) scale(1); } 40% { transform: translateX(0) scale(0.92); } 100% { transform: translateX(0) scale(1.05); opacity: 0.9; } }
 
     /* ---------------------------------------------------- */
-    /* 5. KAMERA STABEL & TOMBOL LANJUT PASTI MUNCUL         */
+    /* 5. KAMERA STABEL & AUTO TRANSISI SAAT FOTO LENGKAP     */
     /* ---------------------------------------------------- */
     .camera-stage-container {
       width: 100%; max-width: 380px; height: 100%;
@@ -642,7 +642,7 @@
   </div>
 </div>
 
-<!-- STEP 3: SESI KAMERA TERBUKA DENGAN TOMBOL LANJUT SANGAT RESPONSIF -->
+<!-- STEP 3: SESI KAMERA RESPONSIF (AUTO TRANSISI LANGSUNG SAAT FOTO LENGKAP) -->
 <div id="step-camera" class="page-fullscreen dark-bg hidden" style="background:#000;">
   <div class="camera-stage-container">
     
@@ -973,6 +973,11 @@
         if (index === currentCardIndex) {
           card.classList.add('card-pressed');
           
+          // AMBIL JUMLAH FOTO LANGSUNG
+          const countAttr = card.getAttribute('data-count');
+          requiredPhotoCount = parseInt(countAttr, 10) || 3;
+          selectedFramePath = card.getAttribute('data-path');
+
           initCameraStreamDirectlyOnUserInteraction();
 
           setTimeout(() => {
@@ -1012,7 +1017,7 @@
       if (i === currentCardIndex) {
         card.classList.add('active');
         selectedFramePath = card.getAttribute('data-path');
-        requiredPhotoCount = parseInt(card.getAttribute('data-count')) || 3;
+        requiredPhotoCount = parseInt(card.getAttribute('data-count'), 10) || 3;
 
         document.getElementById('card-theme-tag').innerText = card.getAttribute('data-tag');
         document.getElementById('card-theme-name').innerText = card.getAttribute('data-name');
@@ -1138,14 +1143,14 @@
     }
   }
 
-  /* KUNCI PERBAIKAN: MEMASTIKAN JUMLAH FOTO DIPERIKSA SECARA NOMINAL PATEN */
+  /* UPDATE UI SECARA SINKRON & OTOMATIS BERPINDAH SESI KETIKA KUOTA TERPENUHI */
   function updatePhotosStripUI() {
     const stripBox = document.getElementById('cam-photos-strip');
     const toolsBox = document.getElementById('cam-floating-tools');
     const actionContainer = document.getElementById('cam-action-btn-container');
     const progressText = document.getElementById('cam-progress-text');
 
-    const totalNeeded = parseInt(requiredPhotoCount) || 3;
+    const totalNeeded = parseInt(requiredPhotoCount, 10) || 3;
     const currentCapturedCount = capturedPhotos.length;
 
     stripBox.innerHTML = '';
@@ -1166,18 +1171,29 @@
       stripBox.appendChild(thumbBox);
     }
 
-    // JIKA FOTO SUDAH TERPENUHI (MISAL 3 DARI 3 FOTO)
+    progressText.innerText = `Foto ${Math.min(currentCapturedCount + 1, totalNeeded)} dari ${totalNeeded}`;
+
     if (currentCapturedCount >= totalNeeded) {
       toolsBox.style.display = 'none';
-      progressText.innerText = "Foto Lengkap!";
+      progressText.innerText = "Foto Lengkap! Memproses...";
       actionContainer.innerHTML = `
-        <button class="btn-primary-v2" style="background: linear-gradient(135deg, #D4AF37 0%, #AA7C11 100%); color:#2B1E1E; border:none; padding:12px 28px; font-size:0.85rem; width:100%; max-width:280px; box-shadow:0 8px 20px rgba(212,175,55,0.4);" onclick="proceedToRenderStrip()">
-          LANJUTKAN CETAK &rarr;
-        </button>
+        <div style="color:var(--gold-accent); font-weight:700; font-size:0.85rem; padding:10px;">
+          <i class="fa-solid fa-spinner fa-spin"></i> Menyiapkan hasil cetak...
+        </div>
       `;
+
+      // HENTIKAN STREAM KAMERA DAN LANGSUNG OTOMATIS RENDER KE HALAMAN PRINTER
+      if (videoStream) {
+        videoStream.getTracks().forEach(track => track.stop());
+        videoStream = null;
+      }
+
+      setTimeout(() => {
+        proceedToRenderStrip();
+      }, 500);
+
     } else {
       toolsBox.style.display = 'flex';
-      progressText.innerText = `Foto ${currentCapturedCount + 1} dari ${totalNeeded}`;
       actionContainer.innerHTML = `
         <div class="cam-snap-trigger" id="btn-snap" onclick="takePhotoSnap()">
           <i class="fa-solid fa-camera"></i>
@@ -1189,6 +1205,12 @@
   function deletePhotoAtIndex(index) {
     capturedPhotos.splice(index, 1);
     isTakingPhoto = false;
+
+    // JIKA TADI KAMERA MATI, MENYALAKAN KEMBALI STREAM
+    if (!videoStream || !videoStream.active) {
+      initCameraStreamDirectlyOnUserInteraction();
+    }
+
     updatePhotosStripUI();
   }
 
@@ -1270,6 +1292,10 @@
 
   function takePhotoSnap() {
     if (isTakingPhoto) return;
+    
+    const totalNeeded = parseInt(requiredPhotoCount, 10) || 3;
+    if (capturedPhotos.length >= totalNeeded) return;
+
     isTakingPhoto = true;
 
     const btnSnap = document.getElementById('btn-snap');
@@ -1332,16 +1358,7 @@
       const btnSnap = document.getElementById('btn-snap');
       if (btnSnap) btnSnap.style.opacity = '1';
       updatePhotosStripUI();
-
-      // JIKA SUDAH MENCAPAI KUOTA FOTO, HENTIKAN STREAM KAMERA DAN CEK OTOMATIS
-      const totalNeeded = parseInt(requiredPhotoCount) || 3;
-      if (capturedPhotos.length >= totalNeeded) {
-        if (videoStream) {
-          videoStream.getTracks().forEach(track => track.stop());
-          videoStream = null;
-        }
-      }
-    }, 300);
+    }, 200);
   }
 
   function proceedToRenderStrip() {
