@@ -330,7 +330,7 @@
     @keyframes frameClickBounce { 0% { transform: translateX(0) scale(1); } 40% { transform: translateX(0) scale(0.92); } 100% { transform: translateX(0) scale(1.05); opacity: 0.9; } }
 
     /* ---------------------------------------------------- */
-    /* 5. KAMERA STABEL & AUTO TRANSISI INSTAN             */
+    /* 5. KAMERA STABEL & TOMBOL KAMERA SELALU AKTIF        */
     /* ---------------------------------------------------- */
     .camera-stage-container {
       width: 100%; max-width: 380px; height: 100%;
@@ -528,14 +528,13 @@
   </div>
 </div>
 
-<!-- STEP 1: WELCOME SCREEN (PROPORSI OVAL PILL RAMPING) -->
+<!-- STEP 1: WELCOME SCREEN -->
 <div id="step-welcome" class="page-fullscreen">
   <div style="width:100%; text-align:center; display:flex; flex-direction:column; align-items:center;">
     <p style="font-size:0.7rem; color:var(--gold-accent); letter-spacing:2.5px; font-weight:700; margin-bottom:1px;">KENANGAN PERNIKAHAN</p>
     <h1 class="font-script" style="font-size:2.6rem; color:var(--primary-crimson); line-height:1.05;" id="display-event-title">Riyan & Amelia</h1>
     <p style="font-size:0.72rem; color:#6E5353; letter-spacing:1px; margin-bottom:4px;">06 DESEMBER 2026</p>
 
-    <!-- FRAME OVAL BULAT MEMANJANG RAMPING PERFECT -->
     <div class="hero-pill-frame-pure">
       <img src="./assets/v2/hero.png" alt="Hero Pengantin" id="welcome-couple-img" onerror="this.src='./assets/v2/dsg1.png'">
     </div>
@@ -558,7 +557,7 @@
   </div>
 </div>
 
-<!-- PAGE BARU: INPUT NAMA "DARI SIAPA KENANGAN INI?" (PAS DI TENGAH LAYAR) -->
+<!-- PAGE: INPUT NAMA -->
 <div id="step-ask-name" class="page-fullscreen dark-bg hidden">
   <div style="width:100%; text-align:center; padding-top:4px;">
     <p style="font-size:0.68rem; color:var(--gold-accent); letter-spacing:2.5px; font-weight:700; margin-bottom:2px;">KENANGAN PERNIKAHAN</p>
@@ -566,7 +565,6 @@
     <p style="font-size:0.72rem; color:rgba(255,255,255,0.7); letter-spacing:1px;">06 DESEMBER 2026</p>
   </div>
 
-  <!-- CONTAINER CENTERED UNTUK TAMPILAN DI TENGAH LAYAR -->
   <div class="ask-page-center-wrapper">
     <div class="glass-card-ask">
       <i class="fa-solid fa-feather-pointed" style="color:var(--gold-accent); font-size:1.8rem; margin-bottom:8px; display:block;"></i>
@@ -642,7 +640,7 @@
   </div>
 </div>
 
-<!-- STEP 3: SESI KAMERA RESPONSIF (LANGSUNG OTOMATIS RENDER SEMENTARA FOTO LENGKAP) -->
+<!-- STEP 3: SESI KAMERA RESPONSIF (FIX JEPRETNAN) -->
 <div id="step-camera" class="page-fullscreen dark-bg hidden" style="background:#000;">
   <div class="camera-stage-container">
     
@@ -653,14 +651,14 @@
       </button>
     </div>
 
-    <!-- VIEWFINDER KAMERA SELALU TERBUKA -->
+    <!-- VIEWFINDER KAMERA -->
     <div class="camera-viewfinder-box" id="cam-viewfinder-box">
       <video id="video" class="camera-video-element mirror" autoplay playsinline webkit-playsinline muted></video>
       <div id="countdown-overlay" class="countdown-overlay hidden">3</div>
       <div id="flash-overlay" class="flash-overlay"></div>
     </div>
 
-    <!-- STRIP PREVIEW & KONTROL KAMERA DI BAWAH -->
+    <!-- STRIP PREVIEW & KONTROL KAMERA -->
     <div style="width:100%; display:flex; flex-direction:column; align-items:center;">
       <div class="cam-photos-preview-strip" id="cam-photos-strip"></div>
 
@@ -691,7 +689,7 @@
   </div>
 </div>
 
-<!-- STEP 4: ANIMASI PRINTER DENGAN POPUP FOTO FINAL -->
+<!-- STEP 4: ANIMASI PRINTER -->
 <div id="step-result" class="printer-lottie-stage hidden">
   <div class="vector-printer-wrapper" id="main-printer-unit">
     <div class="paper-tray-input" id="paper-input-sheet"></div>
@@ -751,7 +749,7 @@
   </div>
 </div>
 
-<!-- PAGE TERPISAH: GALERI KENANGAN TAMU -->
+<!-- GALERI KENANGAN -->
 <div id="step-gallery-page" class="page-fullscreen hidden" style="overflow-y:auto; height:auto; min-height:100dvh;">
   <div class="feed-container">
     <div style="text-align:center; margin-bottom:12px;">
@@ -759,7 +757,6 @@
       <h2 class="font-script" style="font-size:2.6rem; color:var(--primary-crimson); line-height:1;">Jejak Kebahagiaan</h2>
     </div>
 
-    <!-- NARASI ELEGAN GALERI TAMU -->
     <div class="gallery-intro-box">
       <i class="fa-solid fa-quote-left" style="color:var(--gold-accent); font-size:1.1rem; margin-bottom:6px; display:block;"></i>
       <p class="font-serif" style="font-size:0.9rem; color:#4A3B3B; line-height:1.5; font-style:italic;">
@@ -839,7 +836,6 @@
     initFigmaSlider();
   });
 
-  // ANIMASI AMPLOP TINGKAT EMPAT
   function openEnvelopeAnimation() {
     const envelopeWrapper = document.getElementById('envelope-wrapper');
     const envelopeScreen = document.getElementById('envelope-screen');
@@ -1169,8 +1165,6 @@
       stripBox.appendChild(thumbBox);
     }
 
-    progressText.innerText = `Foto ${Math.min(currentCapturedCount + 1, totalNeeded)} dari ${totalNeeded}`;
-
     if (currentCapturedCount >= totalNeeded) {
       toolsBox.style.display = 'none';
       progressText.innerText = "Foto Lengkap! Memproses...";
@@ -1181,6 +1175,7 @@
       `;
     } else {
       toolsBox.style.display = 'flex';
+      progressText.innerText = `Foto ${currentCapturedCount + 1} dari ${totalNeeded}`;
       actionContainer.innerHTML = `
         <div class="cam-snap-trigger" id="btn-snap" onclick="takePhotoSnap()">
           <i class="fa-solid fa-camera"></i>
@@ -1343,7 +1338,13 @@
 
     updatePhotosStripUI();
 
-    // JIKA FOTO SUDAH LENGKAP, LANGSUNG PROSES TANPA MENUNGGU KLIKS TAMBAHAN
+    // RESET STATUS UNTUK FOTO BERIKUTNYA
+    isTakingPhoto = false;
+
+    const btnSnap = document.getElementById('btn-snap');
+    if (btnSnap) btnSnap.style.opacity = '1';
+
+    // JIKA SELURUH FOTO SUDAH TERPENUHI
     if (capturedPhotos.length >= totalNeeded) {
       if (videoStream) {
         videoStream.getTracks().forEach(track => track.stop());
@@ -1352,12 +1353,6 @@
       setTimeout(() => {
         proceedToRenderStrip();
       }, 300);
-    } else {
-      setTimeout(() => {
-        isTakingPhoto = false;
-        const btnSnap = document.getElementById('btn-snap');
-        if (btnSnap) btnSnap.style.opacity = '1';
-      }, 200);
     }
   }
 
