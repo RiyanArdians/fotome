@@ -330,7 +330,7 @@
     @keyframes frameClickBounce { 0% { transform: translateX(0) scale(1); } 40% { transform: translateX(0) scale(0.92); } 100% { transform: translateX(0) scale(1.05); opacity: 0.9; } }
 
     /* ---------------------------------------------------- */
-    /* 5. KAMERA SELALU TERBUKA DENGAN LAYOUT TERPERCAYA    */
+    /* 5. KAMERA SELALU TERBUKA DENGAN PREVIEW STRIP DI BAWAH */
     /* ---------------------------------------------------- */
     .camera-stage-container {
       width: 100%; max-width: 380px; height: 100%;
@@ -594,7 +594,7 @@
   </div>
 </div>
 
-<!-- STEP 2: SLIDER FRAME FULLSCREEN -->
+<!-- STEP 2: SLIDER FIGMA PILIH FRAME -->
 <div id="step-template" class="page-fullscreen dark-bg hidden">
   <div class="slider-header-box">
     <div class="section-label-fullscreen" id="card-theme-tag">ROYAL EDITION</div>
@@ -642,7 +642,7 @@
   </div>
 </div>
 
-<!-- STEP 3: SESI KAMERA TERBUKA & PREVIEW STRIP DI BAWAH -->
+<!-- STEP 3: SESI KAMERA RESPONSIF (KAMERA DIPANTAU SANGAT DIRECT TERBUKA & PREVIEW SLOTS TETAP TAMPIL DI BAWAH) -->
 <div id="step-camera" class="page-fullscreen dark-bg hidden" style="background:#000;">
   <div class="camera-stage-container">
     
@@ -653,14 +653,14 @@
       </button>
     </div>
 
-    <!-- VIEWFINDER KAMERA SELALU AKTIF DENGAN BACKGROUND TERANG -->
+    <!-- VIEWFINDER KAMERA SELALU AKTIF DAN TIDAK PERNAH DIHIDDEN ATAU MINIMIZED -->
     <div class="camera-viewfinder-box" id="cam-viewfinder-box">
       <video id="video" class="camera-video-element mirror" autoplay playsinline webkit-playsinline muted></video>
       <div id="countdown-overlay" class="countdown-overlay hidden">3</div>
       <div id="flash-overlay" class="flash-overlay"></div>
     </div>
 
-    <!-- STRIP PREVIEW & KONTROL KAMERA -->
+    <!-- STRIP PREVIEW & KONTROL KAMERA DI BAWAH -->
     <div style="width:100%; display:flex; flex-direction:column; align-items:center;">
       <div class="cam-photos-preview-strip" id="cam-photos-strip"></div>
 
@@ -972,10 +972,14 @@
 
         if (index === currentCardIndex) {
           card.classList.add('card-pressed');
+          
+          // LANGSUNG MEMANGGIL STREAM SINKRONUS DARI INTERAKSI USER
+          initCameraStreamDirectlyOnUserInteraction();
+
           setTimeout(() => {
             card.classList.remove('card-pressed');
             startCameraProcess();
-          }, 320);
+          }, 200);
         } else {
           currentCardIndex = index;
           updateFigmaSliderPositions();
@@ -1089,14 +1093,54 @@
   }
 
   /* ---------------------------------------------------- */
-  /* KAMERA AKTIF OTOMATIS & PREVIEW KAMERA TETAP TERBUKA   */
+  /* STRATEGI PENYALAN KAMERA INSTAN DARI KLIK PENGGUNA  */
   /* ---------------------------------------------------- */
+  function initCameraStreamDirectlyOnUserInteraction() {
+    if (videoStream) {
+      videoStream.getTracks().forEach(track => track.stop());
+      videoStream = null;
+    }
+
+    const video = document.getElementById('video');
+    const constraints = {
+      video: { facingMode: currentFacingMode },
+      audio: false
+    };
+
+    navigator.mediaDevices.getUserMedia(constraints)
+      .then(stream => {
+        videoStream = stream;
+        video.srcObject = stream;
+        video.play().then(() => {
+          applyZoomTransform();
+          enumerateFrontBackCameras();
+        }).catch(err => console.log("Play catch:", err));
+      })
+      .catch(err => {
+        // Fallback constraint paling ringan jika facingMode ditolak HP
+        navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+          .then(stream => {
+            videoStream = stream;
+            video.srcObject = stream;
+            video.play();
+            applyZoomTransform();
+            enumerateFrontBackCameras();
+          })
+          .catch(e => {
+            console.error("Camera access error:", e);
+          });
+      });
+  }
+
   function startCameraProcess() {
     goToStep('step-camera');
     capturedPhotos = [];
     isTakingPhoto = false;
     updatePhotosStripUI();
-    initCameraStream();
+
+    if (!videoStream || !videoStream.active) {
+      initCameraStreamDirectlyOnUserInteraction();
+    }
   }
 
   function updatePhotosStripUI() {
@@ -1139,10 +1183,6 @@
           <i class="fa-solid fa-camera"></i>
         </div>
       `;
-
-      if (!videoStream || !videoStream.active) {
-        initCameraStream();
-      }
     }
   }
 
@@ -1150,58 +1190,6 @@
     capturedPhotos.splice(index, 1);
     isTakingPhoto = false;
     updatePhotosStripUI();
-  }
-
-  // INI MEKANISME DIRECT CAMERA STREAM TERPERCAYA (OTOMATIS TANPA KLIK SWITCH)
-  function initCameraStream() {
-    if (videoStream) {
-      videoStream.getTracks().forEach(track => track.stop());
-      videoStream = null;
-    }
-
-    const video = document.getElementById('video');
-
-    const constraintsList = [
-      { video: { facingMode: { exact: currentFacingMode } }, audio: false },
-      { video: { facingMode: currentFacingMode }, audio: false },
-      { video: true, audio: false }
-    ];
-
-    let attemptIndex = 0;
-
-    function tryNextConstraint() {
-      if (attemptIndex >= constraintsList.length) {
-        showAlert("Gagal membuka kamera. Harap izinkan akses kamera pada browser kamu!", "Akses Kamera", "⚠️");
-        return;
-      }
-
-      const currentConstraints = constraintsList[attemptIndex];
-      attemptIndex++;
-
-      navigator.mediaDevices.getUserMedia(currentConstraints)
-        .then(stream => {
-          videoStream = stream;
-          video.srcObject = stream;
-          
-          // FORCE PLAY LANGSUNG
-          const playPromise = video.play();
-          if (playPromise !== undefined) {
-            playPromise.then(() => {
-              applyZoomTransform();
-              enumerateFrontBackCameras();
-            }).catch(err => {
-              console.log("Play interrupted, retrying:", err);
-              video.play();
-            });
-          }
-        })
-        .catch(err => {
-          console.warn(`Constraint attempt ${attemptIndex} failed, trying fallback:`, err);
-          tryNextConstraint();
-        });
-    }
-
-    tryNextConstraint();
   }
 
   function enumerateFrontBackCameras() {
@@ -1233,7 +1221,7 @@
 
   function switchCamera() {
     currentFacingMode = (currentFacingMode === "user") ? "environment" : "user";
-    initCameraStream();
+    initCameraStreamDirectlyOnUserInteraction();
   }
 
   function toggleMirror() {
@@ -1269,7 +1257,7 @@
 
   function onCameraSelectChange(modeVal) {
     currentFacingMode = modeVal;
-    initCameraStream();
+    initCameraStreamDirectlyOnUserInteraction();
   }
 
   function stopCameraAndGoBack() {
@@ -1339,7 +1327,6 @@
 
     capturedPhotos.push(tempCanvas.toDataURL('image/png'));
 
-    // BISA DIKLIK KEMBALI
     setTimeout(() => {
       isTakingPhoto = false;
       const btnSnap = document.getElementById('btn-snap');
