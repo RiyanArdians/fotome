@@ -39,7 +39,7 @@
     .font-script { font-family: 'Alex Brush', cursive; }
     .hidden { display: none !important; }
 
-    /* LAYOUT SCREEN STRICT FIT VIEWPORT (NO SCROLL) */
+    /* LAYOUT SCREEN STRICT FIT VIEWPORT */
     .page-fullscreen {
       width: 100vw;
       height: 100dvh;
@@ -94,7 +94,7 @@
       text-transform: uppercase;
       border-radius: 35px;
       cursor: pointer;
-      margin-top: 8px;
+      margin-top: 6px;
       width: 100%;
       max-width: 340px;
       display: inline-flex;
@@ -381,12 +381,6 @@
 
     .photo-thumb-box img { width: 100%; height: 100%; object-fit: cover; }
 
-    .photo-thumb-box .delete-thumb-btn {
-      position: absolute; top: 2px; right: 2px; background: rgba(231, 76, 60, 0.95);
-      color: #FFF; border: none; width: 18px; height: 18px; border-radius: 50%;
-      font-size: 0.65rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.4); z-index: 10;
-    }
-
     .photo-thumb-box.empty-slot {
       border: 1.5px dashed rgba(255,255,255,0.35); color: rgba(255,255,255,0.5); font-size: 0.72rem; font-weight: 600;
     }
@@ -469,11 +463,19 @@
     }
 
     /* ---------------------------------------------------- */
-    /* 6. PRINTER STAGE & POPUP FOTO                        */
+    /* 6. PRINTER STAGE & POPUP FOTO (PERBAIKAN TAMPILAN)   */
     /* ---------------------------------------------------- */
     .printer-lottie-stage {
-      width: 100vw; height: 100dvh; background: #FFFFFF;
-      display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 16px 12px 10px; position: relative; overflow: hidden;
+      width: 100vw; 
+      min-height: 100dvh; 
+      background: #FFFFFF;
+      display: flex; 
+      flex-direction: column; 
+      align-items: center; 
+      justify-content: flex-start; 
+      padding: 16px 14px 20px; 
+      position: relative; 
+      overflow-y: auto; /* Memungkinkan scroll jika tinggi berlebih */
     }
 
     .vector-printer-wrapper {
@@ -515,15 +517,34 @@
     .ejected-photo-sheet.fully-printed { transform: translateY(0); }
     .ejected-photo-sheet img { width: 100%; border-radius: 8px; display: block; margin: 0 auto; }
 
-    .popup-photo-container { width: 100%; max-width: 220px; margin: 6px auto 2px; opacity: 0; transform: scale(0.6); transition: all 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+    /* POP-UP PREVIEW RINGKAS AGAR SEMUA FORM & TOMBOL TERLIHAT */
+    .popup-photo-container { 
+      width: 100%; 
+      max-width: 180px; 
+      margin: 4px auto 2px; 
+      opacity: 0; 
+      transform: scale(0.6); 
+      transition: all 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+    }
     .popup-photo-container.show-popup { opacity: 1; transform: scale(1); }
-    .popup-photo-container img { width: 100%; border-radius: 12px; box-shadow: 0 12px 30px rgba(0,0,0,0.2); }
+    .popup-photo-container img { width: 100%; max-height: 38vh; object-fit: contain; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
 
-    .printer-status-text-box { margin-top: 4px; text-align: center; z-index: 20; }
+    .printer-status-text-box { margin-top: 2px; text-align: center; z-index: 20; }
     .status-main-label { font-size: 0.82rem; font-weight: 700; color: var(--primary-crimson); display: flex; align-items: center; justify-content: center; gap: 5px; }
     .status-sub-label { font-size: 0.68rem; color: #777; margin-top: 1px; font-style: italic; }
 
-    .printer-bottom-actions { width: 100%; max-width: 320px; margin-top: 4px; display: flex; flex-direction: column; gap: 4px; z-index: 20; opacity: 0; transform: translateY(10px); transition: all 0.5s ease; }
+    .printer-bottom-actions { 
+      width: 100%; 
+      max-width: 320px; 
+      margin-top: 8px; 
+      display: flex; 
+      flex-direction: column; 
+      gap: 6px; 
+      z-index: 20; 
+      opacity: 0; 
+      transform: translateY(10px); 
+      transition: all 0.5s ease; 
+    }
     .printer-bottom-actions.visible { opacity: 1; transform: translateY(0); }
 
     /* ---------------------------------------------------- */
@@ -739,7 +760,7 @@
   </div>
 </div>
 
-<!-- STEP 3B: HALAMAN BARU KHUSUS PREVIEW & KONFIRMASI HASIL FOTO -->
+<!-- STEP 3B: HALAMAN KHUSUS PREVIEW & KONFIRMASI HASIL FOTO -->
 <div id="step-review-photos" class="page-fullscreen dark-bg hidden">
   <div style="width:100%; text-align:center; padding-top:10px;">
     <p style="font-size:0.68rem; color:var(--gold-accent); letter-spacing:2.5px; font-weight:700; margin-bottom:2px;">REVIEW HASIL FOTO</p>
@@ -747,9 +768,7 @@
     <p style="font-size:0.72rem; color:rgba(255,255,255,0.7); margin-top:2px;">Tekan tombol ✕ pada foto jika ingin mengambil foto ulang</p>
   </div>
 
-  <div class="review-grid-box" id="review-grid-box">
-    <!-- Diisi otomatis oleh JavaScript -->
-  </div>
+  <div class="review-grid-box" id="review-grid-box"></div>
 
   <div style="width:100%; text-align:center; margin-bottom:10px;">
     <button class="btn-primary-v2" style="background: linear-gradient(135deg, #D4AF37 0%, #AA7C11 100%); color:#2B1E1E; border:none; padding:14px; font-size:0.85rem;" onclick="proceedToRenderStrip()">
@@ -766,8 +785,9 @@
   </div>
 </div>
 
-<!-- STEP 4: ANIMASI PRINTER -->
+<!-- STEP 4: ANIMASI PRINTER & FORM AKSI UTAMA -->
 <div id="step-result" class="printer-lottie-stage hidden">
+  
   <div class="vector-printer-wrapper" id="main-printer-unit">
     <div class="paper-tray-input" id="paper-input-sheet"></div>
     <div class="flat-printer-body">
@@ -799,31 +819,33 @@
     <div class="status-sub-label" id="printer-status-sub">Harap tunggu sebentar</div>
   </div>
 
+  <!-- FORM UCAPAN & TOMBOL UNTUK SIMPAN (DITAMPILKAN DENGAN JELAS) -->
   <div class="printer-bottom-actions" id="printer-bottom-actions">
-    <div style="background: #FAF6F0; border: 1px solid rgba(212,175,55,0.3); border-radius: 10px; padding: 6px 8px; text-align: left;">
-      <label style="display:block; font-size:0.65rem; font-weight:700; color:var(--primary-crimson); margin-bottom:2px;">Nama Kamu</label>
-      <input type="text" id="input-sender-name" style="width:100%; padding:4px 6px; border:1px solid #D8B4B4; border-radius:5px; font-size:0.75rem; outline:none; margin-bottom:3px; background:#FFF;" placeholder="Misal: Budi &amp; Sarah">
+    <div style="background: #FAF6F0; border: 1px solid rgba(212,175,55,0.35); border-radius: 12px; padding: 10px; text-align: left; box-shadow:0 4px 12px rgba(0,0,0,0.05);">
+      <label style="display:block; font-size:0.68rem; font-weight:700; color:var(--primary-crimson); margin-bottom:3px;">Nama Kamu</label>
+      <input type="text" id="input-sender-name" style="width:100%; padding:6px 8px; border:1px solid #D8B4B4; border-radius:6px; font-size:0.8rem; outline:none; margin-bottom:6px; background:#FFF;" placeholder="Misal: Budi &amp; Sarah">
 
-      <label style="display:block; font-size:0.65rem; font-weight:700; color:var(--primary-crimson); margin-bottom:2px;">Pesan / Ucapan Doa Kamu</label>
-      <textarea id="input-sender-message" rows="2" style="width:100%; padding:4px 6px; border:1px solid #D8B4B4; border-radius:5px; font-size:0.75rem; outline:none; background:#FFF;" placeholder="Tuliskan ucapan manismu di sini..."></textarea>
+      <label style="display:block; font-size:0.68rem; font-weight:700; color:var(--primary-crimson); margin-bottom:3px;">Pesan / Ucapan Doa Kamu</label>
+      <textarea id="input-sender-message" rows="2" style="width:100%; padding:6px 8px; border:1px solid #D8B4B4; border-radius:6px; font-size:0.8rem; outline:none; background:#FFF;" placeholder="Tuliskan ucapan manismu di sini..."></textarea>
     </div>
 
-    <button class="btn-primary-v2" style="max-width:100%; padding:9px;" onclick="saveAndShareToFeed()">
+    <button class="btn-primary-v2" style="max-width:100%; padding:11px;" onclick="saveAndShareToFeed()">
       <i class="fa-solid fa-paper-plane"></i> Unduh &amp; Posting ke Galeri
     </button>
 
-    <button class="btn-secondary-v2" style="max-width:100%; padding:7px;" onclick="savePrivateOnly()">
+    <button class="btn-secondary-v2" style="max-width:100%; padding:9px;" onclick="savePrivateOnly()">
       <i class="fa-solid fa-download"></i> Simpan Privat Ke HP
     </button>
 
-    <button class="btn-outline-v2" style="color:#888; max-width:100%; padding:2px;" onclick="goToStep('step-template')">
+    <button class="btn-outline-v2" style="color:#777; max-width:100%; padding:4px;" onclick="goToStep('step-template')">
       <i class="fa-solid fa-rotate-right"></i> Foto Ulang Semua
     </button>
+
+    <div class="app-official-footer" style="max-width: 100%;">
+      © 2026 FOTOME by Riyan. All rights reserved.
+    </div>
   </div>
 
-  <div class="app-official-footer" style="max-width: 320px;">
-    © 2026 FOTOME by Riyan. All rights reserved.
-  </div>
 </div>
 
 <!-- GALERI KENANGAN -->
@@ -844,7 +866,7 @@
       </div>
     </div>
 
-    <div style="font-size:0.85rem; font-weight:700; color:var(--primary-crimson); margin-bottom:10px; display:flex; justify-content:space-between; align-align:center;">
+    <div style="font-size:0.85rem; font-weight:700; color:var(--primary-crimson); margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
       <span><i class="fa-solid fa-border-all"></i> Kiriman Tamu</span>
       <span style="font-size:0.7rem; color:#888;" id="total-posts-count">0 Kiriman</span>
     </div>
@@ -1002,6 +1024,12 @@
           statusText.innerHTML = '<i class="fa-solid fa-circle-check" style="color:#2ECC71;"></i> Cetak Selesai!';
           statusSub.innerText = "Foto kamu sudah siap disimpan!";
           actionsBox.classList.add('visible');
+
+          // Otomatis scroll perlahan untuk memperlihatkan form ucapan & tombol
+          const stepResultPage = document.getElementById('step-result');
+          if (stepResultPage) {
+            stepResultPage.scrollTo({ top: 180, behavior: 'smooth' });
+          }
         }, 400);
 
       }, 6800);
@@ -1398,7 +1426,6 @@
 
     updatePhotosStripUI();
 
-    // JIKA SELURUH FOTO SUDAH LENGKAP, BEBASTAMPILAN KE HALAMAN REVIEW FOTO BARU
     if (capturedPhotos.length >= totalNeeded) {
       if (videoStream) {
         videoStream.getTracks().forEach(track => track.stop());
