@@ -796,14 +796,9 @@
     
     <div class="camera-top-status">
       <span style="font-size:0.75rem; font-weight:700;" id="cam-progress-text">Foto 1 dari 3</span>
-      <div style="display:flex; gap:6px;">
-        <button class="btn-outline-v2" style="width:auto; margin:0; padding:4px 10px; border:1px solid rgba(212,175,55,0.6); border-radius:15px; background:rgba(0,0,0,0.3); color:var(--gold-accent);" onclick="stopCameraAndGoBack()">
-          PILIH FRAME
-        </button>
-        <button class="btn-outline-v2" style="width:auto; margin:0; padding:4px 10px; border:1px solid rgba(255,255,255,0.3); border-radius:15px; background:rgba(0,0,0,0.3);" onclick="resetAndRestartCamera()">
-          RESET FOTO
-        </button>
-      </div>
+      <button class="btn-outline-v2" style="width:auto; margin:0; padding:4px 12px; border:1px solid rgba(212,175,55,0.6); border-radius:15px; background:rgba(0,0,0,0.3); color:var(--gold-accent);" onclick="stopCameraAndGoBack()">
+        PILIH FRAME
+      </button>
     </div>
 
     <!-- VIEWFINDER KAMERA -->
@@ -1042,7 +1037,19 @@
     }, 2200);
   }
 
+  function resetGuestInfo() {
+    currentGuestName = "";
+    const nameInput = document.getElementById('guest-initial-name');
+    if (nameInput) nameInput.value = "";
+    const senderInput = document.getElementById('input-sender-name');
+    if (senderInput) senderInput.value = "";
+  }
+
   function goToStep(targetId) {
+    if (targetId === 'step-welcome') {
+      resetGuestInfo();
+    }
+
     const steps = ['step-welcome', 'step-ask-name', 'step-template', 'step-camera', 'step-review-photos', 'step-result', 'step-gallery-page'];
     steps.forEach(id => {
       const el = document.getElementById(id);
@@ -1433,14 +1440,6 @@
     }
   }
 
-  function resetAndRestartCamera() {
-    capturedPhotos = [];
-    isTakingPhoto = false;
-    const btnSnap = document.getElementById('btn-snap');
-    if (btnSnap) btnSnap.style.opacity = '1';
-    updatePhotosStripUI();
-  }
-
   function updatePhotosStripUI() {
     const stripBox = document.getElementById('cam-photos-strip');
     const progressText = document.getElementById('cam-progress-text');
@@ -1754,9 +1753,13 @@
       }).then(() => {
         showAlert("Foto berhasil diunduh dan diposting ke Galeri!", "BERHASIL DITAMBAHKAN", () => {
           document.getElementById('input-sender-message').value = '';
+          resetGuestInfo();
           goToStep('step-welcome');
         });
       });
+    } else {
+      resetGuestInfo();
+      goToStep('step-welcome');
     }
   }
 
@@ -1764,6 +1767,7 @@
     const senderName = document.getElementById('input-sender-name').value.trim() || currentGuestName || "Tamu";
     downloadImageToPhone(senderName);
     showAlert("Foto berhasil disimpan secara privat ke HP kamu!", "TERSIMPAN PRIVAT", () => {
+      resetGuestInfo();
       goToStep('step-welcome');
     });
   }
