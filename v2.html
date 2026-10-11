@@ -372,13 +372,13 @@
       width: 100%;
       max-width: 340px;
       flex: 1;
-      max-height: 52dvh;
+      max-height: 50dvh;
       border-radius: 24px;
       overflow: hidden;
       background: #000;
       border: 2px solid var(--gold-accent);
       box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
-      margin: 12px 0;
+      margin: 8px 0;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -401,17 +401,17 @@
       background: rgba(255, 255, 255, 0.1);
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
-      padding: 12px 16px;
+      padding: 8px 16px;
       border-radius: 20px;
       border: 1px solid rgba(255, 255, 255, 0.2);
       width: 100%;
       max-width: 340px;
-      margin-bottom: 12px;
+      margin-bottom: 8px;
     }
 
     .photo-thumb-box {
       position: relative; 
-      width: 58px; 
+      width: 52px; 
       aspect-ratio: 1 / 1; 
       border-radius: 12px; 
       overflow: hidden;
@@ -426,17 +426,17 @@
     .photo-thumb-box img { width: 100%; height: 100%; object-fit: cover; object-position: center; }
     .photo-thumb-box.empty-slot { border: 1.5px dashed rgba(255, 255, 255, 0.35); color: rgba(255, 255, 255, 0.6); font-size: 0.8rem; font-weight: 600; }
 
-    /* KONTROL KAMERA SIMPEL PAS DI LAYAR */
+    /* KONTROL KAMERA ATAS (TIMER, ZOOM, MIRROR) */
     .cam-floating-tools {
       display: flex;
-      gap: 4px;
+      gap: 6px;
       background: rgba(255, 255, 255, 0.12);
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
-      padding: 6px 8px;
+      padding: 6px 12px;
       border-radius: 25px;
       border: 1px solid rgba(255, 255, 255, 0.22);
-      margin-bottom: 12px;
+      margin-bottom: 8px;
       width: 100%;
       max-width: 340px;
       justify-content: space-around;
@@ -449,7 +449,7 @@
       color: #FFF;
       font-size: 0.72rem;
       font-weight: 600;
-      padding: 6px 10px;
+      padding: 6px 12px;
       border-radius: 16px;
       cursor: pointer;
       display: flex;
@@ -458,15 +458,44 @@
       white-space: nowrap;
       flex: 1;
       justify-content: center;
-      max-width: 80px;
       transition: transform 0.15s ease, background 0.2s ease;
     }
 
     .cam-tool-btn:active { transform: scale(0.92); }
 
+    /* AREA BAWAH: SWITCH & AMBIL FOTO */
+    .cam-bottom-action-row {
+      width: 100%;
+      max-width: 340px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+
+    .btn-switch-standalone {
+      background: rgba(255, 255, 255, 0.18);
+      border: 1px solid var(--gold-accent);
+      color: #FFF;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 8px 18px;
+      border-radius: 20px;
+      cursor: pointer;
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      transition: transform 0.15s ease, background 0.2s ease;
+    }
+
+    .btn-switch-standalone:active { transform: scale(0.94); background: rgba(255, 255, 255, 0.28); }
+
     .cam-snap-trigger {
-      width: 68px;
-      height: 68px;
+      width: 64px;
+      height: 64px;
       border-radius: 50%;
       background: #FFF;
       border: 4px solid var(--gold-accent);
@@ -476,7 +505,7 @@
       align-items: center;
       justify-content: center;
       color: var(--primary-crimson);
-      font-size: 1.5rem;
+      font-size: 1.4rem;
       transition: transform 0.15s ease;
     }
     .cam-snap-trigger:active { transform: scale(0.88); }
@@ -765,7 +794,7 @@
     <!-- PREVIEW THUMBNAIL FOTO -->
     <div class="cam-photos-preview-strip" id="cam-photos-strip"></div>
 
-    <!-- KONTROL KAMERA SIMPEL TERHUBUNG -->
+    <!-- KONTROL OPSI FOTO (TIMER, ZOOM, MIRROR) -->
     <div class="cam-floating-tools" id="cam-tools-box">
       <button class="cam-tool-btn" id="btn-timer" onclick="toggleTimerSetting()">
         Timer: <span id="label-timer">3s</span>
@@ -773,19 +802,18 @@
       <button class="cam-tool-btn" id="btn-zoom" onclick="toggleZoomSetting()">
         Zoom: <span id="label-zoom">1x</span>
       </button>
-
-      <!-- TOMBOL SWITCH SEDERHANA -->
-      <button class="cam-tool-btn" id="btn-toggle-cam" onclick="switchCameraSimple()">
-        <i class="fa-solid fa-rotate"></i> Switch
-      </button>
-
       <button class="cam-tool-btn" id="btn-mirror" onclick="toggleMirror()">
         Mirror: <span id="label-mirror">OFF</span>
       </button>
     </div>
 
-    <!-- TOMBOL AMBIL FOTO -->
-    <div style="width:100%; display:flex; justify-content:center; align-items:center; margin-bottom: 5px;">
+    <!-- AREA BAWAH: TOMBOL SWITCH STANDALONE & JEPET FOTO -->
+    <div class="cam-bottom-action-row">
+      <!-- TOMBOL SWITCH SENDIRI DI BAWAH -->
+      <button class="btn-switch-standalone" id="btn-toggle-cam" onclick="switchCameraSimple()">
+        <i class="fa-solid fa-camera-rotate"></i> SWITCH KAMERA
+      </button>
+
       <div class="cam-snap-trigger" id="btn-snap" onclick="takePhotoSnap()">
         <i class="fa-solid fa-camera"></i>
       </div>
@@ -955,9 +983,8 @@
   let videoStream = null;
   let generatedDataUrl = "";
 
-  /* VARIABEL KAMERA INDEX MULTI-DEVICE */
+  /* VARIABEL STATUS KAMERA SIMPEL (DEPAN VS BELAKANG) */
   let isBackCamera = false;
-  let cameraDevicesList = [];
   let isSwitchingCamera = false;
   let isMirror = false; 
   let timerDuration = 3;
@@ -1232,7 +1259,7 @@
     loadRealtimeFeedIG();
   }
 
-  /* FITUR PEMBACAAN KAMERA SENSOR UTAMA (1X KLIK SWITCH) */
+  /* PEMBERSIHAN STREAM SANGAT RESIK */
   async function stopCurrentStream() {
     if (videoStream) {
       try {
@@ -1245,89 +1272,57 @@
       video.pause();
       video.srcObject = null;
     }
+    // Delay tunda agar OS Android melepas kuncian kamera
     await new Promise(resolve => setTimeout(resolve, 400));
   }
 
+  /* SISTEM PEMILIHAN HANYA 2 KAMERA (DEPAN & BELAKANG UTAMA) */
   async function initCameraStream() {
     const video = document.getElementById('video');
     if (!video) return;
 
     await stopCurrentStream();
 
-    try {
-      const devices = await navigator.mediaDevices.enumerateDevices();
-      cameraDevicesList = devices.filter(d => d.kind === 'videoinput');
-    } catch (e) {
-      console.warn("Gagal memindai daftar kamera:", e);
-    }
+    let constraints = { audio: false };
 
-    let videoConfig = {};
-
-    if (cameraDevicesList.length > 0) {
-      const backCameras = cameraDevicesList.filter(d => 
-        d.label.toLowerCase().includes('back') || 
-        d.label.toLowerCase().includes('rear') || 
-        d.label.toLowerCase().includes('environment') ||
-        d.label.toLowerCase().includes('0')
-      );
-      
-      const frontCameras = cameraDevicesList.filter(d => 
-        d.label.toLowerCase().includes('front') || 
-        d.label.toLowerCase().includes('user') ||
-        d.label.toLowerCase().includes('facing')
-      );
-
-      if (isBackCamera) {
-        const selectedBack = backCameras[0] || cameraDevicesList[cameraDevicesList.length - 1];
-        if (selectedBack && selectedBack.deviceId) {
-          videoConfig = { deviceId: { exact: selectedBack.deviceId } };
-        } else {
-          videoConfig = { facingMode: { exact: "environment" } };
-        }
-      } else {
-        const selectedFront = frontCameras[0] || cameraDevicesList[0];
-        if (selectedFront && selectedFront.deviceId) {
-          videoConfig = { deviceId: { exact: selectedFront.deviceId } };
-        } else {
-          videoConfig = { facingMode: "user" };
-        }
-      }
+    if (isBackCamera) {
+      // Buka kamera belakang utama
+      constraints.video = { facingMode: { ideal: "environment" } };
     } else {
-      videoConfig = { facingMode: isBackCamera ? "environment" : "user" };
+      // Buka kamera depan utama
+      constraints.video = { facingMode: { ideal: "user" } };
     }
 
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        audio: false,
-        video: videoConfig
-      });
+      const stream = await navigator.mediaDevices.getUserMedia(constraints);
       videoStream = stream;
       video.srcObject = stream;
       await video.play().catch(e => console.warn(e));
       applyZoomTransform();
     } catch (err) {
-      console.warn("Fallback tanpa exact deviceId...", err);
+      console.warn("Fallback ke video true biasa...", err);
       try {
         const fallbackStream = await navigator.mediaDevices.getUserMedia({
           audio: false,
-          video: { facingMode: isBackCamera ? "environment" : "user" }
+          video: true
         });
         videoStream = fallbackStream;
         video.srcObject = fallbackStream;
         await video.play().catch(e => console.warn(e));
         applyZoomTransform();
       } catch (finalErr) {
-        console.error("Kamera gagal dibuka:", finalErr);
-        showAlert("Gagal membuka kamera. Pastikan izin kamera sudah diberikan pada browser.", "Kamera Error", "📷");
+        console.error("Gagal memuat kamera:", finalErr);
+        showAlert("Tidak dapat membuka kamera. Pastikan izin akses kamera sudah diberikan di browser HP kamu.", "Kamera Error", "📷");
       }
     }
   }
 
+  /* TOMBOL SWITCH KHUSUS DI BAWAH */
   async function switchCameraSimple() {
     if (isSwitchingCamera) return;
     isSwitchingCamera = true;
 
-    // Balikkan mode kamera langsung
+    // Balikkan antara kamera depan dan belakang
     isBackCamera = !isBackCamera;
 
     await initCameraStream();
