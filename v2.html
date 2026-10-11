@@ -762,7 +762,7 @@
     <!-- PREVIEW THUMBNAIL FOTO -->
     <div class="cam-photos-preview-strip" id="cam-photos-strip"></div>
 
-    <!-- KONTROL KAMERA RINGKAS TERHUBUNG LENGKAP -->
+    <!-- KONTROL KAMERA -->
     <div class="cam-floating-tools" id="cam-tools-box">
       <button class="cam-tool-btn" id="btn-timer" onclick="toggleTimerSetting()">
         Timer: <span id="label-timer">3s</span>
@@ -952,8 +952,8 @@
   let videoStream = null;
   let generatedDataUrl = "";
 
-  /* STATUS KAMERA DAN OPSI HARMONIS */
-  let activeFacingMode = "user"; // "user" (Depan) / "environment" (Belakang)
+  /* KAMERA STATE */
+  let activeFacingMode = "user"; 
   let isSwitchingCamera = false;
   let isMirror = false; 
   let timerDuration = 3;
@@ -1228,38 +1228,22 @@
     loadRealtimeFeedIG();
   }
 
-  /* SISTEM PEMBERSAPAN STREAM KELAS TINGGI AGAR LANGSUNG BERPINDAH INSTAN */
+  /* LOGIKA SWITCH KAMERA ANTI-ERROR CHROME ANDROID */
   async function stopCurrentStream() {
     if (videoStream) {
       try {
-        videoStream.getTracks().forEach(track => {
-          track.stop();
-        });
+        const tracks = videoStream.getTracks();
+        tracks.forEach(track => track.stop());
       } catch (e) { console.warn(e); }
       videoStream = null;
     }
     const video = document.getElementById('video');
-    if (video) video.srcObject = null;
-    await new Promise(resolve => setTimeout(resolve, 250));
-  }
-
-  async function getBestCameraDeviceId(targetFacing) {
-    try {
-      const devices = await navigator.mediaDevices.enumerateDevices();
-      const videoDevices = devices.filter(d => d.kind === 'videoinput');
-
-      if (videoDevices.length === 0) return null;
-
-      if (targetFacing === 'user') {
-        const frontCam = videoDevices.find(d => d.label.toLowerCase().includes('front') || d.label.toLowerCase().includes('depan') || d.label.toLowerCase().includes('selfie'));
-        return frontCam ? frontCam.deviceId : videoDevices[0].deviceId;
-      } else {
-        const backCams = videoDevices.filter(d => d.label.toLowerCase().includes('back') || d.label.toLowerCase().includes('belakang') || d.label.toLowerCase().includes('rear') || d.label.toLowerCase().includes('main') || d.label.toLowerCase().includes('0'));
-        return backCams.length > 0 ? backCams[0].deviceId : videoDevices[videoDevices.length - 1].deviceId;
-      }
-    } catch(e) {
-      return null;
+    if (video) {
+      video.pause();
+      video.srcObject = null;
     }
+    // Delay pelepasan hardware wajib untuk Android Chrome
+    await new Promise(resolve => setTimeout(resolve, 300));
   }
 
   async function initCameraStream() {
@@ -1268,36 +1252,47 @@
 
     await stopCurrentStream();
 
-    const deviceId = await getBestCameraDeviceId(activeFacingMode);
-
-    let constraints = { audio: false };
-
-    if (deviceId) {
-      constraints.video = { deviceId: { exact: deviceId } };
-    } else {
-      constraints.video = { facingMode: { exact: activeFacingMode } };
-    }
+    // Strategy 1: Ideal facingMode
+    let constraints = {
+      audio: false,
+      video: {
+        facingMode: activeFacingMode,
+        width: { ideal: 1280 },
+        height: { ideal: 720 }
+      }
+    };
 
     try {
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
       videoStream = stream;
       video.srcObject = stream;
-      await video.play().catch(e => console.warn(e));
+      await video.play();
       applyZoomTransform();
     } catch (err) {
-      console.warn("Fallback Mode Ideal FacingMode...", err);
+      console.warn("Mencoba fallback mode longgar...", err);
+      // Strategy 2: Fallback longgar tanpa resolusi ideal
       try {
         const altStream = await navigator.mediaDevices.getUserMedia({ 
-          video: { facingMode: activeFacingMode }, 
-          audio: false 
+          audio: false,
+          video: { facingMode: activeFacingMode }
         });
         videoStream = altStream;
         video.srcObject = altStream;
-        await video.play().catch(e => console.warn(e));
+        await video.play();
         applyZoomTransform();
       } catch (fallbackErr) {
-        console.error("Gagal membuka kamera:", fallbackErr);
-        showAlert("Tidak dapat membuka kamera. Pastikan izin kamera telah diizinkan.", "Kamera Error", "📷");
+        console.warn("Mencoba fallback tanpa constraint spesifik...", fallbackErr);
+        // Strategy 3: Buka sembarang video stream yang tersedia
+        try {
+          const genStream = await navigator.mediaDevices.getUserMedia({ audio: false, video: true });
+          videoStream = genStream;
+          video.srcObject = genStream;
+          await video.play();
+          applyZoomTransform();
+        } catch (finalErr) {
+          console.error("Gagal total memuat kamera:", finalErr);
+          showAlert("Tidak dapat membuka kamera. Pastikan izin kamera telah diizinkan pada browser.", "Kamera Error", "📷");
+        }
       }
     }
   }
@@ -1306,9 +1301,9 @@
     if (isSwitchingCamera) return;
     isSwitchingCamera = true;
 
-    const labelCam = document.getElementById('label-cam-mode');
     activeFacingMode = (activeFacingMode === "user") ? "environment" : "user";
     
+    const labelCam = document.getElementById('label-cam-mode');
     if (labelCam) {
       labelCam.innerText = (activeFacingMode === "user") ? "Depan" : "Belakang";
     }
