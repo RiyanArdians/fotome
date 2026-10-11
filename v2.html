@@ -426,20 +426,20 @@
     .photo-thumb-box img { width: 100%; height: 100%; object-fit: cover; object-position: center; }
     .photo-thumb-box.empty-slot { border: 1.5px dashed rgba(255, 255, 255, 0.35); color: rgba(255, 255, 255, 0.6); font-size: 0.8rem; font-weight: 600; }
 
-    /* KONTROL KAMERA RINGKAS */
+    /* KONTROL KAMERA SIMPEL PAS DI LAYAR */
     .cam-floating-tools {
       display: flex;
-      gap: 6px;
+      gap: 4px;
       background: rgba(255, 255, 255, 0.12);
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
-      padding: 6px 10px;
+      padding: 6px 8px;
       border-radius: 25px;
       border: 1px solid rgba(255, 255, 255, 0.22);
       margin-bottom: 12px;
       width: 100%;
-      max-width: 350px;
-      justify-content: space-between;
+      max-width: 340px;
+      justify-content: space-around;
       align-items: center;
     }
 
@@ -447,15 +447,18 @@
       background: rgba(255, 255, 255, 0.08);
       border: 1px solid rgba(255, 255, 255, 0.2);
       color: #FFF;
-      font-size: 0.7rem;
+      font-size: 0.72rem;
       font-weight: 600;
-      padding: 6px 9px;
+      padding: 6px 10px;
       border-radius: 16px;
       cursor: pointer;
       display: flex;
       align-items: center;
       gap: 4px;
       white-space: nowrap;
+      flex: 1;
+      justify-content: center;
+      max-width: 80px;
       transition: transform 0.15s ease, background 0.2s ease;
     }
 
@@ -762,7 +765,7 @@
     <!-- PREVIEW THUMBNAIL FOTO -->
     <div class="cam-photos-preview-strip" id="cam-photos-strip"></div>
 
-    <!-- KONTROL KAMERA -->
+    <!-- KONTROL KAMERA SIMPEL TERHUBUNG -->
     <div class="cam-floating-tools" id="cam-tools-box">
       <button class="cam-tool-btn" id="btn-timer" onclick="toggleTimerSetting()">
         Timer: <span id="label-timer">3s</span>
@@ -771,9 +774,9 @@
         Zoom: <span id="label-zoom">1x</span>
       </button>
 
-      <!-- TOMBOL SWITCH INSTAN & AMAN -->
-      <button class="cam-tool-btn" id="btn-toggle-cam" onclick="switchCameraSeamless()">
-        <i class="fa-solid fa-rotate"></i> <span id="label-cam-mode">Belakang</span>
+      <!-- TOMBOL SWITCH SEDERHANA -->
+      <button class="cam-tool-btn" id="btn-toggle-cam" onclick="switchCameraSimple()">
+        <i class="fa-solid fa-rotate"></i> Switch
       </button>
 
       <button class="cam-tool-btn" id="btn-mirror" onclick="toggleMirror()">
@@ -952,8 +955,8 @@
   let videoStream = null;
   let generatedDataUrl = "";
 
-  /* KAMERA STATE & LOCKING SAFEGUARD */
-  let activeFacingMode = "user"; 
+  /* STATUS KAMERA SEDERHANA: "user" (Depan) ATAU "environment" (Belakang Utama) */
+  let isBackCamera = false;
   let isSwitchingCamera = false;
   let isMirror = false; 
   let timerDuration = 3;
@@ -1228,12 +1231,11 @@
     loadRealtimeFeedIG();
   }
 
-  /* SISTEM PERGANTIAN KAMERA MUTAKHIR (IN-PLACE CONSTRAINT SWITCH & JEDA RELEASE) */
+  /* FITUR SWITCH KAMERA SEDERHANA DEPAN <-> BELAKANG UTAMA */
   async function stopCurrentStream() {
     if (videoStream) {
       try {
-        const tracks = videoStream.getTracks();
-        tracks.forEach(track => track.stop());
+        videoStream.getTracks().forEach(track => track.stop());
       } catch (e) { console.warn(e); }
       videoStream = null;
     }
@@ -1242,7 +1244,7 @@
       video.pause();
       video.srcObject = null;
     }
-    await new Promise(resolve => setTimeout(resolve, 350));
+    await new Promise(resolve => setTimeout(resolve, 400));
   }
 
   async function initCameraStream() {
@@ -1251,20 +1253,19 @@
 
     await stopCurrentStream();
 
-    // Mode fleksibel untuk kompatibilitas Android & Chrome Mobile
-    let targetConstraint = activeFacingMode === "user" ? "user" : { ideal: "environment" };
+    const facingConstraint = isBackCamera ? "environment" : "user";
 
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
         audio: false,
-        video: { facingMode: targetConstraint }
+        video: { facingMode: facingConstraint }
       });
       videoStream = stream;
       video.srcObject = stream;
       await video.play().catch(e => console.warn(e));
       applyZoomTransform();
     } catch (err) {
-      console.warn("Fallback Stream Standar...", err);
+      console.warn("Mencoba fallback mode longgar...", err);
       try {
         const fallbackStream = await navigator.mediaDevices.getUserMedia({
           audio: false,
@@ -1281,34 +1282,12 @@
     }
   }
 
-  async function switchCameraSeamless() {
+  async function switchCameraSimple() {
     if (isSwitchingCamera) return;
     isSwitchingCamera = true;
 
-    const nextMode = (activeFacingMode === "user") ? "environment" : "user";
-    const labelCam = document.getElementById('label-cam-mode');
+    isBackCamera = !isBackCamera;
 
-    // Metode 1: Coba ubah constraint secara langsung pada video track yang aktif
-    if (videoStream && videoStream.getVideoTracks().length > 0) {
-      const track = videoStream.getVideoTracks()[0];
-      if (typeof track.applyConstraints === 'function') {
-        try {
-          const newFacing = nextMode === "user" ? "user" : { ideal: "environment" };
-          await track.applyConstraints({ facingMode: newFacing });
-          activeFacingMode = nextMode;
-          if (labelCam) labelCam.innerText = (activeFacingMode === "user") ? "Depan" : "Belakang";
-          applyZoomTransform();
-          isSwitchingCamera = false;
-          return;
-        } catch (e) {
-          console.warn("applyConstraints tidak berhasil, beralih ke re-init stream...", e);
-        }
-      }
-    }
-
-    // Metode 2: Re-init stream aman dengan jeda pembersihan penuh
-    activeFacingMode = nextMode;
-    if (labelCam) labelCam.innerText = (activeFacingMode === "user") ? "Depan" : "Belakang";
     await initCameraStream();
     isSwitchingCamera = false;
   }
