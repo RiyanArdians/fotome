@@ -48,14 +48,14 @@
       flex-direction: column;
       justify-content: space-between;
       align-items: center;
-      padding: 16px 16px 10px;
+      padding: 16px 16px 16px;
       position: relative;
       background-color: var(--bg-cream);
       overflow: hidden;
     }
 
     .page-fullscreen.dark-bg {
-      background-color: var(--primary-crimson);
+      background-color: #000000;
       color: #FFFFFF;
       transition: background-color 0.5s ease;
     }
@@ -340,73 +340,82 @@
     .figma-card-item.hidden-left { transform: translateX(-115%) scale(0.65) rotate(-12deg); opacity: 0; z-index: 1; }
     .figma-card-item.hidden-right { transform: translateX(115%) scale(0.65) rotate(12deg); opacity: 0; z-index: 1; }
 
-    /* KAMERA VIEWFINDER & TOAST INDIKATOR POPUP */
+    /* KAMERA VIEWFINDER & KONTROL LEGA SEPERTI AWAL */
     .camera-stage-container {
-      width: 100%; max-width: 380px; height: 100%;
-      display: flex; flex-direction: column; justify-between; align-items: center; padding: 4px;
+      width: 100%;
+      max-width: 380px;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 4px 15px;
     }
 
     .camera-top-status {
-      width: 100%; display: flex; align-items: center; justify-content: space-between;
-      background: rgba(255,255,255,0.1); backdrop-filter: blur(8px); padding: 5px 12px; border-radius: 20px; color: #FFF; border: 1px solid rgba(255,255,255,0.2);
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      padding: 8px 16px;
+      border-radius: 25px;
+      color: #FFF;
+      border: 1px solid rgba(255, 255, 255, 0.2);
     }
 
     .camera-viewfinder-box {
       position: relative;
       width: 100%;
-      max-width: 310px;
-      height: 46dvh;
-      border-radius: 18px;
+      max-width: 340px;
+      flex: 1;
+      max-height: 52dvh;
+      border-radius: 24px;
       overflow: hidden;
       background: #000;
       border: 2px solid var(--gold-accent);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
-      margin: 2px 0;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      margin: 12px 0;
       display: flex;
       align-items: center;
       justify-content: center;
     }
 
     .camera-video-element {
-      width: 100%; height: 100%; object-fit: cover; display: block; background: #000;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      background: #000;
     }
     .camera-video-element.mirror { transform: scaleX(-1); }
 
-    /* TOAST POPUP KAMERA MELAYANG */
-    .cam-toast-popup {
-      position: absolute;
-      top: 14px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(0, 0, 0, 0.75);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      color: #FFF;
-      border: 1px solid var(--gold-accent);
-      padding: 6px 16px;
-      border-radius: 20px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      z-index: 25;
-      pointer-events: none;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-      transition: opacity 0.3s ease;
-      white-space: nowrap;
-    }
-
     .cam-photos-preview-strip {
-      display: flex; gap: 8px; justify-content: center; align-items: center;
-      background: rgba(255,255,255,0.08); backdrop-filter: blur(8px); padding: 6px 10px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.2); width: 100%; margin-bottom: 6px;
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      padding: 12px 16px;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      width: 100%;
+      max-width: 340px;
+      margin-bottom: 14px;
     }
 
     .photo-thumb-box {
       position: relative; 
-      width: 52px; 
+      width: 58px; 
       aspect-ratio: 1 / 1; 
-      border-radius: 8px; 
+      border-radius: 12px; 
       overflow: hidden;
-      border: 1.5px solid rgba(255,255,255,0.4); 
-      background: rgba(255,255,255,0.1); 
+      border: 1.5px solid rgba(255, 255, 255, 0.4); 
+      background: rgba(255, 255, 255, 0.1); 
       display: flex; 
       align-items: center; 
       justify-content: center;
@@ -414,20 +423,53 @@
     }
 
     .photo-thumb-box img { width: 100%; height: 100%; object-fit: cover; object-position: center; }
-    .photo-thumb-box.empty-slot { border: 1.5px dashed rgba(255,255,255,0.35); color: rgba(255,255,255,0.5); font-size: 0.72rem; font-weight: 600; }
+    .photo-thumb-box.empty-slot { border: 1.5px dashed rgba(255, 255, 255, 0.35); color: rgba(255, 255, 255, 0.5); font-size: 0.8rem; font-weight: 600; }
 
     .cam-floating-tools {
-      display: flex; gap: 6px; background: rgba(255,255,255,0.1); backdrop-filter: blur(8px); padding: 4px 10px; border-radius: 18px; border: 1px solid rgba(255,255,255,0.2); margin-bottom: 4px;
+      display: flex;
+      gap: 12px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      padding: 8px 18px;
+      border-radius: 25px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      margin-bottom: 14px;
+      width: 100%;
+      max-width: 340px;
+      justify-content: space-around;
     }
 
     .cam-tool-btn {
-      background: transparent; border: none; color: #FFF; font-size: 0.72rem; font-weight: 600; padding: 4px 8px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; gap: 4px; white-space: nowrap; transition: transform 0.15s ease;
+      background: transparent;
+      border: none;
+      color: #FFF;
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 4px 6px;
+      border-radius: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+      transition: transform 0.15s ease;
     }
-    .cam-tool-btn:active { transform: scale(0.88); }
+    .cam-tool-btn:active { transform: scale(0.9); }
 
     .cam-snap-trigger {
-      width: 58px; height: 58px; border-radius: 50%; background: #FFF; border: 4px solid var(--gold-accent);
-      box-shadow: 0 0 14px rgba(0,0,0,0.4); cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--primary-crimson); font-size: 1.25rem; margin-top: 2px;
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      background: #FFF;
+      border: 4px solid var(--gold-accent);
+      box-shadow: 0 0 18px rgba(0, 0, 0, 0.5);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary-crimson);
+      font-size: 1.5rem;
       transition: transform 0.15s ease;
     }
     .cam-snap-trigger:active { transform: scale(0.88); }
@@ -695,8 +737,8 @@
   </div>
 </div>
 
-<!-- STEP 3: SESI KAMERA RESPONSIF -->
-<div id="step-camera" class="page-fullscreen dark-bg hidden" style="background:#000;">
+<!-- STEP 3: SESI KAMERA RESPONSIF (TAMPILAN AWAL LEGA & TIDAK DEMPET) -->
+<div id="step-camera" class="page-fullscreen dark-bg hidden">
   <div class="camera-stage-container">
     
     <div class="camera-top-status">
@@ -709,37 +751,33 @@
     <!-- VIEWFINDER KAMERA -->
     <div class="camera-viewfinder-box" id="cam-viewfinder-box">
       <video id="video" class="camera-video-element mirror" autoplay playsinline webkit-playsinline muted></video>
-      
-      <!-- TOAST POPUP KAMERA MELAYANG -->
-      <div id="cam-toast-indicator" class="cam-toast-popup hidden">Kamera Depan</div>
-
       <div id="countdown-overlay" class="countdown-overlay hidden">3</div>
       <div id="flash-overlay" class="flash-overlay"></div>
     </div>
 
-    <!-- STRIP PREVIEW & KONTROL KAMERA RINGKAS -->
-    <div style="width:100%; display:flex; flex-direction:column; align-items:center;">
-      <div class="cam-photos-preview-strip" id="cam-photos-strip"></div>
+    <!-- PREVIEW THUMBNAIL FOTO -->
+    <div class="cam-photos-preview-strip" id="cam-photos-strip"></div>
 
-      <div class="cam-floating-tools" id="cam-tools-box">
-        <button class="cam-tool-btn" id="btn-timer" onclick="toggleTimerSetting()">
-          Timer: <span id="label-timer">3s</span>
-        </button>
-        <button class="cam-tool-btn" id="btn-zoom" onclick="toggleZoomSetting()">
-          Zoom: <span id="label-zoom">1x</span>
-        </button>
-        <button class="cam-tool-btn" id="btn-switch" onclick="switchCameraNext()">
-          Switch
-        </button>
-        <button class="cam-tool-btn" id="btn-mirror" onclick="toggleMirror()">
-          Mirror: <span id="label-mirror">ON</span>
-        </button>
-      </div>
+    <!-- KONTROL KAMERA AWAL -->
+    <div class="cam-floating-tools" id="cam-tools-box">
+      <button class="cam-tool-btn" id="btn-timer" onclick="toggleTimerSetting()">
+        Timer: <span id="label-timer">3s</span>
+      </button>
+      <button class="cam-tool-btn" id="btn-zoom" onclick="toggleZoomSetting()">
+        Zoom: <span id="label-zoom">1x</span>
+      </button>
+      <button class="cam-tool-btn" id="btn-switch" onclick="switchCameraNext()">
+        Switch
+      </button>
+      <button class="cam-tool-btn" id="btn-mirror" onclick="toggleMirror()">
+        Mirror: <span id="label-mirror">ON</span>
+      </button>
+    </div>
 
-      <div style="margin-top:2px; width:100%; min-height:60px; display:flex; justify-content:center; align-items:center;">
-        <div class="cam-snap-trigger" id="btn-snap" onclick="takePhotoSnap()">
-          <i class="fa-solid fa-camera"></i>
-        </div>
+    <!-- TOMBOL AMBIL FOTO -->
+    <div style="width:100%; display:flex; justify-content:center; align-items:center; margin-bottom: 5px;">
+      <div class="cam-snap-trigger" id="btn-snap" onclick="takePhotoSnap()">
+        <i class="fa-solid fa-camera"></i>
       </div>
     </div>
 
@@ -907,15 +945,13 @@
   let videoStream = null;
   let generatedDataUrl = "";
 
-  /* VARIABEL KAMERA HANYA DEPAN, BELAKANG & EKSTERNAL */
-  let availableCameraDevices = []; 
-  let currentCamIndex = 0;
+  /* KAMERA KHUSUS DEPAN & BELAKANG */
+  let currentFacingMode = "user"; // "user" (depan) atau "environment" (belakang)
   let isMirror = true;
   let timerDuration = 3;
   let zoomLevel = 1;      
   let onAlertCloseCallback = null;
   let isTakingPhoto = false;
-  let toastTimeout = null;
 
   let cardItems = [];
   let currentCardIndex = 0;
@@ -1066,7 +1102,7 @@
           requiredPhotoCount = parseInt(countAttr, 10) || 3;
           selectedFramePath = card.getAttribute('data-path');
 
-          initCameraStreamDirectlyOnUserInteraction(false);
+          initCameraStream();
 
           setTimeout(() => {
             card.classList.remove('card-pressed');
@@ -1184,66 +1220,8 @@
     loadRealtimeFeedIG();
   }
 
-  /* PENYARINGAN CERDAS DARI BANYAK LENS SENSOR MENJADI KATEGORI UTAMA */
-  async function scanAndEnumerateCameras() {
-    if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) return;
-    try {
-      const devices = await navigator.mediaDevices.enumerateDevices();
-      const videoDevices = devices.filter(d => d.kind === 'videoinput');
-      
-      let frontCam = null;
-      let backCam = null;
-      let extCam = null;
-
-      videoDevices.forEach((dev, index) => {
-        const label = (dev.label || '').toLowerCase();
-
-        if (label.includes('external') || label.includes('usb') || label.includes('webcam')) {
-          if (!extCam) extCam = { deviceId: dev.deviceId, labelName: "Kamera Eksternal" };
-        } else if (label.includes('back') || label.includes('belakang') || label.includes('environment')) {
-          if (!backCam) backCam = { deviceId: dev.deviceId, labelName: "Kamera Belakang" };
-        } else if (label.includes('front') || label.includes('depan') || label.includes('user')) {
-          if (!frontCam) frontCam = { deviceId: dev.deviceId, labelName: "Kamera Depan" };
-        } else {
-          if (index === 0 && !frontCam) frontCam = { deviceId: dev.deviceId, labelName: "Kamera Depan" };
-          else if (index > 0 && !backCam) backCam = { deviceId: dev.deviceId, labelName: "Kamera Belakang" };
-        }
-      });
-
-      availableCameraDevices = [];
-      if (frontCam) availableCameraDevices.push(frontCam);
-      if (backCam) availableCameraDevices.push(backCam);
-      if (extCam) availableCameraDevices.push(extCam);
-
-      if (availableCameraDevices.length === 0) {
-        availableCameraDevices = [
-          { deviceId: null, labelName: "Kamera Depan", facingMode: "user" },
-          { deviceId: null, labelName: "Kamera Belakang", facingMode: "environment" }
-        ];
-      }
-    } catch (e) {
-      console.warn("Gagal memindai kamera:", e);
-    }
-  }
-
-  /* TAMPILKAN POPUP TOAST OTOMATIS HILANG DALAM 1.5 DETIK */
-  function showCameraToast(text) {
-    const toast = document.getElementById('cam-toast-indicator');
-    if (!toast) return;
-
-    toast.innerText = text;
-    toast.classList.remove('hidden');
-    toast.style.opacity = '1';
-
-    if (toastTimeout) clearTimeout(toastTimeout);
-
-    toastTimeout = setTimeout(() => {
-      toast.style.opacity = '0';
-      setTimeout(() => toast.classList.add('hidden'), 300);
-    }, 1500);
-  }
-
-  function initCameraStreamDirectlyOnUserInteraction(showToast = false) {
+  /* LOGIKA KAMERA DEPAN & BELAKANG BERSIH */
+  function initCameraStream() {
     if (videoStream) {
       videoStream.getTracks().forEach(track => track.stop());
       videoStream = null;
@@ -1252,25 +1230,14 @@
     const video = document.getElementById('video');
     video.srcObject = null;
 
-    let constraints = { video: true, audio: false };
+    // Atur mirror otomatis jika kamera depan
+    isMirror = (currentFacingMode === "user");
+    document.getElementById('label-mirror').innerText = isMirror ? 'ON' : 'OFF';
 
-    if (availableCameraDevices.length > 0 && availableCameraDevices[currentCamIndex]) {
-      const activeCam = availableCameraDevices[currentCamIndex];
-
-      if (activeCam.deviceId) {
-        constraints.video = { deviceId: { exact: activeCam.deviceId } };
-      } else if (activeCam.facingMode) {
-        constraints.video = { facingMode: activeCam.facingMode };
-      }
-
-      // Mirror otomatis jika kamera depan
-      isMirror = (activeCam.labelName === "Kamera Depan");
-      document.getElementById('label-mirror').innerText = isMirror ? 'ON' : 'OFF';
-
-      if (showToast) {
-        showCameraToast(activeCam.labelName);
-      }
-    }
+    const constraints = {
+      video: { facingMode: currentFacingMode },
+      audio: false
+    };
 
     navigator.mediaDevices.getUserMedia(constraints)
       .then(async stream => {
@@ -1278,31 +1245,17 @@
         video.srcObject = stream;
         await video.play();
         applyZoomTransform();
-
-        if (availableCameraDevices.length === 0 || !availableCameraDevices[0].deviceId) {
-          await scanAndEnumerateCameras();
-        }
       })
       .catch(err => {
-        navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: false })
-          .then(stream => {
-            videoStream = stream;
-            video.srcObject = stream;
-            video.play();
-            applyZoomTransform();
-          });
+        console.warn("Gagal membuka kamera:", err);
+        showAlert("Tidak dapat membuka kamera. Pastikan izin kamera diizinkan.", "Kamera Error", "📷");
       });
   }
 
   function switchCameraNext() {
-    if (availableCameraDevices.length <= 1) {
-      currentCamIndex = (currentCamIndex + 1) % 2;
-      initCameraStreamDirectlyOnUserInteraction(true);
-      return;
-    }
-
-    currentCamIndex = (currentCamIndex + 1) % availableCameraDevices.length;
-    initCameraStreamDirectlyOnUserInteraction(true);
+    // Toggling antara Depan (user) dan Belakang (environment)
+    currentFacingMode = (currentFacingMode === "user") ? "environment" : "user";
+    initCameraStream();
   }
 
   function startCameraProcess() {
@@ -1318,7 +1271,7 @@
     updatePhotosStripUI();
 
     if (!videoStream || !videoStream.active) {
-      initCameraStreamDirectlyOnUserInteraction(false);
+      initCameraStream();
     }
   }
 
