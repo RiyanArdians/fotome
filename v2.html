@@ -676,15 +676,11 @@
         </button>
       </div>
 
-      <!-- KONTROL UTAMA: SINKRONISASI TOTAL TANPA CLASS CONFLICT -->
+      <!-- CONTAINER UTAMA TOMBOL DI BAWAH KAMERA -->
       <div id="cam-action-btn-container" style="margin-top:2px; width:100%; min-height:60px; display:flex; justify-content:center; align-items:center;">
         <div class="cam-snap-trigger" id="btn-snap" onclick="takePhotoSnap()">
           <i class="fa-solid fa-camera"></i>
         </div>
-        
-        <button id="btn-proceed-render" class="btn-primary-v2" style="display:none; background: linear-gradient(135deg, #D4AF37 0%, #AA7C11 100%); color:#2B1E1E; border:none; padding:12px 24px; font-size:0.85rem; width:100%; max-width:320px;" onclick="proceedToRenderStrip()">
-          Lanjutkan ke Cetak ✨ &rarr;
-        </button>
       </div>
     </div>
 
@@ -1152,8 +1148,7 @@
   function updatePhotosStripUI() {
     const stripBox = document.getElementById('cam-photos-strip');
     const toolsBox = document.getElementById('cam-floating-tools');
-    const btnSnap = document.getElementById('btn-snap');
-    const btnProceed = document.getElementById('btn-proceed-render');
+    const actionContainer = document.getElementById('cam-action-btn-container');
     const progressText = document.getElementById('cam-progress-text');
 
     const totalNeeded = parseInt(requiredPhotoCount, 10) || 3;
@@ -1177,19 +1172,25 @@
       stripBox.appendChild(thumbBox);
     }
 
-    // UPDATE DENGAN STYLE INLINE UNTUK MENGHINDARI KONFLIK CSS CLASS
+    // GANTI ELEMEN HTML SECARA DIRECT DAN PASTI
     if (currentCapturedCount >= totalNeeded) {
       progressText.innerText = `Foto ${totalNeeded} dari ${totalNeeded} (Selesai)`;
       toolsBox.style.display = 'none';
       
-      if (btnSnap) btnSnap.style.display = 'none';
-      if (btnProceed) btnProceed.style.display = 'inline-flex';
+      actionContainer.innerHTML = `
+        <button class="btn-primary-v2" style="background: linear-gradient(135deg, #D4AF37 0%, #AA7C11 100%); color:#2B1E1E; border:none; padding:12px 24px; font-size:0.85rem; width:100%; max-width:320px;" onclick="proceedToRenderStrip()">
+          LANJUTKAN KE CETAK ✨ &rarr;
+        </button>
+      `;
     } else {
       progressText.innerText = `Foto ${currentCapturedCount + 1} dari ${totalNeeded}`;
       toolsBox.style.display = 'flex';
       
-      if (btnSnap) btnSnap.style.display = 'flex';
-      if (btnProceed) btnProceed.style.display = 'none';
+      actionContainer.innerHTML = `
+        <div class="cam-snap-trigger" id="btn-snap" onclick="takePhotoSnap()">
+          <i class="fa-solid fa-camera"></i>
+        </div>
+      `;
     }
   }
 
@@ -1347,16 +1348,11 @@
 
     isTakingPhoto = false;
 
-    const btnSnap = document.getElementById('btn-snap');
-    if (btnSnap) btnSnap.style.opacity = '1';
-
     updatePhotosStripUI();
 
-    // EKSEKUSI OTOMATIS LANGSUNG KE SESI CETAK DENGAN RECOVERY
+    // LANGSUNG PANGGUL RENDER SECARA INSTAN TANPA MENUNGGU LAMA
     if (capturedPhotos.length >= totalNeeded) {
-      setTimeout(() => {
-        proceedToRenderStrip();
-      }, 100);
+      proceedToRenderStrip();
     }
   }
 
