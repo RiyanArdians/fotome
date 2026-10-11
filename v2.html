@@ -61,7 +61,6 @@
       transition: background-color 0.5s ease;
     }
 
-    /* TOMBOL HANYA TEKS TANPA EMOJI / PANAH DENGAN ANIMASI TEKAN */
     .btn-primary-v2 {
       background: linear-gradient(135deg, #8C2331 0%, var(--primary-crimson) 100%);
       color: #FFFFFF;
@@ -165,7 +164,7 @@
 
     .btn-back-styled:active { transform: scale(0.94); background: rgba(255, 255, 255, 0.25); }
 
-    /* 1. AMPLOP ANIMASI LURUS KE ATAS -> TENGAN & ZOOM */
+    /* 1. AMPLOP ANIMASI */
     .envelope-screen {
       position: fixed;
       top: 0; left: 0; width: 100vw; height: 100dvh;
@@ -247,7 +246,7 @@
     .envelope-wrapper.step-lift-up .envelope-card-inside { opacity: 1; transform: translateY(-110px) scale(1); z-index: 8; }
     .envelope-wrapper.step-zoom-center .envelope-card-inside { transform: translateY(0) scale(1.28); z-index: 99; box-shadow: 0 25px 60px rgba(0,0,0,0.5); }
 
-    /* 2. FRAME HERO BULAT MEMANJANG PROPORSI PAS */
+    /* 2. FRAME HERO BULAT MEMANJANG */
     .hero-pill-frame-pure {
       width: 100%;
       max-width: 230px;
@@ -275,7 +274,7 @@
       display: block;
     }
 
-    /* 3. PERBAIKAN TATA LETAK HALAMAN "DARI SIAPA KENANGAN INI?" */
+    /* 3. INPUT NAMA */
     .ask-page-center-wrapper {
       flex: 1;
       display: flex;
@@ -342,7 +341,7 @@
     .figma-card-item.hidden-left { transform: translateX(-115%) scale(0.65) rotate(-12deg); opacity: 0; z-index: 1; }
     .figma-card-item.hidden-right { transform: translateX(115%) scale(0.65) rotate(12deg); opacity: 0; z-index: 1; }
 
-    /* 5. KAMERA VIEWFINDER */
+    /* 5. KAMERA VIEWFINDER & THUMBNAIL PREVIEW PERSEGI (RASIO SAMA) */
     .camera-stage-container {
       width: 100%; max-width: 380px; height: 100%;
       display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 4px;
@@ -379,13 +378,22 @@
       background: rgba(255,255,255,0.08); backdrop-filter: blur(8px); padding: 6px 10px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.2); width: 100%; margin-bottom: 6px;
     }
 
+    /* PREVIEW THUMBNAIL KAMERA DIPERBAIKI SAMA PERSEGI (ASPECT-RATIO 1/1) */
     .photo-thumb-box {
-      position: relative; width: 50px; height: 65px; border-radius: 8px; overflow: hidden;
-      border: 1.5px solid rgba(255,255,255,0.4); background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center;
+      position: relative; 
+      width: 52px; 
+      aspect-ratio: 1 / 1; 
+      border-radius: 8px; 
+      overflow: hidden;
+      border: 1.5px solid rgba(255,255,255,0.4); 
+      background: rgba(255,255,255,0.1); 
+      display: flex; 
+      align-items: center; 
+      justify-content: center;
       transition: all 0.3s ease;
     }
 
-    .photo-thumb-box img { width: 100%; height: 100%; object-fit: cover; }
+    .photo-thumb-box img { width: 100%; height: 100%; object-fit: cover; object-position: center; }
     .photo-thumb-box.empty-slot { border: 1.5px dashed rgba(255,255,255,0.35); color: rgba(255,255,255,0.5); font-size: 0.72rem; font-weight: 600; }
 
     .cam-floating-tools {
@@ -411,7 +419,7 @@
     .flash-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: #FFF; opacity: 0; pointer-events: none; transition: opacity 0.1s; z-index: 30; }
     .flash-overlay.active { opacity: 1; }
 
-    /* REVIEW HASIL FOTO (PENYESUAIAN RASIO SESUAI VIEWFINDER KAMERA) */
+    /* REVIEW HASIL FOTO */
     .review-grid-box {
       display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; align-items: center; width: 100%; max-width: 330px; margin: 15px 0;
     }
@@ -420,7 +428,7 @@
       position: relative; 
       width: calc(33.33% - 8px); 
       max-width: 100px;
-      aspect-ratio: 1 / 1; /* Rasio persegi presisi mengikuti ukuran tangkapan kamera */
+      aspect-ratio: 1 / 1; 
       border-radius: 14px; 
       overflow: hidden; 
       border: 2px solid var(--gold-accent); 
@@ -439,7 +447,7 @@
       position: absolute; top: 5px; right: 5px; background: rgba(231, 76, 60, 0.95); color: #FFF; border: none; width: 22px; height: 22px; border-radius: 50%; font-weight: 700; font-size: 0.75rem; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.4); z-index: 10;
     }
 
-    /* 6. PRINTER STAGE & PROPORSI HASIL CETAK */
+    /* 6. PRINTER STAGE */
     .printer-lottie-stage {
       width: 100vw; min-height: 100dvh; background: #FFFFFF; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 16px 14px 20px; position: relative; overflow-y: auto;
     }
@@ -496,7 +504,7 @@
     }
     .printer-bottom-actions.visible { opacity: 1; transform: translateY(0); }
 
-    /* 7. STYLING GALERI KIRIMAN TAMU + TIMESTAMP FORMAT */
+    /* 7. STYLING GALERI KIRIMAN TAMU & FITUR REAKSI / RATING */
     .feed-container { width: 100%; max-width: 420px; margin: 0 auto; }
     .gallery-intro-box { background: #FAF6F0; border: 1px solid rgba(212, 175, 55, 0.3); border-radius: 16px; padding: 14px 10px; margin-bottom: 16px; text-align: center; }
     .ig-grid-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
@@ -514,6 +522,43 @@
     .ig-item-img-box img { width: 100%; height: 100%; object-fit: cover; }
     .ig-item-msg { font-size: 0.6rem; color: #555; padding: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; font-style: italic; background: #FFF; }
 
+    /* ROW REAKSI / RATING EMOJI */
+    .reaction-bar {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 4px 2px;
+      background: #FAF6F0;
+      border-top: 1px solid rgba(212,175,55,0.2);
+    }
+
+    .reaction-btn {
+      background: transparent;
+      border: none;
+      font-size: 0.68rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      color: #666;
+      padding: 2px 4px;
+      border-radius: 8px;
+      transition: background 0.2s, transform 0.15s;
+    }
+
+    .reaction-btn:active { transform: scale(1.2); }
+    .reaction-btn.reacted { font-weight: 700; color: var(--primary-crimson); background: rgba(212, 175, 55, 0.2); }
+
+    .gallery-section-title {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--primary-crimson);
+      margin: 16px 0 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
     /* FOOTER OFFICIAL */
     .app-official-footer { text-align: center; padding: 8px 10px 2px; font-size: 0.65rem; color: #8C6262; border-top: 1px dashed rgba(216, 180, 180, 0.4); margin-top: 8px; width: 100%; letter-spacing: 0.5px; }
     .app-official-footer.light-text { color: rgba(255, 255, 255, 0.65); border-top: 1px dashed rgba(255, 255, 255, 0.2); }
@@ -524,7 +569,7 @@
     .modal-close-btn { position: absolute; top: 8px; right: 10px; background: #7A1C28; color: #FFF; border: none; width: 28px; height: 28px; border-radius: 50%; font-weight: 700; font-size: 0.85rem; cursor: pointer; z-index: 100; }
     .modal-user-name { font-size: 0.92rem; font-weight: 700; color: var(--primary-crimson); margin-bottom: 1px; padding-right: 25px; }
     .modal-user-date { font-size: 0.65rem; color: #888; margin-bottom: 4px; }
-    .modal-img { width: 100%; max-height: 52vh; object-fit: contain; border-radius: 10px; margin: 6px 0; background: #FAF6F0; }
+    .modal-img { width: 100%; max-height: 50vh; object-fit: contain; border-radius: 10px; margin: 6px 0; background: #FAF6F0; }
     .modal-msg { font-size: 0.78rem; color: #333; font-style: italic; background: #FAF6F0; padding: 8px 10px; border-radius: 8px; line-height: 1.35; word-break: break-word; }
 
     canvas { display: none; }
@@ -532,7 +577,7 @@
 </head>
 <body>
 
-<!-- 0. AMPLOP TERTUTUP PRESISI & ANIMASI ATAS - TURUN - ZOOM -->
+<!-- 0. AMPLOP TERTUTUP -->
 <div id="envelope-screen" class="envelope-screen" onclick="openEnvelopeAnimation()">
   <div style="text-align:center; color:#FFF; margin-bottom:10px;">
     <div style="font-size:0.72rem; letter-spacing:3px; color:var(--gold-accent); font-weight:700; margin-bottom:4px;">KENANGAN PERNIKAHAN</div>
@@ -584,7 +629,7 @@
   </div>
 </div>
 
-<!-- PAGE: INPUT NAMA (PROPORSI DISESUAIKAN SANGAT RAPI) -->
+<!-- PAGE: INPUT NAMA -->
 <div id="step-ask-name" class="page-fullscreen dark-bg hidden">
   <div style="width:100%; text-align:center; padding-top:4px;">
     <p style="font-size:0.68rem; color:var(--gold-accent); letter-spacing:2.5px; font-weight:700; margin-bottom:2px;">KENANGAN PERNIKAHAN</p>
@@ -685,7 +730,7 @@
       <div id="flash-overlay" class="flash-overlay"></div>
     </div>
 
-    <!-- STRIP PREVIEW & KONTROL KAMERA -->
+    <!-- STRIP PREVIEW PERSEGI & KONTROL KAMERA -->
     <div style="width:100%; display:flex; flex-direction:column; align-items:center;">
       <div class="cam-photos-preview-strip" id="cam-photos-strip"></div>
 
@@ -716,7 +761,7 @@
   </div>
 </div>
 
-<!-- STEP 3B: HALAMAN KHUSUS PREVIEW HASIL FOTO -->
+<!-- STEP 3B: HALAMAN PREVIEW HASIL FOTO -->
 <div id="step-review-photos" class="page-fullscreen dark-bg hidden">
   <div style="width:100%; text-align:center; padding-top:10px;">
     <p style="font-size:0.68rem; color:var(--gold-accent); letter-spacing:2.5px; font-weight:700; margin-bottom:2px;">REVIEW HASIL FOTO</p>
@@ -775,7 +820,7 @@
     <div class="status-sub-label" id="printer-status-sub">Harap tunggu sebentar</div>
   </div>
 
-  <!-- FORM UCAPAN: NAMA TERISI DARI AWAL, FOKUS ISI UCAPAN -->
+  <!-- FORM UCAPAN -->
   <div class="printer-bottom-actions" id="printer-bottom-actions">
     <div style="background: #FAF6EE; border: 1px solid rgba(212,175,55,0.35); border-radius: 14px; padding: 10px; text-align: left; box-shadow:0 4px 12px rgba(0,0,0,0.05);">
       <label style="display:block; font-size:0.68rem; font-weight:700; color:var(--primary-crimson); margin-bottom:3px;">Dari (Pengirim)</label>
@@ -804,7 +849,7 @@
 
 </div>
 
-<!-- GALERI KENANGAN -->
+<!-- GALERI KENANGAN (DENGAN POPULER & SEMUA KIRIMAN + REAKSI) -->
 <div id="step-gallery-page" class="page-fullscreen hidden" style="overflow-y:auto; height:auto; min-height:100dvh;">
   <div class="feed-container">
     <div style="text-align:center; margin-bottom:12px;">
@@ -822,11 +867,21 @@
       </div>
     </div>
 
-    <div style="font-size:0.85rem; font-weight:700; color:var(--primary-crimson); margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
-      <span>Kiriman Tamu</span>
-      <span style="font-size:0.7rem; color:#888;" id="total-posts-count">0 Kiriman</span>
+    <!-- SEKSI POPULER / PALING BANYAK DISUKAI (MAX 6 FOTO / 2 BARIS) -->
+    <div id="popular-section" class="hidden">
+      <div class="gallery-section-title">
+        <i class="fa-solid fa-fire-flame-curved" style="color:#E74C3C;"></i>
+        <span>Paling Banyak Disukai (Populer)</span>
+      </div>
+      <div id="popular-grid-box" class="ig-grid-container"></div>
     </div>
 
+    <!-- SEKSI SEMUA KIRIMAN -->
+    <div class="gallery-section-title" style="margin-top:20px;">
+      <i class="fa-solid fa-clock-rotate-left" style="color:var(--primary-crimson);"></i>
+      <span>Semua Kiriman</span>
+      <span style="font-size:0.7rem; color:#888; font-weight:normal; margin-left:auto;" id="total-posts-count">0 Kiriman</span>
+    </div>
     <div id="ig-grid-box" class="ig-grid-container">
       <p style="font-size: 0.8rem; color: #999; grid-column: span 3; text-align: center;">Memuat ucapan &amp; foto tamu...</p>
     </div>
@@ -843,7 +898,7 @@
   </div>
 </div>
 
-<!-- MODAL LIGHTBOX FOTO TAMU (DENGAN TANGGAL & JAM) -->
+<!-- MODAL LIGHTBOX FOTO TAMU -->
 <div id="photo-modal" class="modal-overlay hidden">
   <div class="modal-card">
     <button class="modal-close-btn" onclick="closeModal()">✕</button>
@@ -851,10 +906,11 @@
     <div class="modal-user-date" id="modal-date">06 Des 2026 • 12:00</div>
     <img id="modal-img" class="modal-img" src="" alt="Foto Perbesar">
     <div class="modal-msg" id="modal-msg">"Ucapan doa tamu..."</div>
+    <div class="reaction-bar" id="modal-reaction-bar" style="border-radius:10px; margin-top:8px;"></div>
   </div>
 </div>
 
-<!-- MODAL POP-UP ALERT -->
+<!-- MODAL ALERT -->
 <div id="alert-modal" class="modal-overlay hidden">
   <div class="modal-card">
     <div style="font-size: 2rem; margin-bottom: 6px;" id="alert-icon">✨</div>
@@ -1204,6 +1260,7 @@
     }
   }
 
+  /* UPDATE THUMBNAIL PREVIEW PERSEGI PRESISI DENGAN CAMERA VIEWFINDER */
   function updatePhotosStripUI() {
     const stripBox = document.getElementById('cam-photos-strip');
     const progressText = document.getElementById('cam-progress-text');
@@ -1349,7 +1406,6 @@
     const vWidth = video.videoWidth || 640;
     const vHeight = video.videoHeight || 480;
 
-    // Menyesuaikan rasio pemotongan canvas dengan rasio elemen viewfinder
     const boxRect = viewfinderBox.getBoundingClientRect();
     const boxAspect = boxRect.width / boxRect.height;
 
@@ -1552,6 +1608,8 @@
         name: senderName,
         message: senderMessage,
         photoData: generatedDataUrl,
+        reactions: { like: 0, love: 0, fire: 0 },
+        totalReactions: 0,
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       }).then(() => {
         showAlert("Foto berhasil diunduh dan diposting ke Galeri!", "Berhasil Ditambahkan", "📸", () => {
@@ -1570,7 +1628,7 @@
     });
   }
 
-  /* FORMAT TANGGAL & JAM UNTUK KIRIMAN TAMU */
+  /* FORMAT TANGGAL & JAM DARI TIMESTAMP FIRESTORE */
   function formatTimestamp(timestamp) {
     if (!timestamp) return 'Baru saja';
     const dateObj = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
@@ -1585,62 +1643,157 @@
     return `${day} ${month} ${year} • ${hours}:${minutes}`;
   }
 
+  /* FITUR REAKSI EMOJI (LIKE, LOVE, FIRE) DENGAN MENCEGAH SPAM */
+  function handleReaction(postId, reactionType, event) {
+    if (event) event.stopPropagation();
+
+    const reactedStorageKey = `reacted_${postId}_${reactionType}`;
+    if (localStorage.getItem(reactedStorageKey)) {
+      showAlert("Kamu sudah memberikan reaksi emoji ini!", "Info Reaksi", "✨");
+      return;
+    }
+
+    const postRef = db.collection('posts').doc(postId);
+    db.runTransaction(transaction => {
+      return transaction.get(postRef).then(doc => {
+        if (!doc.exists) return;
+        const data = doc.data();
+        const reactions = data.reactions || { like: 0, love: 0, fire: 0 };
+        reactions[reactionType] = (reactions[reactionType] || 0) + 1;
+        const total = (reactions.like || 0) + (reactions.love || 0) + (reactions.fire || 0);
+
+        transaction.update(postRef, {
+          reactions: reactions,
+          totalReactions: total
+        });
+      });
+    }).then(() => {
+      localStorage.setItem(reactedStorageKey, "true");
+    }).catch(err => {
+      console.error("Gagal menambah reaksi:", err);
+    });
+  }
+
+  function createCardHTML(data) {
+    const timeFormatted = formatTimestamp(data.createdAt);
+    const reactions = data.reactions || { like: 0, love: 0, fire: 0 };
+
+    const isLikeReacted = localStorage.getItem(`reacted_${data.id}_like`);
+    const isLoveReacted = localStorage.getItem(`reacted_${data.id}_love`);
+    const isFireReacted = localStorage.getItem(`reacted_${data.id}_fire`);
+
+    return `
+      <div class="ig-grid-item">
+        <div class="ig-item-header" onclick="openModal('${data.id}')">
+          <div class="ig-item-name">${data.name || 'Tamu'}</div>
+          <div class="ig-item-date">${timeFormatted}</div>
+        </div>
+        <div class="ig-item-img-box" onclick="openModal('${data.id}')">
+          <img src="${data.photoData}" alt="Foto Strip">
+        </div>
+        <div class="ig-item-msg" onclick="openModal('${data.id}')">"${data.message || ''}"</div>
+        <div class="reaction-bar">
+          <button class="reaction-btn ${isLikeReacted ? 'reacted' : ''}" onclick="handleReaction('${data.id}', 'like', event)">
+            👍 <span>${reactions.like || 0}</span>
+          </button>
+          <button class="reaction-btn ${isLoveReacted ? 'reacted' : ''}" onclick="handleReaction('${data.id}', 'love', event)">
+            ❤️ <span>${reactions.love || 0}</span>
+          </button>
+          <button class="reaction-btn ${isFireReacted ? 'reacted' : ''}" onclick="handleReaction('${data.id}', 'fire', event)">
+            🔥 <span>${reactions.fire || 0}</span>
+          </button>
+        </div>
+      </div>
+    `;
+  }
+
+  let globalPostsData = [];
+
   function loadRealtimeFeedIG() {
     db.collection('posts')
       .where('eventId', '==', EVENT_DOC_ID)
       .onSnapshot(snapshot => {
         const gridBox = document.getElementById('ig-grid-box');
+        const popularGridBox = document.getElementById('popular-grid-box');
+        const popularSection = document.getElementById('popular-section');
         const countSpan = document.getElementById('total-posts-count');
+        
         gridBox.innerHTML = '';
+        popularGridBox.innerHTML = '';
 
         if (snapshot.empty) {
           gridBox.innerHTML = '<p style="font-size: 0.8rem; color: #999; grid-column: span 3; text-align: center;">Belum ada foto di galeri. Tampil pertama di sini!</p>';
           countSpan.innerText = '0 Kiriman';
+          popularSection.classList.add('hidden');
           return;
         }
 
         countSpan.innerText = `${snapshot.size} Kiriman`;
 
-        let posts = [];
+        globalPostsData = [];
         snapshot.forEach(doc => {
-          posts.push({ id: doc.id, ...doc.data() });
+          globalPostsData.push({ id: doc.id, ...doc.data() });
         });
 
-        posts.sort((a, b) => {
+        // 1. POPULER (MAX 6 FOTO DENGAN TOTAL REAKSI TERBANYAK & LEBIH DARI 0)
+        let popularPosts = [...globalPostsData]
+          .filter(p => (p.totalReactions || 0) > 0)
+          .sort((a, b) => (b.totalReactions || 0) - (a.totalReactions || 0))
+          .slice(0, 6);
+
+        if (popularPosts.length > 0) {
+          popularSection.classList.remove('hidden');
+          popularPosts.forEach(data => {
+            popularGridBox.innerHTML += createCardHTML(data);
+          });
+        } else {
+          popularSection.classList.add('hidden');
+        }
+
+        // 2. SEMUA KIRIMAN (TERBARU PALING ATAS)
+        let allPosts = [...globalPostsData].sort((a, b) => {
           const timeA = a.createdAt ? a.createdAt.toMillis() : 0;
           const timeB = b.createdAt ? b.createdAt.toMillis() : 0;
           return timeB - timeA;
         });
 
-        posts.forEach(data => {
-          const item = document.createElement('div');
-          item.className = 'ig-grid-item';
-          const timeFormatted = formatTimestamp(data.createdAt);
-          
-          item.onclick = () => openModal(data.name, data.message, data.photoData, timeFormatted);
-
-          item.innerHTML = `
-            <div class="ig-item-header">
-              <div class="ig-item-name">${data.name || 'Tamu'}</div>
-              <div class="ig-item-date">${timeFormatted}</div>
-            </div>
-            <div class="ig-item-img-box">
-              <img src="${data.photoData}" alt="Foto Strip">
-            </div>
-            <div class="ig-item-msg">"${data.message || ''}"</div>
-          `;
-          gridBox.appendChild(item);
+        allPosts.forEach(data => {
+          gridBox.innerHTML += createCardHTML(data);
         });
       }, error => {
         console.error("Gagal memuat galeri:", error);
       });
   }
 
-  function openModal(name, message, photoSrc, dateFormatted) {
-    document.getElementById('modal-name').innerText = name || 'Tamu Undangan';
-    document.getElementById('modal-date').innerText = dateFormatted || '';
-    document.getElementById('modal-msg').innerText = `"${message || ''}"`;
-    document.getElementById('modal-img').src = photoSrc;
+  function openModal(postId) {
+    const data = globalPostsData.find(p => p.id === postId);
+    if (!data) return;
+
+    const timeFormatted = formatTimestamp(data.createdAt);
+    const reactions = data.reactions || { like: 0, love: 0, fire: 0 };
+
+    document.getElementById('modal-name').innerText = data.name || 'Tamu Undangan';
+    document.getElementById('modal-date').innerText = timeFormatted;
+    document.getElementById('modal-msg').innerText = `"${data.message || ''}"`;
+    document.getElementById('modal-img').src = data.photoData;
+
+    const isLikeReacted = localStorage.getItem(`reacted_${data.id}_like`);
+    const isLoveReacted = localStorage.getItem(`reacted_${data.id}_love`);
+    const isFireReacted = localStorage.getItem(`reacted_${data.id}_fire`);
+
+    const modalReactionBar = document.getElementById('modal-reaction-bar');
+    modalReactionBar.innerHTML = `
+      <button class="reaction-btn ${isLikeReacted ? 'reacted' : ''}" onclick="handleReaction('${data.id}', 'like', event)">
+        👍 <span>${reactions.like || 0}</span>
+      </button>
+      <button class="reaction-btn ${isLoveReacted ? 'reacted' : ''}" onclick="handleReaction('${data.id}', 'love', event)">
+        ❤️ <span>${reactions.love || 0}</span>
+      </button>
+      <button class="reaction-btn ${isFireReacted ? 'reacted' : ''}" onclick="handleReaction('${data.id}', 'fire', event)">
+        🔥 <span>${reactions.fire || 0}</span>
+      </button>
+    `;
+
     document.getElementById('photo-modal').classList.remove('hidden');
   }
 
