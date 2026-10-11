@@ -16,14 +16,14 @@
 
   <style>
     :root {
-      --primary-crimson: #7A1C28;
-      --deep-crimson: #5C131D;
+      --primary-crimson: #8C4A52;
+      --deep-crimson: #6B343B;
       --gold-accent: #D4AF37;
-      --gold-light: #F3E5AB;
-      --bg-cream: #FAF6F0;
-      --text-dark: #2B1E1E;
-      --card-glass: rgba(255, 255, 255, 0.12);
-      --card-border: rgba(212, 175, 55, 0.35);
+      --gold-light: #F8F1E5;
+      --bg-cream: #FDFBF7;
+      --text-dark: #3A2E2E;
+      --card-glass: rgba(255, 255, 255, 0.18);
+      --card-border: rgba(212, 175, 55, 0.3);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -48,20 +48,20 @@
       flex-direction: column;
       justify-content: space-between;
       align-items: center;
-      padding: 16px 16px 16px;
+      padding: 16px;
       position: relative;
       background-color: var(--bg-cream);
       overflow: hidden;
     }
 
     .page-fullscreen.dark-bg {
-      background-color: var(--primary-crimson);
+      background: linear-gradient(180deg, #7A3D44 0%, #5C2B32 100%);
       color: #FFFFFF;
-      transition: background-color 0.5s ease;
+      transition: background 0.5s ease;
     }
 
     .btn-primary-v2 {
-      background: linear-gradient(135deg, #8C2331 0%, var(--primary-crimson) 100%);
+      background: linear-gradient(135deg, #9E5660 0%, var(--primary-crimson) 100%);
       color: #FFFFFF;
       border: 1px solid var(--gold-accent);
       padding: 13px 20px;
@@ -71,7 +71,7 @@
       text-transform: uppercase;
       border-radius: 35px;
       cursor: pointer;
-      box-shadow: 0 6px 18px rgba(122, 28, 40, 0.25);
+      box-shadow: 0 6px 18px rgba(140, 74, 82, 0.25);
       width: 100%;
       max-width: 320px;
       display: flex;
@@ -80,10 +80,10 @@
       transition: transform 0.15s ease, box-shadow 0.15s ease;
     }
 
-    .btn-primary-v2:active { transform: scale(0.95); box-shadow: 0 2px 8px rgba(122, 28, 40, 0.2); }
+    .btn-primary-v2:active { transform: scale(0.95); box-shadow: 0 2px 8px rgba(140, 74, 82, 0.2); }
 
     .btn-gold-v2 {
-      background: linear-gradient(135deg, #D4AF37 0%, #AA7C11 100%);
+      background: linear-gradient(135deg, #E2C275 0%, #C39B38 100%);
       color: #2B1E1E;
       border: 1px solid #FFF;
       padding: 13px 20px;
@@ -93,7 +93,7 @@
       text-transform: uppercase;
       border-radius: 35px;
       cursor: pointer;
-      box-shadow: 0 6px 18px rgba(170, 124, 17, 0.3);
+      box-shadow: 0 6px 18px rgba(195, 155, 56, 0.25);
       width: 100%;
       max-width: 320px;
       display: flex;
@@ -102,7 +102,7 @@
       transition: transform 0.15s ease, box-shadow 0.15s ease;
     }
 
-    .btn-gold-v2:active { transform: scale(0.95); box-shadow: 0 2px 8px rgba(170, 124, 17, 0.2); }
+    .btn-gold-v2:active { transform: scale(0.95); box-shadow: 0 2px 8px rgba(195, 155, 56, 0.2); }
 
     .btn-secondary-v2 {
       background: transparent;
@@ -124,7 +124,7 @@
       transition: transform 0.15s ease, background 0.2s ease;
     }
 
-    .btn-secondary-v2:active { transform: scale(0.95); background: rgba(122, 28, 40, 0.08); }
+    .btn-secondary-v2:active { transform: scale(0.95); background: rgba(140, 74, 82, 0.08); }
 
     .btn-outline-v2 {
       background: transparent;
@@ -145,7 +145,7 @@
     .btn-outline-v2:active { transform: scale(0.94); opacity: 0.7; }
 
     .btn-back-styled {
-      background: rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.15);
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
       color: #FFFFFF;
@@ -163,11 +163,11 @@
 
     .btn-back-styled:active { transform: scale(0.94); background: rgba(255, 255, 255, 0.25); }
 
-    /* AMPLOP ANIMASI */
+    /* AMPLOP ANIMASI SOFT */
     .envelope-screen {
       position: fixed;
       top: 0; left: 0; width: 100vw; height: 100dvh;
-      background: var(--primary-crimson);
+      background: linear-gradient(180deg, #7A3D44 0%, #5C2B32 100%);
       z-index: 99999;
       display: flex;
       flex-direction: column;
@@ -185,7 +185,7 @@
       height: 185px;
       background: var(--deep-crimson);
       border-radius: 12px;
-      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.45);
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.3);
       border: 1px solid var(--card-border);
       margin: 15px 0;
       display: flex;
@@ -200,11 +200,11 @@
       width: 0; height: 0;
       border-left: 144px solid transparent;
       border-right: 144px solid transparent;
-      border-top: 105px solid #8C2331;
+      border-top: 105px solid #8C4A52;
       transform-origin: top;
       transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
       z-index: 5;
-      filter: drop-shadow(0 4px 6px rgba(0,0,0,0.25));
+      filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2));
     }
 
     .envelope-gold-seal {
@@ -212,9 +212,9 @@
       top: 50%; left: 50%;
       transform: translate(-50%, -50%);
       width: 42px; height: 42px;
-      background: linear-gradient(135deg, #F3E5AB 0%, #D4AF37 50%, #AA7C11 100%);
+      background: linear-gradient(135deg, #F8F1E5 0%, #D4AF37 50%, #C39B38 100%);
       border-radius: 50%;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
       border: 1.5px solid #FFF;
       z-index: 10;
       transition: transform 0.3s ease, opacity 0.3s ease;
@@ -224,12 +224,12 @@
       position: absolute;
       width: 258px;
       height: 162px;
-      background: #FAF6F0;
+      background: #FDFBF7;
       border-radius: 10px;
       border: 1px solid var(--gold-accent);
       padding: 14px 10px;
       text-align: center;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
       z-index: 2;
       transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.5s ease;
       display: flex;
@@ -243,7 +243,7 @@
     .envelope-wrapper.step-open-flap .envelope-flap-top { transform: rotateX(180deg); z-index: 1; }
     .envelope-wrapper.step-open-flap .envelope-gold-seal { opacity: 0; transform: translate(-50%, -50%) scale(0.4); }
     .envelope-wrapper.step-lift-up .envelope-card-inside { opacity: 1; transform: translateY(-110px) scale(1); z-index: 8; }
-    .envelope-wrapper.step-zoom-center .envelope-card-inside { transform: translateY(0) scale(1.28); z-index: 99; box-shadow: 0 25px 60px rgba(0,0,0,0.5); }
+    .envelope-wrapper.step-zoom-center .envelope-card-inside { transform: translateY(0) scale(1.28); z-index: 99; box-shadow: 0 25px 60px rgba(0,0,0,0.35); }
 
     /* FRAME HERO BULAT */
     .hero-pill-frame-pure {
@@ -257,7 +257,7 @@
       padding: 5px;
       margin: 8px auto;
       background: #FFF;
-      box-shadow: 0 10px 25px rgba(122, 28, 40, 0.12);
+      box-shadow: 0 10px 25px rgba(140, 74, 82, 0.1);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -293,13 +293,13 @@
       padding: 24px 20px 20px;
       width: 100%;
       max-width: 320px;
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
       text-align: center;
     }
 
     .stylish-underline-input {
       width: 100%;
-      background: rgba(0, 0, 0, 0.2);
+      background: rgba(0, 0, 0, 0.15);
       border: 1px solid rgba(212, 175, 55, 0.5);
       border-radius: 30px;
       color: #FFFFFF;
@@ -312,8 +312,8 @@
       margin: 16px 0 4px;
     }
 
-    .stylish-underline-input::placeholder { color: rgba(255, 255, 255, 0.5); font-style: italic; font-size: 0.88rem; }
-    .stylish-underline-input:focus { border-color: var(--gold-accent); box-shadow: 0 0 12px rgba(212, 175, 55, 0.3); background: rgba(0, 0, 0, 0.3); }
+    .stylish-underline-input::placeholder { color: rgba(255, 255, 255, 0.6); font-style: italic; font-size: 0.88rem; }
+    .stylish-underline-input:focus { border-color: var(--gold-accent); box-shadow: 0 0 12px rgba(212, 175, 55, 0.3); background: rgba(0, 0, 0, 0.25); }
 
     /* SLIDER FIGMA PILIH FRAME */
     .slider-header-box { text-align: center; z-index: 10; width: 100%; max-width: 360px; margin-top: 2px; }
@@ -327,9 +327,9 @@
 
     .figma-card-item {
       position: absolute; width: 170px; height: 100%; max-height: 340px;
-      border-radius: 18px; background: rgba(255, 255, 255, 0.12); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      border-radius: 18px; background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
       border: 1px solid rgba(255, 255, 255, 0.3); display: flex; align-items: center; justify-content: center;
-      padding: 8px; box-shadow: 0 12px 25px rgba(0, 0, 0, 0.25); transition: all 0.45s cubic-bezier(0.25, 1, 0.5, 1); cursor: pointer; user-select: none;
+      padding: 8px; box-shadow: 0 12px 25px rgba(0, 0, 0, 0.2); transition: all 0.45s cubic-bezier(0.25, 1, 0.5, 1); cursor: pointer; user-select: none;
     }
 
     .figma-card-item img { width: 100%; height: 100%; max-height: 320px; object-fit: contain; }
@@ -358,13 +358,13 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      background: rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.15);
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
       padding: 8px 16px;
       border-radius: 25px;
       color: #FFF;
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.25);
     }
 
     .camera-viewfinder-box {
@@ -377,7 +377,7 @@
       overflow: hidden;
       background: #000;
       border: 2px solid var(--gold-accent);
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
       margin: 12px 0;
       display: flex;
       align-items: center;
@@ -398,15 +398,15 @@
       gap: 10px;
       justify-content: center;
       align-items: center;
-      background: rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.1);
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
       padding: 12px 16px;
       border-radius: 20px;
-      border: 1px solid rgba(255, 255, 255, 0.18);
+      border: 1px solid rgba(255, 255, 255, 0.2);
       width: 100%;
       max-width: 340px;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
     }
 
     .photo-thumb-box {
@@ -424,39 +424,42 @@
     }
 
     .photo-thumb-box img { width: 100%; height: 100%; object-fit: cover; object-position: center; }
-    .photo-thumb-box.empty-slot { border: 1.5px dashed rgba(255, 255, 255, 0.35); color: rgba(255, 255, 255, 0.5); font-size: 0.8rem; font-weight: 600; }
+    .photo-thumb-box.empty-slot { border: 1.5px dashed rgba(255, 255, 255, 0.35); color: rgba(255, 255, 255, 0.6); font-size: 0.8rem; font-weight: 600; }
 
+    /* DESAIN TOMBOL KONTROL DIPISAH DEPAN / BELAKANG */
     .cam-floating-tools {
       display: flex;
-      gap: 12px;
-      background: rgba(255, 255, 255, 0.1);
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.12);
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
-      padding: 8px 18px;
+      padding: 6px 12px;
       border-radius: 25px;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      margin-bottom: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      margin-bottom: 12px;
       width: 100%;
-      max-width: 340px;
-      justify-content: space-around;
+      max-width: 350px;
+      justify-content: space-between;
     }
 
     .cam-tool-btn {
-      background: transparent;
-      border: none;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.2);
       color: #FFF;
-      font-size: 0.8rem;
+      font-size: 0.72rem;
       font-weight: 600;
-      padding: 4px 6px;
-      border-radius: 10px;
+      padding: 6px 10px;
+      border-radius: 16px;
       cursor: pointer;
       display: flex;
       align-items: center;
       gap: 4px;
       white-space: nowrap;
-      transition: transform 0.15s ease;
+      transition: transform 0.15s ease, background 0.2s ease;
     }
-    .cam-tool-btn:active { transform: scale(0.9); }
+
+    .cam-tool-btn:active { transform: scale(0.92); }
+    .cam-tool-btn.active-cam { background: var(--gold-accent); color: #2B1E1E; border-color: #FFF; font-weight: 700; }
 
     .cam-snap-trigger {
       width: 68px;
@@ -464,7 +467,7 @@
       border-radius: 50%;
       background: #FFF;
       border: 4px solid var(--gold-accent);
-      box-shadow: 0 0 18px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 0 18px rgba(0, 0, 0, 0.3);
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -495,7 +498,7 @@
       border-radius: 14px; 
       overflow: hidden; 
       border: 2px solid var(--gold-accent); 
-      box-shadow: 0 8px 18px rgba(0,0,0,0.3); 
+      box-shadow: 0 8px 18px rgba(0,0,0,0.25); 
       background: #000;
     }
 
@@ -507,7 +510,7 @@
     }
 
     .review-delete-btn {
-      position: absolute; top: 5px; right: 5px; background: rgba(231, 76, 60, 0.95); color: #FFF; border: none; width: 22px; height: 22px; border-radius: 50%; font-weight: 700; font-size: 0.75rem; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.4); z-index: 10;
+      position: absolute; top: 5px; right: 5px; background: rgba(217, 83, 79, 0.95); color: #FFF; border: none; width: 22px; height: 22px; border-radius: 50%; font-weight: 700; font-size: 0.75rem; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.3); z-index: 10;
     }
 
     /* PRINTER STAGE */
@@ -528,7 +531,7 @@
     .paper-tray-input.pulled-in { transform: translateY(45px); }
 
     .flat-printer-body {
-      width: 220px; height: 80px; background: #3B444B; border-radius: 14px; position: relative; z-index: 10; box-shadow: 0 8px 20px rgba(0,0,0,0.18); display: flex; flex-direction: column; justify-content: space-between; padding: 6px 10px;
+      width: 220px; height: 80px; background: #4A3E3E; border-radius: 14px; position: relative; z-index: 10; box-shadow: 0 8px 20px rgba(0,0,0,0.15); display: flex; flex-direction: column; justify-content: space-between; padding: 6px 10px;
     }
 
     .printer-panel-top { display: flex; align-items: center; gap: 6px; }
@@ -543,12 +546,12 @@
 
     .printer-brand-tag { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.58rem; font-weight: 600; color: rgba(255, 255, 255, 0.7); letter-spacing: 1px; }
 
-    .printer-door-tray { width: 100%; height: 28px; background: #2C3539; border-radius: 6px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; }
+    .printer-door-tray { width: 100%; height: 28px; background: #322828; border-radius: 6px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; }
     .printer-slot-gap { width: 88%; height: 6px; background: #111; border-radius: 3px; }
 
     .printer-output-paper-container { position: relative; width: 130px; margin-top: -8px; overflow: hidden; z-index: 5; display: flex; justify-content: center; padding-top: 4px; }
 
-    .ejected-photo-sheet { width: 100%; transform: translateY(-100%); transition: transform 5s cubic-bezier(0.22, 1, 0.36, 1); filter: drop-shadow(0 6px 15px rgba(0,0,0,0.15)); }
+    .ejected-photo-sheet { width: 100%; transform: translateY(-100%); transition: transform 5s cubic-bezier(0.22, 1, 0.36, 1); filter: drop-shadow(0 6px 15px rgba(0,0,0,0.12)); }
     .ejected-photo-sheet.fully-printed { transform: translateY(0); }
     .ejected-photo-sheet img { width: 100%; border-radius: 6px; display: block; margin: 0 auto; }
 
@@ -556,7 +559,7 @@
       width: 100%; max-width: 165px; margin: 2px auto; opacity: 0; transform: scale(0.6); transition: all 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
     }
     .popup-photo-container.show-popup { opacity: 1; transform: scale(1); }
-    .popup-photo-container img { width: 100%; max-height: 36vh; object-fit: contain; border-radius: 10px; box-shadow: 0 8px 22px rgba(0,0,0,0.18); }
+    .popup-photo-container img { width: 100%; max-height: 36vh; object-fit: contain; border-radius: 10px; box-shadow: 0 8px 22px rgba(0,0,0,0.15); }
 
     .printer-status-text-box { margin-top: 2px; text-align: center; z-index: 20; }
     .status-main-label { font-size: 0.82rem; font-weight: 700; color: var(--primary-crimson); display: flex; align-items: center; justify-content: center; gap: 5px; }
@@ -569,11 +572,11 @@
 
     /* GALERI RINGAN */
     .feed-container { width: 100%; max-width: 420px; margin: 0 auto; }
-    .gallery-intro-box { background: #FAF6F0; border: 1px solid rgba(212, 175, 55, 0.3); border-radius: 16px; padding: 14px 10px; margin-bottom: 16px; text-align: center; }
+    .gallery-intro-box { background: #FDFBF7; border: 1px solid rgba(212, 175, 55, 0.3); border-radius: 16px; padding: 14px 10px; margin-bottom: 16px; text-align: center; }
     .ig-grid-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
     
     .ig-grid-item { 
-      background: #FFF; border-radius: 12px; overflow: hidden; border: 1px solid rgba(212,175,55,0.25); cursor: pointer; display: flex; flex-direction: column; box-shadow: 0 4px 10px rgba(0,0,0,0.05); transition: transform 0.15s ease; 
+      background: #FFF; border-radius: 12px; overflow: hidden; border: 1px solid rgba(212,175,55,0.25); cursor: pointer; display: flex; flex-direction: column; box-shadow: 0 4px 10px rgba(0,0,0,0.04); transition: transform 0.15s ease; 
     }
     .ig-grid-item:active { transform: scale(0.96); }
 
@@ -581,22 +584,22 @@
     .ig-item-name { font-size: 0.62rem; font-weight: 700; color: var(--primary-crimson); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; text-align: center; }
     .ig-item-date { font-size: 0.52rem; color: #888; margin-top: 1px; }
 
-    .ig-item-img-box { width: 100%; aspect-ratio: 1/1; overflow: hidden; background: #FAF6F0; }
+    .ig-item-img-box { width: 100%; aspect-ratio: 1/1; overflow: hidden; background: #FDFBF7; }
     .ig-item-img-box img { width: 100%; height: 100%; object-fit: cover; }
     .ig-item-msg { font-size: 0.6rem; color: #555; padding: 5px 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; font-style: italic; background: #FFF; }
 
     /* FOOTER OFFICIAL */
-    .app-official-footer { text-align: center; padding: 8px 10px 2px; font-size: 0.65rem; color: #8C6262; border-top: 1px dashed rgba(216, 180, 180, 0.4); margin-top: 8px; width: 100%; letter-spacing: 0.5px; }
+    .app-official-footer { text-align: center; padding: 8px 10px 2px; font-size: 0.65rem; color: #9A7B7E; border-top: 1px dashed rgba(216, 180, 180, 0.4); margin-top: 8px; width: 100%; letter-spacing: 0.5px; }
     .app-official-footer.light-text { color: rgba(255, 255, 255, 0.65); border-top: 1px dashed rgba(255, 255, 255, 0.2); }
 
     /* MODAL LIGHTBOX & ALERT */
-    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(5px); display: flex; align-items: center; justify-content: center; z-index: 99999; padding: 15px; }
-    .modal-card { background: #FFF; border-radius: 18px; padding: 18px 14px 14px; max-width: 330px; width: 100%; text-align: center; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.4); border: 1px solid rgba(212, 175, 55, 0.3); max-height: 90vh; display: flex; flex-direction: column; overflow-y: auto; }
-    .modal-close-btn { position: absolute; top: 8px; right: 10px; background: #7A1C28; color: #FFF; border: none; width: 28px; height: 28px; border-radius: 50%; font-weight: 700; font-size: 0.85rem; cursor: pointer; z-index: 100; }
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(5px); display: flex; align-items: center; justify-content: center; z-index: 99999; padding: 15px; }
+    .modal-card { background: #FFF; border-radius: 18px; padding: 18px 14px 14px; max-width: 330px; width: 100%; text-align: center; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.3); border: 1px solid rgba(212, 175, 55, 0.3); max-height: 90vh; display: flex; flex-direction: column; overflow-y: auto; }
+    .modal-close-btn { position: absolute; top: 8px; right: 10px; background: var(--primary-crimson); color: #FFF; border: none; width: 28px; height: 28px; border-radius: 50%; font-weight: 700; font-size: 0.85rem; cursor: pointer; z-index: 100; }
     .modal-user-name { font-size: 0.92rem; font-weight: 700; color: var(--primary-crimson); margin-bottom: 1px; padding-right: 25px; }
     .modal-user-date { font-size: 0.65rem; color: #888; margin-bottom: 4px; }
-    .modal-img { width: 100%; max-height: 52vh; object-fit: contain; border-radius: 10px; margin: 6px 0; background: #FAF6F0; }
-    .modal-msg { font-size: 0.78rem; color: #333; font-style: italic; background: #FAF6F0; padding: 8px 10px; border-radius: 8px; line-height: 1.35; word-break: break-word; }
+    .modal-img { width: 100%; max-height: 52vh; object-fit: contain; border-radius: 10px; margin: 6px 0; background: #FDFBF7; }
+    .modal-msg { font-size: 0.78rem; color: #333; font-style: italic; background: #FDFBF7; padding: 8px 10px; border-radius: 8px; line-height: 1.35; word-break: break-word; }
 
     canvas { display: none; }
   </style>
@@ -631,13 +634,13 @@
   <div style="width:100%; text-align:center; display:flex; flex-direction:column; align-items:center;">
     <p style="font-size:0.7rem; color:var(--gold-accent); letter-spacing:2.5px; font-weight:700; margin-bottom:1px;">KENANGAN PERNIKAHAN</p>
     <h1 class="font-script" style="font-size:2.6rem; color:var(--primary-crimson); line-height:1.05;" id="display-event-title">Riyan & Amelia</h1>
-    <p style="font-size:0.72rem; color:#6E5353; letter-spacing:1px; margin-bottom:4px;">06 DESEMBER 2026</p>
+    <p style="font-size:0.72rem; color:#8C6267; letter-spacing:1px; margin-bottom:4px;">06 DESEMBER 2026</p>
 
     <div class="hero-pill-frame-pure">
       <img src="./assets/v2/hero.png" alt="Hero Pengantin" id="welcome-couple-img" onerror="this.src='./assets/v2/dsg1.png'">
     </div>
 
-    <p style="font-size:0.75rem; color:#555; font-style:italic; line-height:1.35; max-width:310px; margin:4px 0 10px;">
+    <p style="font-size:0.75rem; color:#665557; font-style:italic; line-height:1.35; max-width:310px; margin:4px 0 10px;">
       "Satu foto menyimpan sejuta kenangan. Terima kasih telah menjadi bagian dari hari bahagia kami!"
     </p>
 
@@ -660,7 +663,7 @@
   <div style="width:100%; text-align:center; padding-top:4px;">
     <p style="font-size:0.68rem; color:var(--gold-accent); letter-spacing:2.5px; font-weight:700; margin-bottom:2px;">KENANGAN PERNIKAHAN</p>
     <h2 class="font-script" style="font-size:2.4rem; color:#FFF;" id="ask-event-title">Riyan & Amelia</h2>
-    <p style="font-size:0.72rem; color:rgba(255,255,255,0.7); letter-spacing:1px;">06 DESEMBER 2026</p>
+    <p style="font-size:0.72rem; color:rgba(255,255,255,0.75); letter-spacing:1px;">06 DESEMBER 2026</p>
   </div>
 
   <div class="ask-page-center-wrapper">
@@ -669,7 +672,7 @@
       <h3 class="font-serif" style="font-size:1.45rem; letter-spacing:1.5px; font-weight:600; color:#FFF; line-height:1.2;">
         DARI SIAPA<br>KENANGAN INI?
       </h3>
-      <p style="font-size:0.72rem; color:rgba(255,255,255,0.75); margin-top:4px;">Tuliskan nama/panggilanmu untuk dicantumkan pada foto kenangan</p>
+      <p style="font-size:0.72rem; color:rgba(255,255,255,0.8); margin-top:4px;">Tuliskan nama/panggilanmu untuk dicantumkan pada foto kenangan</p>
 
       <input type="text" id="guest-initial-name" class="stylish-underline-input" placeholder="Misal: Budi & Sarah" autocomplete="off">
     </div>
@@ -695,35 +698,35 @@
   <div class="slider-header-box">
     <div class="section-label-fullscreen" id="card-theme-tag">ROYAL EDITION</div>
     <div class="slider-main-title" id="card-theme-name">Classic Royal (3 Foto)</div>
-    <div style="font-size:0.72rem; color:rgba(255,255,255,0.8); font-style:italic;">Ketuk bingkai untuk memilih &amp; memulai</div>
+    <div style="font-size:0.72rem; color:rgba(255,255,255,0.85); font-style:italic;">Ketuk bingkai untuk memilih &amp; memulai</div>
   </div>
 
   <div class="slider-cards-viewport" id="slider-stack-box">
-    <div class="figma-card-item" data-path="./assets/v2/dsg3.png" data-count="3" data-name="Classic Royal (3 Foto)" data-tag="ROYAL EDITION" data-color="#7A1C28">
+    <div class="figma-card-item" data-path="./assets/v2/dsg3.png" data-count="3" data-name="Classic Royal (3 Foto)" data-tag="ROYAL EDITION" data-color="#8C4A52">
       <img src="./assets/v2/dsg3.png" alt="Desain 3">
     </div>
-    <div class="figma-card-item" data-path="./assets/v2/dsg2.png" data-count="2" data-name="Classic Royal (2 Foto)" data-tag="ROYAL EDITION" data-color="#5B1620">
+    <div class="figma-card-item" data-path="./assets/v2/dsg2.png" data-count="2" data-name="Classic Royal (2 Foto)" data-tag="ROYAL EDITION" data-color="#723A41">
       <img src="./assets/v2/dsg2.png" alt="Desain 2">
     </div>
-    <div class="figma-card-item" data-path="./assets/v2/dsg1.png" data-count="1" data-name="Classic Royal (1 Foto)" data-tag="ROYAL EDITION" data-color="#8C2331">
+    <div class="figma-card-item" data-path="./assets/v2/dsg1.png" data-count="1" data-name="Classic Royal (1 Foto)" data-tag="ROYAL EDITION" data-color="#9E5660">
       <img src="./assets/v2/dsg1.png" alt="Desain 1">
     </div>
-    <div class="figma-card-item" data-path="./assets/v2/flower3.png" data-count="3" data-name="Floral Romance (3 Foto)" data-tag="FLORAL COLLECTION" data-color="#4A5D4E">
+    <div class="figma-card-item" data-path="./assets/v2/flower3.png" data-count="3" data-name="Floral Romance (3 Foto)" data-tag="FLORAL COLLECTION" data-color="#5B7062">
       <img src="./assets/v2/flower3.png" alt="Flower 3">
     </div>
-    <div class="figma-card-item" data-path="./assets/v2/flower2.png" data-count="2" data-name="Floral Romance (2 Foto)" data-tag="FLORAL COLLECTION" data-color="#3D4E41">
+    <div class="figma-card-item" data-path="./assets/v2/flower2.png" data-count="2" data-name="Floral Romance (2 Foto)" data-tag="FLORAL COLLECTION" data-color="#4B5E52">
       <img src="./assets/v2/flower2.png" alt="Flower 2">
     </div>
-    <div class="figma-card-item" data-path="./assets/v2/flower1.png" data-count="1" data-name="Floral Romance (1 Foto)" data-tag="FLORAL COLLECTION" data-color="#556B5A">
+    <div class="figma-card-item" data-path="./assets/v2/flower1.png" data-count="1" data-name="Floral Romance (1 Foto)" data-tag="FLORAL COLLECTION" data-color="#6B8273">
       <img src="./assets/v2/flower1.png" alt="Flower 1">
     </div>
-    <div class="figma-card-item" data-path="./assets/v2/line 3.png" data-count="3" data-name="Minimalist Modern (3 Foto)" data-tag="MINIMALIST STYLE" data-color="#2C3E50">
+    <div class="figma-card-item" data-path="./assets/v2/line 3.png" data-count="3" data-name="Minimalist Modern (3 Foto)" data-tag="MINIMALIST STYLE" data-color="#4B5868">
       <img src="./assets/v2/line 3.png" alt="Line 3">
     </div>
-    <div class="figma-card-item" data-path="./assets/v2/line 2.png" data-count="2" data-name="Minimalist Modern (2 Foto)" data-tag="MINIMALIST STYLE" data-color="#1A252F">
+    <div class="figma-card-item" data-path="./assets/v2/line 2.png" data-count="2" data-name="Minimalist Modern (2 Foto)" data-tag="MINIMALIST STYLE" data-color="#3B4654">
       <img src="./assets/v2/line 2.png" alt="Line 2">
     </div>
-    <div class="figma-card-item" data-path="./assets/v2/line 1.png" data-count="1" data-name="Minimalist Modern (1 Foto)" data-tag="MINIMALIST STYLE" data-color="#34495E">
+    <div class="figma-card-item" data-path="./assets/v2/line 1.png" data-count="1" data-name="Minimalist Modern (1 Foto)" data-tag="MINIMALIST STYLE" data-color="#5C6C7E">
       <img src="./assets/v2/line 1.png" alt="Line 1">
     </div>
   </div>
@@ -759,7 +762,7 @@
     <!-- PREVIEW THUMBNAIL FOTO -->
     <div class="cam-photos-preview-strip" id="cam-photos-strip"></div>
 
-    <!-- KONTROL KAMERA AWAL -->
+    <!-- KONTROL KAMERA DENGAN TOMBOL KAMERA DIPISAH -->
     <div class="cam-floating-tools" id="cam-tools-box">
       <button class="cam-tool-btn" id="btn-timer" onclick="toggleTimerSetting()">
         Timer: <span id="label-timer">3s</span>
@@ -767,9 +770,15 @@
       <button class="cam-tool-btn" id="btn-zoom" onclick="toggleZoomSetting()">
         Zoom: <span id="label-zoom">1x</span>
       </button>
-      <button class="cam-tool-btn" id="btn-switch" onclick="switchCameraNext()">
-        Switch
+
+      <!-- TOMBOL DEPAN DAN BELAKANG SEPARATE -->
+      <button class="cam-tool-btn active-cam" id="btn-cam-user" onclick="setCameraMode('user')">
+        Depan
       </button>
+      <button class="cam-tool-btn" id="btn-cam-env" onclick="setCameraMode('environment')">
+        Belakang
+      </button>
+
       <button class="cam-tool-btn" id="btn-mirror" onclick="toggleMirror()">
         Mirror: <span id="label-mirror">OFF</span>
       </button>
@@ -790,7 +799,7 @@
   <div style="width:100%; text-align:center; padding-top:10px;">
     <p style="font-size:0.68rem; color:var(--gold-accent); letter-spacing:2.5px; font-weight:700; margin-bottom:2px;">REVIEW HASIL FOTO</p>
     <h2 class="font-serif" style="font-size:1.4rem; color:#FFF;">Apakah foto kamu sudah pas?</h2>
-    <p style="font-size:0.72rem; color:rgba(255,255,255,0.7); margin-top:2px;">Tekan tombol ✕ pada foto jika ingin mengambil foto ulang</p>
+    <p style="font-size:0.72rem; color:rgba(255,255,255,0.75); margin-top:2px;">Tekan tombol ✕ pada foto jika ingin mengambil foto ulang</p>
   </div>
 
   <div class="review-grid-box" id="review-grid-box"></div>
@@ -846,7 +855,7 @@
 
   <!-- FORM UCAPAN -->
   <div class="printer-bottom-actions" id="printer-bottom-actions">
-    <div style="background: #FAF6EE; border: 1px solid rgba(212,175,55,0.35); border-radius: 14px; padding: 10px; text-align: left; box-shadow:0 4px 12px rgba(0,0,0,0.05);">
+    <div style="background: #FDFBF7; border: 1px solid rgba(212,175,55,0.35); border-radius: 14px; padding: 10px; text-align: left; box-shadow:0 4px 12px rgba(0,0,0,0.05);">
       <label style="display:block; font-size:0.68rem; font-weight:700; color:var(--primary-crimson); margin-bottom:3px;">Dari (Pengirim)</label>
       <input type="text" id="input-sender-name" style="width:100%; padding:6px 8px; border:1px solid #D8B4B4; border-radius:6px; font-size:0.8rem; outline:none; margin-bottom:6px; background:#FFFDF9; font-family:'Plus Jakarta Sans', sans-serif; font-weight:600; color:#4A3B3B;" readonly>
 
@@ -927,7 +936,7 @@
 <div id="alert-modal" class="modal-overlay hidden">
   <div class="modal-card">
     <div style="font-size: 2rem; margin-bottom: 6px;" id="alert-icon">✨</div>
-    <div style="font-size: 0.9rem; font-weight: 700; color: #7A1C28; margin-bottom: 6px;" id="alert-title">Pemberitahuan</div>
+    <div style="font-size: 0.9rem; font-weight: 700; color: #8C4A52; margin-bottom: 6px;" id="alert-title">Pemberitahuan</div>
     <div style="font-size: 0.8rem; color: #555; line-height: 1.4; margin-bottom: 16px;" id="alert-text">Pesan...</div>
     <button class="btn-primary-v2" style="margin-top:0;" onclick="closeAlertModal()">OK</button>
   </div>
@@ -946,10 +955,9 @@
   let videoStream = null;
   let generatedDataUrl = "";
 
-  /* FUNGSI DAN STATUS KAMERA */
-  let cameraDevicesList = [];
-  let currentCamIndex = 0;
-  let isMirror = false; // Mirror manual saja
+  /* STATUS KAMERA DAN OPSI */
+  let activeFacingMode = "user"; // "user" (Depan) atau "environment" (Belakang)
+  let isMirror = false; 
   let timerDuration = 3;
   let zoomLevel = 1;      
   let onAlertCloseCallback = null;
@@ -1200,12 +1208,12 @@
             lockOverlay = document.createElement('div');
             lockOverlay.id = 'lock-overlay';
             lockOverlay.innerHTML = `
-              <div style="min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; font-family: 'Plus Jakarta Sans', sans-serif; background-color: #FAF6F0; color: #2B1E1E;">
-                <div style="background: #FFF; padding: 40px 25px; border-radius: 24px; box-shadow: 0 15px 35px rgba(122, 28, 40, 0.1); border: 1px solid rgba(212, 175, 55, 0.3); max-width: 400px; width: 100%;">
+              <div style="min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; font-family: 'Plus Jakarta Sans', sans-serif; background-color: #FDFBF7; color: #3A2E2E;">
+                <div style="background: #FFF; padding: 40px 25px; border-radius: 24px; box-shadow: 0 15px 35px rgba(140, 74, 82, 0.1); border: 1px solid rgba(212, 175, 55, 0.3); max-width: 400px; width: 100%;">
                   <div style="font-size: 3rem; margin-bottom: 10px;">🔒</div>
-                  <h2 style="font-family: 'Cormorant Garamond', serif; color: #7A1C28; font-size: 2rem; margin-bottom: 10px;">Photobooth Ditutup</h2>
+                  <h2 style="font-family: 'Cormorant Garamond', serif; color: #8C4A52; font-size: 2rem; margin-bottom: 10px;">Photobooth Ditutup</h2>
                   <p style="color: #6E5353; font-size: 0.9rem; line-height: 1.6; margin-bottom: 20px;">Sesi virtual photobooth saat ini sedang tidak aktif.</p>
-                  <div style="font-family: 'Alex Brush', cursive; font-size: 2.2rem; color: #7A1C28;">${eventTitle}</div>
+                  <div style="font-family: 'Alex Brush', cursive; font-size: 2.2rem; color: #8C4A52;">${eventTitle}</div>
                 </div>
               </div>
             `;
@@ -1222,7 +1230,7 @@
     loadRealtimeFeedIG();
   }
 
-  /* SISTEM PERPINDAHAN KAMERA DEPAN - BELAKANG TANPA DITIMPA MIRROR */
+  /* SISTEM PEMISAHAN TOMBOL KAMERA DENGAN PENANGANAN ERROR BERSIH */
   async function stopCurrentStream() {
     if (videoStream) {
       try {
@@ -1232,16 +1240,7 @@
     }
     const video = document.getElementById('video');
     if (video) video.srcObject = null;
-    await new Promise(resolve => setTimeout(resolve, 100));
-  }
-
-  async function getCameraDevices() {
-    try {
-      const devices = await navigator.mediaDevices.enumerateDevices();
-      cameraDevicesList = devices.filter(d => d.kind === 'videoinput');
-    } catch(e) {
-      cameraDevicesList = [];
-    }
+    await new Promise(resolve => setTimeout(resolve, 150));
   }
 
   async function initCameraStream() {
@@ -1250,18 +1249,10 @@
 
     await stopCurrentStream();
 
-    if (cameraDevicesList.length === 0) {
-      await getCameraDevices();
-    }
-
-    let constraints = { audio: false };
-
-    if (cameraDevicesList.length > 0) {
-      const targetDevice = cameraDevicesList[currentCamIndex % cameraDevicesList.length];
-      constraints.video = { deviceId: { exact: targetDevice.deviceId } };
-    } else {
-      constraints.video = { facingMode: "user" };
-    }
+    const constraints = {
+      video: { facingMode: { ideal: activeFacingMode } },
+      audio: false
+    };
 
     try {
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
@@ -1270,12 +1261,11 @@
       await video.play().catch(e => console.warn(e));
       applyZoomTransform();
     } catch (err) {
-      console.warn("Retrying with simple facingMode constraint...", err);
+      console.warn("Fallback ke standar media Stream...", err);
       try {
-        const mode = (currentCamIndex % 2 === 0) ? "user" : "environment";
-        const altStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: mode }, audio: false });
-        videoStream = altStream;
-        video.srcObject = altStream;
+        const fallbackStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+        videoStream = fallbackStream;
+        video.srcObject = fallbackStream;
         await video.play().catch(e => console.warn(e));
         applyZoomTransform();
       } catch (fallbackErr) {
@@ -1285,8 +1275,14 @@
     }
   }
 
-  function switchCameraNext() {
-    currentCamIndex++;
+  function setCameraMode(mode) {
+    if (activeFacingMode === mode && videoStream && videoStream.active) return;
+    
+    activeFacingMode = mode;
+
+    document.getElementById('btn-cam-user').classList.toggle('active-cam', mode === 'user');
+    document.getElementById('btn-cam-env').classList.toggle('active-cam', mode === 'environment');
+
     initCameraStream();
   }
 
@@ -1332,7 +1328,7 @@
     progressText.innerText = `Foto ${currentCapturedCount + 1} dari ${totalNeeded}`;
   }
 
-  /* FITUR MIRROR DIBUAT MANUAL SAJA */
+  /* MIRROR MANUAL */
   function toggleMirror() {
     isMirror = !isMirror;
     applyZoomTransform();
@@ -1564,7 +1560,7 @@
         }
 
         ctx.save();
-        ctx.shadowColor = "rgba(0, 0, 0, 0.22)";
+        ctx.shadowColor = "rgba(0, 0, 0, 0.2)";
         ctx.shadowBlur = 15;
         ctx.shadowOffsetX = 0;
         ctx.shadowOffsetY = 6;
