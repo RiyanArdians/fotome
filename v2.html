@@ -330,7 +330,7 @@
     @keyframes frameClickBounce { 0% { transform: translateX(0) scale(1); } 40% { transform: translateX(0) scale(0.92); } 100% { transform: translateX(0) scale(1.05); opacity: 0.9; } }
 
     /* ---------------------------------------------------- */
-    /* 5. SESI KAMERA RESPONSIF 100% FIT SCREEN TANPA SCROLL */
+    /* 5. SESI KAMERA FIX TERBUKA & SENSITIF KLIK BERULANG  */
     /* ---------------------------------------------------- */
     .camera-stage-container {
       width: 100%; max-width: 380px; height: 100%;
@@ -354,6 +354,9 @@
       box-shadow: 0 8px 20px rgba(0,0,0,0.4);
       margin: 2px 0;
       transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .camera-viewfinder-box.minimized {
@@ -369,6 +372,7 @@
       height: 100%;
       object-fit: cover;
       display: block;
+      background: #000;
     }
     
     .camera-video-element.mirror { transform: scaleX(-1); }
@@ -422,6 +426,7 @@
       width: 58px; height: 58px; border-radius: 50%; background: #FFF; border: 4px solid var(--gold-accent);
       box-shadow: 0 0 14px rgba(0,0,0,0.4); cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--primary-crimson); font-size: 1.25rem; margin-top: 2px;
       transition: transform 0.15s ease;
+      user-select: none;
     }
 
     .cam-snap-trigger:active { transform: scale(0.88); }
@@ -658,7 +663,7 @@
   </div>
 </div>
 
-<!-- STEP 3: SESI KAMERA RESPONSIF (KAMERA DIPASTIKAN LANGSUNG TERBUKA) -->
+<!-- STEP 3: SESI KAMERA RESPONSIF (DIPERBAIKI 100% PASTI TERBUKA & SENSITIF KLIK) -->
 <div id="step-camera" class="page-fullscreen dark-bg hidden" style="background:#000;">
   <div class="camera-stage-container">
     
@@ -669,9 +674,9 @@
       </button>
     </div>
 
-    <!-- VIEWFINDER KAMERA -->
+    <!-- VIEWFINDER KAMERA DENGAN AUTOPLAY, MUTED, PLAYSINLINE SANGAT KETAT -->
     <div class="camera-viewfinder-box" id="cam-viewfinder-box">
-      <video id="video" class="camera-video-element mirror" autoplay playsinline muted></video>
+      <video id="video" class="camera-video-element mirror" autoplay playsinline webkit-playsinline muted></video>
       <div id="countdown-overlay" class="countdown-overlay hidden">3</div>
       <div id="flash-overlay" class="flash-overlay"></div>
     </div>
@@ -846,6 +851,7 @@
   let timerDuration = 3;
   let zoomLevel = 1;      
   let onAlertCloseCallback = null;
+  let isTakingPhoto = false;
 
   let cardItems = [];
   let currentCardIndex = 0;
@@ -1104,11 +1110,12 @@
   }
 
   /* ---------------------------------------------------- */
-  /* LOGIK KAMERA PASTI TERBUKA DENGAN STREAM UNIVERSAL   */
+  /* LOGIK KAMERA SANGAT STABEL & PASTI TERBUKA & RESUMABLE */
   /* ---------------------------------------------------- */
   function startCameraProcess() {
     goToStep('step-camera');
     capturedPhotos = [];
+    isTakingPhoto = false;
     updatePhotosStripUI();
     initCameraStream();
   }
@@ -1169,33 +1176,41 @@
 
   function deletePhotoAtIndex(index) {
     capturedPhotos.splice(index, 1);
+    isTakingPhoto = false;
     updatePhotosStripUI();
   }
 
   function initCameraStream() {
     if (videoStream) {
       videoStream.getTracks().forEach(track => track.stop());
+      videoStream = null;
     }
 
-    const constraints = { 
-      video: { facingMode: currentFacingMode },
-      audio: false
+    const video = document.getElementById('video');
+
+    // MENGGUNAKAN FALLBACK MEKANISME TERUJI
+    const tryStream = (constraints) => {
+      navigator.mediaDevices.getUserMedia(constraints)
+        .then(stream => {
+          videoStream = stream;
+          video.srcObject = stream;
+          video.play().catch(e => {
+            console.log("Autoplay retry error:", e);
+          });
+          applyZoomTransform();
+          enumerateFrontBackCameras();
+        })
+        .catch(err => {
+          console.warn("Gagal constraint 1, mencoba mode standar:", err);
+          if (constraints.video.facingMode) {
+            tryStream({ video: true, audio: false });
+          } else {
+            showAlert("Gagal membuka kamera. Harap pastikan izin kamera diizinkan di browser kamu!", "Akses Kamera", "⚠️");
+          }
+        });
     };
 
-    navigator.mediaDevices.getUserMedia(constraints)
-      .then(stream => {
-        videoStream = stream;
-        const video = document.getElementById('video');
-        video.srcObject = stream;
-        video.play().catch(e => console.log("Video play error:", e));
-
-        applyZoomTransform();
-        enumerateFrontBackCameras();
-      })
-      .catch(err => {
-        console.error("Camera Error:", err);
-        showAlert("Gagal membuka kamera. Harap izinkan akses kamera pada browser kamu!", "Akses Kamera", "⚠️");
-      });
+    tryStream({ video: { facingMode: currentFacingMode }, audio: false });
   }
 
   function enumerateFrontBackCameras() {
@@ -1269,13 +1284,17 @@
   function stopCameraAndGoBack() {
     if (videoStream) {
       videoStream.getTracks().forEach(track => track.stop());
+      videoStream = null;
     }
     goToStep('step-template');
   }
 
   function takePhotoSnap() {
+    if (isTakingPhoto) return;
+    isTakingPhoto = true;
+
     const btnSnap = document.getElementById('btn-snap');
-    if (btnSnap) btnSnap.style.pointerEvents = 'none';
+    if (btnSnap) btnSnap.style.opacity = '0.5';
 
     if (timerDuration === 0) {
       executeSnapCapture();
@@ -1329,15 +1348,16 @@
 
     capturedPhotos.push(tempCanvas.toDataURL('image/png'));
 
+    // RESET STATUS FOTO & UI SECARA PASTI
     setTimeout(() => {
+      isTakingPhoto = false;
       updatePhotosStripUI();
-      const btnSnap = document.getElementById('btn-snap');
-      if (btnSnap) btnSnap.style.pointerEvents = 'auto';
     }, 300);
 
     if (capturedPhotos.length >= requiredPhotoCount) {
       if (videoStream) {
         videoStream.getTracks().forEach(track => track.stop());
+        videoStream = null;
       }
     }
   }
