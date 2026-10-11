@@ -55,7 +55,7 @@
     }
 
     .page-fullscreen.dark-bg {
-      background-color: #000000;
+      background-color: var(--primary-crimson);
       color: #FFFFFF;
       transition: background-color 0.5s ease;
     }
@@ -340,7 +340,7 @@
     .figma-card-item.hidden-left { transform: translateX(-115%) scale(0.65) rotate(-12deg); opacity: 0; z-index: 1; }
     .figma-card-item.hidden-right { transform: translateX(115%) scale(0.65) rotate(12deg); opacity: 0; z-index: 1; }
 
-    /* KAMERA VIEWFINDER & KONTROL LEGA SEPERTI AWAL */
+    /* KAMERA VIEWFINDER & KONTROL LEGA */
     .camera-stage-container {
       width: 100%;
       max-width: 380px;
@@ -737,7 +737,7 @@
   </div>
 </div>
 
-<!-- STEP 3: SESI KAMERA RESPONSIF (TAMPILAN AWAL LEGA & TIDAK DEMPET) -->
+<!-- STEP 3: SESI KAMERA RESPONSIF -->
 <div id="step-camera" class="page-fullscreen dark-bg hidden">
   <div class="camera-stage-container">
     
@@ -945,8 +945,8 @@
   let videoStream = null;
   let generatedDataUrl = "";
 
-  /* KAMERA KHUSUS DEPAN & BELAKANG */
-  let currentFacingMode = "user"; // "user" (depan) atau "environment" (belakang)
+  /* KAMERA AWAL (USER = DEPAN, ENVIRONMENT = BELAKANG) */
+  let currentFacingMode = "user";
   let isMirror = true;
   let timerDuration = 3;
   let zoomLevel = 1;      
@@ -1220,7 +1220,7 @@
     loadRealtimeFeedIG();
   }
 
-  /* LOGIKA KAMERA DEPAN & BELAKANG BERSIH */
+  /* LOGIKA KAMERA STABIL DENGAN FALLBACK AMAN */
   function initCameraStream() {
     if (videoStream) {
       videoStream.getTracks().forEach(track => track.stop());
@@ -1228,14 +1228,15 @@
     }
 
     const video = document.getElementById('video');
+    if (!video) return;
     video.srcObject = null;
 
-    // Atur mirror otomatis jika kamera depan
     isMirror = (currentFacingMode === "user");
-    document.getElementById('label-mirror').innerText = isMirror ? 'ON' : 'OFF';
+    const labelMirror = document.getElementById('label-mirror');
+    if (labelMirror) labelMirror.innerText = isMirror ? 'ON' : 'OFF';
 
     const constraints = {
-      video: { facingMode: currentFacingMode },
+      video: { facingMode: { ideal: currentFacingMode } },
       audio: false
     };
 
@@ -1247,13 +1248,22 @@
         applyZoomTransform();
       })
       .catch(err => {
-        console.warn("Gagal membuka kamera:", err);
-        showAlert("Tidak dapat membuka kamera. Pastikan izin kamera diizinkan.", "Kamera Error", "📷");
+        console.warn("Fallback ke kamera default...", err);
+        navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+          .then(async stream => {
+            videoStream = stream;
+            video.srcObject = stream;
+            await video.play();
+            applyZoomTransform();
+          })
+          .catch(fallbackErr => {
+            console.error("Kamera error:", fallbackErr);
+            showAlert("Tidak dapat membuka kamera. Pastikan izin kamera diizinkan.", "Kamera Error", "📷");
+          });
       });
   }
 
   function switchCameraNext() {
-    // Toggling antara Depan (user) dan Belakang (environment)
     currentFacingMode = (currentFacingMode === "user") ? "environment" : "user";
     initCameraStream();
   }
