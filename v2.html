@@ -330,7 +330,7 @@
     @keyframes frameClickBounce { 0% { transform: translateX(0) scale(1); } 40% { transform: translateX(0) scale(0.92); } 100% { transform: translateX(0) scale(1.05); opacity: 0.9; } }
 
     /* ---------------------------------------------------- */
-    /* 5. SESI KAMERA FIX TERBUKA & SENSITIF KLIK BERULANG  */
+    /* 5. KAMERA SELALU TERBUKA DENGAN LAYOUT TERPERCAYA    */
     /* ---------------------------------------------------- */
     .camera-stage-container {
       width: 100%; max-width: 380px; height: 100%;
@@ -353,18 +353,9 @@
       border: 2px solid var(--gold-accent);
       box-shadow: 0 8px 20px rgba(0,0,0,0.4);
       margin: 2px 0;
-      transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
       display: flex;
       align-items: center;
       justify-content: center;
-    }
-
-    .camera-viewfinder-box.minimized {
-      height: 0;
-      margin: 0;
-      opacity: 0;
-      border: none;
-      pointer-events: none;
     }
 
     .camera-video-element {
@@ -380,24 +371,12 @@
     .cam-photos-preview-strip {
       display: flex; gap: 8px; justify-content: center; align-items: center;
       background: rgba(255,255,255,0.08); backdrop-filter: blur(8px); padding: 6px 10px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.2); width: 100%; margin-bottom: 4px;
-      transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-    }
-
-    .cam-photos-preview-strip.center-expanded {
-      transform: translateY(-10px);
-      padding: 14px;
-      background: rgba(255,255,255,0.15);
-      border-color: var(--gold-accent);
     }
 
     .photo-thumb-box {
       position: relative; width: 52px; height: 68px; border-radius: 8px; overflow: hidden;
       border: 1.5px solid rgba(255,255,255,0.4); background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center;
       transition: all 0.3s ease;
-    }
-
-    .cam-photos-preview-strip.center-expanded .photo-thumb-box {
-      width: 70px; height: 92px;
     }
 
     .photo-thumb-box img { width: 100%; height: 100%; object-fit: cover; }
@@ -663,7 +642,7 @@
   </div>
 </div>
 
-<!-- STEP 3: SESI KAMERA RESPONSIF (DIPERBAIKI 100% PASTI TERBUKA & SENSITIF KLIK) -->
+<!-- STEP 3: SESI KAMERA TERBUKA & PREVIEW STRIP DI BAWAH -->
 <div id="step-camera" class="page-fullscreen dark-bg hidden" style="background:#000;">
   <div class="camera-stage-container">
     
@@ -674,7 +653,7 @@
       </button>
     </div>
 
-    <!-- VIEWFINDER KAMERA DENGAN AUTOPLAY, MUTED, PLAYSINLINE SANGAT KETAT -->
+    <!-- VIEWFINDER KAMERA SELALU AKTIF DENGAN BACKGROUND TERANG -->
     <div class="camera-viewfinder-box" id="cam-viewfinder-box">
       <video id="video" class="camera-video-element mirror" autoplay playsinline webkit-playsinline muted></video>
       <div id="countdown-overlay" class="countdown-overlay hidden">3</div>
@@ -1110,7 +1089,7 @@
   }
 
   /* ---------------------------------------------------- */
-  /* LOGIK KAMERA SANGAT STABEL & PASTI TERBUKA & RESUMABLE */
+  /* KAMERA AKTIF OTOMATIS & PREVIEW KAMERA TETAP TERBUKA   */
   /* ---------------------------------------------------- */
   function startCameraProcess() {
     goToStep('step-camera');
@@ -1122,7 +1101,6 @@
 
   function updatePhotosStripUI() {
     const stripBox = document.getElementById('cam-photos-strip');
-    const viewfinderBox = document.getElementById('cam-viewfinder-box');
     const toolsBox = document.getElementById('cam-floating-tools');
     const actionContainer = document.getElementById('cam-action-btn-container');
     const progressText = document.getElementById('cam-progress-text');
@@ -1146,10 +1124,7 @@
     }
 
     if (capturedPhotos.length >= requiredPhotoCount) {
-      viewfinderBox.classList.add('minimized');
-      stripBox.classList.add('center-expanded');
       toolsBox.style.display = 'none';
-
       progressText.innerText = "Foto kamu sudah lengkap!";
       actionContainer.innerHTML = `
         <button class="btn-primary-v2" style="background: linear-gradient(135deg, #D4AF37 0%, #AA7C11 100%); color:#2B1E1E; border:none; padding:10px 26px; font-size:0.82rem;" onclick="proceedToRenderStrip()">
@@ -1157,10 +1132,7 @@
         </button>
       `;
     } else {
-      viewfinderBox.classList.remove('minimized');
-      stripBox.classList.remove('center-expanded');
       toolsBox.style.display = 'flex';
-
       progressText.innerText = `Foto ${capturedPhotos.length + 1} dari ${requiredPhotoCount}`;
       actionContainer.innerHTML = `
         <div class="cam-snap-trigger" id="btn-snap" onclick="takePhotoSnap()">
@@ -1180,6 +1152,7 @@
     updatePhotosStripUI();
   }
 
+  // INI MEKANISME DIRECT CAMERA STREAM TERPERCAYA (OTOMATIS TANPA KLIK SWITCH)
   function initCameraStream() {
     if (videoStream) {
       videoStream.getTracks().forEach(track => track.stop());
@@ -1188,29 +1161,47 @@
 
     const video = document.getElementById('video');
 
-    // MENGGUNAKAN FALLBACK MEKANISME TERUJI
-    const tryStream = (constraints) => {
-      navigator.mediaDevices.getUserMedia(constraints)
+    const constraintsList = [
+      { video: { facingMode: { exact: currentFacingMode } }, audio: false },
+      { video: { facingMode: currentFacingMode }, audio: false },
+      { video: true, audio: false }
+    ];
+
+    let attemptIndex = 0;
+
+    function tryNextConstraint() {
+      if (attemptIndex >= constraintsList.length) {
+        showAlert("Gagal membuka kamera. Harap izinkan akses kamera pada browser kamu!", "Akses Kamera", "⚠️");
+        return;
+      }
+
+      const currentConstraints = constraintsList[attemptIndex];
+      attemptIndex++;
+
+      navigator.mediaDevices.getUserMedia(currentConstraints)
         .then(stream => {
           videoStream = stream;
           video.srcObject = stream;
-          video.play().catch(e => {
-            console.log("Autoplay retry error:", e);
-          });
-          applyZoomTransform();
-          enumerateFrontBackCameras();
+          
+          // FORCE PLAY LANGSUNG
+          const playPromise = video.play();
+          if (playPromise !== undefined) {
+            playPromise.then(() => {
+              applyZoomTransform();
+              enumerateFrontBackCameras();
+            }).catch(err => {
+              console.log("Play interrupted, retrying:", err);
+              video.play();
+            });
+          }
         })
         .catch(err => {
-          console.warn("Gagal constraint 1, mencoba mode standar:", err);
-          if (constraints.video.facingMode) {
-            tryStream({ video: true, audio: false });
-          } else {
-            showAlert("Gagal membuka kamera. Harap pastikan izin kamera diizinkan di browser kamu!", "Akses Kamera", "⚠️");
-          }
+          console.warn(`Constraint attempt ${attemptIndex} failed, trying fallback:`, err);
+          tryNextConstraint();
         });
-    };
+    }
 
-    tryStream({ video: { facingMode: currentFacingMode }, audio: false });
+    tryNextConstraint();
   }
 
   function enumerateFrontBackCameras() {
@@ -1348,9 +1339,11 @@
 
     capturedPhotos.push(tempCanvas.toDataURL('image/png'));
 
-    // RESET STATUS FOTO & UI SECARA PASTI
+    // BISA DIKLIK KEMBALI
     setTimeout(() => {
       isTakingPhoto = false;
+      const btnSnap = document.getElementById('btn-snap');
+      if (btnSnap) btnSnap.style.opacity = '1';
       updatePhotosStripUI();
     }, 300);
 
