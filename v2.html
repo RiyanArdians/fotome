@@ -676,13 +676,14 @@
         </button>
       </div>
 
-      <!-- KONTROL UTAMA: TOMBOL JEPRET & TOMBOL LANJUT SINKRON TOTAL -->
+      <!-- KONTROL UTAMA: SINKRONISASI TOMBOL JEPRET & TOMBOL LANJUT -->
       <div id="cam-action-btn-container" style="margin-top:2px; width:100%; display:flex; justify-content:center;">
         <div class="cam-snap-trigger" id="btn-snap" onclick="takePhotoSnap()">
           <i class="fa-solid fa-camera"></i>
         </div>
-        <button id="btn-proceed-render" class="btn-primary-v2 hidden" style="background: linear-gradient(135deg, #D4AF37 0%, #AA7C11 100%); color:#2B1E1E; border:none;" onclick="proceedToRenderStrip()">
-          Lanjutkan ke Cetak &rarr;
+        
+        <button id="btn-proceed-render" class="btn-primary-v2 hidden" style="background: linear-gradient(135deg, #D4AF37 0%, #AA7C11 100%); color:#2B1E1E; border:none; padding:12px 24px; font-size:0.85rem;" onclick="proceedToRenderStrip()">
+          Lanjutkan ke Cetak ✨ &rarr;
         </button>
       </div>
     </div>
@@ -1135,7 +1136,6 @@
     capturedPhotos = [];
     isTakingPhoto = false;
 
-    // AMBIL ULANG DARI ITEM CARD TERPILIH AGAR SINKRON SEMPURNA
     const activeCard = cardItems[currentCardIndex];
     if (activeCard) {
       requiredPhotoCount = parseInt(activeCard.getAttribute('data-count'), 10) || 3;
@@ -1177,17 +1177,25 @@
       stripBox.appendChild(thumbBox);
     }
 
-    // UPDATE HEADER ATAS SESUAI JUMLAH TERPILIH
+    // UPDATE LOGIKA TOMBOL LANJUT SANGAT TEGAS
     if (currentCapturedCount >= totalNeeded) {
       progressText.innerText = `Foto ${totalNeeded} dari ${totalNeeded} (Selesai)`;
       toolsBox.style.display = 'none';
-      btnSnap.classList.add('hidden');
-      btnProceed.classList.remove('hidden');
+      
+      if (btnSnap) btnSnap.classList.add('hidden');
+      if (btnProceed) {
+        btnProceed.classList.remove('hidden');
+        btnProceed.style.display = 'inline-flex';
+      }
     } else {
       progressText.innerText = `Foto ${currentCapturedCount + 1} dari ${totalNeeded}`;
       toolsBox.style.display = 'flex';
-      btnSnap.classList.remove('hidden');
-      btnProceed.classList.add('hidden');
+      
+      if (btnSnap) btnSnap.classList.remove('hidden');
+      if (btnProceed) {
+        btnProceed.classList.add('hidden');
+        btnProceed.style.display = 'none';
+      }
     }
   }
 
@@ -1343,7 +1351,6 @@
 
     const totalNeeded = parseInt(requiredPhotoCount, 10) || 3;
 
-    // PASTI BISA JEPRETLAGI / DI-RESET STATUSNYA
     isTakingPhoto = false;
 
     const btnSnap = document.getElementById('btn-snap');
@@ -1351,15 +1358,11 @@
 
     updatePhotosStripUI();
 
-    // JIKA SELURUH FOTO SUDAH TERPENUHI, OTOMATIS RENDERING KE CETAK
+    // EKSEKUSI OTOMATIS JIKA SELURUH FOTO SUDAH LENGKAP
     if (capturedPhotos.length >= totalNeeded) {
-      if (videoStream) {
-        videoStream.getTracks().forEach(track => track.stop());
-        videoStream = null;
-      }
       setTimeout(() => {
         proceedToRenderStrip();
-      }, 350);
+      }, 300);
     }
   }
 
