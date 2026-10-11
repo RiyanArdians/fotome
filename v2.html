@@ -945,7 +945,7 @@
   let videoStream = null;
   let generatedDataUrl = "";
 
-  /* KAMERA AWAL (USER = DEPAN, ENVIRONMENT = BELAKANG) */
+  /* KAMERA DEPAN ("user") & BELAKANG ("environment") */
   let currentFacingMode = "user";
   let isMirror = true;
   let timerDuration = 3;
@@ -1220,47 +1220,61 @@
     loadRealtimeFeedIG();
   }
 
-  /* LOGIKA KAMERA STABIL DENGAN FALLBACK AMAN */
+  /* LOGIKA PERBAIKAN KAMERA (TIDAK LAGI POPUP ERROR SAAT SWITCH) */
   function initCameraStream() {
-    if (videoStream) {
-      videoStream.getTracks().forEach(track => track.stop());
-      videoStream = null;
-    }
-
     const video = document.getElementById('video');
     if (!video) return;
+
+    // Stop stream lama dan bersihkan memori kamera
+    if (videoStream) {
+      try {
+        videoStream.getTracks().forEach(track => {
+          track.stop();
+          videoStream.removeTrack(track);
+        });
+      } catch (e) {
+        console.warn(e);
+      }
+      videoStream = null;
+    }
     video.srcObject = null;
 
     isMirror = (currentFacingMode === "user");
     const labelMirror = document.getElementById('label-mirror');
     if (labelMirror) labelMirror.innerText = isMirror ? 'ON' : 'OFF';
 
+    // Constraint longgar dengan 'ideal' agar browser HP Android tidak konflik
     const constraints = {
-      video: { facingMode: { ideal: currentFacingMode } },
+      video: { 
+        facingMode: { ideal: currentFacingMode } 
+      },
       audio: false
     };
 
-    navigator.mediaDevices.getUserMedia(constraints)
-      .then(async stream => {
-        videoStream = stream;
-        video.srcObject = stream;
-        await video.play();
-        applyZoomTransform();
-      })
-      .catch(err => {
-        console.warn("Fallback ke kamera default...", err);
-        navigator.mediaDevices.getUserMedia({ video: true, audio: false })
-          .then(async stream => {
-            videoStream = stream;
-            video.srcObject = stream;
-            await video.play();
-            applyZoomTransform();
-          })
-          .catch(fallbackErr => {
-            console.error("Kamera error:", fallbackErr);
-            showAlert("Tidak dapat membuka kamera. Pastikan izin kamera diizinkan.", "Kamera Error", "📷");
-          });
-      });
+    // Jeda 100ms agar hardware HP selesai melepaskan sensor kamera lama
+    setTimeout(() => {
+      navigator.mediaDevices.getUserMedia(constraints)
+        .then(async stream => {
+          videoStream = stream;
+          video.srcObject = stream;
+          await video.play().catch(e => console.warn(e));
+          applyZoomTransform();
+        })
+        .catch(err => {
+          console.warn("Mencoba fallback standar...", err);
+          navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+            .then(async stream => {
+              videoStream = stream;
+              video.srcObject = stream;
+              await video.play().catch(e => console.warn(e));
+              applyZoomTransform();
+            })
+            .catch(fallbackErr => {
+              console.error(fallbackErr);
+              showAlert("Tidak dapat membuka kamera. Pastikan izin kamera diizinkan.", "Kamera Error", "📷");
+            });
+        });
+    }, 100);
   }
 
   function switchCameraNext() {
