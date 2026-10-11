@@ -771,9 +771,9 @@
         Zoom: <span id="label-zoom">1x</span>
       </button>
 
-      <!-- TOMBOL SWITCH KAMERA KANONIS DENGAN LABEL DINAMIS -->
-      <button class="cam-tool-btn" id="btn-toggle-cam" onclick="switchCameraToggle()">
-        <i class="fa-solid fa-arrows-rotate"></i> <span id="label-cam-mode">Depan</span>
+      <!-- TOMBOL SWITCH INSTAN BEBAS ERROR -->
+      <button class="cam-tool-btn" id="btn-toggle-cam" onclick="switchCameraInstant()">
+        <i class="fa-solid fa-rotate"></i> <span id="label-cam-mode">Belakang</span>
       </button>
 
       <button class="cam-tool-btn" id="btn-mirror" onclick="toggleMirror()">
@@ -952,8 +952,9 @@
   let videoStream = null;
   let generatedDataUrl = "";
 
-  /* STATUS KAMERA DAN OPSI */
+  /* STATUS KAMERA DAN OPSI HARMONIS */
   let activeFacingMode = "user"; // "user" (Depan) / "environment" (Belakang)
+  let isSwitchingCamera = false;
   let isMirror = false; 
   let timerDuration = 3;
   let zoomLevel = 1;      
@@ -1227,17 +1228,38 @@
     loadRealtimeFeedIG();
   }
 
-  /* FUNGSI SWITCH KAMERA UNIVERSAL DENGAN PEMBERSIHAN LEPAS KUNCI HARDWARE */
+  /* SISTEM PEMBERSAPAN STREAM KELAS TINGGI AGAR LANGSUNG BERPINDAH INSTAN */
   async function stopCurrentStream() {
     if (videoStream) {
       try {
-        videoStream.getTracks().forEach(track => track.stop());
+        videoStream.getTracks().forEach(track => {
+          track.stop();
+        });
       } catch (e) { console.warn(e); }
       videoStream = null;
     }
     const video = document.getElementById('video');
     if (video) video.srcObject = null;
-    await new Promise(resolve => setTimeout(resolve, 200));
+    await new Promise(resolve => setTimeout(resolve, 250));
+  }
+
+  async function getBestCameraDeviceId(targetFacing) {
+    try {
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      const videoDevices = devices.filter(d => d.kind === 'videoinput');
+
+      if (videoDevices.length === 0) return null;
+
+      if (targetFacing === 'user') {
+        const frontCam = videoDevices.find(d => d.label.toLowerCase().includes('front') || d.label.toLowerCase().includes('depan') || d.label.toLowerCase().includes('selfie'));
+        return frontCam ? frontCam.deviceId : videoDevices[0].deviceId;
+      } else {
+        const backCams = videoDevices.filter(d => d.label.toLowerCase().includes('back') || d.label.toLowerCase().includes('belakang') || d.label.toLowerCase().includes('rear') || d.label.toLowerCase().includes('main') || d.label.toLowerCase().includes('0'));
+        return backCams.length > 0 ? backCams[0].deviceId : videoDevices[videoDevices.length - 1].deviceId;
+      }
+    } catch(e) {
+      return null;
+    }
   }
 
   async function initCameraStream() {
@@ -1246,56 +1268,53 @@
 
     await stopCurrentStream();
 
-    // Menggunakan strategi penanganan bertingkat
-    const modeConstraint = (activeFacingMode === "user") ? "user" : "environment";
-    
-    let options = {
-      video: { facingMode: { ideal: modeConstraint } },
-      audio: false
-    };
+    const deviceId = await getBestCameraDeviceId(activeFacingMode);
+
+    let constraints = { audio: false };
+
+    if (deviceId) {
+      constraints.video = { deviceId: { exact: deviceId } };
+    } else {
+      constraints.video = { facingMode: { exact: activeFacingMode } };
+    }
 
     try {
-      const stream = await navigator.mediaDevices.getUserMedia(options);
+      const stream = await navigator.mediaDevices.getUserMedia(constraints);
       videoStream = stream;
       video.srcObject = stream;
       await video.play().catch(e => console.warn(e));
       applyZoomTransform();
     } catch (err) {
-      console.warn("Mencoba fallback mode kamera standar...", err);
+      console.warn("Fallback Mode Ideal FacingMode...", err);
       try {
-        const fallbackStream = await navigator.mediaDevices.getUserMedia({ 
-          video: { facingMode: modeConstraint }, 
+        const altStream = await navigator.mediaDevices.getUserMedia({ 
+          video: { facingMode: activeFacingMode }, 
           audio: false 
         });
-        videoStream = fallbackStream;
-        video.srcObject = fallbackStream;
+        videoStream = altStream;
+        video.srcObject = altStream;
         await video.play().catch(e => console.warn(e));
         applyZoomTransform();
       } catch (fallbackErr) {
-        console.warn("Gagal membuka mode spesifik, membuka kamera standar...", fallbackErr);
-        try {
-          const genStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
-          videoStream = genStream;
-          video.srcObject = genStream;
-          await video.play().catch(e => console.warn(e));
-          applyZoomTransform();
-        } catch (eFinal) {
-          console.error("Kamera Error:", eFinal);
-          showAlert("Tidak dapat membuka kamera. Pastikan izin kamera telah diizinkan pada browser.", "Kamera Error", "📷");
-        }
+        console.error("Gagal membuka kamera:", fallbackErr);
+        showAlert("Tidak dapat membuka kamera. Pastikan izin kamera telah diizinkan.", "Kamera Error", "📷");
       }
     }
   }
 
-  function switchCameraToggle() {
+  async function switchCameraInstant() {
+    if (isSwitchingCamera) return;
+    isSwitchingCamera = true;
+
+    const labelCam = document.getElementById('label-cam-mode');
     activeFacingMode = (activeFacingMode === "user") ? "environment" : "user";
     
-    const labelCam = document.getElementById('label-cam-mode');
     if (labelCam) {
       labelCam.innerText = (activeFacingMode === "user") ? "Depan" : "Belakang";
     }
 
-    initCameraStream();
+    await initCameraStream();
+    isSwitchingCamera = false;
   }
 
   function startCameraProcess() {
