@@ -300,7 +300,8 @@
     }
 
     .gallery-grid-name { font-size: 0.65rem; font-weight: 700; color: #8C6262; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; text-align: center; }
-    .gallery-grid-msg { font-size: 0.58rem; color: #777; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; text-align: center; font-style: italic; }
+    .gallery-grid-date { font-size: 0.52rem; color: #888; margin-top: 1px; width: 100%; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .gallery-grid-msg { font-size: 0.58rem; color: #777; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; text-align: center; font-style: italic; margin-top: 2px; }
 
     /* STYLE MODUL KELOLA TAMU UNDANGAN */
     .guest-tools-grid {
@@ -501,7 +502,8 @@
     }
 
     .modal-user-name { font-size: 1rem; font-weight: 700; color: #8C6262; margin-bottom: 2px; }
-    .modal-img { width: 100%; border-radius: 12px; margin: 10px 0; }
+    .modal-user-date { font-size: 0.68rem; color: #888; margin-bottom: 6px; }
+    .modal-img { width: 100%; border-radius: 12px; margin: 6px 0 10px; }
     .modal-msg { font-size: 0.82rem; color: #333; font-style: italic; background: #FAF6EE; padding: 10px; border-radius: 10px; line-height: 1.4; margin-bottom: 12px; }
     .modal-actions-col { display: flex; flex-direction: column; gap: 6px; }
 
@@ -509,9 +511,7 @@
     .btn-modal-dl-msg { background: #8C6262; color: #FFF; border: none; padding: 9px; border-radius: 12px; font-size: 0.75rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
     .btn-modal-del { background: #C62828; color: #FFF; border: none; padding: 9px; border-radius: 12px; font-size: 0.75rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
 
-    /* ========================================================= */
-    /* CUSTOM DIALOG POPUP MENGGANTIKAN ALERT & CONFIRM BROWSER  */
-    /* ========================================================= */
+    /* CUSTOM DIALOG POPUP MENGGANTIKAN ALERT & CONFIRM BROWSER */
     .admin-dialog-overlay {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100vh;
@@ -741,6 +741,7 @@
   <div class="modal-card">
     <button class="modal-close-btn" onclick="closeAdminModal()">✕</button>
     <div class="modal-user-name" id="modal-sender-name">Nama Tamu</div>
+    <div class="modal-user-date" id="modal-sender-date">06 Des 2026 • 12:00</div>
     <img id="modal-img-src" class="modal-img" src="" alt="Foto Strip">
     <div class="modal-msg" id="modal-sender-msg">"Pesan ucapan..."</div>
     
@@ -888,6 +889,21 @@
   // DEFAULT LINK UTAMA UNDANGAN & TEMPLATE WA
   let baseInvitationUrl = "https://riyanardians.github.io/";
   let defaultWaTemplate = "Kepada Yth. Bapak/Ibu/Saudara/i {nama},\n\nTanpa mengurangi rasa hormat, perkenankan kami mengundang Anda untuk menghadiri acara pernikahan kami.\n\nBerikut link undangan digital kami:\n{link}\n\nMerupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu.\n\nTerima kasih,\nRiyan & Amelia";
+
+  // FUNGSI FORMAT TANGGAL DAN JAM DARI TIMESTAMP FIRESTORE
+  function formatTimestamp(timestamp) {
+    if (!timestamp) return 'Baru saja';
+    const dateObj = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+    
+    const day = String(dateObj.getDate()).padStart(2, '0');
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agt', 'Sep', 'Okt', 'Nov', 'Des'];
+    const month = months[dateObj.getMonth()];
+    const year = dateObj.getFullYear();
+    const hours = String(dateObj.getHours()).padStart(2, '0');
+    const minutes = String(dateObj.getMinutes()).padStart(2, '0');
+
+    return `${day} ${month} ${year} • ${hours}:${minutes}`;
+  }
 
   // SISTEM CUSTOM DIALOG MENGGANTIKAN ALERT & CONFIRM
   function showAdminAlert(title, message, iconClass = "fa-solid fa-circle-info") {
@@ -1136,7 +1152,7 @@
     }, true, "fa-solid fa-trash");
   }
 
-  // 2. KELOLA GALERI
+  // 2. KELOLA GALERI (DENGAN DUKUNGAN TANGGAL & JAM)
   function loadGalleryAdmin() {
     const container = document.getElementById('gallery-grid-container');
 
@@ -1155,16 +1171,18 @@
         allGalleryPosts.push({ id: doc.id, ...doc.data() });
       });
 
+      // Urutkan dari yang terbaru ke terlama
       allGalleryPosts.sort((a, b) => {
         const timeA = a.createdAt ? a.createdAt.toMillis() : 0;
         const timeB = b.createdAt ? b.createdAt.toMillis() : 0;
-        return timeA - timeB;
+        return timeB - timeA;
       });
 
       allGalleryPosts.forEach(data => {
         const postId = data.id;
         const name = data.name || 'Tamu';
         const msg = data.message || '-';
+        const timeFormatted = formatTimestamp(data.createdAt);
 
         const card = document.createElement('div');
         card.className = 'gallery-grid-card';
@@ -1174,11 +1192,12 @@
           <div class="card-checkbox-wrapper" onclick="event.stopPropagation()">
             <input type="checkbox" class="card-checkbox post-select-cb" value="${postId}" onchange="updateCardStyle(this, '${postId}')">
           </div>
-          <div class="gallery-thumb-box" onclick="openAdminModal('${postId}', '${name}', '${msg.replace(/'/g, "\\'")}', '${data.photoData}')">
+          <div class="gallery-thumb-box" onclick="openAdminModal('${postId}', '${name.replace(/'/g, "\\'")}', '${msg.replace(/'/g, "\\'")}', '${data.photoData}', '${timeFormatted}')">
             <img src="${data.photoData}" class="gallery-thumb-grid" alt="Thumb">
           </div>
-          <div class="gallery-grid-name" onclick="openAdminModal('${postId}', '${name}', '${msg.replace(/'/g, "\\'")}', '${data.photoData}')">${name}</div>
-          <div class="gallery-grid-msg" onclick="openAdminModal('${postId}', '${name}', '${msg.replace(/'/g, "\\'")}', '${data.photoData}')">"${msg}"</div>
+          <div class="gallery-grid-name" onclick="openAdminModal('${postId}', '${name.replace(/'/g, "\\'")}', '${msg.replace(/'/g, "\\'")}', '${data.photoData}', '${timeFormatted}')">${name}</div>
+          <div class="gallery-grid-date" onclick="openAdminModal('${postId}', '${name.replace(/'/g, "\\'")}', '${msg.replace(/'/g, "\\'")}', '${data.photoData}', '${timeFormatted}')">${timeFormatted}</div>
+          <div class="gallery-grid-msg" onclick="openAdminModal('${postId}', '${name.replace(/'/g, "\\'")}', '${msg.replace(/'/g, "\\'")}', '${data.photoData}', '${timeFormatted}')">"${msg}"</div>
         `;
         container.appendChild(card);
       });
@@ -1278,13 +1297,14 @@
   let activeSenderName = "";
   let activeSenderMsg = "";
 
-  function openAdminModal(postId, name, message, photoData) {
+  function openAdminModal(postId, name, message, photoData, dateFormatted) {
     activePostId = postId;
     activePhotoUrl = photoData;
     activeSenderName = name;
     activeSenderMsg = message;
 
     document.getElementById('modal-sender-name').innerText = name;
+    document.getElementById('modal-sender-date').innerText = dateFormatted || '';
     document.getElementById('modal-sender-msg').innerText = `"${message}"`;
     document.getElementById('modal-img-src').src = photoData;
 
