@@ -330,7 +330,7 @@
     @keyframes frameClickBounce { 0% { transform: translateX(0) scale(1); } 40% { transform: translateX(0) scale(0.92); } 100% { transform: translateX(0) scale(1.05); opacity: 0.9; } }
 
     /* ---------------------------------------------------- */
-    /* 5. KAMERA STABEL & AUTO TRANSISI SAAT FOTO LENGKAP     */
+    /* 5. KAMERA STABEL & AUTO TRANSISI INSTAN             */
     /* ---------------------------------------------------- */
     .camera-stage-container {
       width: 100%; max-width: 380px; height: 100%;
@@ -642,7 +642,7 @@
   </div>
 </div>
 
-<!-- STEP 3: SESI KAMERA RESPONSIF (AUTO TRANSISI LANGSUNG SAAT FOTO LENGKAP) -->
+<!-- STEP 3: SESI KAMERA RESPONSIF (LANGSUNG OTOMATIS RENDER SEMENTARA FOTO LENGKAP) -->
 <div id="step-camera" class="page-fullscreen dark-bg hidden" style="background:#000;">
   <div class="camera-stage-container">
     
@@ -973,7 +973,6 @@
         if (index === currentCardIndex) {
           card.classList.add('card-pressed');
           
-          // AMBIL JUMLAH FOTO LANGSUNG
           const countAttr = card.getAttribute('data-count');
           requiredPhotoCount = parseInt(countAttr, 10) || 3;
           selectedFramePath = card.getAttribute('data-path');
@@ -1143,7 +1142,6 @@
     }
   }
 
-  /* UPDATE UI SECARA SINKRON & OTOMATIS BERPINDAH SESI KETIKA KUOTA TERPENUHI */
   function updatePhotosStripUI() {
     const stripBox = document.getElementById('cam-photos-strip');
     const toolsBox = document.getElementById('cam-floating-tools');
@@ -1181,17 +1179,6 @@
           <i class="fa-solid fa-spinner fa-spin"></i> Menyiapkan hasil cetak...
         </div>
       `;
-
-      // HENTIKAN STREAM KAMERA DAN LANGSUNG OTOMATIS RENDER KE HALAMAN PRINTER
-      if (videoStream) {
-        videoStream.getTracks().forEach(track => track.stop());
-        videoStream = null;
-      }
-
-      setTimeout(() => {
-        proceedToRenderStrip();
-      }, 500);
-
     } else {
       toolsBox.style.display = 'flex';
       actionContainer.innerHTML = `
@@ -1206,7 +1193,6 @@
     capturedPhotos.splice(index, 1);
     isTakingPhoto = false;
 
-    // JIKA TADI KAMERA MATI, MENYALAKAN KEMBALI STREAM
     if (!videoStream || !videoStream.active) {
       initCameraStreamDirectlyOnUserInteraction();
     }
@@ -1353,12 +1339,26 @@
 
     capturedPhotos.push(tempCanvas.toDataURL('image/png'));
 
-    setTimeout(() => {
-      isTakingPhoto = false;
-      const btnSnap = document.getElementById('btn-snap');
-      if (btnSnap) btnSnap.style.opacity = '1';
-      updatePhotosStripUI();
-    }, 200);
+    const totalNeeded = parseInt(requiredPhotoCount, 10) || 3;
+
+    updatePhotosStripUI();
+
+    // JIKA FOTO SUDAH LENGKAP, LANGSUNG PROSES TANPA MENUNGGU KLIKS TAMBAHAN
+    if (capturedPhotos.length >= totalNeeded) {
+      if (videoStream) {
+        videoStream.getTracks().forEach(track => track.stop());
+        videoStream = null;
+      }
+      setTimeout(() => {
+        proceedToRenderStrip();
+      }, 300);
+    } else {
+      setTimeout(() => {
+        isTakingPhoto = false;
+        const btnSnap = document.getElementById('btn-snap');
+        if (btnSnap) btnSnap.style.opacity = '1';
+      }, 200);
+    }
   }
 
   function proceedToRenderStrip() {
@@ -1458,6 +1458,9 @@
         img.src = generatedDataUrl;
       });
 
+      goToStep('step-result');
+    }).catch(err => {
+      console.error("Render error:", err);
       goToStep('step-result');
     });
   }
