@@ -163,7 +163,7 @@
 
     .btn-back-styled:active { transform: scale(0.94); background: rgba(255, 255, 255, 0.25); }
 
-    /* 1. AMPLOP ANIMASI */
+    /* AMPLOP ANIMASI */
     .envelope-screen {
       position: fixed;
       top: 0; left: 0; width: 100vw; height: 100dvh;
@@ -245,7 +245,7 @@
     .envelope-wrapper.step-lift-up .envelope-card-inside { opacity: 1; transform: translateY(-110px) scale(1); z-index: 8; }
     .envelope-wrapper.step-zoom-center .envelope-card-inside { transform: translateY(0) scale(1.28); z-index: 99; box-shadow: 0 25px 60px rgba(0,0,0,0.5); }
 
-    /* 2. FRAME HERO BULAT MEMANJANG */
+    /* FRAME HERO BULAT */
     .hero-pill-frame-pure {
       width: 100%;
       max-width: 230px;
@@ -273,7 +273,7 @@
       display: block;
     }
 
-    /* 3. INPUT NAMA */
+    /* INPUT NAMA */
     .ask-page-center-wrapper {
       flex: 1;
       display: flex;
@@ -315,7 +315,7 @@
     .stylish-underline-input::placeholder { color: rgba(255, 255, 255, 0.5); font-style: italic; font-size: 0.88rem; }
     .stylish-underline-input:focus { border-color: var(--gold-accent); box-shadow: 0 0 12px rgba(212, 175, 55, 0.3); background: rgba(0, 0, 0, 0.3); }
 
-    /* 4. SLIDER FIGMA PILIH FRAME */
+    /* SLIDER FIGMA PILIH FRAME */
     .slider-header-box { text-align: center; z-index: 10; width: 100%; max-width: 360px; margin-top: 2px; }
     .section-label-fullscreen { font-size: 0.68rem; font-weight: 700; color: var(--gold-accent); text-transform: uppercase; letter-spacing: 2.5px; margin-bottom: 2px; }
     .slider-main-title { font-family: 'Cormorant Garamond', serif; font-size: 1.35rem; font-weight: 700; color: #FFFFFF; line-height: 1.2; margin-bottom: 2px; }
@@ -340,7 +340,7 @@
     .figma-card-item.hidden-left { transform: translateX(-115%) scale(0.65) rotate(-12deg); opacity: 0; z-index: 1; }
     .figma-card-item.hidden-right { transform: translateX(115%) scale(0.65) rotate(12deg); opacity: 0; z-index: 1; }
 
-    /* 5. KAMERA VIEWFINDER & THUMBNAIL PREVIEW PERSEGI (RASIO SAMA) */
+    /* KAMERA VIEWFINDER & KONTROL */
     .camera-stage-container {
       width: 100%; max-width: 380px; height: 100%;
       display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 4px;
@@ -377,7 +377,6 @@
       background: rgba(255,255,255,0.08); backdrop-filter: blur(8px); padding: 6px 10px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.2); width: 100%; margin-bottom: 6px;
     }
 
-    /* PREVIEW THUMBNAIL KAMERA PERSEGI PRESISI (ASPECT-RATIO 1/1) */
     .photo-thumb-box {
       position: relative; 
       width: 52px; 
@@ -396,11 +395,11 @@
     .photo-thumb-box.empty-slot { border: 1.5px dashed rgba(255,255,255,0.35); color: rgba(255,255,255,0.5); font-size: 0.72rem; font-weight: 600; }
 
     .cam-floating-tools {
-      display: flex; gap: 6px; background: rgba(255,255,255,0.1); backdrop-filter: blur(8px); padding: 4px 10px; border-radius: 18px; border: 1px solid rgba(255,255,255,0.2); margin-bottom: 4px;
+      display: flex; gap: 4px; background: rgba(255,255,255,0.1); backdrop-filter: blur(8px); padding: 4px 8px; border-radius: 18px; border: 1px solid rgba(255,255,255,0.2); margin-bottom: 4px; max-width: 100%; overflow-x: auto;
     }
 
     .cam-tool-btn {
-      background: transparent; border: none; color: #FFF; font-size: 0.7rem; font-weight: 600; padding: 4px 8px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: transform 0.15s ease;
+      background: transparent; border: none; color: #FFF; font-size: 0.68rem; font-weight: 600; padding: 4px 6px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; gap: 3px; white-space: nowrap; transition: transform 0.15s ease;
     }
     .cam-tool-btn:active { transform: scale(0.88); }
 
@@ -446,7 +445,7 @@
       position: absolute; top: 5px; right: 5px; background: rgba(231, 76, 60, 0.95); color: #FFF; border: none; width: 22px; height: 22px; border-radius: 50%; font-weight: 700; font-size: 0.75rem; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.4); z-index: 10;
     }
 
-    /* 6. PRINTER STAGE */
+    /* PRINTER STAGE */
     .printer-lottie-stage {
       width: 100vw; min-height: 100dvh; background: #FFFFFF; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 16px 14px 20px; position: relative; overflow-y: auto;
     }
@@ -503,7 +502,7 @@
     }
     .printer-bottom-actions.visible { opacity: 1; transform: translateY(0); }
 
-    /* 7. STYLING GALERI RINGAN TANPA EMOJI */
+    /* GALERI RINGAN */
     .feed-container { width: 100%; max-width: 420px; margin: 0 auto; }
     .gallery-intro-box { background: #FAF6F0; border: 1px solid rgba(212, 175, 55, 0.3); border-radius: 16px; padding: 14px 10px; margin-bottom: 16px; text-align: center; }
     .ig-grid-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
@@ -692,7 +691,7 @@
       <div id="flash-overlay" class="flash-overlay"></div>
     </div>
 
-    <!-- STRIP PREVIEW PERSEGI & KONTROL KAMERA -->
+    <!-- STRIP PREVIEW & KONTROL KAMERA -->
     <div style="width:100%; display:flex; flex-direction:column; align-items:center;">
       <div class="cam-photos-preview-strip" id="cam-photos-strip"></div>
 
@@ -703,8 +702,8 @@
         <button class="cam-tool-btn" id="btn-zoom" onclick="toggleZoomSetting()">
           Zoom: <span id="label-zoom">1x</span>
         </button>
-        <button class="cam-tool-btn" onclick="switchCamera()">
-          Switch
+        <button class="cam-tool-btn" id="btn-switch" onclick="switchCameraNext()">
+          <i class="fa-solid fa-arrows-rotate"></i> <span id="label-cam-name">Cam: Depan</span>
         </button>
         <button class="cam-tool-btn" id="btn-mirror" onclick="toggleMirror()">
           Mirror: <span id="label-mirror">ON</span>
@@ -717,8 +716,6 @@
         </div>
       </div>
     </div>
-
-    <select id="camera-select" class="cam-select-box hidden" onchange="onCameraSelectChange(this.value)"></select>
 
   </div>
 </div>
@@ -811,7 +808,7 @@
 
 </div>
 
-<!-- GALERI KENANGAN (TAMPILAN CEPAT KEMBALI SEPERTI AWAL) -->
+<!-- GALERI KENANGAN -->
 <div id="step-gallery-page" class="page-fullscreen hidden" style="overflow-y:auto; height:auto; min-height:100dvh;">
   <div class="feed-container">
     <div style="text-align:center; margin-bottom:12px;">
@@ -884,7 +881,9 @@
   let videoStream = null;
   let generatedDataUrl = "";
 
-  let currentFacingMode = "user"; 
+  /* VARIABEL DETEKSI KAMERA LENGKAP */
+  let availableCameraDevices = []; 
+  let currentCamIndex = 0;
   let isMirror = true;
   let timerDuration = 3;
   let zoomLevel = 1;      
@@ -1136,7 +1135,7 @@
             lockOverlay = document.createElement('div');
             lockOverlay.id = 'lock-overlay';
             lockOverlay.innerHTML = `
-              <div style="min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; font-family: 'Plus Jakarta Sans', sans-serif; background-color: #FAF6F0; color: #2B1E1E;">
+              <div style="min-height: 100vh; display: flex; flex-direction: column; justify- content: center; align-items: center; text-align: center; padding: 20px; font-family: 'Plus Jakarta Sans', sans-serif; background-color: #FAF6F0; color: #2B1E1E;">
                 <div style="background: #FFF; padding: 40px 25px; border-radius: 24px; box-shadow: 0 15px 35px rgba(122, 28, 40, 0.1); border: 1px solid rgba(212, 175, 55, 0.3); max-width: 400px; width: 100%;">
                   <div style="font-size: 3rem; margin-bottom: 10px;">🔒</div>
                   <h2 style="font-family: 'Cormorant Garamond', serif; color: #7A1C28; font-size: 2rem; margin-bottom: 10px;">Photobooth Ditutup</h2>
@@ -1158,40 +1157,111 @@
     loadRealtimeFeedIG();
   }
 
+  /* KONTROL KAMERA TINGKAT TINGGI MEMINDAI SIKLUS PERANGKAT SPESIFIK */
+  async function scanAndEnumerateCameras() {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) return;
+    try {
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      const videoDevices = devices.filter(d => d.kind === 'videoinput');
+      
+      availableCameraDevices = [];
+      
+      videoDevices.forEach((dev, index) => {
+        let label = dev.label || `Kamera ${index + 1}`;
+        let typeName = "Depan";
+
+        const lowerLabel = label.toLowerCase();
+        if (lowerLabel.includes('back') || lowerLabel.includes('belakang') || lowerLabel.includes('environment')) {
+          typeName = "Belakang";
+        } else if (lowerLabel.includes('front') || lowerLabel.includes('depan') || lowerLabel.includes('user')) {
+          typeName = "Depan";
+        } else if (lowerLabel.includes('usb') || lowerLabel.includes('external') || lowerLabel.includes('webcam')) {
+          typeName = "Eksternal";
+        } else {
+          typeName = index === 0 ? "Depan" : "Belakang";
+        }
+
+        availableCameraDevices.push({
+          deviceId: dev.deviceId,
+          labelName: typeName
+        });
+      });
+
+      if (availableCameraDevices.length === 0) {
+        availableCameraDevices.push({ deviceId: null, labelName: "Depan" });
+      }
+    } catch (e) {
+      console.warn("Gagal memindai daftar kamera:", e);
+    }
+  }
+
   function initCameraStreamDirectlyOnUserInteraction() {
+    // Hentikan stream terdahulu secara bersih
     if (videoStream) {
       videoStream.getTracks().forEach(track => track.stop());
       videoStream = null;
     }
 
     const video = document.getElementById('video');
-    const constraints = {
-      video: { facingMode: currentFacingMode },
-      audio: false
-    };
+    video.srcObject = null;
+
+    let constraints = { video: true, audio: false };
+
+    if (availableCameraDevices.length > 0 && availableCameraDevices[currentCamIndex]) {
+      const activeCam = availableCameraDevices[currentCamIndex];
+      if (activeCam.deviceId) {
+        constraints.video = { deviceId: { exact: activeCam.deviceId } };
+      } else {
+        constraints.video = { facingMode: activeCam.labelName === "Belakang" ? "environment" : "user" };
+      }
+      
+      // Auto-Mirror jika kamera depan
+      isMirror = activeCam.labelName === "Depan";
+      document.getElementById('label-mirror').innerText = isMirror ? 'ON' : 'OFF';
+      document.getElementById('label-cam-name').innerText = `Cam: ${activeCam.labelName}`;
+    }
 
     navigator.mediaDevices.getUserMedia(constraints)
-      .then(stream => {
+      .then(async stream => {
         videoStream = stream;
         video.srcObject = stream;
-        video.play().then(() => {
-          applyZoomTransform();
-          enumerateFrontBackCameras();
-        }).catch(err => console.log("Play catch:", err));
+        await video.play();
+        applyZoomTransform();
+        
+        // Pindai nama perangkat jika belum
+        if (availableCameraDevices.length === 0 || !availableCameraDevices[0].deviceId) {
+          await scanAndEnumerateCameras();
+          if (availableCameraDevices[currentCamIndex]) {
+            document.getElementById('label-cam-name').innerText = `Cam: ${availableCameraDevices[currentCamIndex].labelName}`;
+          }
+        }
       })
       .catch(err => {
-        navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+        // Fallback pencarian kamera umum jika ID spesifik gagal
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: false })
           .then(stream => {
             videoStream = stream;
             video.srcObject = stream;
             video.play();
             applyZoomTransform();
-            enumerateFrontBackCameras();
           })
           .catch(e => {
-            console.error("Camera access error:", e);
+            showAlert("Izin kamera ditolak atau kamera tidak ditemukan.", "Kamera Error", "📷");
           });
       });
+  }
+
+  function switchCameraNext() {
+    if (availableCameraDevices.length <= 1) {
+      // Jika list belum dimuat, coba paksa ubah facingMode balik
+      currentCamIndex = (currentCamIndex + 1) % 2;
+      initCameraStreamDirectlyOnUserInteraction();
+      return;
+    }
+
+    // Pindah ke indeks kamera berikutnya
+    currentCamIndex = (currentCamIndex + 1) % availableCameraDevices.length;
+    initCameraStreamDirectlyOnUserInteraction();
   }
 
   function startCameraProcess() {
@@ -1236,38 +1306,6 @@
     progressText.innerText = `Foto ${currentCapturedCount + 1} dari ${totalNeeded}`;
   }
 
-  function enumerateFrontBackCameras() {
-    if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) return;
-
-    navigator.mediaDevices.enumerateDevices().then(devices => {
-      const videoDevices = devices.filter(d => d.kind === 'videoinput');
-      const select = document.getElementById('camera-select');
-      select.innerHTML = '';
-
-      if (videoDevices.length === 0) return;
-
-      const frontCam = videoDevices.find(d => d.label.toLowerCase().includes('front') || d.label.toLowerCase().includes('depan')) || videoDevices[0];
-      const backCam = videoDevices.find(d => d.label.toLowerCase().includes('back') || d.label.toLowerCase().includes('belakang')) || videoDevices[videoDevices.length - 1];
-
-      const filtered = [];
-      if (frontCam) filtered.push({ mode: 'user', label: 'Kamera Depan' });
-      if (backCam && backCam !== frontCam) filtered.push({ mode: 'environment', label: 'Kamera Belakang' });
-
-      filtered.forEach(cam => {
-        const option = document.createElement('option');
-        option.value = cam.mode;
-        option.text = cam.label;
-        if (cam.mode === currentFacingMode) option.selected = true;
-        select.appendChild(option);
-      });
-    });
-  }
-
-  function switchCamera() {
-    currentFacingMode = (currentFacingMode === "user") ? "environment" : "user";
-    initCameraStreamDirectlyOnUserInteraction();
-  }
-
   function toggleMirror() {
     isMirror = !isMirror;
     applyZoomTransform();
@@ -1297,11 +1335,6 @@
     let transformStr = `scale(${zoomLevel})`;
     if (isMirror) transformStr += ` scaleX(-1)`;
     video.style.transform = transformStr;
-  }
-
-  function onCameraSelectChange(modeVal) {
-    currentFacingMode = modeVal;
-    initCameraStreamDirectlyOnUserInteraction();
   }
 
   function stopCameraAndGoBack() {
@@ -1576,7 +1609,6 @@
     });
   }
 
-  /* FORMAT TANGGAL & JAM RINGAN */
   function formatTimestamp(timestamp) {
     if (!timestamp) return 'Baru saja';
     const dateObj = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
@@ -1593,7 +1625,6 @@
 
   let globalPostsMap = {};
 
-  /* PEMUATAN REALTIME OPTIMAL & RINGAN */
   function loadRealtimeFeedIG() {
     db.collection('posts')
       .where('eventId', '==', EVENT_DOC_ID)
@@ -1618,7 +1649,6 @@
           globalPostsMap[doc.id] = data;
         });
 
-        // Urutkan dari terbaru ke terlama secara lokal agar sangat cepat
         posts.sort((a, b) => {
           const timeA = a.createdAt ? a.createdAt.toMillis() : 0;
           const timeB = b.createdAt ? b.createdAt.toMillis() : 0;
