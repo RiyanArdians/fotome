@@ -426,7 +426,7 @@
     .photo-thumb-box img { width: 100%; height: 100%; object-fit: cover; object-position: center; }
     .photo-thumb-box.empty-slot { border: 1.5px dashed rgba(255, 255, 255, 0.35); color: rgba(255, 255, 255, 0.6); font-size: 0.8rem; font-weight: 600; }
 
-    /* DESAIN TOMBOL KONTROL PAS LENGKAP */
+    /* KONTROL KAMERA RINGKAS */
     .cam-floating-tools {
       display: flex;
       gap: 6px;
@@ -771,8 +771,8 @@
         Zoom: <span id="label-zoom">1x</span>
       </button>
 
-      <!-- TOMBOL SWITCH INSTAN BEBAS ERROR -->
-      <button class="cam-tool-btn" id="btn-toggle-cam" onclick="switchCameraInstant()">
+      <!-- TOMBOL SWITCH INSTAN & AMAN -->
+      <button class="cam-tool-btn" id="btn-toggle-cam" onclick="switchCameraSeamless()">
         <i class="fa-solid fa-rotate"></i> <span id="label-cam-mode">Belakang</span>
       </button>
 
@@ -952,7 +952,7 @@
   let videoStream = null;
   let generatedDataUrl = "";
 
-  /* KAMERA STATE */
+  /* KAMERA STATE & LOCKING SAFEGUARD */
   let activeFacingMode = "user"; 
   let isSwitchingCamera = false;
   let isMirror = false; 
@@ -1228,7 +1228,7 @@
     loadRealtimeFeedIG();
   }
 
-  /* LOGIKA SWITCH KAMERA ANTI-ERROR CHROME ANDROID */
+  /* SISTEM PERGANTIAN KAMERA MUTAKHIR (IN-PLACE CONSTRAINT SWITCH & JEDA RELEASE) */
   async function stopCurrentStream() {
     if (videoStream) {
       try {
@@ -1242,8 +1242,7 @@
       video.pause();
       video.srcObject = null;
     }
-    // Delay pelepasan hardware wajib untuk Android Chrome
-    await new Promise(resolve => setTimeout(resolve, 300));
+    await new Promise(resolve => setTimeout(resolve, 350));
   }
 
   async function initCameraStream() {
@@ -1252,62 +1251,64 @@
 
     await stopCurrentStream();
 
-    // Strategy 1: Ideal facingMode
-    let constraints = {
-      audio: false,
-      video: {
-        facingMode: activeFacingMode,
-        width: { ideal: 1280 },
-        height: { ideal: 720 }
-      }
-    };
+    // Mode fleksibel untuk kompatibilitas Android & Chrome Mobile
+    let targetConstraint = activeFacingMode === "user" ? "user" : { ideal: "environment" };
 
     try {
-      const stream = await navigator.mediaDevices.getUserMedia(constraints);
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: false,
+        video: { facingMode: targetConstraint }
+      });
       videoStream = stream;
       video.srcObject = stream;
-      await video.play();
+      await video.play().catch(e => console.warn(e));
       applyZoomTransform();
     } catch (err) {
-      console.warn("Mencoba fallback mode longgar...", err);
-      // Strategy 2: Fallback longgar tanpa resolusi ideal
+      console.warn("Fallback Stream Standar...", err);
       try {
-        const altStream = await navigator.mediaDevices.getUserMedia({ 
+        const fallbackStream = await navigator.mediaDevices.getUserMedia({
           audio: false,
-          video: { facingMode: activeFacingMode }
+          video: true
         });
-        videoStream = altStream;
-        video.srcObject = altStream;
-        await video.play();
+        videoStream = fallbackStream;
+        video.srcObject = fallbackStream;
+        await video.play().catch(e => console.warn(e));
         applyZoomTransform();
-      } catch (fallbackErr) {
-        console.warn("Mencoba fallback tanpa constraint spesifik...", fallbackErr);
-        // Strategy 3: Buka sembarang video stream yang tersedia
-        try {
-          const genStream = await navigator.mediaDevices.getUserMedia({ audio: false, video: true });
-          videoStream = genStream;
-          video.srcObject = genStream;
-          await video.play();
-          applyZoomTransform();
-        } catch (finalErr) {
-          console.error("Gagal total memuat kamera:", finalErr);
-          showAlert("Tidak dapat membuka kamera. Pastikan izin kamera telah diizinkan pada browser.", "Kamera Error", "📷");
-        }
+      } catch (finalErr) {
+        console.error("Gagal memuat kamera:", finalErr);
+        showAlert("Tidak dapat membuka kamera. Pastikan izin kamera telah diizinkan pada browser.", "Kamera Error", "📷");
       }
     }
   }
 
-  async function switchCameraInstant() {
+  async function switchCameraSeamless() {
     if (isSwitchingCamera) return;
     isSwitchingCamera = true;
 
-    activeFacingMode = (activeFacingMode === "user") ? "environment" : "user";
-    
+    const nextMode = (activeFacingMode === "user") ? "environment" : "user";
     const labelCam = document.getElementById('label-cam-mode');
-    if (labelCam) {
-      labelCam.innerText = (activeFacingMode === "user") ? "Depan" : "Belakang";
+
+    // Metode 1: Coba ubah constraint secara langsung pada video track yang aktif
+    if (videoStream && videoStream.getVideoTracks().length > 0) {
+      const track = videoStream.getVideoTracks()[0];
+      if (typeof track.applyConstraints === 'function') {
+        try {
+          const newFacing = nextMode === "user" ? "user" : { ideal: "environment" };
+          await track.applyConstraints({ facingMode: newFacing });
+          activeFacingMode = nextMode;
+          if (labelCam) labelCam.innerText = (activeFacingMode === "user") ? "Depan" : "Belakang";
+          applyZoomTransform();
+          isSwitchingCamera = false;
+          return;
+        } catch (e) {
+          console.warn("applyConstraints tidak berhasil, beralih ke re-init stream...", e);
+        }
+      }
     }
 
+    // Metode 2: Re-init stream aman dengan jeda pembersihan penuh
+    activeFacingMode = nextMode;
+    if (labelCam) labelCam.innerText = (activeFacingMode === "user") ? "Depan" : "Belakang";
     await initCameraStream();
     isSwitchingCamera = false;
   }
