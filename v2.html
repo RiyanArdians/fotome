@@ -233,7 +233,7 @@
       max-width: 240px;
       height: 46dvh;
       max-height: 360px;
-      border-radius: 120px; /* SHAPE OVAL BULAT MEMANJANG RAMPING */
+      border-radius: 120px;
       overflow: hidden;
       border: 2px solid var(--gold-accent);
       padding: 5px;
@@ -258,17 +258,27 @@
     /* ---------------------------------------------------- */
     /* 3. DESAIN BARU KARTU "DARI SIAPA KENANGAN INI?"      */
     /* ---------------------------------------------------- */
+    .ask-page-center-wrapper {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+    }
+
     .glass-card-ask {
       background: rgba(255, 255, 255, 0.08);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       border: 1px solid rgba(212, 175, 55, 0.35);
       border-radius: 22px;
-      padding: 28px 20px 24px;
-      margin-top: 25px;
+      padding: 26px 20px 22px;
+      margin-top: 15px;
       width: 100%;
       max-width: 330px;
       box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+      text-align: center;
     }
 
     .stylish-underline-input {
@@ -336,7 +346,7 @@
       position: relative;
       width: 100%;
       max-width: 320px;
-      height: 38dvh;
+      height: 42dvh;
       border-radius: 18px;
       overflow: hidden;
       background: #000;
@@ -354,7 +364,13 @@
       pointer-events: none;
     }
 
-    .camera-video-element { width: 100%; height: 100%; object-fit: cover; }
+    .camera-video-element {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    
     .camera-video-element.mirror { transform: scaleX(-1); }
 
     .cam-photos-preview-strip {
@@ -476,7 +492,7 @@
     .printer-bottom-actions.visible { opacity: 1; transform: translateY(0); }
 
     /* ---------------------------------------------------- */
-    /* 7. GALERI KENANGAN TAMU (BISA DI-SCROLL BANYAK KIRIMAN) */
+    /* 7. GALERI KENANGAN TAMU                              */
     /* ---------------------------------------------------- */
     .feed-container { width: 100%; max-width: 420px; margin: 0 auto; }
     .gallery-intro-box { background: #FAF6F0; border: 1px solid rgba(212, 175, 55, 0.3); border-radius: 16px; padding: 14px 10px; margin-bottom: 16px; text-align: center; }
@@ -528,14 +544,14 @@
   </div>
 </div>
 
-<!-- STEP 1: WELCOME SCREEN (PROPORSI OVAL PILL RAMPING & PAS TANPA RUANG KOSONG DI BAWAH) -->
+<!-- STEP 1: WELCOME SCREEN (PROPORSI OVAL PILL RAMPING) -->
 <div id="step-welcome" class="page-fullscreen">
   <div style="width:100%; text-align:center; display:flex; flex-direction:column; align-items:center;">
     <p style="font-size:0.7rem; color:var(--gold-accent); letter-spacing:2.5px; font-weight:700; margin-bottom:1px;">KENANGAN PERNIKAHAN</p>
     <h1 class="font-script" style="font-size:2.6rem; color:var(--primary-crimson); line-height:1.05;" id="display-event-title">Riyan & Amelia</h1>
     <p style="font-size:0.72rem; color:#6E5353; letter-spacing:1px; margin-bottom:4px;">06 DESEMBER 2026</p>
 
-    <!-- FRAME OVAL BULAT MEMANJANG RAMPING PERFECT PERTAMA (HERO) -->
+    <!-- FRAME OVAL BULAT MEMANJANG RAMPING PERFECT -->
     <div class="hero-pill-frame-pure">
       <img src="./assets/v2/hero.png" alt="Hero Pengantin" id="welcome-couple-img" onerror="this.src='./assets/v2/dsg1.png'">
     </div>
@@ -558,17 +574,20 @@
   </div>
 </div>
 
-<!-- PAGE BARU: INPUT NAMA "DARI SIAPA KENANGAN INI?" (DI-UPGRADE ELEGAN) -->
+<!-- PAGE BARU: INPUT NAMA "DARI SIAPA KENANGAN INI?" (PAS DI TENGAH LAYAR) -->
 <div id="step-ask-name" class="page-fullscreen dark-bg hidden">
-  <div style="width:100%; text-align:center; display:flex; flex-direction:column; align-items:center;">
-    <p style="font-size:0.68rem; color:var(--gold-accent); letter-spacing:2.5px; font-weight:700; margin-bottom:3px;">KENANGAN PERNIKAHAN</p>
-    <h2 class="font-script" style="font-size:2.5rem; color:#FFF;" id="ask-event-title">Riyan & Amelia</h2>
+  <div style="width:100%; text-align:center; padding-top:4px;">
+    <p style="font-size:0.68rem; color:var(--gold-accent); letter-spacing:2.5px; font-weight:700; margin-bottom:2px;">KENANGAN PERNIKAHAN</p>
+    <h2 class="font-script" style="font-size:2.4rem; color:#FFF;" id="ask-event-title">Riyan & Amelia</h2>
     <p style="font-size:0.72rem; color:rgba(255,255,255,0.7); letter-spacing:1px;">06 DESEMBER 2026</p>
+  </div>
 
+  <!-- CONTAINER CENTERED UNTUK TAMPILAN DI TENGAH LAYAR -->
+  <div class="ask-page-center-wrapper">
     <div class="glass-card-ask">
       <i class="fa-solid fa-feather-pointed" style="color:var(--gold-accent); font-size:1.8rem; margin-bottom:8px; display:block;"></i>
-      <h3 class="font-serif" style="font-size:1.5rem; letter-spacing:1.5px; font-weight:600; color:#FFF; line-height:1.2;">
-        SIAPA NAMA KAMU?
+      <h3 class="font-serif" style="font-size:1.45rem; letter-spacing:1.5px; font-weight:600; color:#FFF; line-height:1.2;">
+        DARI SIAPA<br>KENANGAN INI?
       </h3>
       <p style="font-size:0.72rem; color:rgba(255,255,255,0.75); margin-top:4px;">Tuliskan nama/panggilanmu untuk dicantumkan pada foto kenangan</p>
 
@@ -591,7 +610,7 @@
   </div>
 </div>
 
-<!-- STEP 2: SLIDER FRAME FULLSCREEN (FIT SCREEN) -->
+<!-- STEP 2: SLIDER FRAME FULLSCREEN -->
 <div id="step-template" class="page-fullscreen dark-bg hidden">
   <div class="slider-header-box">
     <div class="section-label-fullscreen" id="card-theme-tag">ROYAL EDITION</div>
@@ -639,7 +658,7 @@
   </div>
 </div>
 
-<!-- STEP 3: SESI KAMERA RESPONSIF 100% FIT SCREEN (SUDAH DIPERBAIKI BISA DIKLIK TANGKAP BERULANG) -->
+<!-- STEP 3: SESI KAMERA RESPONSIF (KAMERA DIPASTIKAN LANGSUNG TERBUKA) -->
 <div id="step-camera" class="page-fullscreen dark-bg hidden" style="background:#000;">
   <div class="camera-stage-container">
     
@@ -688,7 +707,7 @@
   </div>
 </div>
 
-<!-- STEP 4: ANIMASI PRINTER DENGAN POPUP FOTO FINAL (FIT SCREEN) -->
+<!-- STEP 4: ANIMASI PRINTER DENGAN POPUP FOTO FINAL -->
 <div id="step-result" class="printer-lottie-stage hidden">
   <div class="vector-printer-wrapper" id="main-printer-unit">
     <div class="paper-tray-input" id="paper-input-sheet"></div>
@@ -748,7 +767,7 @@
   </div>
 </div>
 
-<!-- PAGE TERPISAH: GALERI KENANGAN TAMU (BISA DI-SCROLL BANYAK KIRIMAN) -->
+<!-- PAGE TERPISAH: GALERI KENANGAN TAMU -->
 <div id="step-gallery-page" class="page-fullscreen hidden" style="overflow-y:auto; height:auto; min-height:100dvh;">
   <div class="feed-container">
     <div style="text-align:center; margin-bottom:12px;">
@@ -1085,7 +1104,7 @@
   }
 
   /* ---------------------------------------------------- */
-  /* LOGIK KAMERA TERBUKA DENGAN BAIK & BISA KAN KAN LENGKAP */
+  /* LOGIK KAMERA PASTI TERBUKA DENGAN STREAM UNIVERSAL   */
   /* ---------------------------------------------------- */
   function startCameraProcess() {
     goToStep('step-camera');
@@ -1159,11 +1178,7 @@
     }
 
     const constraints = { 
-      video: { 
-        facingMode: currentFacingMode,
-        width: { ideal: 1280 },
-        height: { ideal: 720 }
-      },
+      video: { facingMode: currentFacingMode },
       audio: false
     };
 
@@ -1172,15 +1187,14 @@
         videoStream = stream;
         const video = document.getElementById('video');
         video.srcObject = stream;
-        video.onloadedmetadata = () => {
-          video.play().catch(e => console.log("Play error:", e));
-        };
+        video.play().catch(e => console.log("Video play error:", e));
 
         applyZoomTransform();
         enumerateFrontBackCameras();
       })
       .catch(err => {
-        showAlert("Gagal membuka kamera. Harap izinkan akses kamera di browser kamu!", "Akses Kamera", "⚠️");
+        console.error("Camera Error:", err);
+        showAlert("Gagal membuka kamera. Harap izinkan akses kamera pada browser kamu!", "Akses Kamera", "⚠️");
       });
   }
 
@@ -1315,7 +1329,6 @@
 
     capturedPhotos.push(tempCanvas.toDataURL('image/png'));
 
-    // KEMBALIKAN AKSES TOMBOL KAMERA SUPAYA BISA DI-KLIK FOTO SELANJUTNYA
     setTimeout(() => {
       updatePhotosStripUI();
       const btnSnap = document.getElementById('btn-snap');
