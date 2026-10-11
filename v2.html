@@ -945,7 +945,7 @@
   let videoStream = null;
   let generatedDataUrl = "";
 
-  /* KAMERA TOGGLE LANGSUNG DEPAN ("user") DAN BELAKANG ("environment") */
+  /* KAMERA DAN KONTROL DEPAN / BELAKANG AMAN */
   let currentFacingMode = "user";
   let isMirror = true;
   let timerDuration = 3;
@@ -1220,8 +1220,8 @@
     loadRealtimeFeedIG();
   }
 
-  /* LOGIKA SWITCH KAMERA DEPAN <-> BELAKANG MURNI */
-  function initCameraStream() {
+  /* KODE PENANGANAN KAMERA BEBAS ERROR DENGAN FALLBACK AMAN */
+  async function initCameraStream() {
     const video = document.getElementById('video');
     if (!video) return;
 
@@ -1235,8 +1235,29 @@
     const labelMirror = document.getElementById('label-mirror');
     if (labelMirror) labelMirror.innerText = isMirror ? 'ON' : 'OFF';
 
+    // Cari daftar kamera fisik jika ada
+    let targetDeviceId = null;
+    try {
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      const videoDevices = devices.filter(d => d.kind === 'videoinput');
+      
+      if (videoDevices.length > 0) {
+        if (currentFacingMode === 'environment') {
+          const backCam = videoDevices.find(d => d.label.toLowerCase().includes('back') || d.label.toLowerCase().includes('belakang') || d.label.toLowerCase().includes('environment'));
+          if (backCam) targetDeviceId = backCam.deviceId;
+          else if (videoDevices.length > 1) targetDeviceId = videoDevices[videoDevices.length - 1].deviceId;
+        } else {
+          const frontCam = videoDevices.find(d => d.label.toLowerCase().includes('front') || d.label.toLowerCase().includes('depan') || d.label.toLowerCase().includes('user'));
+          if (frontCam) targetDeviceId = frontCam.deviceId;
+          else targetDeviceId = videoDevices[0].deviceId;
+        }
+      }
+    } catch(e) {
+      console.warn("Gagal membaca daftar perangkat kamera:", e);
+    }
+
     const constraints = {
-      video: { facingMode: currentFacingMode },
+      video: targetDeviceId ? { deviceId: { exact: targetDeviceId } } : { facingMode: { ideal: currentFacingMode } },
       audio: false
     };
 
@@ -1248,13 +1269,23 @@
         applyZoomTransform();
       })
       .catch(err => {
-        console.error("Gagal me-load kamera:", err);
-        showAlert("Tidak dapat membuka kamera. Pastikan izin kamera diizinkan.", "Kamera Error", "📷");
+        console.warn("Retrying fallback kamera umum...", err);
+        // Fallback jika constraint deviceId/facingMode ditolak HP
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: currentFacingMode }, audio: false })
+          .then(async stream => {
+            videoStream = stream;
+            video.srcObject = stream;
+            await video.play();
+            applyZoomTransform();
+          })
+          .catch(fallbackErr => {
+            console.error("Kamera error:", fallbackErr);
+            showAlert("Tidak dapat membuka kamera. Pastikan izin kamera diizinkan.", "Kamera Error", "📷");
+          });
       });
   }
 
   function switchCameraNext() {
-    // Berpindah langsung dari "user" (depan) ke "environment" (belakang) dan sebaliknya
     currentFacingMode = (currentFacingMode === "user") ? "environment" : "user";
     initCameraStream();
   }
