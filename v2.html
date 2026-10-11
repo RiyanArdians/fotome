@@ -564,7 +564,7 @@
       position: absolute; top: 5px; right: 5px; background: rgba(122, 61, 68, 0.95); color: #FFF; border: 1px solid var(--gold-accent); width: 22px; height: 22px; border-radius: 50%; font-weight: 700; font-size: 0.72rem; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.3); z-index: 10;
     }
 
-    /* PRINTER STAGE (SEMAKIN ELEGAN HARMONIS) */
+    /* PRINTER STAGE */
     .printer-lottie-stage {
       width: 100vw; min-height: 100dvh; background: linear-gradient(180deg, #7A3D44 0%, #5C2B32 100%); color: #FFF; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 16px 14px 20px; position: relative; overflow-y: auto;
     }
@@ -796,9 +796,14 @@
     
     <div class="camera-top-status">
       <span style="font-size:0.75rem; font-weight:700;" id="cam-progress-text">Foto 1 dari 3</span>
-      <button class="btn-outline-v2" style="width:auto; margin:0; padding:2px 6px;" onclick="stopCameraAndGoBack()">
-        Batal
-      </button>
+      <div style="display:flex; gap:6px;">
+        <button class="btn-outline-v2" style="width:auto; margin:0; padding:4px 10px; border:1px solid rgba(212,175,55,0.6); border-radius:15px; background:rgba(0,0,0,0.3); color:var(--gold-accent);" onclick="stopCameraAndGoBack()">
+          PILIH FRAME
+        </button>
+        <button class="btn-outline-v2" style="width:auto; margin:0; padding:4px 10px; border:1px solid rgba(255,255,255,0.3); border-radius:15px; background:rgba(0,0,0,0.3);" onclick="resetAndRestartCamera()">
+          RESET FOTO
+        </button>
+      </div>
     </div>
 
     <!-- VIEWFINDER KAMERA -->
@@ -1154,6 +1159,9 @@
           requiredPhotoCount = parseInt(countAttr, 10) || 3;
           selectedFramePath = card.getAttribute('data-path');
 
+          // RESET FOTO SAAT MEMILIH FRAME BARU
+          capturedPhotos = [];
+
           initCameraStream();
 
           setTimeout(() => {
@@ -1409,6 +1417,9 @@
     goToStep('step-camera');
     isTakingPhoto = false;
 
+    const btnSnap = document.getElementById('btn-snap');
+    if (btnSnap) btnSnap.style.opacity = '1';
+
     const activeCard = cardItems[currentCardIndex];
     if (activeCard) {
       requiredPhotoCount = parseInt(activeCard.getAttribute('data-count'), 10) || 3;
@@ -1420,6 +1431,14 @@
     if (!videoStream || !videoStream.active) {
       initCameraStream();
     }
+  }
+
+  function resetAndRestartCamera() {
+    capturedPhotos = [];
+    isTakingPhoto = false;
+    const btnSnap = document.getElementById('btn-snap');
+    if (btnSnap) btnSnap.style.opacity = '1';
+    updatePhotosStripUI();
   }
 
   function updatePhotosStripUI() {
@@ -1444,7 +1463,8 @@
       stripBox.appendChild(thumbBox);
     }
 
-    progressText.innerText = `Foto ${currentCapturedCount + 1} dari ${totalNeeded}`;
+    const currentDisplayNum = Math.min(currentCapturedCount + 1, totalNeeded);
+    progressText.innerText = `Foto ${currentDisplayNum} dari ${totalNeeded}`;
   }
 
   /* MIRROR MANUAL */
@@ -1481,6 +1501,8 @@
   }
 
   async function stopCameraAndGoBack() {
+    capturedPhotos = [];
+    isTakingPhoto = false;
     await stopCurrentStream();
     goToStep('step-template');
   }
