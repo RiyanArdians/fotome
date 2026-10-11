@@ -392,7 +392,6 @@
       background: #000;
       transition: transform 0.2s ease-out;
     }
-    .camera-video-element.mirror { transform: scaleX(-1); }
 
     .cam-photos-preview-strip {
       display: flex;
@@ -752,7 +751,7 @@
 
     <!-- VIEWFINDER KAMERA -->
     <div class="camera-viewfinder-box" id="cam-viewfinder-box">
-      <video id="video" class="camera-video-element mirror" autoplay playsinline webkit-playsinline muted></video>
+      <video id="video" class="camera-video-element" autoplay playsinline webkit-playsinline muted></video>
       <div id="countdown-overlay" class="countdown-overlay hidden">3</div>
       <div id="flash-overlay" class="flash-overlay"></div>
     </div>
@@ -772,7 +771,7 @@
         Switch
       </button>
       <button class="cam-tool-btn" id="btn-mirror" onclick="toggleMirror()">
-        Mirror: <span id="label-mirror">ON</span>
+        Mirror: <span id="label-mirror">OFF</span>
       </button>
     </div>
 
@@ -947,9 +946,10 @@
   let videoStream = null;
   let generatedDataUrl = "";
 
-  /* STATUS KAMERA DAN OPSI */
-  let currentFacingMode = "user";
-  let isMirror = true;
+  /* FUNGSI DAN STATUS KAMERA */
+  let cameraDevicesList = [];
+  let currentCamIndex = 0;
+  let isMirror = false; // Mirror manual saja
   let timerDuration = 3;
   let zoomLevel = 1;      
   let onAlertCloseCallback = null;
@@ -1222,20 +1222,26 @@
     loadRealtimeFeedIG();
   }
 
-  /* LOGIKA KAMERA BEBAS ERROR DENGAN PEMBERSIHAN TOTAL MEMORI STREAM */
+  /* SISTEM PERPINDAHAN KAMERA DEPAN - BELAKANG TANPA DITIMPA MIRROR */
   async function stopCurrentStream() {
     if (videoStream) {
       try {
         videoStream.getTracks().forEach(track => track.stop());
-      } catch (e) {
-        console.warn(e);
-      }
+      } catch (e) { console.warn(e); }
       videoStream = null;
     }
     const video = document.getElementById('video');
     if (video) video.srcObject = null;
-    // Berikan jeda 150ms agar hardware kamera selesai melepaskan resource di Android Chrome
-    await new Promise(resolve => setTimeout(resolve, 150));
+    await new Promise(resolve => setTimeout(resolve, 100));
+  }
+
+  async function getCameraDevices() {
+    try {
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      cameraDevicesList = devices.filter(d => d.kind === 'videoinput');
+    } catch(e) {
+      cameraDevicesList = [];
+    }
   }
 
   async function initCameraStream() {
@@ -1244,39 +1250,43 @@
 
     await stopCurrentStream();
 
-    isMirror = (currentFacingMode === "user");
-    const labelMirror = document.getElementById('label-mirror');
-    if (labelMirror) labelMirror.innerText = isMirror ? 'ON' : 'OFF';
+    if (cameraDevicesList.length === 0) {
+      await getCameraDevices();
+    }
 
-    // Opsi penanganan permintaan akses kamera
-    const primaryOptions = {
-      video: { facingMode: { ideal: currentFacingMode } },
-      audio: false
-    };
+    let constraints = { audio: false };
+
+    if (cameraDevicesList.length > 0) {
+      const targetDevice = cameraDevicesList[currentCamIndex % cameraDevicesList.length];
+      constraints.video = { deviceId: { exact: targetDevice.deviceId } };
+    } else {
+      constraints.video = { facingMode: "user" };
+    }
 
     try {
-      const stream = await navigator.mediaDevices.getUserMedia(primaryOptions);
+      const stream = await navigator.mediaDevices.getUserMedia(constraints);
       videoStream = stream;
       video.srcObject = stream;
       await video.play().catch(e => console.warn(e));
       applyZoomTransform();
     } catch (err) {
-      console.warn("Mencoba fallback kamera umum tanpa constraint...", err);
+      console.warn("Retrying with simple facingMode constraint...", err);
       try {
-        const fallbackStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
-        videoStream = fallbackStream;
-        video.srcObject = fallbackStream;
+        const mode = (currentCamIndex % 2 === 0) ? "user" : "environment";
+        const altStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: mode }, audio: false });
+        videoStream = altStream;
+        video.srcObject = altStream;
         await video.play().catch(e => console.warn(e));
         applyZoomTransform();
       } catch (fallbackErr) {
-        console.error("Gagal membuka kamera:", fallbackErr);
-        showAlert("Tidak dapat membuka kamera. Pastikan izin kamera telah diizinkan pada browser.", "Kamera Error", "📷");
+        console.error("Gagal memuat kamera:", fallbackErr);
+        showAlert("Tidak dapat membuka kamera. Pastikan izin kamera telah diizinkan.", "Kamera Error", "📷");
       }
     }
   }
 
   function switchCameraNext() {
-    currentFacingMode = (currentFacingMode === "user") ? "environment" : "user";
+    currentCamIndex++;
     initCameraStream();
   }
 
@@ -1322,6 +1332,7 @@
     progressText.innerText = `Foto ${currentCapturedCount + 1} dari ${totalNeeded}`;
   }
 
+  /* FITUR MIRROR DIBUAT MANUAL SAJA */
   function toggleMirror() {
     isMirror = !isMirror;
     applyZoomTransform();
