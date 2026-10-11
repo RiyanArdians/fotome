@@ -945,7 +945,7 @@
   let videoStream = null;
   let generatedDataUrl = "";
 
-  /* KAMERA DEPAN ("user") & BELAKANG ("environment") */
+  /* KAMERA TOGGLE LANGSUNG DEPAN ("user") DAN BELAKANG ("environment") */
   let currentFacingMode = "user";
   let isMirror = true;
   let timerDuration = 3;
@@ -1220,21 +1220,13 @@
     loadRealtimeFeedIG();
   }
 
-  /* LOGIKA PERBAIKAN KAMERA (TIDAK LAGI POPUP ERROR SAAT SWITCH) */
+  /* LOGIKA SWITCH KAMERA DEPAN <-> BELAKANG MURNI */
   function initCameraStream() {
     const video = document.getElementById('video');
     if (!video) return;
 
-    // Stop stream lama dan bersihkan memori kamera
     if (videoStream) {
-      try {
-        videoStream.getTracks().forEach(track => {
-          track.stop();
-          videoStream.removeTrack(track);
-        });
-      } catch (e) {
-        console.warn(e);
-      }
+      videoStream.getTracks().forEach(track => track.stop());
       videoStream = null;
     }
     video.srcObject = null;
@@ -1243,41 +1235,26 @@
     const labelMirror = document.getElementById('label-mirror');
     if (labelMirror) labelMirror.innerText = isMirror ? 'ON' : 'OFF';
 
-    // Constraint longgar dengan 'ideal' agar browser HP Android tidak konflik
     const constraints = {
-      video: { 
-        facingMode: { ideal: currentFacingMode } 
-      },
+      video: { facingMode: currentFacingMode },
       audio: false
     };
 
-    // Jeda 100ms agar hardware HP selesai melepaskan sensor kamera lama
-    setTimeout(() => {
-      navigator.mediaDevices.getUserMedia(constraints)
-        .then(async stream => {
-          videoStream = stream;
-          video.srcObject = stream;
-          await video.play().catch(e => console.warn(e));
-          applyZoomTransform();
-        })
-        .catch(err => {
-          console.warn("Mencoba fallback standar...", err);
-          navigator.mediaDevices.getUserMedia({ video: true, audio: false })
-            .then(async stream => {
-              videoStream = stream;
-              video.srcObject = stream;
-              await video.play().catch(e => console.warn(e));
-              applyZoomTransform();
-            })
-            .catch(fallbackErr => {
-              console.error(fallbackErr);
-              showAlert("Tidak dapat membuka kamera. Pastikan izin kamera diizinkan.", "Kamera Error", "📷");
-            });
-        });
-    }, 100);
+    navigator.mediaDevices.getUserMedia(constraints)
+      .then(async stream => {
+        videoStream = stream;
+        video.srcObject = stream;
+        await video.play();
+        applyZoomTransform();
+      })
+      .catch(err => {
+        console.error("Gagal me-load kamera:", err);
+        showAlert("Tidak dapat membuka kamera. Pastikan izin kamera diizinkan.", "Kamera Error", "📷");
+      });
   }
 
   function switchCameraNext() {
+    // Berpindah langsung dari "user" (depan) ke "environment" (belakang) dan sebaliknya
     currentFacingMode = (currentFacingMode === "user") ? "environment" : "user";
     initCameraStream();
   }
