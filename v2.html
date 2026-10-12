@@ -46,7 +46,7 @@
       100% { transform: rotate(360deg); }
     }
     .spin-icon {
-      display: inline-block;
+      display: inline-flex !important;
       animation: spinAnim 0.75s linear infinite;
     }
 
@@ -171,7 +171,7 @@
       cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 5px;
+      gap: 6px;
       backdrop-filter: blur(6px);
       transition: transform 0.15s ease, background 0.2s ease;
     }
@@ -962,12 +962,18 @@
       </div>
     </div>
 
-    <!-- HEADER GALERI: TOMBOL REFRESH DI SAMPING JUMLAH KIRIMAN -->
+    <!-- HEADER GALERI: TOMBOL REFRESH DENGAN IKON VECTOR TRANSPARAN -->
     <div style="font-size:0.85rem; font-weight:700; color:var(--gold-accent); margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; letter-spacing:1px;">
       <span>KIRIMAN TAMU</span>
       <div style="display:flex; align-items:center; gap:8px;">
         <button class="btn-refresh-feed-custom" onclick="manualRefreshFeed()" title="Segarkan Foto">
-          <span id="refresh-icon-elm">🔄</span> Refresh
+          <span id="refresh-icon-elm" style="display:inline-flex; align-items:center; justify-content:center;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M23 4v6h-6"></path>
+              <path d="M1 20v-6h6"></path>
+              <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+            </svg>
+          </span> Refresh
         </button>
         <span style="font-size:0.7rem; color:rgba(255,255,255,0.7);" id="total-posts-count">... Kiriman</span>
       </div>
@@ -1095,6 +1101,8 @@
     if (targetEl) targetEl.classList.remove('hidden');
 
     if (targetId === 'step-gallery-page') {
+      // PERBAIKAN: Selalu reset posisi scroll ke paling atas saat membuka galeri
+      if (targetEl) targetEl.scrollTop = 0;
       setTimeout(handleGalleryScroll, 200);
     } else {
       const btnTop = document.getElementById('btn-scroll-top');
@@ -1850,18 +1858,19 @@
         showAlert("Foto berhasil diunduh dan diposting ke Galeri!", "BERHASIL DITAMBAHKAN", () => {
           document.getElementById('input-sender-message').value = '';
           resetGuestInfo();
-          goToStep('step-welcome');
+          // PERBAIKAN: Langsung arahkan pengguna ke Galeri Tamu di posisi paling atas
+          goToStep('step-gallery-page');
         });
       }).catch(err => {
         console.error("Gagal simpan ke database:", err);
         showAlert("Foto berhasil diunduh ke HP!", "TERSIMPAN PRIVAT", () => {
           resetGuestInfo();
-          goToStep('step-welcome');
+          goToStep('step-gallery-page');
         });
       });
     } else {
       resetGuestInfo();
-      goToStep('step-welcome');
+      goToStep('step-gallery-page');
     }
   }
 
