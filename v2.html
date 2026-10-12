@@ -371,7 +371,7 @@
     .figma-card-item.hidden-right { transform: translateX(115%) scale(0.65) rotate(12deg); opacity: 0; z-index: 1; }
     .figma-card-item.card-pressed { transform: scale(0.92) !important; }
 
-    /* KAMERA VIEWFINDER PRESISI DINAMIS */
+    /* KAMERA VIEWFINDER PRESISI PRESISI WYSIWYG */
     .camera-stage-container {
       width: 100%;
       max-width: 380px;
@@ -402,7 +402,7 @@
       width: 100%;
       max-width: 320px;
       max-height: 48dvh;
-      border-radius: 24px;
+      border-radius: 20px;
       overflow: hidden;
       background: #000;
       border: 2px solid var(--gold-accent);
@@ -542,8 +542,7 @@
     .review-photo-card {
       position: relative; 
       width: calc(33.33% - 8px); 
-      max-width: 100px;
-      aspect-ratio: 1 / 1; 
+      max-width: 120px;
       border-radius: 14px; 
       overflow: hidden; 
       border: 2px solid var(--gold-accent); 
@@ -556,6 +555,7 @@
       height: 100%; 
       object-fit: cover; 
       object-position: center; 
+      display: block;
     }
 
     .review-delete-btn {
@@ -637,7 +637,7 @@
     .ig-item-img-box img { width: 100%; height: 100%; object-fit: cover; }
     .ig-item-msg { font-size: 0.6rem; color: rgba(255,255,255,0.85); padding: 6px 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; font-style: italic; background: rgba(0, 0, 0, 0.15); }
 
-    /* TOMBOL MELAYANG SCROLL TOP / BOTTOM */
+    /* TOMBOL MELAYANG SCROLL NAVIGASI */
     .floating-scroll-nav {
       position: fixed;
       bottom: 25px;
@@ -649,22 +649,22 @@
     }
 
     .btn-scroll-nav {
-      width: 44px;
-      height: 44px;
+      width: 46px;
+      height: 46px;
       border-radius: 50%;
       background: rgba(122, 61, 68, 0.95);
       border: 1.5px solid var(--gold-accent);
       color: var(--gold-accent);
       font-size: 1.1rem;
       font-weight: bold;
-      box-shadow: 0 6px 16px rgba(0,0,0,0.45);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.5);
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
-      transition: transform 0.15s ease, background 0.2s ease;
+      transition: transform 0.15s ease, opacity 0.25s ease;
     }
 
     .btn-scroll-nav:active { transform: scale(0.88); background: rgba(212, 175, 55, 0.3); }
@@ -820,7 +820,7 @@
   </div>
 </div>
 
-<!-- STEP 3: SESI KAMERA RESPONSIF & PRESISI -->
+<!-- STEP 3: SESI KAMERA RESPONSIF & PRESISI WYSIWYG -->
 <div id="step-camera" class="page-fullscreen hidden">
   <div class="camera-stage-container">
     
@@ -831,7 +831,7 @@
       </button>
     </div>
 
-    <!-- VIEWFINDER KAMERA (PRESISI WYSIWYG) -->
+    <!-- VIEWFINDER KAMERA (PRESISI SAMAKAN RASIO FRAME) -->
     <div class="camera-viewfinder-box" id="cam-viewfinder-box">
       <video id="video" class="camera-video-element" autoplay playsinline webkit-playsinline muted></video>
       <div id="countdown-overlay" class="countdown-overlay hidden">3</div>
@@ -983,7 +983,7 @@
       <p style="font-size: 0.8rem; color: rgba(255,255,255,0.6); grid-column: span 3; text-align: center;">Memuat ucapan &amp; foto tamu...</p>
     </div>
 
-    <!-- TOMBOL MUAT LEBIH BANYAK DENGAN HITUNGAN JUMLAH -->
+    <!-- TOMBOL MUAT LEBIH BANYAK -->
     <div style="text-align: center; margin-top: 15px;">
       <button id="btn-load-more" class="btn-secondary-v2 hidden" style="max-width: 260px; margin: 0 auto;" onclick="loadMorePosts()">
         MUAT LEBIH BANYAK
@@ -1002,10 +1002,10 @@
   </div>
 </div>
 
-<!-- TOMBOL SCROLL NAVIGASI MELAYANG (KE ATAS / KE BAWAH) -->
-<div id="gallery-scroll-nav" class="floating-scroll-nav hidden">
-  <button onclick="scrollGallery('top')" title="Ke Atas" class="btn-scroll-nav">▲</button>
-  <button onclick="scrollGallery('bottom')" title="Ke Bawah" class="btn-scroll-nav">▼</button>
+<!-- TOMBOL SCROLL NAVIGASI MELAYANG (PINTAR AKAN MUNCUL PAS DI SCROLL) -->
+<div id="gallery-scroll-nav" class="floating-scroll-nav">
+  <button id="btn-scroll-top" onclick="scrollToTop()" title="Ke Atas" class="btn-scroll-nav hidden">▲</button>
+  <button id="btn-scroll-bottom" onclick="scrollToBottom()" title="Ke Bawah" class="btn-scroll-nav hidden">▼</button>
 </div>
 
 <!-- MODAL LIGHTBOX FOTO TAMU -->
@@ -1062,6 +1062,11 @@
 
   document.addEventListener("DOMContentLoaded", () => {
     initFigmaSlider();
+
+    const galleryPage = document.getElementById('step-gallery-page');
+    if (galleryPage) {
+      galleryPage.addEventListener('scroll', handleGalleryScroll);
+    }
   });
 
   function openEnvelopeAnimation() {
@@ -1105,15 +1110,17 @@
       if (el) el.classList.add('hidden');
     });
 
-    const scrollNav = document.getElementById('gallery-scroll-nav');
-    if (targetId === 'step-gallery-page') {
-      if (scrollNav) scrollNav.classList.remove('hidden');
-    } else {
-      if (scrollNav) scrollNav.classList.add('hidden');
-    }
-
     const targetEl = document.getElementById(targetId);
     if (targetEl) targetEl.classList.remove('hidden');
+
+    if (targetId === 'step-gallery-page') {
+      setTimeout(handleGalleryScroll, 100);
+    } else {
+      const btnTop = document.getElementById('btn-scroll-top');
+      const btnBottom = document.getElementById('btn-scroll-bottom');
+      if (btnTop) btnTop.classList.add('hidden');
+      if (btnBottom) btnBottom.classList.add('hidden');
+    }
 
     if (targetId === 'step-template') {
       updateFigmaSliderPositions();
@@ -1176,14 +1183,41 @@
     }
   }
 
-  function scrollGallery(direction) {
-    const page = document.getElementById('step-gallery-page');
-    if (!page) return;
-    if (direction === 'top') {
-      page.scrollTo({ top: 0, behavior: 'smooth' });
+  /* DETEKSI SCROLL ELEMEN GALERI (LOGIKA TOMBOL PINTAR) */
+  function handleGalleryScroll() {
+    const galleryPage = document.getElementById('step-gallery-page');
+    const btnTop = document.getElementById('btn-scroll-top');
+    const btnBottom = document.getElementById('btn-scroll-bottom');
+
+    if (!galleryPage || !btnTop || !btnBottom) return;
+
+    const scrollTop = galleryPage.scrollTop;
+    const scrollHeight = galleryPage.scrollHeight;
+    const clientHeight = galleryPage.clientHeight;
+
+    // Tombol Ke Atas: Muncul jika sudah scroll ke bawah lebih dari 200px
+    if (scrollTop > 200) {
+      btnTop.classList.remove('hidden');
     } else {
-      page.scrollTo({ top: page.scrollHeight, behavior: 'smooth' });
+      btnTop.classList.add('hidden');
     }
+
+    // Tombol Ke Bawah: Muncul jika berada di atas & ada sisa kiriman di bawah
+    if (scrollTop < 150 && (scrollHeight - clientHeight > 250)) {
+      btnBottom.classList.remove('hidden');
+    } else {
+      btnBottom.classList.add('hidden');
+    }
+  }
+
+  function scrollToTop() {
+    const galleryPage = document.getElementById('step-gallery-page');
+    if (galleryPage) galleryPage.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function scrollToBottom() {
+    const galleryPage = document.getElementById('step-gallery-page');
+    if (galleryPage) galleryPage.scrollTo({ top: galleryPage.scrollHeight, behavior: 'smooth' });
   }
 
   function submitGuestNameAndNext() {
@@ -1349,23 +1383,20 @@
     loadRealtimeFeedIG();
   }
 
-  /* KUNCI PRESISI RASIO SLOT FRAME (WYSIWYG) */
+  /* FUNGSI HITUNG RASIO PRESISI SAMAKAN SEMUA LAYAR (WYSIWYG) */
+  function getFrameTargetAspect() {
+    const count = parseInt(requiredPhotoCount, 10) || 3;
+    if (count === 1) return 1.30; // Aspect ratio frame 1 foto (lebar/tinggi)
+    if (count === 2) return 1.20; // Aspect ratio frame 2 foto
+    return 1.27;                 // Aspect ratio frame 3 foto
+  }
+
   function updateViewfinderAspectRatio() {
     const viewfinderBox = document.getElementById('cam-viewfinder-box');
     if (!viewfinderBox) return;
 
-    const count = parseInt(requiredPhotoCount, 10) || 3;
-    let slotAspect = 1.2667; 
-
-    if (count === 1) {
-      slotAspect = 456 / 792; // ~0.5757 (frame 1 foto)
-    } else if (count === 2) {
-      slotAspect = 456 / 504; // ~0.9048 (frame 2 foto)
-    } else {
-      slotAspect = 456 / 360; // ~1.2667 (frame 3 foto)
-    }
-
-    viewfinderBox.style.aspectRatio = `${slotAspect}`;
+    const targetAspect = getFrameTargetAspect();
+    viewfinderBox.style.aspectRatio = `${targetAspect}`;
   }
 
   /* DETEKSI SEMUA KAMERA & FILTER */
@@ -1633,10 +1664,7 @@
     const vWidth = video.videoWidth || 640;
     const vHeight = video.videoHeight || 480;
 
-    const count = parseInt(requiredPhotoCount, 10) || 3;
-    let targetAspect = 1.2667;
-    if (count === 1) targetAspect = 456 / 792;
-    else if (count === 2) targetAspect = 456 / 504;
+    const targetAspect = getFrameTargetAspect();
 
     let cropW = vWidth;
     let cropH = vWidth / targetAspect;
@@ -1686,9 +1714,12 @@
     const gridBox = document.getElementById('review-grid-box');
     gridBox.innerHTML = '';
 
+    const targetAspect = getFrameTargetAspect();
+
     capturedPhotos.forEach((src, idx) => {
       const card = document.createElement('div');
       card.className = 'review-photo-card';
+      card.style.aspectRatio = `${targetAspect}`;
       card.innerHTML = `
         <img src="${src}" alt="Foto ${idx + 1}">
         <button class="review-delete-btn" onclick="deletePhotoInReview(${idx})">✕</button>
@@ -1746,21 +1777,21 @@
       ctx.drawImage(frameImg, 0, 0, W, H);
 
       const totalPhotos = userImages.length;
+      const targetAspect = getFrameTargetAspect();
+
       const slotW = Math.round(W * 0.76); 
+      const slotH = Math.round(slotW / targetAspect);
       const startX = Math.round((W - slotW) / 2);
 
-      let slotH, startY, gapY;
+      let startY, gapY;
 
       if (totalPhotos === 1) {
-        slotH = Math.round(H * 0.44);
-        startY = Math.round(H * 0.28);
+        startY = Math.round((H - slotH) * 0.38);
         gapY = 0;
       } else if (totalPhotos === 2) {
-        slotH = Math.round(H * 0.28);
         startY = Math.round(H * 0.19);
         gapY = Math.round(H * 0.035);
       } else {
-        slotH = Math.round(H * 0.20);
         startY = Math.round(H * 0.17);
         gapY = Math.round(H * 0.025);
       }
@@ -1768,29 +1799,13 @@
       userImages.forEach((photo, i) => {
         const currentY = startY + (i * (slotH + gapY));
 
-        const imgAspect = photo.width / photo.height;
-        const slotAspect = slotW / slotH;
-        let renderW, renderH, offsetX, offsetY;
-
-        if (imgAspect > slotAspect) {
-          renderH = photo.height;
-          renderW = photo.height * slotAspect;
-          offsetX = (photo.width - renderW) / 2;
-          offsetY = 0;
-        } else {
-          renderW = photo.width;
-          renderH = photo.width / slotAspect;
-          offsetX = 0;
-          offsetY = (photo.height - renderH) / 2;
-        }
-
         ctx.save();
         ctx.shadowColor = "rgba(0, 0, 0, 0.2)";
         ctx.shadowBlur = 15;
         ctx.shadowOffsetX = 0;
         ctx.shadowOffsetY = 6;
 
-        ctx.drawImage(photo, offsetX, offsetY, renderW, renderH, startX, currentY, slotW, slotH);
+        ctx.drawImage(photo, 0, 0, photo.width, photo.height, startX, currentY, slotW, slotH);
         ctx.restore();
       });
 
@@ -1890,7 +1905,6 @@
 
   /* PENGAMBILAN GALERI REALTIME DENGAN INFO JUMLAH KIRIMAN */
   function loadRealtimeFeedIG() {
-    // 1. Ambil Total Foto di DB
     db.collection('posts')
       .where('eventId', '==', EVENT_DOC_ID)
       .onSnapshot(totalSnap => {
@@ -1900,7 +1914,6 @@
         updateLoadMoreButtonState();
       }, err => console.warn(err));
 
-    // 2. Ambil Batch Foto Pertama
     db.collection('posts')
       .where('eventId', '==', EVENT_DOC_ID)
       .orderBy('createdAt', 'desc')
