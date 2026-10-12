@@ -148,7 +148,6 @@
 
     .btn-back-styled:active { transform: scale(0.94); background: rgba(255, 255, 255, 0.22); }
 
-    /* DESIGN AMPLOP */
     .envelope-screen {
       position: fixed;
       top: 0; left: 0; width: 100vw; height: 100dvh;
@@ -661,7 +660,6 @@
 </head>
 <body>
 
-<!-- AMPLOP TERTUTUP -->
 <div id="envelope-screen" class="envelope-screen" onclick="openEnvelopeAnimation()">
   <div style="text-align:center; color:#FFF; margin-bottom:10px;">
     <div style="font-size:0.7rem; letter-spacing:3px; color:var(--gold-accent); font-weight:700; margin-bottom:4px; text-transform:uppercase;">Kenangan Pernikahan</div>
@@ -684,7 +682,6 @@
   </div>
 </div>
 
-<!-- WELCOME SCREEN -->
 <div id="step-welcome" class="page-fullscreen">
   <div style="width:100%; text-align:center; display:flex; flex-direction:column; align-items:center;">
     <p style="font-size:0.7rem; color:var(--gold-accent); letter-spacing:2.5px; font-weight:700; margin-bottom:1px;">KENANGAN PERNIKAHAN</p>
@@ -713,7 +710,6 @@
   </div>
 </div>
 
-<!-- INPUT NAMA -->
 <div id="step-ask-name" class="page-fullscreen hidden">
   <div style="width:100%; text-align:center; padding-top:4px;">
     <p style="font-size:0.68rem; color:var(--gold-accent); letter-spacing:2.5px; font-weight:700; margin-bottom:2px;">KENANGAN PERNIKAHAN</p>
@@ -747,7 +743,6 @@
   </div>
 </div>
 
-<!-- PILIH FRAME -->
 <div id="step-template" class="page-fullscreen hidden">
   <div class="slider-header-box">
     <div class="section-label-fullscreen" id="card-theme-tag">ROYAL EDITION</div>
@@ -795,7 +790,6 @@
   </div>
 </div>
 
-<!-- SESI KAMERA -->
 <div id="step-camera" class="page-fullscreen hidden">
   <div class="camera-stage-container">
     <div class="camera-top-status">
@@ -839,7 +833,6 @@
   </div>
 </div>
 
-<!-- REVIEW FOTO -->
 <div id="step-review-photos" class="page-fullscreen hidden">
   <div style="width:100%; text-align:center; padding-top:10px;">
     <p style="font-size:0.68rem; color:var(--gold-accent); letter-spacing:2.5px; font-weight:700; margin-bottom:2px;">REVIEW HASIL FOTO</p>
@@ -864,7 +857,6 @@
   </div>
 </div>
 
-<!-- ANIMASI PRINTER -->
 <div id="step-result" class="printer-lottie-stage hidden">
   <div class="vector-printer-wrapper" id="main-printer-unit">
     <div class="paper-tray-input" id="paper-input-sheet"></div>
@@ -923,7 +915,6 @@
   </div>
 </div>
 
-<!-- GALERI KENANGAN -->
 <div id="step-gallery-page" class="page-fullscreen-scrollable hidden">
   <div class="feed-container">
     <div style="text-align:center; margin-bottom:12px;">
@@ -972,7 +963,6 @@
   <button id="btn-scroll-bottom" onclick="scrollToBottom()" title="Ke Bawah" class="btn-scroll-nav hidden">▼</button>
 </div>
 
-<!-- MODAL LIGHTBOX -->
 <div id="photo-modal" class="modal-overlay hidden">
   <div class="modal-card">
     <button class="modal-close-btn" onclick="closeModal()">✕</button>
@@ -983,7 +973,6 @@
   </div>
 </div>
 
-<!-- MODAL ALERT -->
 <div id="alert-modal" class="modal-overlay hidden">
   <div class="modal-card">
     <div style="font-size: 0.95rem; font-weight: 700; color: var(--gold-accent); margin-bottom: 8px; letter-spacing: 1px;" id="alert-title">PEMBERITAHUAN</div>
@@ -1016,12 +1005,13 @@
   let cardItems = [];
   let currentCardIndex = 0;
 
-  /* CHUNKING & CURSOR PAGINATION UNTUK KECEPATAN IS */
   let globalPostsMap = {};
   let lastVisibleDoc = null;
   let totalPostsInDb = 0;
   let loadedPostsCount = 0;
   const PAGE_SIZE = 12;
+  let feedUnsubscribe = null;
+  let isInitialLoad = true;
 
   document.addEventListener("DOMContentLoaded", () => {
     initFigmaSlider();
@@ -1695,7 +1685,6 @@
     renderPhotostripWithFigmaFrame();
   }
 
-  /* RENDER PRESISI 100% CENTER VERTIKAL */
   function renderPhotostripWithFigmaFrame() {
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
@@ -1782,7 +1771,6 @@
     a.click();
   }
 
-  /* OPTIMISTIC UPDATE: FOTO BARU LANGSUNG DISISIPKAN INSTAN SEMENTARA DIUNGGAH */
   function saveAndShareToFeed() {
     const senderName = document.getElementById('input-sender-name').value.trim() || currentGuestName || "Tamu Undangan";
     const senderMessage = document.getElementById('input-sender-message').value.trim() || "Selamat untuk kebahagiaan kalian!";
@@ -1801,7 +1789,6 @@
 
     globalPostsMap[tempPostId] = newPostData;
     
-    // SISIPKAN KE GALERI DEPAN
     const gridBox = document.getElementById('ig-grid-box');
     if (gridBox) {
       if (gridBox.innerText.includes('Belum ada foto')) {
@@ -1890,11 +1877,14 @@
     }
   }
 
-  /* BATCH LOADING KILAT (0 DELAY) */
+  /* REALTIME SYNC UNTUK SEMUA DEVICE TAMU */
   function loadRealtimeFeedIG() {
+    if (feedUnsubscribe) feedUnsubscribe();
+    isInitialLoad = true;
+
     const gridBox = document.getElementById('ig-grid-box');
 
-    // 1. Ambil jumlah total postingan
+    // 1. Ambil total kiriman awal
     db.collection('posts')
       .where('eventId', '==', EVENT_DOC_ID)
       .get()
@@ -1906,40 +1896,62 @@
       })
       .catch(err => console.warn(err));
 
-    // 2. Ambil 12 foto awal secara cepat tanpa mendownload ganda
-    db.collection('posts')
+    // 2. Realtime listener aktif
+    feedUnsubscribe = db.collection('posts')
       .where('eventId', '==', EVENT_DOC_ID)
       .orderBy('createdAt', 'desc')
       .limit(PAGE_SIZE)
-      .get()
-      .then(snapshot => {
-        if (snapshot.empty) {
+      .onSnapshot(snapshot => {
+        if (!snapshot || snapshot.empty) {
           if (gridBox && gridBox.children.length === 0) {
             gridBox.innerHTML = '<p style="font-size: 0.8rem; color: rgba(255,255,255,0.6); grid-column: span 3; text-align: center;">Belum ada foto di galeri. Tampil pertama di sini!</p>';
           }
           return;
         }
 
-        lastVisibleDoc = snapshot.docs[snapshot.docs.length - 1];
-        loadedPostsCount = snapshot.docs.length;
+        if (isInitialLoad) {
+          isInitialLoad = false;
+          lastVisibleDoc = snapshot.docs[snapshot.docs.length - 1];
+          loadedPostsCount = snapshot.docs.length;
 
-        let html = '';
-        snapshot.docs.forEach(doc => {
-          const data = { id: doc.id, ...doc.data() };
-          globalPostsMap[doc.id] = data;
-          html += renderPostCardHTML(data);
-        });
-
-        gridBox.innerHTML = html;
-        updateLoadMoreButtonState();
-      })
-      .catch(err => {
-        console.warn("Query standar pending, menjalankan mode fleksibel...", err);
+          let html = '';
+          snapshot.docs.forEach(doc => {
+            const data = { id: doc.id, ...doc.data() };
+            globalPostsMap[doc.id] = data;
+            html += renderPostCardHTML(data);
+          });
+          gridBox.innerHTML = html;
+          updateLoadMoreButtonState();
+        } else {
+          // Deteksi kiriman baru dari HP orang lain secara otomatis
+          snapshot.docChanges().forEach(change => {
+            if (change.type === 'added') {
+              const data = { id: change.doc.id, ...change.doc.data() };
+              
+              if (!globalPostsMap[data.id]) {
+                globalPostsMap[data.id] = data;
+                
+                if (gridBox.innerText.includes('Belum ada foto')) {
+                  gridBox.innerHTML = '';
+                }
+                
+                gridBox.insertAdjacentHTML('afterbegin', renderPostCardHTML(data));
+                
+                totalPostsInDb++;
+                loadedPostsCount++;
+                const countSpan = document.getElementById('total-posts-count');
+                if (countSpan) countSpan.innerText = `${totalPostsInDb} Kiriman`;
+                updateLoadMoreButtonState();
+              }
+            }
+          });
+        }
+      }, error => {
+        console.warn("Realtime listener error:", error);
         fallbackClientSideLoad();
       });
   }
 
-  /* AMBIL BATCH BERIKUTNYA SECARA INSTAN PAKAI CURSOR */
   function loadMorePosts() {
     if (!lastVisibleDoc) {
       fallbackClientSideLoad();
