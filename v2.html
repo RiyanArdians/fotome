@@ -40,6 +40,16 @@
     .font-script { font-family: 'Alex Brush', cursive; }
     .hidden { display: none !important; }
 
+    /* ANIMASI SPINNER LOADING & REFRESH */
+    @keyframes spinAnim {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .spin-icon {
+      display: inline-block;
+      animation: spinAnim 0.75s linear infinite;
+    }
+
     .page-fullscreen {
       width: 100vw;
       height: 100dvh;
@@ -105,6 +115,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      gap: 6px;
       transition: transform 0.15s ease, background 0.2s ease;
     }
 
@@ -147,6 +158,24 @@
     }
 
     .btn-back-styled:active { transform: scale(0.94); background: rgba(255, 255, 255, 0.22); }
+
+    .btn-refresh-feed-custom {
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid var(--gold-accent);
+      color: #FFF;
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 6px 12px;
+      border-radius: 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      backdrop-filter: blur(6px);
+      transition: transform 0.15s ease, background 0.2s ease;
+    }
+
+    .btn-refresh-feed-custom:active { transform: scale(0.92); background: rgba(212, 175, 55, 0.3); }
 
     .envelope-screen {
       position: fixed;
@@ -915,6 +944,7 @@
   </div>
 </div>
 
+<!-- GALERI KENANGAN -->
 <div id="step-gallery-page" class="page-fullscreen-scrollable hidden">
   <div class="feed-container">
     <div style="text-align:center; margin-bottom:12px;">
@@ -931,9 +961,15 @@
       </div>
     </div>
 
+    <!-- HEADER GALERI: TOMBOL REFRESH DI SAMPING JUMLAH KIRIMAN -->
     <div style="font-size:0.85rem; font-weight:700; color:var(--gold-accent); margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; letter-spacing:1px;">
       <span>KIRIMAN TAMU</span>
-      <span style="font-size:0.7rem; color:rgba(255,255,255,0.7);" id="total-posts-count">... Kiriman</span>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <button class="btn-refresh-feed-custom" onclick="manualRefreshFeed()" title="Segarkan Foto">
+          <span id="refresh-icon-elm">🔄</span> Refresh
+        </button>
+        <span style="font-size:0.7rem; color:rgba(255,255,255,0.7);" id="total-posts-count">... Kiriman</span>
+      </div>
     </div>
 
     <div id="ig-grid-box" class="ig-grid-container">
@@ -1006,12 +1042,10 @@
   let currentCardIndex = 0;
 
   let globalPostsMap = {};
-  let lastVisibleDoc = null;
   let totalPostsInDb = 0;
-  let loadedPostsCount = 0;
+  let loadedPostsCount = 12;
   const PAGE_SIZE = 12;
   let feedUnsubscribe = null;
-  let isInitialLoad = true;
 
   document.addEventListener("DOMContentLoaded", () => {
     initFigmaSlider();
@@ -1788,19 +1822,6 @@
     };
 
     globalPostsMap[tempPostId] = newPostData;
-    
-    const gridBox = document.getElementById('ig-grid-box');
-    if (gridBox) {
-      if (gridBox.innerText.includes('Belum ada foto')) {
-        gridBox.innerHTML = '';
-      }
-      gridBox.insertAdjacentHTML('afterbegin', renderPostCardHTML(newPostData));
-    }
-
-    totalPostsInDb++;
-    loadedPostsCount++;
-    const countSpan = document.getElementById('total-posts-count');
-    if (countSpan) countSpan.innerText = `${totalPostsInDb} Kiriman`;
 
     if (typeof db !== 'undefined') {
       db.collection('posts').add({
@@ -1870,37 +1891,35 @@
       loadMoreBtn.style.opacity = '0.6';
       loadMoreBtn.classList.remove('hidden');
     } else {
-      loadMoreBtn.innerText = `MUAT LEBIH BANYAK (${loadedPostsCount}/${totalPostsInDb})`;
+      loadMoreBtn.innerHTML = `MUAT LEBIH BANYAK (${loadedPostsCount}/${totalPostsInDb})`;
       loadMoreBtn.disabled = false;
       loadMoreBtn.style.opacity = '1';
       loadMoreBtn.classList.remove('hidden');
     }
   }
 
-  /* REALTIME SYNC UNTUK SEMUA DEVICE TAMU */
+  /* REFRESH MANUAL UNTUK HP LAIN */
+  function manualRefreshFeed() {
+    const iconElm = document.getElementById('refresh-icon-elm');
+    if (iconElm) iconElm.classList.add('spin-icon');
+
+    loadRealtimeFeedIG();
+
+    setTimeout(() => {
+      if (iconElm) iconElm.classList.remove('spin-icon');
+    }, 700);
+  }
+
+  /* REALTIME SYNC UNIVERSAL TANPA BUTUH KOMPOSIT INDEKS */
   function loadRealtimeFeedIG() {
     if (feedUnsubscribe) feedUnsubscribe();
-    isInitialLoad = true;
 
     const gridBox = document.getElementById('ig-grid-box');
 
-    // 1. Ambil total kiriman awal
-    db.collection('posts')
-      .where('eventId', '==', EVENT_DOC_ID)
-      .get()
-      .then(snap => {
-        totalPostsInDb = snap.size;
-        const countSpan = document.getElementById('total-posts-count');
-        if (countSpan) countSpan.innerText = `${totalPostsInDb} Kiriman`;
-        updateLoadMoreButtonState();
-      })
-      .catch(err => console.warn(err));
-
-    // 2. Realtime listener aktif
+    // Listener realtime universal yang kompatibel di semua device
     feedUnsubscribe = db.collection('posts')
-      .where('eventId', '==', EVENT_DOC_ID)
       .orderBy('createdAt', 'desc')
-      .limit(PAGE_SIZE)
+      .limit(60)
       .onSnapshot(snapshot => {
         if (!snapshot || snapshot.empty) {
           if (gridBox && gridBox.children.length === 0) {
@@ -1909,113 +1928,18 @@
           return;
         }
 
-        if (isInitialLoad) {
-          isInitialLoad = false;
-          lastVisibleDoc = snapshot.docs[snapshot.docs.length - 1];
-          loadedPostsCount = snapshot.docs.length;
-
-          let html = '';
-          snapshot.docs.forEach(doc => {
-            const data = { id: doc.id, ...doc.data() };
-            globalPostsMap[doc.id] = data;
-            html += renderPostCardHTML(data);
-          });
-          gridBox.innerHTML = html;
-          updateLoadMoreButtonState();
-        } else {
-          // Deteksi kiriman baru dari HP orang lain secara otomatis
-          snapshot.docChanges().forEach(change => {
-            if (change.type === 'added') {
-              const data = { id: change.doc.id, ...change.doc.data() };
-              
-              if (!globalPostsMap[data.id]) {
-                globalPostsMap[data.id] = data;
-                
-                if (gridBox.innerText.includes('Belum ada foto')) {
-                  gridBox.innerHTML = '';
-                }
-                
-                gridBox.insertAdjacentHTML('afterbegin', renderPostCardHTML(data));
-                
-                totalPostsInDb++;
-                loadedPostsCount++;
-                const countSpan = document.getElementById('total-posts-count');
-                if (countSpan) countSpan.innerText = `${totalPostsInDb} Kiriman`;
-                updateLoadMoreButtonState();
-              }
-            }
-          });
-        }
-      }, error => {
-        console.warn("Realtime listener error:", error);
-        fallbackClientSideLoad();
-      });
-  }
-
-  function loadMorePosts() {
-    if (!lastVisibleDoc) {
-      fallbackClientSideLoad();
-      return;
-    }
-
-    const loadMoreBtn = document.getElementById('btn-load-more');
-    if (loadMoreBtn) loadMoreBtn.innerText = 'MEMUAT...';
-
-    db.collection('posts')
-      .where('eventId', '==', EVENT_DOC_ID)
-      .orderBy('createdAt', 'desc')
-      .startAfter(lastVisibleDoc)
-      .limit(PAGE_SIZE)
-      .get()
-      .then(snapshot => {
-        if (snapshot.empty) {
-          updateLoadMoreButtonState();
-          return;
-        }
-
-        lastVisibleDoc = snapshot.docs[snapshot.docs.length - 1];
-        loadedPostsCount += snapshot.docs.length;
-        const gridBox = document.getElementById('ig-grid-box');
-
-        snapshot.docs.forEach(doc => {
-          const data = { id: doc.id, ...doc.data() };
-          globalPostsMap[doc.id] = data;
-          if (gridBox) {
-            gridBox.insertAdjacentHTML('beforeend', renderPostCardHTML(data));
-          }
-        });
-
-        updateLoadMoreButtonState();
-      })
-      .catch(err => {
-        console.warn("Cursor Error, fallback...", err);
-        fallbackClientSideLoad();
-      });
-  }
-
-  function fallbackClientSideLoad() {
-    db.collection('posts')
-      .where('eventId', '==', EVENT_DOC_ID)
-      .get()
-      .then(snapshot => {
-        const gridBox = document.getElementById('ig-grid-box');
-        if (snapshot.empty) return;
-
         let posts = [];
         snapshot.docs.forEach(doc => {
           const data = { id: doc.id, ...doc.data() };
-          posts.push(data);
-          globalPostsMap[doc.id] = data;
-        });
-
-        posts.sort((a, b) => {
-          const timeA = a.createdAt ? (a.createdAt.toMillis ? a.createdAt.toMillis() : (a.createdAt.seconds ? a.createdAt.seconds * 1000 : 0)) : 0;
-          const timeB = b.createdAt ? (b.createdAt.toMillis ? b.createdAt.toMillis() : (b.createdAt.seconds ? b.createdAt.seconds * 1000 : 0)) : 0;
-          return timeB - timeA;
+          if (!data.eventId || data.eventId === EVENT_DOC_ID) {
+            posts.push(data);
+            globalPostsMap[doc.id] = data;
+          }
         });
 
         totalPostsInDb = posts.length;
-        loadedPostsCount = Math.min(loadedPostsCount + PAGE_SIZE, totalPostsInDb);
+        const countSpan = document.getElementById('total-posts-count');
+        if (countSpan) countSpan.innerText = `${totalPostsInDb} Kiriman`;
 
         let html = '';
         const displayBatch = posts.slice(0, loadedPostsCount);
@@ -2025,7 +1949,24 @@
 
         if (gridBox) gridBox.innerHTML = html;
         updateLoadMoreButtonState();
+      }, error => {
+        console.warn("Realtime listener error:", error);
       });
+  }
+
+  /* PROSES PAGINATION DENGAN LOADING SPINNER */
+  function loadMorePosts() {
+    const loadMoreBtn = document.getElementById('btn-load-more');
+    if (loadMoreBtn) {
+      loadMoreBtn.disabled = true;
+      loadMoreBtn.innerHTML = '<span class="spin-icon">⏳</span> MEMUAT FOTO...';
+    }
+
+    setTimeout(() => {
+      loadedPostsCount += PAGE_SIZE;
+      loadRealtimeFeedIG();
+      if (loadMoreBtn) loadMoreBtn.disabled = false;
+    }, 450);
   }
 
   function renderPostCardHTML(data) {
