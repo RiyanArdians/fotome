@@ -1067,7 +1067,7 @@
   /* VARIABEL PAGINASI & TAMPILAN GALERI */
   let globalPostsMap = {};
   let lastVisibleDoc = null;
-  let currentDisplayedPosts = 0;
+  let currentDisplayedPosts = 12;
   let totalPostsInDb = 0;
   const PAGE_SIZE = 12;
 
@@ -1757,6 +1757,7 @@
     renderPhotostripWithFigmaFrame();
   }
 
+  /* RENDER DENGAN PRESISI 100% CENTER VERTIKAL UNTUK 1, 2, MAUPUN 3 FOTO */
   function renderPhotostripWithFigmaFrame() {
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
@@ -1789,6 +1790,7 @@
       ctx.imageSmoothingEnabled = true;
       ctx.imageSmoothingQuality = 'high';
 
+      // 1. Gambar Bingkai Utama
       ctx.drawImage(frameImg, 0, 0, W, H);
 
       const totalPhotos = userImages.length;
@@ -1798,18 +1800,10 @@
       const slotH = Math.round(slotW / targetAspect);
       const startX = Math.round((W - slotW) / 2);
 
-      let startY, gapY;
-
-      if (totalPhotos === 1) {
-        startY = Math.round((H - slotH) / 2);
-        gapY = 0;
-      } else if (totalPhotos === 2) {
-        startY = Math.round(H * 0.22);
-        gapY = Math.round(H * 0.05);
-      } else {
-        startY = Math.round(H * 0.15);
-        gapY = Math.round(H * 0.025);
-      }
+      // 2. Kalkulasi Presisi Center Vertikal
+      const gapY = Math.round(H * 0.022); 
+      const totalBlockHeight = (totalPhotos * slotH) + ((totalPhotos - 1) * gapY);
+      const startY = Math.round((H - totalBlockHeight) / 2);
 
       userImages.forEach((photo, i) => {
         const currentY = startY + (i * (slotH + gapY));
@@ -1864,7 +1858,7 @@
         name: senderName,
         message: senderMessage,
         photoData: generatedDataUrl,
-        createdAt: firebase.firestore.Timestamp.now()
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
       }).then(() => {
         showAlert("Foto berhasil diunduh dan diposting ke Galeri!", "BERHASIL DITAMBAHKAN", () => {
           document.getElementById('input-sender-message').value = '';
@@ -1895,7 +1889,16 @@
 
   function formatTimestamp(timestamp) {
     if (!timestamp) return 'Baru saja';
-    const dateObj = timestamp.toDate ? timestamp.toDate() : (timestamp.seconds ? new Date(timestamp.seconds * 1000) : new Date(timestamp));
+    let dateObj;
+    if (timestamp.toDate) {
+      dateObj = timestamp.toDate();
+    } else if (timestamp.seconds) {
+      dateObj = new Date(timestamp.seconds * 1000);
+    } else if (timestamp instanceof Date) {
+      dateObj = timestamp;
+    } else {
+      dateObj = new Date();
+    }
     
     const day = String(dateObj.getDate()).padStart(2, '0');
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agt', 'Sep', 'Okt', 'Nov', 'Des'];
@@ -1924,23 +1927,19 @@
     }
   }
 
+  /* DETEKSI REALTIME OTOMATIS TAMBAH FOTO TANPA PERLU REFRESH */
   function loadRealtimeFeedIG() {
     db.collection('posts')
       .where('eventId', '==', EVENT_DOC_ID)
-      .onSnapshot(totalSnap => {
-        totalPostsInDb = totalSnap ? totalSnap.size : 0;
+      .orderBy('createdAt', 'desc')
+      .onSnapshot({ includeMetadataChanges: true }, snapshot => {
+        if (!snapshot) return;
+
+        totalPostsInDb = snapshot.size;
         const countSpan = document.getElementById('total-posts-count');
         if (countSpan) countSpan.innerText = `${totalPostsInDb} Kiriman`;
-        updateLoadMoreButtonState();
-      }, err => console.warn(err));
 
-    db.collection('posts')
-      .where('eventId', '==', EVENT_DOC_ID)
-      .orderBy('createdAt', 'desc')
-      .limit(PAGE_SIZE)
-      .onSnapshot(snapshot => {
         const gridBox = document.getElementById('ig-grid-box');
-        
         if (snapshot.empty) {
           if (gridBox) gridBox.innerHTML = '<p style="font-size: 0.8rem; color: rgba(255,255,255,0.6); grid-column: span 3; text-align: center;">Belum ada foto di galeri. Tampil pertama di sini!</p>';
           currentDisplayedPosts = 0;
@@ -1948,62 +1947,32 @@
           return;
         }
 
-        lastVisibleDoc = snapshot.docs[snapshot.docs.length - 1];
-        currentDisplayedPosts = snapshot.docs.length;
+        const allDocs = snapshot.docs;
+        let limitToRender = Math.max(currentDisplayedPosts || PAGE_SIZE, PAGE_SIZE);
+        if (limitToRender > allDocs.length) limitToRender = allDocs.length;
+
+        currentDisplayedPosts = limitToRender;
+        lastVisibleDoc = allDocs[limitToRender - 1];
 
         let html = '';
-        snapshot.docs.forEach(doc => {
+        for (let i = 0; i < limitToRender; i++) {
+          const doc = allDocs[i];
           const data = { id: doc.id, ...doc.data() };
           globalPostsMap[doc.id] = data;
           html += renderPostCardHTML(data);
-        });
+        }
 
         if (gridBox) gridBox.innerHTML = html;
         updateLoadMoreButtonState();
       }, error => {
-        console.warn("Menggunakan Fallback...", error);
+        console.warn("Realtime listener fallback...", error);
         fallbackFullLoad();
       });
   }
 
   function loadMorePosts() {
-    const loadMoreBtn = document.getElementById('btn-load-more');
-    if (loadMoreBtn) loadMoreBtn.innerText = 'MEMUAT...';
-
-    if (lastVisibleDoc) {
-      db.collection('posts')
-        .where('eventId', '==', EVENT_DOC_ID)
-        .orderBy('createdAt', 'desc')
-        .startAfter(lastVisibleDoc)
-        .limit(PAGE_SIZE)
-        .get()
-        .then(snapshot => {
-          if (snapshot.empty) {
-            updateLoadMoreButtonState();
-            return;
-          }
-
-          lastVisibleDoc = snapshot.docs[snapshot.docs.length - 1];
-          currentDisplayedPosts += snapshot.docs.length;
-          const gridBox = document.getElementById('ig-grid-box');
-
-          snapshot.docs.forEach(doc => {
-            const data = { id: doc.id, ...doc.data() };
-            globalPostsMap[doc.id] = data;
-            if (gridBox) {
-              gridBox.insertAdjacentHTML('beforeend', renderPostCardHTML(data));
-            }
-          });
-
-          updateLoadMoreButtonState();
-        })
-        .catch(err => {
-          console.warn("Fallback Load More...", err);
-          fallbackFullLoad();
-        });
-    } else {
-      fallbackFullLoad();
-    }
+    currentDisplayedPosts += PAGE_SIZE;
+    loadRealtimeFeedIG();
   }
 
   function fallbackFullLoad() {
@@ -2028,7 +1997,7 @@
         });
 
         totalPostsInDb = posts.length;
-        currentDisplayedPosts = Math.min(currentDisplayedPosts + PAGE_SIZE, totalPostsInDb);
+        currentDisplayedPosts = Math.min(currentDisplayedPosts, totalPostsInDb);
 
         let html = '';
         const displayBatch = posts.slice(0, currentDisplayedPosts);
