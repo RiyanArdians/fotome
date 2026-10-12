@@ -190,7 +190,6 @@
       perspective: 1000px;
     }
 
-    /* Lipatan Kiri & Kanan Amplop */
     .envelope-wrapper::before {
       content: "";
       position: absolute;
@@ -226,7 +225,6 @@
       filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
     }
 
-    /* Segel Wax Emas Stamp */
     .envelope-gold-seal {
       position: absolute;
       top: 50%; left: 50%;
@@ -373,7 +371,7 @@
     .figma-card-item.hidden-right { transform: translateX(115%) scale(0.65) rotate(12deg); opacity: 0; z-index: 1; }
     .figma-card-item.card-pressed { transform: scale(0.92) !important; }
 
-    /* KAMERA VIEWFINDER & KONTROL LEGA */
+    /* KAMERA VIEWFINDER PRESISI DINAMIS */
     .camera-stage-container {
       width: 100%;
       max-width: 380px;
@@ -402,18 +400,18 @@
     .camera-viewfinder-box {
       position: relative;
       width: 100%;
-      max-width: 340px;
-      flex: 1;
-      max-height: 50dvh;
+      max-width: 320px;
+      max-height: 48dvh;
       border-radius: 24px;
       overflow: hidden;
       background: #000;
       border: 2px solid var(--gold-accent);
       box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
-      margin: 8px 0;
+      margin: 8px auto;
       display: flex;
       align-items: center;
       justify-content: center;
+      transition: aspect-ratio 0.3s ease;
     }
 
     .camera-video-element {
@@ -639,6 +637,38 @@
     .ig-item-img-box img { width: 100%; height: 100%; object-fit: cover; }
     .ig-item-msg { font-size: 0.6rem; color: rgba(255,255,255,0.85); padding: 6px 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; font-style: italic; background: rgba(0, 0, 0, 0.15); }
 
+    /* TOMBOL MELAYANG SCROLL TOP / BOTTOM */
+    .floating-scroll-nav {
+      position: fixed;
+      bottom: 25px;
+      right: 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      z-index: 9999;
+    }
+
+    .btn-scroll-nav {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(122, 61, 68, 0.95);
+      border: 1.5px solid var(--gold-accent);
+      color: var(--gold-accent);
+      font-size: 1.1rem;
+      font-weight: bold;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.45);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      transition: transform 0.15s ease, background 0.2s ease;
+    }
+
+    .btn-scroll-nav:active { transform: scale(0.88); background: rgba(212, 175, 55, 0.3); }
+
     /* FOOTER OFFICIAL */
     .app-official-footer { text-align: center; padding: 8px 10px 2px; font-size: 0.65rem; color: rgba(255, 255, 255, 0.65); border-top: 1px dashed rgba(255, 255, 255, 0.2); margin-top: 8px; width: 100%; letter-spacing: 0.5px; }
 
@@ -790,7 +820,7 @@
   </div>
 </div>
 
-<!-- STEP 3: SESI KAMERA RESPONSIF -->
+<!-- STEP 3: SESI KAMERA RESPONSIF & PRESISI -->
 <div id="step-camera" class="page-fullscreen hidden">
   <div class="camera-stage-container">
     
@@ -801,7 +831,7 @@
       </button>
     </div>
 
-    <!-- VIEWFINDER KAMERA -->
+    <!-- VIEWFINDER KAMERA (PRESISI WYSIWYG) -->
     <div class="camera-viewfinder-box" id="cam-viewfinder-box">
       <video id="video" class="camera-video-element" autoplay playsinline webkit-playsinline muted></video>
       <div id="countdown-overlay" class="countdown-overlay hidden">3</div>
@@ -826,7 +856,6 @@
 
     <!-- AREA BAWAH: SELECTOR KAMERA & JEPET FOTO -->
     <div class="cam-bottom-action-row">
-      <!-- SELECT DROPDOWN KAMERA -->
       <div style="width: 100%; max-width: 280px; position: relative;">
         <select id="camera-select-dropdown" onchange="onCameraSelectChange(this.value)" style="width: 100%; background: rgba(0,0,0,0.4); color: #FFF; border: 1px solid var(--gold-accent); padding: 8px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; text-align: center; outline: none; backdrop-filter: blur(8px); cursor: pointer;">
           <option value="">Memindai Kamera...</option>
@@ -954,9 +983,9 @@
       <p style="font-size: 0.8rem; color: rgba(255,255,255,0.6); grid-column: span 3; text-align: center;">Memuat ucapan &amp; foto tamu...</p>
     </div>
 
-    <!-- TOMBOL MUAT LEBIH BANYAK -->
+    <!-- TOMBOL MUAT LEBIH BANYAK DENGAN HITUNGAN JUMLAH -->
     <div style="text-align: center; margin-top: 15px;">
-      <button id="btn-load-more" class="btn-secondary-v2 hidden" style="max-width: 200px; margin: 0 auto;" onclick="loadMorePosts()">
+      <button id="btn-load-more" class="btn-secondary-v2 hidden" style="max-width: 260px; margin: 0 auto;" onclick="loadMorePosts()">
         MUAT LEBIH BANYAK
       </button>
     </div>
@@ -971,6 +1000,12 @@
   <div class="app-official-footer">
     © 2026 FOTOME by Riyan. All rights reserved.
   </div>
+</div>
+
+<!-- TOMBOL SCROLL NAVIGASI MELAYANG (KE ATAS / KE BAWAH) -->
+<div id="gallery-scroll-nav" class="floating-scroll-nav hidden">
+  <button onclick="scrollGallery('top')" title="Ke Atas" class="btn-scroll-nav">▲</button>
+  <button onclick="scrollGallery('bottom')" title="Ke Bawah" class="btn-scroll-nav">▼</button>
 </div>
 
 <!-- MODAL LIGHTBOX FOTO TAMU -->
@@ -1018,10 +1053,11 @@
   let cardItems = [];
   let currentCardIndex = 0;
 
-  /* VARIABEL PAGINASI GALERI BULLETPROOF */
+  /* VARIABEL PAGINASI & TAMPILAN GALERI */
   let globalPostsMap = {};
   let lastVisibleDoc = null;
-  let currentLoadedCount = 12;
+  let currentDisplayedPosts = 0;
+  let totalPostsInDb = 0;
   const PAGE_SIZE = 12;
 
   document.addEventListener("DOMContentLoaded", () => {
@@ -1068,6 +1104,13 @@
       const el = document.getElementById(id);
       if (el) el.classList.add('hidden');
     });
+
+    const scrollNav = document.getElementById('gallery-scroll-nav');
+    if (targetId === 'step-gallery-page') {
+      if (scrollNav) scrollNav.classList.remove('hidden');
+    } else {
+      if (scrollNav) scrollNav.classList.add('hidden');
+    }
 
     const targetEl = document.getElementById(targetId);
     if (targetEl) targetEl.classList.remove('hidden');
@@ -1133,6 +1176,16 @@
     }
   }
 
+  function scrollGallery(direction) {
+    const page = document.getElementById('step-gallery-page');
+    if (!page) return;
+    if (direction === 'top') {
+      page.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      page.scrollTo({ top: page.scrollHeight, behavior: 'smooth' });
+    }
+  }
+
   function submitGuestNameAndNext() {
     const inputName = document.getElementById('guest-initial-name').value.trim();
     if (!inputName) {
@@ -1179,7 +1232,6 @@
           requiredPhotoCount = parseInt(countAttr, 10) || 3;
           selectedFramePath = card.getAttribute('data-path');
 
-          // RESET FOTO SAAT MEMILIH FRAME BARU
           capturedPhotos = [];
 
           initCameraStream();
@@ -1297,7 +1349,26 @@
     loadRealtimeFeedIG();
   }
 
-  /* DETEKSI SEMUA KAMERA & FILTER HANYA DEPAN, BELAKANG UTAMA, & EXTERNAL */
+  /* KUNCI PRESISI RASIO SLOT FRAME (WYSIWYG) */
+  function updateViewfinderAspectRatio() {
+    const viewfinderBox = document.getElementById('cam-viewfinder-box');
+    if (!viewfinderBox) return;
+
+    const count = parseInt(requiredPhotoCount, 10) || 3;
+    let slotAspect = 1.2667; 
+
+    if (count === 1) {
+      slotAspect = 456 / 792; // ~0.5757 (frame 1 foto)
+    } else if (count === 2) {
+      slotAspect = 456 / 504; // ~0.9048 (frame 2 foto)
+    } else {
+      slotAspect = 456 / 360; // ~1.2667 (frame 3 foto)
+    }
+
+    viewfinderBox.style.aspectRatio = `${slotAspect}`;
+  }
+
+  /* DETEKSI SEMUA KAMERA & FILTER */
   async function populateCameraDevices() {
     const selectEl = document.getElementById('camera-select-dropdown');
     if (!selectEl) return;
@@ -1446,6 +1517,7 @@
       selectedFramePath = activeCard.getAttribute('data-path');
     }
 
+    updateViewfinderAspectRatio();
     updatePhotosStripUI();
 
     if (!videoStream || !videoStream.active) {
@@ -1479,7 +1551,6 @@
     progressText.innerText = `Foto ${currentDisplayNum} dari ${totalNeeded}`;
   }
 
-  /* MIRROR MANUAL */
   function toggleMirror() {
     isMirror = !isMirror;
     applyZoomTransform();
@@ -1558,20 +1629,21 @@
     setTimeout(() => flash.classList.remove('active'), 200);
 
     const video = document.getElementById('video');
-    const viewfinderBox = document.getElementById('cam-viewfinder-box');
     
     const vWidth = video.videoWidth || 640;
     const vHeight = video.videoHeight || 480;
 
-    const boxRect = viewfinderBox.getBoundingClientRect();
-    const boxAspect = boxRect.width / boxRect.height;
+    const count = parseInt(requiredPhotoCount, 10) || 3;
+    let targetAspect = 1.2667;
+    if (count === 1) targetAspect = 456 / 792;
+    else if (count === 2) targetAspect = 456 / 504;
 
     let cropW = vWidth;
-    let cropH = vWidth / boxAspect;
+    let cropH = vWidth / targetAspect;
 
     if (cropH > vHeight) {
       cropH = vHeight;
-      cropW = vHeight * boxAspect;
+      cropW = vHeight * targetAspect;
     }
 
     const cropX = (vWidth - cropW) / 2;
@@ -1579,7 +1651,7 @@
 
     const tempCanvas = document.createElement('canvas');
     tempCanvas.width = 600;
-    tempCanvas.height = Math.round(600 / boxAspect);
+    tempCanvas.height = Math.round(600 / targetAspect);
     const ctx = tempCanvas.getContext('2d');
 
     ctx.save();
@@ -1799,25 +1871,52 @@
     return `${day} ${month} ${year} • ${hours}:${minutes}`;
   }
 
-  /* PENGAMBILAN GALERI BULLETPROOF (DENGAN DUAL FALLBACK & PAGINASI) */
+  function updateLoadMoreButtonState() {
+    const loadMoreBtn = document.getElementById('btn-load-more');
+    if (!loadMoreBtn) return;
+
+    if (currentDisplayedPosts >= totalPostsInDb) {
+      loadMoreBtn.innerText = `SEMUA TERMUAT (${totalPostsInDb}/${totalPostsInDb})`;
+      loadMoreBtn.disabled = true;
+      loadMoreBtn.style.opacity = '0.6';
+      loadMoreBtn.classList.remove('hidden');
+    } else {
+      loadMoreBtn.innerText = `MUAT LEBIH BANYAK (${currentDisplayedPosts}/${totalPostsInDb})`;
+      loadMoreBtn.disabled = false;
+      loadMoreBtn.style.opacity = '1';
+      loadMoreBtn.classList.remove('hidden');
+    }
+  }
+
+  /* PENGAMBILAN GALERI REALTIME DENGAN INFO JUMLAH KIRIMAN */
   function loadRealtimeFeedIG() {
+    // 1. Ambil Total Foto di DB
+    db.collection('posts')
+      .where('eventId', '==', EVENT_DOC_ID)
+      .onSnapshot(totalSnap => {
+        totalPostsInDb = totalSnap ? totalSnap.size : 0;
+        const countSpan = document.getElementById('total-posts-count');
+        if (countSpan) countSpan.innerText = `${totalPostsInDb} Kiriman`;
+        updateLoadMoreButtonState();
+      }, err => console.warn(err));
+
+    // 2. Ambil Batch Foto Pertama
     db.collection('posts')
       .where('eventId', '==', EVENT_DOC_ID)
       .orderBy('createdAt', 'desc')
       .limit(PAGE_SIZE)
       .onSnapshot(snapshot => {
         const gridBox = document.getElementById('ig-grid-box');
-        const countSpan = document.getElementById('total-posts-count');
-        const loadMoreBtn = document.getElementById('btn-load-more');
         
         if (snapshot.empty) {
           if (gridBox) gridBox.innerHTML = '<p style="font-size: 0.8rem; color: rgba(255,255,255,0.6); grid-column: span 3; text-align: center;">Belum ada foto di galeri. Tampil pertama di sini!</p>';
-          if (countSpan) countSpan.innerText = '0 Kiriman';
-          if (loadMoreBtn) loadMoreBtn.classList.add('hidden');
+          currentDisplayedPosts = 0;
+          updateLoadMoreButtonState();
           return;
         }
 
         lastVisibleDoc = snapshot.docs[snapshot.docs.length - 1];
+        currentDisplayedPosts = snapshot.docs.length;
 
         let html = '';
         snapshot.docs.forEach(doc => {
@@ -1827,70 +1926,11 @@
         });
 
         if (gridBox) gridBox.innerHTML = html;
-
-        if (snapshot.docs.length >= PAGE_SIZE) {
-          if (loadMoreBtn) {
-            loadMoreBtn.innerText = 'MUAT LEBIH BANYAK';
-            loadMoreBtn.classList.remove('hidden');
-          }
-        } else {
-          if (loadMoreBtn) loadMoreBtn.classList.add('hidden');
-        }
+        updateLoadMoreButtonState();
       }, error => {
-        console.warn("Index belum aktif, menggunakan penanganan fallback...", error);
-        
-        db.collection('posts')
-          .where('eventId', '==', EVENT_DOC_ID)
-          .get()
-          .then(snapshot => {
-            const gridBox = document.getElementById('ig-grid-box');
-            const loadMoreBtn = document.getElementById('btn-load-more');
-            if (snapshot.empty) {
-              if (gridBox) gridBox.innerHTML = '<p style="font-size: 0.8rem; color: rgba(255,255,255,0.6); grid-column: span 3; text-align: center;">Belum ada foto di galeri. Tampil pertama di sini!</p>';
-              if (loadMoreBtn) loadMoreBtn.classList.add('hidden');
-              return;
-            }
-
-            let posts = [];
-            snapshot.docs.forEach(doc => {
-              const data = { id: doc.id, ...doc.data() };
-              posts.push(data);
-              globalPostsMap[doc.id] = data;
-            });
-
-            posts.sort((a, b) => {
-              const timeA = a.createdAt ? (a.createdAt.toMillis ? a.createdAt.toMillis() : (a.createdAt.seconds ? a.createdAt.seconds * 1000 : 0)) : 0;
-              const timeB = b.createdAt ? (b.createdAt.toMillis ? b.createdAt.toMillis() : (b.createdAt.seconds ? b.createdAt.seconds * 1000 : 0)) : 0;
-              return timeB - timeA;
-            });
-
-            let html = '';
-            currentLoadedCount = PAGE_SIZE;
-            const displayPosts = posts.slice(0, currentLoadedCount);
-            displayPosts.forEach(data => {
-              html += renderPostCardHTML(data);
-            });
-
-            if (gridBox) gridBox.innerHTML = html;
-
-            if (posts.length > currentLoadedCount && loadMoreBtn) {
-              loadMoreBtn.innerText = 'MUAT LEBIH BANYAK';
-              loadMoreBtn.classList.remove('hidden');
-            } else if (loadMoreBtn) {
-              loadMoreBtn.classList.add('hidden');
-            }
-          });
+        console.warn("Menggunakan Fallback...", error);
+        fallbackFullLoad();
       });
-
-    // Hitung total statistik kiriman
-    db.collection('posts')
-      .where('eventId', '==', EVENT_DOC_ID)
-      .onSnapshot(totalSnap => {
-        const countSpan = document.getElementById('total-posts-count');
-        if (countSpan && totalSnap) {
-          countSpan.innerText = `${totalSnap.size} Kiriman`;
-        }
-      }, err => console.warn(err));
   }
 
   function loadMorePosts() {
@@ -1906,11 +1946,12 @@
         .get()
         .then(snapshot => {
           if (snapshot.empty) {
-            if (loadMoreBtn) loadMoreBtn.classList.add('hidden');
+            updateLoadMoreButtonState();
             return;
           }
 
           lastVisibleDoc = snapshot.docs[snapshot.docs.length - 1];
+          currentDisplayedPosts += snapshot.docs.length;
           const gridBox = document.getElementById('ig-grid-box');
 
           snapshot.docs.forEach(doc => {
@@ -1921,32 +1962,24 @@
             }
           });
 
-          if (snapshot.docs.length < PAGE_SIZE) {
-            if (loadMoreBtn) loadMoreBtn.classList.add('hidden');
-          } else {
-            if (loadMoreBtn) loadMoreBtn.innerText = 'MUAT LEBIH BANYAK';
-          }
+          updateLoadMoreButtonState();
         })
         .catch(err => {
-          console.warn("Server startAfter terhambat, menggunakan fallback lokal...", err);
-          fallbackLoadMore();
+          console.warn("Fallback Load More...", err);
+          fallbackFullLoad();
         });
     } else {
-      fallbackLoadMore();
+      fallbackFullLoad();
     }
   }
 
-  function fallbackLoadMore() {
+  function fallbackFullLoad() {
     db.collection('posts')
       .where('eventId', '==', EVENT_DOC_ID)
       .get()
       .then(snapshot => {
-        const loadMoreBtn = document.getElementById('btn-load-more');
         const gridBox = document.getElementById('ig-grid-box');
-        if (snapshot.empty) {
-          if (loadMoreBtn) loadMoreBtn.classList.add('hidden');
-          return;
-        }
+        if (snapshot.empty) return;
 
         let posts = [];
         snapshot.docs.forEach(doc => {
@@ -1961,18 +1994,17 @@
           return timeB - timeA;
         });
 
-        const nextBatch = posts.slice(currentLoadedCount, currentLoadedCount + PAGE_SIZE);
-        currentLoadedCount += nextBatch.length;
+        totalPostsInDb = posts.length;
+        currentDisplayedPosts = Math.min(currentDisplayedPosts + PAGE_SIZE, totalPostsInDb);
 
-        nextBatch.forEach(data => {
-          if (gridBox) gridBox.insertAdjacentHTML('beforeend', renderPostCardHTML(data));
+        let html = '';
+        const displayBatch = posts.slice(0, currentDisplayedPosts);
+        displayBatch.forEach(data => {
+          html += renderPostCardHTML(data);
         });
 
-        if (currentLoadedCount >= posts.length && loadMoreBtn) {
-          loadMoreBtn.classList.add('hidden');
-        } else if (loadMoreBtn) {
-          loadMoreBtn.innerText = 'MUAT LEBIH BANYAK';
-        }
+        if (gridBox) gridBox.innerHTML = html;
+        updateLoadMoreButtonState();
       });
   }
 
