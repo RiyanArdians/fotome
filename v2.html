@@ -54,7 +54,6 @@
       overflow: hidden;
     }
 
-    /* WADAH KHUSUS GALERI AGAR SCROLL TERDETEKSI PRESISI */
     .page-fullscreen-scrollable {
       width: 100vw;
       height: 100dvh;
@@ -66,29 +65,6 @@
       overflow-y: auto;
       -webkit-overflow-scrolling: touch;
     }
-
-    /* TOMBOL ELEGAN KHUSUS */
-    .btn-primary-v2 {
-      background: linear-gradient(135deg, #8C4A52 0%, var(--primary-crimson) 100%);
-      color: #FFFFFF;
-      border: 1px solid var(--gold-accent);
-      padding: 13px 20px;
-      font-size: 0.78rem;
-      font-weight: 700;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      border-radius: 35px;
-      cursor: pointer;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
-      width: 100%;
-      max-width: 320px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: transform 0.15s ease, box-shadow 0.15s ease;
-    }
-
-    .btn-primary-v2:active { transform: scale(0.96); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); }
 
     .btn-gold-v2 {
       background: linear-gradient(135deg, #E2C275 0%, #C39B38 100%);
@@ -172,7 +148,7 @@
 
     .btn-back-styled:active { transform: scale(0.94); background: rgba(255, 255, 255, 0.22); }
 
-    /* DESIGN AMPLOP REALISTIK ELEGAN */
+    /* DESIGN AMPLOP */
     .envelope-screen {
       position: fixed;
       top: 0; left: 0; width: 100vw; height: 100dvh;
@@ -288,7 +264,6 @@
     .envelope-wrapper.step-lift-up .envelope-card-inside { opacity: 1; transform: translateY(-115px) scale(1); z-index: 8; }
     .envelope-wrapper.step-zoom-center .envelope-card-inside { transform: translateY(0) scale(1.28); z-index: 99; box-shadow: 0 25px 60px rgba(0,0,0,0.4); }
 
-    /* FRAME HERO BULAT */
     .hero-pill-frame-pure {
       width: 100%;
       max-width: 230px;
@@ -316,7 +291,6 @@
       display: block;
     }
 
-    /* INPUT NAMA */
     .ask-page-center-wrapper {
       flex: 1;
       display: flex;
@@ -358,7 +332,6 @@
     .stylish-underline-input::placeholder { color: rgba(255, 255, 255, 0.55); font-style: italic; font-size: 0.85rem; }
     .stylish-underline-input:focus { border-color: var(--gold-accent); box-shadow: 0 0 12px rgba(212, 175, 55, 0.3); background: rgba(0, 0, 0, 0.3); }
 
-    /* SLIDER FIGMA PILIH FRAME */
     .slider-header-box { text-align: center; z-index: 10; width: 100%; max-width: 360px; margin-top: 2px; }
     .section-label-fullscreen { font-size: 0.68rem; font-weight: 700; color: var(--gold-accent); text-transform: uppercase; letter-spacing: 2.5px; margin-bottom: 2px; }
     .slider-main-title { font-family: 'Cormorant Garamond', serif; font-size: 1.35rem; font-weight: 700; color: #FFFFFF; line-height: 1.2; margin-bottom: 2px; }
@@ -384,7 +357,6 @@
     .figma-card-item.hidden-right { transform: translateX(115%) scale(0.65) rotate(12deg); opacity: 0; z-index: 1; }
     .figma-card-item.card-pressed { transform: scale(0.92) !important; }
 
-    /* KAMERA VIEWFINDER PRESISI WYSIWYG */
     .camera-stage-container {
       width: 100%;
       max-width: 380px;
@@ -469,7 +441,6 @@
     .photo-thumb-box img { width: 100%; height: 100%; object-fit: cover; object-position: center; }
     .photo-thumb-box.empty-slot { border: 1.5px dashed rgba(255, 255, 255, 0.35); color: rgba(255, 255, 255, 0.6); font-size: 0.8rem; font-weight: 600; }
 
-    /* KONTROL KAMERA ATAS (TIMER, ZOOM, MIRROR) */
     .cam-floating-tools {
       display: flex;
       gap: 6px;
@@ -506,7 +477,6 @@
 
     .cam-tool-btn:active { transform: scale(0.92); }
 
-    /* AREA BAWAH: DROPDOWN KAMERA & JEPET FOTO */
     .cam-bottom-action-row {
       width: 100%;
       max-width: 340px;
@@ -547,7 +517,6 @@
     .flash-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: #FFF; opacity: 0; pointer-events: none; transition: opacity 0.1s; z-index: 30; }
     .flash-overlay.active { opacity: 1; }
 
-    /* REVIEW HASIL FOTO (RASIO SERAGAM) */
     .review-grid-box {
       display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; align-items: center; width: 100%; max-width: 340px; margin: 15px auto;
     }
@@ -573,7 +542,6 @@
       position: absolute; top: 6px; right: 6px; background: rgba(122, 61, 68, 0.95); color: #FFF; border: 1px solid var(--gold-accent); width: 24px; height: 24px; border-radius: 50%; font-weight: 700; font-size: 0.75rem; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.4); z-index: 10;
     }
 
-    /* PRINTER STAGE */
     .printer-lottie-stage {
       width: 100vw; min-height: 100dvh; background: linear-gradient(180deg, #7A3D44 0%, #5C2B32 100%); color: #FFF; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 16px 14px 20px; position: relative; overflow-y: auto;
     }
@@ -630,7 +598,6 @@
     }
     .printer-bottom-actions.visible { opacity: 1; transform: translateY(0); }
 
-    /* GALERI BERSIH ELEGAN */
     .feed-container { width: 100%; max-width: 420px; margin: 0 auto; }
     .gallery-intro-box { background: rgba(255, 255, 255, 0.1); border: 1px solid var(--card-border); backdrop-filter: blur(10px); border-radius: 16px; padding: 16px 12px; margin-bottom: 16px; text-align: center; }
     .ig-grid-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
@@ -648,7 +615,6 @@
     .ig-item-img-box img { width: 100%; height: 100%; object-fit: cover; }
     .ig-item-msg { font-size: 0.6rem; color: rgba(255,255,255,0.85); padding: 6px 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; font-style: italic; background: rgba(0, 0, 0, 0.15); }
 
-    /* TOMBOL MELAYANG SCROLL NAVIGASI PINTAR */
     .floating-scroll-nav {
       position: fixed;
       bottom: 25px;
@@ -680,10 +646,8 @@
 
     .btn-scroll-nav:active { transform: scale(0.88); background: rgba(212, 175, 55, 0.3); }
 
-    /* FOOTER OFFICIAL */
     .app-official-footer { text-align: center; padding: 8px 10px 2px; font-size: 0.65rem; color: rgba(255, 255, 255, 0.65); border-top: 1px dashed rgba(255, 255, 255, 0.2); margin-top: 8px; width: 100%; letter-spacing: 0.5px; }
 
-    /* MODAL LIGHTBOX & ALERT */
     .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 99999; padding: 15px; }
     .modal-card { background: linear-gradient(180deg, #7A3D44 0%, #5C2B32 100%); color: #FFF; border-radius: 20px; padding: 20px 16px 16px; max-width: 330px; width: 100%; text-align: center; position: relative; box-shadow: 0 15px 35px rgba(0,0,0,0.5); border: 1px solid var(--gold-accent); max-height: 90vh; display: flex; flex-direction: column; overflow-y: auto; }
     .modal-close-btn { position: absolute; top: 10px; right: 12px; background: rgba(0,0,0,0.3); color: var(--gold-accent); border: 1px solid var(--gold-accent); width: 28px; height: 28px; border-radius: 50%; font-weight: 700; font-size: 0.8rem; cursor: pointer; z-index: 100; }
@@ -697,7 +661,7 @@
 </head>
 <body>
 
-<!-- 0. AMPLOP TERTUTUP REALISTIS -->
+<!-- AMPLOP TERTUTUP -->
 <div id="envelope-screen" class="envelope-screen" onclick="openEnvelopeAnimation()">
   <div style="text-align:center; color:#FFF; margin-bottom:10px;">
     <div style="font-size:0.7rem; letter-spacing:3px; color:var(--gold-accent); font-weight:700; margin-bottom:4px; text-transform:uppercase;">Kenangan Pernikahan</div>
@@ -720,7 +684,7 @@
   </div>
 </div>
 
-<!-- STEP 1: WELCOME SCREEN -->
+<!-- WELCOME SCREEN -->
 <div id="step-welcome" class="page-fullscreen">
   <div style="width:100%; text-align:center; display:flex; flex-direction:column; align-items:center;">
     <p style="font-size:0.7rem; color:var(--gold-accent); letter-spacing:2.5px; font-weight:700; margin-bottom:1px;">KENANGAN PERNIKAHAN</p>
@@ -749,7 +713,7 @@
   </div>
 </div>
 
-<!-- PAGE: INPUT NAMA -->
+<!-- INPUT NAMA -->
 <div id="step-ask-name" class="page-fullscreen hidden">
   <div style="width:100%; text-align:center; padding-top:4px;">
     <p style="font-size:0.68rem; color:var(--gold-accent); letter-spacing:2.5px; font-weight:700; margin-bottom:2px;">KENANGAN PERNIKAHAN</p>
@@ -783,7 +747,7 @@
   </div>
 </div>
 
-<!-- STEP 2: SLIDER FIGMA PILIH FRAME -->
+<!-- PILIH FRAME -->
 <div id="step-template" class="page-fullscreen hidden">
   <div class="slider-header-box">
     <div class="section-label-fullscreen" id="card-theme-tag">ROYAL EDITION</div>
@@ -831,10 +795,9 @@
   </div>
 </div>
 
-<!-- STEP 3: SESI KAMERA RESPONSIF & PRESISI WYSIWYG -->
+<!-- SESI KAMERA -->
 <div id="step-camera" class="page-fullscreen hidden">
   <div class="camera-stage-container">
-    
     <div class="camera-top-status">
       <span style="font-size:0.75rem; font-weight:700;" id="cam-progress-text">Foto 1 dari 3</span>
       <button class="btn-outline-v2" style="width:auto; margin:0; padding:4px 12px; border:1px solid rgba(212,175,55,0.6); border-radius:15px; background:rgba(0,0,0,0.3); color:var(--gold-accent);" onclick="stopCameraAndGoBack()">
@@ -842,17 +805,14 @@
       </button>
     </div>
 
-    <!-- VIEWFINDER KAMERA (PRESISI RASIO BINGKAI SERAGAM) -->
     <div class="camera-viewfinder-box" id="cam-viewfinder-box">
       <video id="video" class="camera-video-element" autoplay playsinline webkit-playsinline muted></video>
       <div id="countdown-overlay" class="countdown-overlay hidden">3</div>
       <div id="flash-overlay" class="flash-overlay"></div>
     </div>
 
-    <!-- PREVIEW THUMBNAIL FOTO -->
     <div class="cam-photos-preview-strip" id="cam-photos-strip"></div>
 
-    <!-- KONTROL OPSI FOTO (TIMER, ZOOM, MIRROR) -->
     <div class="cam-floating-tools" id="cam-tools-box">
       <button class="cam-tool-btn" id="btn-timer" onclick="toggleTimerSetting()">
         Timer: <span id="label-timer">3s</span>
@@ -865,7 +825,6 @@
       </button>
     </div>
 
-    <!-- AREA BAWAH: DROPDOWN KAMERA & JEPET FOTO -->
     <div class="cam-bottom-action-row">
       <div style="width: 100%; max-width: 280px; position: relative;">
         <select id="camera-select-dropdown" onchange="onCameraSelectChange(this.value)" style="width: 100%; background: rgba(0,0,0,0.4); color: #FFF; border: 1px solid var(--gold-accent); padding: 8px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; text-align: center; outline: none; backdrop-filter: blur(8px); cursor: pointer;">
@@ -877,11 +836,10 @@
         <div class="cam-snap-trigger-inner"></div>
       </div>
     </div>
-
   </div>
 </div>
 
-<!-- STEP 3B: HALAMAN PREVIEW HASIL FOTO -->
+<!-- REVIEW FOTO -->
 <div id="step-review-photos" class="page-fullscreen hidden">
   <div style="width:100%; text-align:center; padding-top:10px;">
     <p style="font-size:0.68rem; color:var(--gold-accent); letter-spacing:2.5px; font-weight:700; margin-bottom:2px;">REVIEW HASIL FOTO</p>
@@ -906,9 +864,8 @@
   </div>
 </div>
 
-<!-- STEP 4: ANIMASI PRINTER & FORM UCAPAN -->
+<!-- ANIMASI PRINTER -->
 <div id="step-result" class="printer-lottie-stage hidden">
-  
   <div class="vector-printer-wrapper" id="main-printer-unit">
     <div class="paper-tray-input" id="paper-input-sheet"></div>
     <div class="flat-printer-body">
@@ -939,7 +896,6 @@
     <div class="status-sub-label" id="printer-status-sub">Harap tunggu sebentar</div>
   </div>
 
-  <!-- FORM UCAPAN ELEGAN HARMONIS -->
   <div class="printer-bottom-actions" id="printer-bottom-actions">
     <div style="background: rgba(255, 255, 255, 0.1); border: 1px solid var(--gold-accent); border-radius: 14px; padding: 12px; text-align: left; box-shadow: 0 8px 20px rgba(0,0,0,0.2); backdrop-filter: blur(8px);">
       <label style="display:block; font-size:0.68rem; font-weight:700; color:var(--gold-accent); margin-bottom:3px; letter-spacing:1px; text-transform:uppercase;">Dari (Pengirim)</label>
@@ -965,7 +921,6 @@
       © 2026 FOTOME by Riyan. All rights reserved.
     </div>
   </div>
-
 </div>
 
 <!-- GALERI KENANGAN -->
@@ -994,7 +949,6 @@
       <p style="font-size: 0.8rem; color: rgba(255,255,255,0.6); grid-column: span 3; text-align: center;">Memuat ucapan &amp; foto tamu...</p>
     </div>
 
-    <!-- TOMBOL MUAT LEBIH BANYAK -->
     <div style="text-align: center; margin-top: 15px;">
       <button id="btn-load-more" class="btn-secondary-v2 hidden" style="max-width: 260px; margin: 0 auto;" onclick="loadMorePosts()">
         MUAT LEBIH BANYAK
@@ -1013,13 +967,12 @@
   </div>
 </div>
 
-<!-- TOMBOL SCROLL NAVIGASI MELAYANG -->
 <div id="gallery-scroll-nav" class="floating-scroll-nav">
   <button id="btn-scroll-top" onclick="scrollToTop()" title="Ke Atas" class="btn-scroll-nav hidden">▲</button>
   <button id="btn-scroll-bottom" onclick="scrollToBottom()" title="Ke Bawah" class="btn-scroll-nav hidden">▼</button>
 </div>
 
-<!-- MODAL LIGHTBOX FOTO TAMU -->
+<!-- MODAL LIGHTBOX -->
 <div id="photo-modal" class="modal-overlay hidden">
   <div class="modal-card">
     <button class="modal-close-btn" onclick="closeModal()">✕</button>
@@ -1030,7 +983,7 @@
   </div>
 </div>
 
-<!-- MODAL ALERT BERSIH -->
+<!-- MODAL ALERT -->
 <div id="alert-modal" class="modal-overlay hidden">
   <div class="modal-card">
     <div style="font-size: 0.95rem; font-weight: 700; color: var(--gold-accent); margin-bottom: 8px; letter-spacing: 1px;" id="alert-title">PEMBERITAHUAN</div>
@@ -1052,7 +1005,6 @@
   let videoStream = null;
   let generatedDataUrl = "";
 
-  /* VARIABEL STATUS KAMERA DENGAN DEVICE ID */
   let activeDeviceId = null;
   let isSwitchingCamera = false;
   let isMirror = false; 
@@ -1064,12 +1016,12 @@
   let cardItems = [];
   let currentCardIndex = 0;
 
-  /* VARIABEL PAGINASI & TAMPILAN GALERI */
+  /* CHUNKING & CURSOR PAGINATION UNTUK KECEPATAN IS */
   let globalPostsMap = {};
-  let currentDisplayedPosts = 12;
+  let lastVisibleDoc = null;
   let totalPostsInDb = 0;
+  let loadedPostsCount = 0;
   const PAGE_SIZE = 12;
-  let feedUnsubscribe = null;
 
   document.addEventListener("DOMContentLoaded", () => {
     initFigmaSlider();
@@ -1085,20 +1037,11 @@
     const envelopeScreen = document.getElementById('envelope-screen');
 
     envelopeWrapper.classList.add('step-open-flap');
-
-    setTimeout(() => {
-      envelopeWrapper.classList.add('step-lift-up');
-    }, 600);
-
-    setTimeout(() => {
-      envelopeWrapper.classList.add('step-zoom-center');
-    }, 1300);
-
+    setTimeout(() => envelopeWrapper.classList.add('step-lift-up'), 600);
+    setTimeout(() => envelopeWrapper.classList.add('step-zoom-center'), 1300);
     setTimeout(() => {
       envelopeScreen.style.opacity = '0';
-      setTimeout(() => {
-        envelopeScreen.style.display = 'none';
-      }, 750);
+      setTimeout(() => envelopeScreen.style.display = 'none', 750);
     }, 2200);
   }
 
@@ -1175,7 +1118,6 @@
       setTimeout(() => {
         ledRed.classList.remove('blinking');
         ledGreen.classList.remove('blinking');
-        
         printerUnit.classList.add('fade-out-printer');
 
         setTimeout(() => {
@@ -1189,7 +1131,6 @@
             stepResultPage.scrollTo({ top: 160, behavior: 'smooth' });
           }
         }, 400);
-
       }, 6800);
     }
   }
@@ -1277,13 +1218,11 @@
 
         if (index === currentCardIndex) {
           card.classList.add('card-pressed');
-          
           const countAttr = card.getAttribute('data-count');
           requiredPhotoCount = parseInt(countAttr, 10) || 3;
           selectedFramePath = card.getAttribute('data-path');
 
           capturedPhotos = [];
-
           initCameraStream();
 
           setTimeout(() => {
@@ -1399,7 +1338,6 @@
     loadRealtimeFeedIG();
   }
 
-  /* RASIO TUNGGAL SERAGAM UNTUK 1, 2, MAUPUN 3 FOTO (456/360 = ~1.2667) */
   function getFrameTargetAspect() {
     return 456 / 360; 
   }
@@ -1757,7 +1695,7 @@
     renderPhotostripWithFigmaFrame();
   }
 
-  /* RENDER DENGAN PRESISI 100% CENTER VERTIKAL UNTUK 1, 2, MAUPUN 3 FOTO */
+  /* RENDER PRESISI 100% CENTER VERTIKAL */
   function renderPhotostripWithFigmaFrame() {
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
@@ -1790,7 +1728,6 @@
       ctx.imageSmoothingEnabled = true;
       ctx.imageSmoothingQuality = 'high';
 
-      // 1. Gambar Bingkai Utama
       ctx.drawImage(frameImg, 0, 0, W, H);
 
       const totalPhotos = userImages.length;
@@ -1800,7 +1737,6 @@
       const slotH = Math.round(slotW / targetAspect);
       const startX = Math.round((W - slotW) / 2);
 
-      // 2. Kalkulasi Presisi Center Vertikal
       const gapY = Math.round(H * 0.022); 
       const totalBlockHeight = (totalPhotos * slotH) + ((totalPhotos - 1) * gapY);
       const startY = Math.round((H - totalBlockHeight) / 2);
@@ -1846,11 +1782,38 @@
     a.click();
   }
 
+  /* OPTIMISTIC UPDATE: FOTO BARU LANGSUNG DISISIPKAN INSTAN SEMENTARA DIUNGGAH */
   function saveAndShareToFeed() {
     const senderName = document.getElementById('input-sender-name').value.trim() || currentGuestName || "Tamu Undangan";
     const senderMessage = document.getElementById('input-sender-message').value.trim() || "Selamat untuk kebahagiaan kalian!";
 
     downloadImageToPhone(senderName);
+
+    const tempPostId = 'local_' + Date.now();
+    const newPostData = {
+      id: tempPostId,
+      eventId: EVENT_DOC_ID,
+      name: senderName,
+      message: senderMessage,
+      photoData: generatedDataUrl,
+      createdAt: new Date()
+    };
+
+    globalPostsMap[tempPostId] = newPostData;
+    
+    // SISIPKAN KE GALERI DEPAN
+    const gridBox = document.getElementById('ig-grid-box');
+    if (gridBox) {
+      if (gridBox.innerText.includes('Belum ada foto')) {
+        gridBox.innerHTML = '';
+      }
+      gridBox.insertAdjacentHTML('afterbegin', renderPostCardHTML(newPostData));
+    }
+
+    totalPostsInDb++;
+    loadedPostsCount++;
+    const countSpan = document.getElementById('total-posts-count');
+    if (countSpan) countSpan.innerText = `${totalPostsInDb} Kiriman`;
 
     if (typeof db !== 'undefined') {
       db.collection('posts').add({
@@ -1914,24 +1877,24 @@
     const loadMoreBtn = document.getElementById('btn-load-more');
     if (!loadMoreBtn) return;
 
-    if (currentDisplayedPosts >= totalPostsInDb) {
+    if (loadedPostsCount >= totalPostsInDb) {
       loadMoreBtn.innerText = `SEMUA TERMUAT (${totalPostsInDb}/${totalPostsInDb})`;
       loadMoreBtn.disabled = true;
       loadMoreBtn.style.opacity = '0.6';
       loadMoreBtn.classList.remove('hidden');
     } else {
-      loadMoreBtn.innerText = `MUAT LEBIH BANYAK (${currentDisplayedPosts}/${totalPostsInDb})`;
+      loadMoreBtn.innerText = `MUAT LEBIH BANYAK (${loadedPostsCount}/${totalPostsInDb})`;
       loadMoreBtn.disabled = false;
       loadMoreBtn.style.opacity = '1';
       loadMoreBtn.classList.remove('hidden');
     }
   }
 
-  /* FITUR GALERI CEPAT, INSTAN & HITUNGAN HIT RINGAN */
+  /* BATCH LOADING KILAT (0 DELAY) */
   function loadRealtimeFeedIG() {
-    if (feedUnsubscribe) feedUnsubscribe();
+    const gridBox = document.getElementById('ig-grid-box');
 
-    // 1. Ambil jumlah total postingan secara terpisah agar angka tidak 0
+    // 1. Ambil jumlah total postingan
     db.collection('posts')
       .where('eventId', '==', EVENT_DOC_ID)
       .get()
@@ -1941,21 +1904,24 @@
         if (countSpan) countSpan.innerText = `${totalPostsInDb} Kiriman`;
         updateLoadMoreButtonState();
       })
-      .catch(err => console.warn("Hitung total error:", err));
+      .catch(err => console.warn(err));
 
-    // 2. Listener realtime instan tanpa pemicu berulang
-    feedUnsubscribe = db.collection('posts')
+    // 2. Ambil 12 foto awal secara cepat tanpa mendownload ganda
+    db.collection('posts')
       .where('eventId', '==', EVENT_DOC_ID)
       .orderBy('createdAt', 'desc')
-      .limit(currentDisplayedPosts)
-      .onSnapshot(snapshot => {
-        if (!snapshot) return;
-
-        const gridBox = document.getElementById('ig-grid-box');
+      .limit(PAGE_SIZE)
+      .get()
+      .then(snapshot => {
         if (snapshot.empty) {
-          if (gridBox) gridBox.innerHTML = '<p style="font-size: 0.8rem; color: rgba(255,255,255,0.6); grid-column: span 3; text-align: center;">Belum ada foto di galeri. Tampil pertama di sini!</p>';
+          if (gridBox && gridBox.children.length === 0) {
+            gridBox.innerHTML = '<p style="font-size: 0.8rem; color: rgba(255,255,255,0.6); grid-column: span 3; text-align: center;">Belum ada foto di galeri. Tampil pertama di sini!</p>';
+          }
           return;
         }
+
+        lastVisibleDoc = snapshot.docs[snapshot.docs.length - 1];
+        loadedPostsCount = snapshot.docs.length;
 
         let html = '';
         snapshot.docs.forEach(doc => {
@@ -1964,20 +1930,58 @@
           html += renderPostCardHTML(data);
         });
 
-        if (gridBox) gridBox.innerHTML = html;
+        gridBox.innerHTML = html;
         updateLoadMoreButtonState();
-      }, error => {
-        console.warn("Realtime listener fallback...", error);
-        fallbackFullLoad();
+      })
+      .catch(err => {
+        console.warn("Query standar pending, menjalankan mode fleksibel...", err);
+        fallbackClientSideLoad();
       });
   }
 
+  /* AMBIL BATCH BERIKUTNYA SECARA INSTAN PAKAI CURSOR */
   function loadMorePosts() {
-    currentDisplayedPosts += PAGE_SIZE;
-    loadRealtimeFeedIG();
+    if (!lastVisibleDoc) {
+      fallbackClientSideLoad();
+      return;
+    }
+
+    const loadMoreBtn = document.getElementById('btn-load-more');
+    if (loadMoreBtn) loadMoreBtn.innerText = 'MEMUAT...';
+
+    db.collection('posts')
+      .where('eventId', '==', EVENT_DOC_ID)
+      .orderBy('createdAt', 'desc')
+      .startAfter(lastVisibleDoc)
+      .limit(PAGE_SIZE)
+      .get()
+      .then(snapshot => {
+        if (snapshot.empty) {
+          updateLoadMoreButtonState();
+          return;
+        }
+
+        lastVisibleDoc = snapshot.docs[snapshot.docs.length - 1];
+        loadedPostsCount += snapshot.docs.length;
+        const gridBox = document.getElementById('ig-grid-box');
+
+        snapshot.docs.forEach(doc => {
+          const data = { id: doc.id, ...doc.data() };
+          globalPostsMap[doc.id] = data;
+          if (gridBox) {
+            gridBox.insertAdjacentHTML('beforeend', renderPostCardHTML(data));
+          }
+        });
+
+        updateLoadMoreButtonState();
+      })
+      .catch(err => {
+        console.warn("Cursor Error, fallback...", err);
+        fallbackClientSideLoad();
+      });
   }
 
-  function fallbackFullLoad() {
+  function fallbackClientSideLoad() {
     db.collection('posts')
       .where('eventId', '==', EVENT_DOC_ID)
       .get()
@@ -1999,10 +2003,10 @@
         });
 
         totalPostsInDb = posts.length;
-        currentDisplayedPosts = Math.min(currentDisplayedPosts, totalPostsInDb);
+        loadedPostsCount = Math.min(loadedPostsCount + PAGE_SIZE, totalPostsInDb);
 
         let html = '';
-        const displayBatch = posts.slice(0, currentDisplayedPosts);
+        const displayBatch = posts.slice(0, loadedPostsCount);
         displayBatch.forEach(data => {
           html += renderPostCardHTML(data);
         });
