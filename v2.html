@@ -954,6 +954,13 @@
       <p style="font-size: 0.8rem; color: rgba(255,255,255,0.6); grid-column: span 3; text-align: center;">Memuat ucapan &amp; foto tamu...</p>
     </div>
 
+    <!-- TOMBOL MUAT LEBIH BANYAK -->
+    <div style="text-align: center; margin-top: 15px;">
+      <button id="btn-load-more" class="btn-secondary-v2 hidden" style="max-width: 200px; margin: 0 auto;" onclick="loadMorePosts()">
+        MUAT LEBIH BANYAK
+      </button>
+    </div>
+
     <div style="margin-top:20px;">
       <button class="btn-gold-v2" style="max-width:100%;" onclick="goToStep('step-welcome')">
         KEMBALI KE BERANDA
@@ -1010,6 +1017,11 @@
 
   let cardItems = [];
   let currentCardIndex = 0;
+
+  /* VARIABEL PAGINASI GALERI */
+  let globalPostsMap = {};
+  let lastVisibleDoc = null;
+  const PAGE_SIZE = 12;
 
   document.addEventListener("DOMContentLoaded", () => {
     initFigmaSlider();
@@ -1786,59 +1798,131 @@
     return `${day} ${month} ${year} • ${hours}:${minutes}`;
   }
 
-  let globalPostsMap = {};
-
+  /* PENGAMBILAN GALERI OPTIMAL (PAGINASI) */
   function loadRealtimeFeedIG() {
     db.collection('posts')
       .where('eventId', '==', EVENT_DOC_ID)
+      .orderBy('createdAt', 'desc')
+      .limit(PAGE_SIZE)
       .onSnapshot(snapshot => {
         const gridBox = document.getElementById('ig-grid-box');
         const countSpan = document.getElementById('total-posts-count');
+        const loadMoreBtn = document.getElementById('btn-load-more');
         
         if (snapshot.empty) {
           gridBox.innerHTML = '<p style="font-size: 0.8rem; color: rgba(255,255,255,0.6); grid-column: span 3; text-align: center;">Belum ada foto di galeri. Tampil pertama di sini!</p>';
           countSpan.innerText = '0 Kiriman';
+          if (loadMoreBtn) loadMoreBtn.classList.add('hidden');
           return;
         }
 
-        countSpan.innerText = `${snapshot.size} Kiriman`;
-
-        let posts = [];
-        globalPostsMap = {};
-
-        snapshot.forEach(doc => {
-          const data = { id: doc.id, ...doc.data() };
-          posts.push(data);
-          globalPostsMap[doc.id] = data;
-        });
-
-        posts.sort((a, b) => {
-          const timeA = a.createdAt ? a.createdAt.toMillis() : 0;
-          const timeB = b.createdAt ? b.createdAt.toMillis() : 0;
-          return timeB - timeA;
-        });
+        lastVisibleDoc = snapshot.docs[snapshot.docs.length - 1];
 
         let html = '';
-        posts.forEach(data => {
-          const timeFormatted = formatTimestamp(data.createdAt);
-          html += `
-            <div class="ig-grid-item" onclick="openModal('${data.id}')">
-              <div class="ig-item-header">
-                <div class="ig-item-name">${data.name || 'Tamu'}</div>
-                <div class="ig-item-date">${timeFormatted}</div>
-              </div>
-              <div class="ig-item-img-box">
-                <img src="${data.photoData}" alt="Foto Strip" loading="lazy">
-              </div>
-              <div class="ig-item-msg">"${data.message || ''}"</div>
-            </div>
-          `;
+        snapshot.docs.forEach(doc => {
+          const data = { id: doc.id, ...doc.data() };
+          globalPostsMap[doc.id] = data;
+          html += renderPostCardHTML(data);
         });
 
         gridBox.innerHTML = html;
+
+        if (snapshot.docs.length >= PAGE_SIZE) {
+          if (loadMoreBtn) {
+            loadMoreBtn.innerText = 'MUAT LEBIH BANYAK';
+            loadMoreBtn.classList.remove('hidden');
+          }
+        } else {
+          if (loadMoreBtn) loadMoreBtn.classList.add('hidden');
+        }
       }, error => {
         console.error("Gagal memuat galeri:", error);
+        // Fallback jika indeks belum dibuat di Firebase Console
+        if (error && error.message && error.message.includes('index')) {
+          db.collection('posts')
+            .where('eventId', '==', EVENT_DOC_ID)
+            .limit(PAGE_SIZE)
+            .onSnapshot(fallbackSnap => {
+              const gridBox = document.getElementById('ig-grid-box');
+              if (fallbackSnap.empty) return;
+              lastVisibleDoc = fallbackSnap.docs[fallbackSnap.docs.length - 1];
+              let html = '';
+              fallbackSnap.docs.forEach(doc => {
+                const data = { id: doc.id, ...doc.data() };
+                globalPostsMap[doc.id] = data;
+                html += renderPostCardHTML(data);
+              });
+              if (gridBox) gridBox.innerHTML = html;
+            });
+        }
       });
+
+    // Menghitung total statistik kiriman secara realtime tanpa unduh file besar
+    db.collection('posts')
+      .where('eventId', '==', EVENT_DOC_ID)
+      .onSnapshot(totalSnap => {
+        const countSpan = document.getElementById('total-posts-count');
+        if (countSpan && totalSnap) {
+          countSpan.innerText = `${totalSnap.size} Kiriman`;
+        }
+      }, err => console.warn(err));
+  }
+
+  function loadMorePosts() {
+    if (!lastVisibleDoc) return;
+
+    const loadMoreBtn = document.getElementById('btn-load-more');
+    if (loadMoreBtn) loadMoreBtn.innerText = 'MEMUAT...';
+
+    db.collection('posts')
+      .where('eventId', '==', EVENT_DOC_ID)
+      .orderBy('createdAt', 'desc')
+      .startAfter(lastVisibleDoc)
+      .limit(PAGE_SIZE)
+      .get()
+      .then(snapshot => {
+        if (snapshot.empty) {
+          if (loadMoreBtn) loadMoreBtn.classList.add('hidden');
+          return;
+        }
+
+        lastVisibleDoc = snapshot.docs[snapshot.docs.length - 1];
+        const gridBox = document.getElementById('ig-grid-box');
+
+        snapshot.docs.forEach(doc => {
+          const data = { id: doc.id, ...doc.data() };
+          globalPostsMap[doc.id] = data;
+          if (gridBox) {
+            gridBox.insertAdjacentHTML('beforeend', renderPostCardHTML(data));
+          }
+        });
+
+        if (snapshot.docs.length < PAGE_SIZE) {
+          if (loadMoreBtn) loadMoreBtn.classList.add('hidden');
+        } else {
+          if (loadMoreBtn) loadMoreBtn.innerText = 'MUAT LEBIH BANYAK';
+        }
+      })
+      .catch(err => {
+        console.error("Gagal memuat foto tambahan:", err);
+        if (loadMoreBtn) loadMoreBtn.innerText = 'MUAT LEBIH BANYAK';
+      });
+  }
+
+  function renderPostCardHTML(data) {
+    const timeFormatted = formatTimestamp(data.createdAt);
+    return `
+      <div class="ig-grid-item" onclick="openModal('${data.id}')">
+        <div class="ig-item-header">
+          <div class="ig-item-name">${data.name || 'Tamu'}</div>
+          <div class="ig-item-date">${timeFormatted}</div>
+        </div>
+        <div class="ig-item-img-box">
+          <img src="${data.photoData}" alt="Foto Strip" loading="lazy">
+        </div>
+        <div class="ig-item-msg">"${data.message || ''}"</div>
+      </div>
+    `;
   }
 
   function openModal(postId) {
