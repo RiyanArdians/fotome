@@ -371,7 +371,7 @@
     .figma-card-item.hidden-right { transform: translateX(115%) scale(0.65) rotate(12deg); opacity: 0; z-index: 1; }
     .figma-card-item.card-pressed { transform: scale(0.92) !important; }
 
-    /* KAMERA VIEWFINDER PRESISI PRESISI WYSIWYG */
+    /* KAMERA VIEWFINDER PRESISI WYSIWYG */
     .camera-stage-container {
       width: 100%;
       max-width: 380px;
@@ -534,7 +534,7 @@
     .flash-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: #FFF; opacity: 0; pointer-events: none; transition: opacity 0.1s; z-index: 30; }
     .flash-overlay.active { opacity: 1; }
 
-    /* REVIEW HASIL FOTO */
+    /* REVIEW HASIL FOTO (RASIO PRESISI) */
     .review-grid-box {
       display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; align-items: center; width: 100%; max-width: 330px; margin: 15px 0;
     }
@@ -637,7 +637,7 @@
     .ig-item-img-box img { width: 100%; height: 100%; object-fit: cover; }
     .ig-item-msg { font-size: 0.6rem; color: rgba(255,255,255,0.85); padding: 6px 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; font-style: italic; background: rgba(0, 0, 0, 0.15); }
 
-    /* TOMBOL MELAYANG SCROLL NAVIGASI */
+    /* TOMBOL MELAYANG SCROLL NAVIGASI PINTAR */
     .floating-scroll-nav {
       position: fixed;
       bottom: 25px;
@@ -831,7 +831,7 @@
       </button>
     </div>
 
-    <!-- VIEWFINDER KAMERA (PRESISI SAMAKAN RASIO FRAME) -->
+    <!-- VIEWFINDER KAMERA (PRESISI RASIO BINGKAI) -->
     <div class="camera-viewfinder-box" id="cam-viewfinder-box">
       <video id="video" class="camera-video-element" autoplay playsinline webkit-playsinline muted></video>
       <div id="countdown-overlay" class="countdown-overlay hidden">3</div>
@@ -1002,7 +1002,7 @@
   </div>
 </div>
 
-<!-- TOMBOL SCROLL NAVIGASI MELAYANG (PINTAR AKAN MUNCUL PAS DI SCROLL) -->
+<!-- TOMBOL SCROLL NAVIGASI MELAYANG (PINTAR AKAN MUNCUL PAS DIBUTUHKAN) -->
 <div id="gallery-scroll-nav" class="floating-scroll-nav">
   <button id="btn-scroll-top" onclick="scrollToTop()" title="Ke Atas" class="btn-scroll-nav hidden">▲</button>
   <button id="btn-scroll-bottom" onclick="scrollToBottom()" title="Ke Bawah" class="btn-scroll-nav hidden">▼</button>
@@ -1063,9 +1063,11 @@
   document.addEventListener("DOMContentLoaded", () => {
     initFigmaSlider();
 
+    // Event Listener Scroll untuk Window dan Elemen Galeri (Mendukung semua Tipe HP)
+    window.addEventListener('scroll', handleGalleryScroll, { passive: true });
     const galleryPage = document.getElementById('step-gallery-page');
     if (galleryPage) {
-      galleryPage.addEventListener('scroll', handleGalleryScroll);
+      galleryPage.addEventListener('scroll', handleGalleryScroll, { passive: true });
     }
   });
 
@@ -1114,7 +1116,7 @@
     if (targetEl) targetEl.classList.remove('hidden');
 
     if (targetId === 'step-gallery-page') {
-      setTimeout(handleGalleryScroll, 100);
+      setTimeout(handleGalleryScroll, 150);
     } else {
       const btnTop = document.getElementById('btn-scroll-top');
       const btnBottom = document.getElementById('btn-scroll-bottom');
@@ -1183,41 +1185,53 @@
     }
   }
 
-  /* DETEKSI SCROLL ELEMEN GALERI (LOGIKA TOMBOL PINTAR) */
+  /* DETEKSI SCROLL DENGAN LOGIKA NAVIGASI PINTAR */
   function handleGalleryScroll() {
     const galleryPage = document.getElementById('step-gallery-page');
     const btnTop = document.getElementById('btn-scroll-top');
     const btnBottom = document.getElementById('btn-scroll-bottom');
 
-    if (!galleryPage || !btnTop || !btnBottom) return;
+    if (!galleryPage || galleryPage.classList.contains('hidden') || !btnTop || !btnBottom) return;
 
-    const scrollTop = galleryPage.scrollTop;
-    const scrollHeight = galleryPage.scrollHeight;
-    const clientHeight = galleryPage.clientHeight;
+    const elemScrollTop = galleryPage.scrollTop;
+    const winScrollTop = window.scrollY || document.documentElement.scrollTop || 0;
+    const scrollTop = Math.max(elemScrollTop, winScrollTop);
 
-    // Tombol Ke Atas: Muncul jika sudah scroll ke bawah lebih dari 200px
-    if (scrollTop > 200) {
-      btnTop.classList.remove('hidden');
-    } else {
+    const elemScrollHeight = galleryPage.scrollHeight;
+    const winScrollHeight = document.documentElement.scrollHeight || document.body.scrollHeight || 0;
+    const scrollHeight = Math.max(elemScrollHeight, winScrollHeight);
+
+    const clientHeight = window.innerHeight || galleryPage.clientHeight || 0;
+
+    const isAtTop = scrollTop < 80;
+    const isAtBottom = (scrollTop + clientHeight) >= (scrollHeight - 80);
+
+    if (isAtTop) {
       btnTop.classList.add('hidden');
-    }
-
-    // Tombol Ke Bawah: Muncul jika berada di atas & ada sisa kiriman di bawah
-    if (scrollTop < 150 && (scrollHeight - clientHeight > 250)) {
-      btnBottom.classList.remove('hidden');
-    } else {
+      if (scrollHeight > clientHeight + 100) {
+        btnBottom.classList.remove('hidden');
+      } else {
+        btnBottom.classList.add('hidden');
+      }
+    } else if (isAtBottom) {
+      btnTop.classList.remove('hidden');
       btnBottom.classList.add('hidden');
+    } else {
+      btnTop.classList.remove('hidden');
+      btnBottom.classList.remove('hidden');
     }
   }
 
   function scrollToTop() {
     const galleryPage = document.getElementById('step-gallery-page');
     if (galleryPage) galleryPage.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   function scrollToBottom() {
     const galleryPage = document.getElementById('step-gallery-page');
     if (galleryPage) galleryPage.scrollTo({ top: galleryPage.scrollHeight, behavior: 'smooth' });
+    window.scrollTo({ top: document.documentElement.scrollHeight || document.body.scrollHeight, behavior: 'smooth' });
   }
 
   function submitGuestNameAndNext() {
@@ -1383,12 +1397,12 @@
     loadRealtimeFeedIG();
   }
 
-  /* FUNGSI HITUNG RASIO PRESISI SAMAKAN SEMUA LAYAR (WYSIWYG) */
+  /* HITUNG RASIO PRESISI SAMA PERSIS DENGAN LUBANG CANVAS */
   function getFrameTargetAspect() {
     const count = parseInt(requiredPhotoCount, 10) || 3;
-    if (count === 1) return 1.30; // Aspect ratio frame 1 foto (lebar/tinggi)
-    if (count === 2) return 1.20; // Aspect ratio frame 2 foto
-    return 1.27;                 // Aspect ratio frame 3 foto
+    if (count === 1) return 456 / 792; // ~0.5758 (Portrait)
+    if (count === 2) return 456 / 504; // ~0.9048 (Slightly tall)
+    return 456 / 360;                  // ~1.2667 (Landscape)
   }
 
   function updateViewfinderAspectRatio() {
@@ -1844,15 +1858,22 @@
     downloadImageToPhone(senderName);
 
     if (typeof db !== 'undefined') {
+      // Menggunakan Timestamp.now() lokal agar postingan langsung realtime tanpa delay
       db.collection('posts').add({
         eventId: EVENT_DOC_ID,
         name: senderName,
         message: senderMessage,
         photoData: generatedDataUrl,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        createdAt: firebase.firestore.Timestamp.now()
       }).then(() => {
         showAlert("Foto berhasil diunduh dan diposting ke Galeri!", "BERHASIL DITAMBAHKAN", () => {
           document.getElementById('input-sender-message').value = '';
+          resetGuestInfo();
+          goToStep('step-welcome');
+        });
+      }).catch(err => {
+        console.error("Gagal simpan ke database:", err);
+        showAlert("Foto berhasil diunduh ke HP!", "TERSIMPAN PRIVAT", () => {
           resetGuestInfo();
           goToStep('step-welcome');
         });
