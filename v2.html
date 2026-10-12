@@ -987,7 +987,7 @@
 
     <div style="font-size:0.85rem; font-weight:700; color:var(--gold-accent); margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; letter-spacing:1px;">
       <span>KIRIMAN TAMU</span>
-      <span style="font-size:0.7rem; color:rgba(255,255,255,0.7);" id="total-posts-count">0 Kiriman</span>
+      <span style="font-size:0.7rem; color:rgba(255,255,255,0.7);" id="total-posts-count">... Kiriman</span>
     </div>
 
     <div id="ig-grid-box" class="ig-grid-container">
@@ -1066,10 +1066,10 @@
 
   /* VARIABEL PAGINASI & TAMPILAN GALERI */
   let globalPostsMap = {};
-  let lastVisibleDoc = null;
   let currentDisplayedPosts = 12;
   let totalPostsInDb = 0;
   const PAGE_SIZE = 12;
+  let feedUnsubscribe = null;
 
   document.addEventListener("DOMContentLoaded", () => {
     initFigmaSlider();
@@ -1858,7 +1858,7 @@
         name: senderName,
         message: senderMessage,
         photoData: generatedDataUrl,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        createdAt: firebase.firestore.Timestamp.now()
       }).then(() => {
         showAlert("Foto berhasil diunduh dan diposting ke Galeri!", "BERHASIL DITAMBAHKAN", () => {
           document.getElementById('input-sender-message').value = '';
@@ -1927,40 +1927,42 @@
     }
   }
 
-  /* DETEKSI REALTIME OTOMATIS TAMBAH FOTO TANPA PERLU REFRESH */
+  /* FITUR GALERI CEPAT, INSTAN & HITUNGAN HIT RINGAN */
   function loadRealtimeFeedIG() {
+    if (feedUnsubscribe) feedUnsubscribe();
+
+    // 1. Ambil jumlah total postingan secara terpisah agar angka tidak 0
     db.collection('posts')
       .where('eventId', '==', EVENT_DOC_ID)
-      .orderBy('createdAt', 'desc')
-      .onSnapshot({ includeMetadataChanges: true }, snapshot => {
-        if (!snapshot) return;
-
-        totalPostsInDb = snapshot.size;
+      .get()
+      .then(snap => {
+        totalPostsInDb = snap.size;
         const countSpan = document.getElementById('total-posts-count');
         if (countSpan) countSpan.innerText = `${totalPostsInDb} Kiriman`;
+        updateLoadMoreButtonState();
+      })
+      .catch(err => console.warn("Hitung total error:", err));
+
+    // 2. Listener realtime instan tanpa pemicu berulang
+    feedUnsubscribe = db.collection('posts')
+      .where('eventId', '==', EVENT_DOC_ID)
+      .orderBy('createdAt', 'desc')
+      .limit(currentDisplayedPosts)
+      .onSnapshot(snapshot => {
+        if (!snapshot) return;
 
         const gridBox = document.getElementById('ig-grid-box');
         if (snapshot.empty) {
           if (gridBox) gridBox.innerHTML = '<p style="font-size: 0.8rem; color: rgba(255,255,255,0.6); grid-column: span 3; text-align: center;">Belum ada foto di galeri. Tampil pertama di sini!</p>';
-          currentDisplayedPosts = 0;
-          updateLoadMoreButtonState();
           return;
         }
 
-        const allDocs = snapshot.docs;
-        let limitToRender = Math.max(currentDisplayedPosts || PAGE_SIZE, PAGE_SIZE);
-        if (limitToRender > allDocs.length) limitToRender = allDocs.length;
-
-        currentDisplayedPosts = limitToRender;
-        lastVisibleDoc = allDocs[limitToRender - 1];
-
         let html = '';
-        for (let i = 0; i < limitToRender; i++) {
-          const doc = allDocs[i];
+        snapshot.docs.forEach(doc => {
           const data = { id: doc.id, ...doc.data() };
           globalPostsMap[doc.id] = data;
           html += renderPostCardHTML(data);
-        }
+        });
 
         if (gridBox) gridBox.innerHTML = html;
         updateLoadMoreButtonState();
