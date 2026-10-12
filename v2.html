@@ -413,7 +413,7 @@
     .camera-viewfinder-box {
       position: relative;
       width: 100%;
-      max-width: 310px;
+      max-width: 330px;
       max-height: 48dvh;
       border-radius: 20px;
       overflow: hidden;
@@ -547,7 +547,7 @@
     .flash-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: #FFF; opacity: 0; pointer-events: none; transition: opacity 0.1s; z-index: 30; }
     .flash-overlay.active { opacity: 1; }
 
-    /* REVIEW HASIL FOTO (DINAMIS & RASIO PRESISI) */
+    /* REVIEW HASIL FOTO (RASIO SERAGAM) */
     .review-grid-box {
       display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; align-items: center; width: 100%; max-width: 340px; margin: 15px auto;
     }
@@ -842,7 +842,7 @@
       </button>
     </div>
 
-    <!-- VIEWFINDER KAMERA (PRESISI RASIO BINGKAI) -->
+    <!-- VIEWFINDER KAMERA (PRESISI RASIO BINGKAI SERAGAM) -->
     <div class="camera-viewfinder-box" id="cam-viewfinder-box">
       <video id="video" class="camera-video-element" autoplay playsinline webkit-playsinline muted></video>
       <div id="countdown-overlay" class="countdown-overlay hidden">3</div>
@@ -1399,12 +1399,9 @@
     loadRealtimeFeedIG();
   }
 
-  /* HITUNG RASIO PRESISI PROPORSI KAMERA & CANVAS */
+  /* RASIO TUNGGAL SERAGAM UNTUK 1, 2, MAUPUN 3 FOTO (456/360 = ~1.2667) */
   function getFrameTargetAspect() {
-    const count = parseInt(requiredPhotoCount, 10) || 3;
-    if (count === 1) return 456 / 608; // 0.75 (3:4 Portrait Standar - Pas & Tidak Terpotong)
-    if (count === 2) return 456 / 480; // 0.95 (Proporsional 2 Foto)
-    return 456 / 342;                  // 1.3333 (4:3 Landscape Standar untuk 3 Foto)
+    return 456 / 360; 
   }
 
   function updateViewfinderAspectRatio() {
@@ -1730,23 +1727,13 @@
     gridBox.innerHTML = '';
 
     const targetAspect = getFrameTargetAspect();
-    const total = capturedPhotos.length;
 
     capturedPhotos.forEach((src, idx) => {
       const card = document.createElement('div');
       card.className = 'review-photo-card';
       
-      if (total === 1) {
-        card.style.width = '180px';
-        card.style.maxWidth = '180px';
-      } else if (total === 2) {
-        card.style.width = '140px';
-        card.style.maxWidth = '140px';
-      } else {
-        card.style.width = '100px';
-        card.style.maxWidth = '100px';
-      }
-
+      card.style.width = '120px';
+      card.style.maxWidth = '120px';
       card.style.aspectRatio = `${targetAspect}`;
       card.innerHTML = `
         <img src="${src}" alt="Foto ${idx + 1}">
@@ -1802,7 +1789,6 @@
       ctx.imageSmoothingEnabled = true;
       ctx.imageSmoothingQuality = 'high';
 
-      // Gambar bingkai terlebih dahulu
       ctx.drawImage(frameImg, 0, 0, W, H);
 
       const totalPhotos = userImages.length;
@@ -1818,8 +1804,8 @@
         startY = Math.round((H - slotH) / 2);
         gapY = 0;
       } else if (totalPhotos === 2) {
-        startY = Math.round(H * 0.18);
-        gapY = Math.round(H * 0.04);
+        startY = Math.round(H * 0.22);
+        gapY = Math.round(H * 0.05);
       } else {
         startY = Math.round(H * 0.15);
         gapY = Math.round(H * 0.025);
