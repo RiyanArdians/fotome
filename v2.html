@@ -54,6 +54,19 @@
       overflow: hidden;
     }
 
+    /* WADAH KHUSUS GALERI AGAR SCROLL TERDETEKSI PRESISI */
+    .page-fullscreen-scrollable {
+      width: 100vw;
+      height: 100dvh;
+      display: block;
+      padding: 16px 16px 80px;
+      position: relative;
+      background: linear-gradient(180deg, #7A3D44 0%, #5C2B32 100%);
+      color: #FFFFFF;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
     /* TOMBOL ELEGAN KHUSUS */
     .btn-primary-v2 {
       background: linear-gradient(135deg, #8C4A52 0%, var(--primary-crimson) 100%);
@@ -957,8 +970,8 @@
 
 </div>
 
-<!-- GALERI KENANGAN -->
-<div id="step-gallery-page" class="page-fullscreen hidden" style="overflow-y:auto; height:auto; min-height:100dvh;">
+<!-- GALERI KENANGAN (MEMPUNYAI SCROLLBAR SENDIRI DENGAN DETEKSI AKURAT) -->
+<div id="step-gallery-page" class="page-fullscreen-scrollable hidden">
   <div class="feed-container">
     <div style="text-align:center; margin-bottom:12px;">
       <p style="font-size:0.68rem; color:var(--gold-accent); letter-spacing:2.5px; font-weight:700; margin-bottom:2px;">GALERI KENANGAN</p>
@@ -1002,7 +1015,7 @@
   </div>
 </div>
 
-<!-- TOMBOL SCROLL NAVIGASI MELAYANG (PINTAR AKAN MUNCUL PAS DIBUTUHKAN) -->
+<!-- TOMBOL SCROLL NAVIGASI MELAYANG (PINTAR & DILENGKAPI DETEKSI PRESISI) -->
 <div id="gallery-scroll-nav" class="floating-scroll-nav">
   <button id="btn-scroll-top" onclick="scrollToTop()" title="Ke Atas" class="btn-scroll-nav hidden">▲</button>
   <button id="btn-scroll-bottom" onclick="scrollToBottom()" title="Ke Bawah" class="btn-scroll-nav hidden">▼</button>
@@ -1063,8 +1076,7 @@
   document.addEventListener("DOMContentLoaded", () => {
     initFigmaSlider();
 
-    // Event Listener Scroll untuk Window dan Elemen Galeri (Mendukung semua Tipe HP)
-    window.addEventListener('scroll', handleGalleryScroll, { passive: true });
+    // Event listener scroll dipasang langsung di wadah galeri
     const galleryPage = document.getElementById('step-gallery-page');
     if (galleryPage) {
       galleryPage.addEventListener('scroll', handleGalleryScroll, { passive: true });
@@ -1116,7 +1128,7 @@
     if (targetEl) targetEl.classList.remove('hidden');
 
     if (targetId === 'step-gallery-page') {
-      setTimeout(handleGalleryScroll, 150);
+      setTimeout(handleGalleryScroll, 200);
     } else {
       const btnTop = document.getElementById('btn-scroll-top');
       const btnBottom = document.getElementById('btn-scroll-bottom');
@@ -1185,7 +1197,7 @@
     }
   }
 
-  /* DETEKSI SCROLL DENGAN LOGIKA NAVIGASI PINTAR */
+  /* DETEKSI SCROLL PRESISI KHUSUS ELEMEN GALERI */
   function handleGalleryScroll() {
     const galleryPage = document.getElementById('step-gallery-page');
     const btnTop = document.getElementById('btn-scroll-top');
@@ -1193,26 +1205,23 @@
 
     if (!galleryPage || galleryPage.classList.contains('hidden') || !btnTop || !btnBottom) return;
 
-    const elemScrollTop = galleryPage.scrollTop;
-    const winScrollTop = window.scrollY || document.documentElement.scrollTop || 0;
-    const scrollTop = Math.max(elemScrollTop, winScrollTop);
+    const scrollTop = galleryPage.scrollTop;
+    const scrollHeight = galleryPage.scrollHeight;
+    const clientHeight = galleryPage.clientHeight;
 
-    const elemScrollHeight = galleryPage.scrollHeight;
-    const winScrollHeight = document.documentElement.scrollHeight || document.body.scrollHeight || 0;
-    const scrollHeight = Math.max(elemScrollHeight, winScrollHeight);
-
-    const clientHeight = window.innerHeight || galleryPage.clientHeight || 0;
+    // Jika panjang foto kurang dari layar, sembunyikan tombol
+    if (scrollHeight <= clientHeight + 50) {
+      btnTop.classList.add('hidden');
+      btnBottom.classList.add('hidden');
+      return;
+    }
 
     const isAtTop = scrollTop < 80;
     const isAtBottom = (scrollTop + clientHeight) >= (scrollHeight - 80);
 
     if (isAtTop) {
       btnTop.classList.add('hidden');
-      if (scrollHeight > clientHeight + 100) {
-        btnBottom.classList.remove('hidden');
-      } else {
-        btnBottom.classList.add('hidden');
-      }
+      btnBottom.classList.remove('hidden');
     } else if (isAtBottom) {
       btnTop.classList.remove('hidden');
       btnBottom.classList.add('hidden');
@@ -1225,13 +1234,11 @@
   function scrollToTop() {
     const galleryPage = document.getElementById('step-gallery-page');
     if (galleryPage) galleryPage.scrollTo({ top: 0, behavior: 'smooth' });
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   function scrollToBottom() {
     const galleryPage = document.getElementById('step-gallery-page');
     if (galleryPage) galleryPage.scrollTo({ top: galleryPage.scrollHeight, behavior: 'smooth' });
-    window.scrollTo({ top: document.documentElement.scrollHeight || document.body.scrollHeight, behavior: 'smooth' });
   }
 
   function submitGuestNameAndNext() {
@@ -1858,7 +1865,7 @@
     downloadImageToPhone(senderName);
 
     if (typeof db !== 'undefined') {
-      // Menggunakan Timestamp.now() lokal agar postingan langsung realtime tanpa delay
+      // Menggunakan Timestamp.now() lokal agar postingan langsung realtime di semua HP tamu
       db.collection('posts').add({
         eventId: EVENT_DOC_ID,
         name: senderName,
