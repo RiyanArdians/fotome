@@ -413,7 +413,7 @@
     .camera-viewfinder-box {
       position: relative;
       width: 100%;
-      max-width: 320px;
+      max-width: 310px;
       max-height: 48dvh;
       border-radius: 20px;
       overflow: hidden;
@@ -547,19 +547,17 @@
     .flash-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: #FFF; opacity: 0; pointer-events: none; transition: opacity 0.1s; z-index: 30; }
     .flash-overlay.active { opacity: 1; }
 
-    /* REVIEW HASIL FOTO (RASIO PRESISI) */
+    /* REVIEW HASIL FOTO (DINAMIS & RASIO PRESISI) */
     .review-grid-box {
-      display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; align-items: center; width: 100%; max-width: 330px; margin: 15px 0;
+      display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; align-items: center; width: 100%; max-width: 340px; margin: 15px auto;
     }
 
     .review-photo-card {
       position: relative; 
-      width: calc(33.33% - 8px); 
-      max-width: 120px;
-      border-radius: 14px; 
+      border-radius: 16px; 
       overflow: hidden; 
       border: 2px solid var(--gold-accent); 
-      box-shadow: 0 8px 18px rgba(0,0,0,0.25); 
+      box-shadow: 0 10px 22px rgba(0,0,0,0.3); 
       background: #000;
     }
 
@@ -572,7 +570,7 @@
     }
 
     .review-delete-btn {
-      position: absolute; top: 5px; right: 5px; background: rgba(122, 61, 68, 0.95); color: #FFF; border: 1px solid var(--gold-accent); width: 22px; height: 22px; border-radius: 50%; font-weight: 700; font-size: 0.72rem; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.3); z-index: 10;
+      position: absolute; top: 6px; right: 6px; background: rgba(122, 61, 68, 0.95); color: #FFF; border: 1px solid var(--gold-accent); width: 24px; height: 24px; border-radius: 50%; font-weight: 700; font-size: 0.75rem; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.4); z-index: 10;
     }
 
     /* PRINTER STAGE */
@@ -618,10 +616,10 @@
     .ejected-photo-sheet img { width: 100%; border-radius: 6px; display: block; margin: 0 auto; }
 
     .popup-photo-container { 
-      width: 100%; max-width: 165px; margin: 2px auto; opacity: 0; transform: scale(0.6); transition: all 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+      width: 100%; max-width: 175px; margin: 2px auto; opacity: 0; transform: scale(0.6); transition: all 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
     }
     .popup-photo-container.show-popup { opacity: 1; transform: scale(1); }
-    .popup-photo-container img { width: 100%; max-height: 36vh; object-fit: contain; border-radius: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.35); border: 1px solid var(--gold-accent); }
+    .popup-photo-container img { width: 100%; max-height: 38vh; object-fit: contain; border-radius: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.35); border: 1px solid var(--gold-accent); }
 
     .printer-status-text-box { margin-top: 4px; text-align: center; z-index: 20; }
     .status-main-label { font-size: 0.85rem; font-weight: 700; color: var(--gold-accent); letter-spacing: 1px; display: flex; align-items: center; justify-content: center; gap: 5px; }
@@ -867,7 +865,7 @@
       </button>
     </div>
 
-    <!-- AREA BAWAH: SELECTOR KAMERA & JEPET FOTO -->
+    <!-- AREA BAWAH: DROPDOWN KAMERA & JEPET FOTO -->
     <div class="cam-bottom-action-row">
       <div style="width: 100%; max-width: 280px; position: relative;">
         <select id="camera-select-dropdown" onchange="onCameraSelectChange(this.value)" style="width: 100%; background: rgba(0,0,0,0.4); color: #FFF; border: 1px solid var(--gold-accent); padding: 8px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; text-align: center; outline: none; backdrop-filter: blur(8px); cursor: pointer;">
@@ -970,7 +968,7 @@
 
 </div>
 
-<!-- GALERI KENANGAN (MEMPUNYAI SCROLLBAR SENDIRI DENGAN DETEKSI AKURAT) -->
+<!-- GALERI KENANGAN -->
 <div id="step-gallery-page" class="page-fullscreen-scrollable hidden">
   <div class="feed-container">
     <div style="text-align:center; margin-bottom:12px;">
@@ -1015,7 +1013,7 @@
   </div>
 </div>
 
-<!-- TOMBOL SCROLL NAVIGASI MELAYANG (PINTAR & DILENGKAPI DETEKSI PRESISI) -->
+<!-- TOMBOL SCROLL NAVIGASI MELAYANG -->
 <div id="gallery-scroll-nav" class="floating-scroll-nav">
   <button id="btn-scroll-top" onclick="scrollToTop()" title="Ke Atas" class="btn-scroll-nav hidden">▲</button>
   <button id="btn-scroll-bottom" onclick="scrollToBottom()" title="Ke Bawah" class="btn-scroll-nav hidden">▼</button>
@@ -1076,7 +1074,6 @@
   document.addEventListener("DOMContentLoaded", () => {
     initFigmaSlider();
 
-    // Event listener scroll dipasang langsung di wadah galeri
     const galleryPage = document.getElementById('step-gallery-page');
     if (galleryPage) {
       galleryPage.addEventListener('scroll', handleGalleryScroll, { passive: true });
@@ -1197,7 +1194,6 @@
     }
   }
 
-  /* DETEKSI SCROLL PRESISI KHUSUS ELEMEN GALERI */
   function handleGalleryScroll() {
     const galleryPage = document.getElementById('step-gallery-page');
     const btnTop = document.getElementById('btn-scroll-top');
@@ -1209,7 +1205,6 @@
     const scrollHeight = galleryPage.scrollHeight;
     const clientHeight = galleryPage.clientHeight;
 
-    // Jika panjang foto kurang dari layar, sembunyikan tombol
     if (scrollHeight <= clientHeight + 50) {
       btnTop.classList.add('hidden');
       btnBottom.classList.add('hidden');
@@ -1404,12 +1399,12 @@
     loadRealtimeFeedIG();
   }
 
-  /* HITUNG RASIO PRESISI SAMA PERSIS DENGAN LUBANG CANVAS */
+  /* HITUNG RASIO PRESISI PROPORSI KAMERA & CANVAS */
   function getFrameTargetAspect() {
     const count = parseInt(requiredPhotoCount, 10) || 3;
-    if (count === 1) return 456 / 792; // ~0.5758 (Portrait)
-    if (count === 2) return 456 / 504; // ~0.9048 (Slightly tall)
-    return 456 / 360;                  // ~1.2667 (Landscape)
+    if (count === 1) return 456 / 608; // 0.75 (3:4 Portrait Standar - Pas & Tidak Terpotong)
+    if (count === 2) return 456 / 480; // 0.95 (Proporsional 2 Foto)
+    return 456 / 342;                  // 1.3333 (4:3 Landscape Standar untuk 3 Foto)
   }
 
   function updateViewfinderAspectRatio() {
@@ -1420,7 +1415,6 @@
     viewfinderBox.style.aspectRatio = `${targetAspect}`;
   }
 
-  /* DETEKSI SEMUA KAMERA & FILTER */
   async function populateCameraDevices() {
     const selectEl = document.getElementById('camera-select-dropdown');
     if (!selectEl) return;
@@ -1736,10 +1730,23 @@
     gridBox.innerHTML = '';
 
     const targetAspect = getFrameTargetAspect();
+    const total = capturedPhotos.length;
 
     capturedPhotos.forEach((src, idx) => {
       const card = document.createElement('div');
       card.className = 'review-photo-card';
+      
+      if (total === 1) {
+        card.style.width = '180px';
+        card.style.maxWidth = '180px';
+      } else if (total === 2) {
+        card.style.width = '140px';
+        card.style.maxWidth = '140px';
+      } else {
+        card.style.width = '100px';
+        card.style.maxWidth = '100px';
+      }
+
       card.style.aspectRatio = `${targetAspect}`;
       card.innerHTML = `
         <img src="${src}" alt="Foto ${idx + 1}">
@@ -1795,6 +1802,7 @@
       ctx.imageSmoothingEnabled = true;
       ctx.imageSmoothingQuality = 'high';
 
+      // Gambar bingkai terlebih dahulu
       ctx.drawImage(frameImg, 0, 0, W, H);
 
       const totalPhotos = userImages.length;
@@ -1807,13 +1815,13 @@
       let startY, gapY;
 
       if (totalPhotos === 1) {
-        startY = Math.round((H - slotH) * 0.38);
+        startY = Math.round((H - slotH) / 2);
         gapY = 0;
       } else if (totalPhotos === 2) {
-        startY = Math.round(H * 0.19);
-        gapY = Math.round(H * 0.035);
+        startY = Math.round(H * 0.18);
+        gapY = Math.round(H * 0.04);
       } else {
-        startY = Math.round(H * 0.17);
+        startY = Math.round(H * 0.15);
         gapY = Math.round(H * 0.025);
       }
 
@@ -1821,10 +1829,10 @@
         const currentY = startY + (i * (slotH + gapY));
 
         ctx.save();
-        ctx.shadowColor = "rgba(0, 0, 0, 0.2)";
-        ctx.shadowBlur = 15;
+        ctx.shadowColor = "rgba(0, 0, 0, 0.15)";
+        ctx.shadowBlur = 10;
         ctx.shadowOffsetX = 0;
-        ctx.shadowOffsetY = 6;
+        ctx.shadowOffsetY = 4;
 
         ctx.drawImage(photo, 0, 0, photo.width, photo.height, startX, currentY, slotW, slotH);
         ctx.restore();
@@ -1865,7 +1873,6 @@
     downloadImageToPhone(senderName);
 
     if (typeof db !== 'undefined') {
-      // Menggunakan Timestamp.now() lokal agar postingan langsung realtime di semua HP tamu
       db.collection('posts').add({
         eventId: EVENT_DOC_ID,
         name: senderName,
@@ -1931,7 +1938,6 @@
     }
   }
 
-  /* PENGAMBILAN GALERI REALTIME DENGAN INFO JUMLAH KIRIMAN */
   function loadRealtimeFeedIG() {
     db.collection('posts')
       .where('eventId', '==', EVENT_DOC_ID)
