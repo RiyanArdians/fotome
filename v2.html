@@ -50,6 +50,19 @@
       animation: spinAnim 0.75s linear infinite;
     }
 
+    /* SPINNER EMAS KHUSUS DENGAN BACKGROUND TRANSPARAN */
+    .custom-spinner {
+      width: 15px;
+      height: 15px;
+      border: 2px solid rgba(212, 175, 55, 0.25);
+      border-top-color: var(--gold-accent);
+      border-radius: 50%;
+      display: inline-block;
+      animation: spinAnim 0.75s linear infinite;
+      vertical-align: middle;
+      margin-right: 6px;
+    }
+
     .page-fullscreen {
       width: 100vw;
       height: 100dvh;
@@ -1101,7 +1114,6 @@
     if (targetEl) targetEl.classList.remove('hidden');
 
     if (targetId === 'step-gallery-page') {
-      // PERBAIKAN: Selalu reset posisi scroll ke paling atas saat membuka galeri
       if (targetEl) targetEl.scrollTop = 0;
       setTimeout(handleGalleryScroll, 200);
     } else {
@@ -1858,7 +1870,6 @@
         showAlert("Foto berhasil diunduh dan diposting ke Galeri!", "BERHASIL DITAMBAHKAN", () => {
           document.getElementById('input-sender-message').value = '';
           resetGuestInfo();
-          // PERBAIKAN: Langsung arahkan pengguna ke Galeri Tamu di posisi paling atas
           goToStep('step-gallery-page');
         });
       }).catch(err => {
@@ -2012,12 +2023,12 @@
       });
   }
 
-  /* AMBIL BATCH BERIKUTNYA DENGAN ANIMASI SPINNER HALUS */
+  /* AMBIL BATCH BERIKUTNYA DENGAN SPINNER RING EMAS */
   function loadMorePosts() {
     const loadMoreBtn = document.getElementById('btn-load-more');
     if (loadMoreBtn) {
       loadMoreBtn.disabled = true;
-      loadMoreBtn.innerHTML = '<span class="spin-icon">⏳</span> MEMUAT FOTO...';
+      loadMoreBtn.innerHTML = '<span class="custom-spinner"></span> MEMUAT FOTO...';
     }
 
     if (!lastVisibleDoc) {
