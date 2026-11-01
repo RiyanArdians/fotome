@@ -1729,18 +1729,31 @@ f      width: 100vw;
   }
 }
 
-  function renderReviewPhotosUI() {
+    function renderReviewPhotosUI() {
     const gridBox = document.getElementById('review-grid-box');
     gridBox.innerHTML = '';
 
     const targetAspect = getFrameTargetAspect();
+    const total = capturedPhotos.length || 1;
+    const gap = 12;
+
+    // Susun vertikal supaya tiap foto bisa lebih besar
+    gridBox.style.flexDirection = 'column';
+    gridBox.style.flexWrap = 'nowrap';
+    gridBox.style.gap = gap + 'px';
+
+    // Hitung ukuran otomatis sesuai tinggi layar & jumlah foto
+    const availH = Math.max(window.innerHeight - 330, 240);
+    const availW = Math.min(window.innerWidth - 48, 360);
+    let cardW = ((availH - gap * (total - 1)) / total) * targetAspect;
+    cardW = Math.max(120, Math.min(cardW, availW));
 
     capturedPhotos.forEach((src, idx) => {
       const card = document.createElement('div');
       card.className = 'review-photo-card';
-      
-      card.style.width = '120px';
-      card.style.maxWidth = '120px';
+
+      card.style.width = cardW + 'px';
+      card.style.maxWidth = cardW + 'px';
       card.style.aspectRatio = `${targetAspect}`;
       card.innerHTML = `
         <img src="${src}" alt="Foto ${idx + 1}">
@@ -1748,7 +1761,7 @@ f      width: 100vw;
       `;
       gridBox.appendChild(card);
     });
-  }
+      }
 
   function deletePhotoInReview(index) {
     capturedPhotos.splice(index, 1);
