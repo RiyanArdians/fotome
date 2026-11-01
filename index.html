@@ -2,1652 +2,2270 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Virtual Photobooth - FOTOME</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Virtual Photobooth & Guestbook - FOTOME</title>
   
-  <!-- Google Fonts & Font Awesome Icons -->
-  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Great+Vibes&family=Courier+Prime:wght@400;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,500;1,600;1,700&family=Bodoni+Moda:ital,opsz,wght@1,6..96,600;1,6..96,700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-  <!-- SDK Firebase CDN Versi Kompatibel -->
+  <!-- Firebase Compat SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-  
-  <!-- File Konfigurasi Firebase -->
   <script src="./js/config.js"></script>
 
   <style>
     :root {
-      --dusty-rose: #8C6262;
-      --soft-blush: #D8B4B4;
+      --primary-crimson: #7A3D44;
+      --deep-crimson: #5C2B32;
+      --gold-accent: #D4AF37;
+      --gold-light: #F8F1E5;
       --bg-cream: #FDFBF7;
-      --soft-mocha: #B3927A;
-      --text-dark: #3D2B2B;
-      --gold-accent: #C5A059;
+      --text-dark: #2C2223;
+      --card-glass: rgba(255, 255, 255, 0.12);
+      --card-border: rgba(212, 175, 55, 0.35);
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
-    body {
+    html, body {
+      width: 100vw;
+      height: 100%;
+      overflow-x: hidden;
       font-family: 'Plus Jakarta Sans', sans-serif;
-      background-color: var(--bg-cream);
-      color: var(--text-dark);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      padding: 20px 15px;
-    }
-
-    .app-card {
-      width: 100%;
-      max-width: 440px;
-      background: #FFFFFF;
-      border-radius: 28px;
-      padding: 35px 24px 30px;
-      box-shadow: 0 15px 35px rgba(140, 98, 98, 0.08), 0 3px 10px rgba(0,0,0,0.02);
-      border: 1px solid rgba(216, 180, 180, 0.3);
-      text-align: center;
-      position: relative;
-      overflow: hidden;
+      background: linear-gradient(180deg, #7A3D44 0%, #5C2B32 100%);
+      color: #FFFFFF;
     }
 
     .font-serif { font-family: 'Cormorant Garamond', serif; }
-    .font-hand { font-family: 'Great Vibes', cursive; }
+    .font-script { font-family: 'Alex Brush', cursive; }
     .hidden { display: none !important; }
 
-    /* STYLING TOMBOL UTAMA & SEKUNDER */
-    .btn-primary {
-      background: linear-gradient(135deg, #A37B7B 0%, var(--dusty-rose) 100%);
-      color: #FFFFFF;
-      border: none;
-      padding: 16px 28px;
-      font-size: 1rem;
-      font-weight: 700;
-      border-radius: 30px;
-      cursor: pointer;
-      box-shadow: 0 6px 20px rgba(140, 98, 98, 0.25);
-      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      margin-top: 18px;
-      width: 100%;
-      justify-content: center;
-      letter-spacing: 0.5px;
+    /* ANIMASI SPINNER LOADING & REFRESH */
+    @keyframes spinAnim {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .spin-icon {
+      display: inline-flex !important;
+      animation: spinAnim 0.75s linear infinite;
     }
 
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(140, 98, 98, 0.35);
+    /* SPINNER EMAS KHUSUS DENGAN BACKGROUND TRANSPARAN */
+    .custom-spinner {
+      width: 15px;
+      height: 15px;
+      border: 2px solid rgba(212, 175, 55, 0.25);
+      border-top-color: var(--gold-accent);
+      border-radius: 50%;
+      display: inline-block;
+      animation: spinAnim 0.75s linear infinite;
+      vertical-align: middle;
+      margin-right: 6px;
     }
 
-    .btn-secondary {
-      background-color: transparent;
-      color: var(--dusty-rose);
-      border: 1px solid var(--soft-blush);
-      padding: 12px 20px;
-      font-size: 0.88rem;
-      font-weight: 600;
-      border-radius: 30px;
-      cursor: pointer;
-      margin-top: 10px;
-      width: 100%;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      transition: all 0.2s ease;
-    }
-
-    .btn-secondary:hover {
-      background-color: rgba(216, 180, 180, 0.12);
-    }
-
-    /* BARIS CONTROL KAMERA 3 TOMBOL */
-    .cam-controls-row {
-      display: flex;
-      gap: 6px;
-      justify-content: center;
-      align-items: center;
-      margin-top: 6px;
-      flex-wrap: wrap;
-    }
-
-    .btn-switch-cam {
-      background-color: #FFFFFF;
-      color: var(--dusty-rose);
-      border: 1px solid var(--soft-blush);
-      padding: 6px 10px;
-      font-size: 0.74rem;
-      font-weight: 700;
-      border-radius: 20px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-      transition: all 0.2s ease;
-      white-space: nowrap;
-    }
-
-    .btn-switch-cam:hover {
-      transform: scale(1.03);
-    }
-
-    /* DROPDOWN SELECTOR KAMERA EKSTERNAL */
-    .camera-select-dropdown {
-      background-color: #FFFFFF;
-      color: var(--dusty-rose);
-      border: 1px solid var(--soft-blush);
-      padding: 5px 8px;
-      font-size: 0.74rem;
-      font-weight: 700;
-      border-radius: 20px;
-      outline: none;
-      cursor: pointer;
-      max-width: 140px;
-      text-overflow: ellipsis;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    }
-
-    /* CONTAINER SLIDER (ZOOM & BRIGHTNESS) */
-    .slider-adjust-wrapper {
+    .page-fullscreen {
+      width: 100vw;
+      height: 100dvh;
       display: flex;
       flex-direction: column;
-      gap: 10px;
-      background: #FAF6EE;
-      padding: 12px 16px;
-      border-radius: 16px;
-      border: 1px solid rgba(216, 180, 180, 0.4);
-      margin-top: 10px;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px;
+      position: relative;
+      background: linear-gradient(180deg, #7A3D44 0%, #5C2B32 100%);
+      color: #FFFFFF;
+      overflow: hidden;
     }
 
-    .slider-item {
+    .page-fullscreen-scrollable {
+      width: 100vw;
+      height: 100dvh;
+      display: block;
+      padding: 16px 16px 80px;
+      position: relative;
+      background: linear-gradient(180deg, #7A3D44 0%, #5C2B32 100%);
+      color: #FFFFFF;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .btn-gold-v2 {
+      background: linear-gradient(135deg, #E2C275 0%, #C39B38 100%);
+      color: #2A1A1C;
+      border: 1px solid #FFF;
+      padding: 13px 20px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      border-radius: 35px;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+      width: 100%;
+      max-width: 320px;
+      margin: 0 auto;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      gap: 10px;
+      justify-content: center;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .btn-gold-v2:active { transform: scale(0.96); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); }
+
+    .btn-secondary-v2 {
+      background: rgba(255, 255, 255, 0.08);
+      color: #FFFFFF;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      padding: 11px 18px;
       font-size: 0.75rem;
       font-weight: 700;
-      color: var(--dusty-rose);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      border-radius: 35px;
+      cursor: pointer;
+      margin: 6px auto 0;
+      width: 100%;
+      max-width: 320px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: transform 0.15s ease, background 0.2s ease;
     }
 
-    .slider-item label {
+    .btn-secondary-v2:active { transform: scale(0.96); background: rgba(255, 255, 255, 0.18); }
+
+    .btn-outline-v2 {
+      background: transparent;
+      color: rgba(255, 255, 255, 0.8);
+      border: none;
+      padding: 6px 12px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      cursor: pointer;
+      width: 100%;
+      max-width: 320px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.15s ease, opacity 0.2s ease;
+    }
+
+    .btn-outline-v2:active { transform: scale(0.94); opacity: 0.7; }
+
+    .btn-back-styled {
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      color: #FFFFFF;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      padding: 10px 28px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border-radius: 30px;
+      cursor: pointer;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin: 0 auto;
+      transition: transform 0.15s ease, background 0.2s ease;
+    }
+
+    .btn-back-styled:active { transform: scale(0.94); background: rgba(255, 255, 255, 0.22); }
+
+    /* TOMBOL REFRESH KHUSUS GALERI */
+    .btn-refresh-feed-custom {
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid var(--gold-accent);
+      color: #FFF;
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 5px 12px;
+      border-radius: 20px;
+      cursor: pointer;
       display: flex;
       align-items: center;
       gap: 6px;
-      width: 110px;
-      text-align: left;
+      backdrop-filter: blur(6px);
+      transition: transform 0.15s ease, background 0.2s ease;
     }
 
-    .slider-item input[type="range"] {
-      flex: 1;
-      accent-color: var(--dusty-rose);
-      cursor: pointer;
-      height: 4px;
-    }
+    .btn-refresh-feed-custom:active { transform: scale(0.92); background: rgba(212, 175, 55, 0.25); }
 
-    .slider-val {
-      width: 38px;
-      text-align: right;
-      font-size: 0.72rem;
-      color: var(--text-dark);
-    }
-
-    /* HALAMAN WELCOME */
-    .welcome-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 10px 0 5px;
-    }
-
-    .welcome-badge {
-      font-size: 0.78rem;
-      color: var(--gold-accent);
-      letter-spacing: 3.5px;
-      text-transform: uppercase;
-      font-weight: 700;
-      margin-bottom: 14px;
-    }
-
-    .welcome-title {
-      font-size: 2.5rem;
-      color: var(--dusty-rose);
-      line-height: 1.15;
-      margin-bottom: 20px;
-      font-weight: 600;
-      letter-spacing: -0.5px;
-    }
-
-    .welcome-subtitle {
-      font-size: 0.92rem;
-      color: #6E5353;
-      line-height: 1.65;
-      margin-bottom: 6px;
-      font-weight: 400;
-    }
-
-    .welcome-names {
-      font-family: 'Great Vibes', cursive;
-      font-size: 1.8rem;
-      color: var(--dusty-rose);
-      margin-top: 6px;
-    }
-
-    /* STEP 2: TEMPLATE SELECTOR */
-    .option-title {
-      font-size: 0.82rem;
-      font-weight: 700;
-      color: var(--dusty-rose);
-      text-align: left;
-      margin: 16px 0 8px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    .option-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      margin-bottom: 8px;
-    }
-
-    /* GRID DESAIN 5 OPSI */
-    .design-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      margin-bottom: 12px;
-    }
-
-    .design-card {
-      border: 2px solid var(--soft-blush);
-      border-radius: 14px;
-      padding: 10px 4px 8px;
-      cursor: pointer;
-      transition: all 0.25s ease;
-      background-color: #FFFFFF;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-    }
-
-    .design-card.active, .design-card:hover {
-      border-color: var(--dusty-rose);
-      background-color: #FFFFFF;
-      box-shadow: 0 6px 16px rgba(140, 98, 98, 0.18);
-      transform: translateY(-2px);
-    }
-
-    .preview-box {
-      width: 46px;
-      height: 64px;
-      background: #FAF6EE;
-      border-radius: 6px;
-      margin-bottom: 6px;
-      position: relative;
+    .envelope-screen {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100dvh;
+      background: linear-gradient(180deg, #7A3D44 0%, #5C2B32 100%);
+      z-index: 99999;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 3px;
-      padding: 4px;
-      box-shadow: inset 0 0 5px rgba(0,0,0,0.06);
+      padding: 20px;
+      cursor: pointer;
       overflow: hidden;
+      transition: opacity 0.8s ease;
     }
 
-    .preview-photo {
-      width: 34px;
-      height: 12px;
-      background: #E0C8C8;
-      border-radius: 2px;
-    }
-
-    .preview-box.design1 { border: 1px solid #3B5E4C; }
-    .preview-img-corner {
-      position: absolute;
-      top: -2px;
-      left: -2px;
-      width: 20px;
-      height: 20px;
-      object-fit: contain;
-    }
-
-    .preview-box.design2 { border: 1px dashed #333333; background: #F5F5F5; }
-    .preview-box.design2 .preview-photo { background: #666666; }
-
-    .preview-box.design3 { border: 2px solid #A82B2B; }
-    .preview-box.design3 .preview-photo {
-      border: 1px solid #A82B2B;
-      border-radius: 3px;
-      background: #E8C8C8;
-    }
-
-    .preview-box.design4 { border: 1px solid #DDD; background: #FAFAFA; }
-    .preview-box.design4 .preview-photo { background: #E2D0D0; border-radius: 3px; }
-
-    .preview-box.design5 { border: 2px solid #5A121A; background: #5A121A; }
-    .preview-box.design5 .preview-photo { background: #FFF; border: 1px solid #FFF; }
-
-    .option-card {
-      border: 2px solid var(--soft-blush);
-      border-radius: 14px;
-      padding: 10px 5px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      background-color: #FFFFFF;
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: var(--text-dark);
-      text-align: center;
-    }
-
-    .option-card.active, .option-card:hover {
-      border-color: var(--dusty-rose);
-      background-color: #FFFFFF;
-      color: var(--dusty-rose);
-      box-shadow: 0 4px 12px rgba(140, 98, 98, 0.15);
-    }
-
-    /* COLOR PALETTE PICKER */
-    .color-section-wrapper {
-      transition: all 0.3s ease;
-    }
-
-    .color-section-wrapper.disabled {
-      opacity: 0.4;
-      pointer-events: none;
-      filter: grayscale(0.5);
-    }
-
-    .color-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      margin-bottom: 10px;
-    }
-
-    .color-card {
-      border: 2px solid transparent;
-      border-radius: 12px;
-      padding: 8px 4px;
-      cursor: pointer;
-      font-size: 0.72rem;
-      font-weight: 600;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-      background-color: #FFFFFF;
-      border: 1px solid rgba(216, 180, 180, 0.3);
-    }
-
-    .color-dot {
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      border: 1px solid rgba(0,0,0,0.15);
-    }
-
-    .color-card.active {
-      border-color: var(--dusty-rose);
-      box-shadow: 0 3px 10px rgba(140, 98, 98, 0.18);
-    }
-
-    /* STEP 3: CAMERA */
-    .camera-header-info {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin-bottom: 8px;
-      gap: 4px;
-    }
-
-    .camera-wrapper {
+    .envelope-wrapper {
       position: relative;
-      width: 100%;
-      height: 380px;
-      border-radius: 20px;
-      overflow: hidden;
-      background-color: #000;
-      margin: 10px 0 5px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      width: 300px;
+      height: 195px;
+      background: #4F242A;
+      border-radius: 8px;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.45);
+      border: 1px solid rgba(212, 175, 55, 0.3);
+      margin: 20px 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      perspective: 1000px;
     }
 
-    video {
+    .envelope-wrapper::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0;
+      width: 0; height: 0;
+      border-top: 97px solid transparent;
+      border-bottom: 98px solid transparent;
+      border-left: 150px solid #5A2A30;
+      z-index: 3;
+    }
+
+    .envelope-wrapper::after {
+      content: "";
+      position: absolute;
+      top: 0; right: 0;
+      width: 0; height: 0;
+      border-top: 97px solid transparent;
+      border-bottom: 98px solid transparent;
+      border-right: 150px solid #52252B;
+      z-index: 3;
+    }
+
+    .envelope-flap-top {
+      position: absolute;
+      top: 0; left: 0;
+      width: 0; height: 0;
+      border-left: 150px solid transparent;
+      border-right: 150px solid transparent;
+      border-top: 110px solid #6A333A;
+      transform-origin: top;
+      transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 5;
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+    }
+
+    .envelope-gold-seal {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 46px; height: 46px;
+      background: radial-gradient(circle, #E2C275 0%, #C39B38 70%, #906F1E 100%);
+      border-radius: 50%;
+      box-shadow: inset 0 2px 4px rgba(255,255,255,0.6), 0 6px 16px rgba(0, 0, 0, 0.4);
+      border: 1px solid #FFF;
+      z-index: 10;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .envelope-gold-seal::after {
+      content: "F";
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: #3D2605;
+      text-shadow: 0 1px 1px rgba(255,255,255,0.4);
+    }
+
+    .envelope-card-inside {
+      position: absolute;
+      width: 268px;
+      height: 168px;
+      background: #FDFBF7;
+      border-radius: 6px;
+      border: 1px solid var(--gold-accent);
+      padding: 16px 12px;
+      text-align: center;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+      z-index: 2;
+      transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.5s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transform: translateY(0) scale(0.95);
+    }
+
+    .envelope-wrapper.step-open-flap .envelope-flap-top { transform: rotateX(180deg); z-index: 1; }
+    .envelope-wrapper.step-open-flap .envelope-gold-seal { opacity: 0; transform: translate(-50%, -50%) scale(0.4); }
+    .envelope-wrapper.step-lift-up .envelope-card-inside { opacity: 1; transform: translateY(-115px) scale(1); z-index: 8; }
+    .envelope-wrapper.step-zoom-center .envelope-card-inside { transform: translateY(0) scale(1.28); z-index: 99; box-shadow: 0 25px 60px rgba(0,0,0,0.4); }
+
+    .hero-pill-frame-pure {
+      width: 100%;
+      max-width: 230px;
+      height: 48dvh;
+      max-height: 350px;
+      border-radius: 120px;
+      overflow: hidden;
+      border: 2px solid var(--gold-accent);
+      padding: 5px;
+      margin: 8px auto;
+      background: rgba(255, 255, 255, 0.1);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .hero-pill-frame-pure img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      transition: transform 0.1s ease;
+      object-position: center top;
+      border-radius: 115px;
+      display: block;
     }
 
-    video.mirror {
-      transform: scaleX(-1);
-    }
-
-    .countdown-overlay {
-      position: absolute;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.45);
-      backdrop-filter: blur(2px);
+    .ask-page-center-wrapper {
+      flex: 1;
       display: flex;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
-      color: #FFFFFF;
-      font-size: 5.5rem;
-      font-weight: bold;
-      z-index: 10;
+      width: 100%;
+      margin: auto 0;
     }
 
-    .flash-overlay {
-      position: absolute;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: #FFFFFF;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.08s ease;
-      z-index: 11;
-    }
-
-    .photo-progress {
-      font-size: 0.92rem;
-      color: var(--dusty-rose);
-      font-weight: 700;
-    }
-
-    /* ANIMASI POLAROID EJECT PRESISI */
-    .polaroid-container {
-      position: relative;
+    .glass-card-ask {
+      background: var(--card-glass);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--card-border);
+      border-radius: 22px;
+      padding: 26px 20px 22px;
       width: 100%;
       max-width: 320px;
-      margin: 10px auto 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .polaroid-camera-body {
-      width: 320px;
-      height: 110px;
-      background: linear-gradient(180deg, #FAF7F2 0%, #E6DDD0 100%);
-      border-radius: 22px 22px 12px 12px;
-      box-shadow: 0 12px 25px rgba(0,0,0,0.15), inset 0 2px 3px #FFF;
-      border: 2px solid #D6C7BC;
-      position: relative;
-      z-index: 3;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .camera-lens {
-      width: 60px;
-      height: 60px;
-      background: radial-gradient(circle, #2B1E1E 35%, #555 60%, #222 100%);
-      border-radius: 50%;
-      border: 4px solid #D8B4B4;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.25);
-    }
-
-    .camera-flash {
-      position: absolute;
-      top: 18px;
-      left: 24px;
-      width: 28px;
-      height: 18px;
-      background: #FFF;
-      border: 2px solid #C5A059;
-      border-radius: 4px;
-      box-shadow: inset 0 0 5px #C5A059;
-    }
-
-    .camera-stripe {
-      position: absolute;
-      top: 50px;
-      right: 24px;
-      width: 45px;
-      height: 6px;
-      background: linear-gradient(90deg, #8C6262, #D8B4B4, #C5A059);
-      border-radius: 3px;
-    }
-
-    .camera-slot {
-      width: 320px;
-      height: 14px;
-      background: #111111;
-      border-radius: 7px;
-      margin-top: -7px;
-      z-index: 4;
-      box-shadow: inset 0 3px 6px rgba(0,0,0,0.85), 0 2px 4px rgba(0,0,0,0.15);
-    }
-
-    .photo-eject-wrapper {
-      width: 320px;
-      overflow: hidden;
-      position: relative;
-      z-index: 1;
-      margin-top: -8px;
-      padding-top: 5px;
-    }
-
-    #result-img {
-      width: 320px;
-      border-radius: 12px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.18);
-      display: block;
-      margin: 0 auto;
-      transform: translateY(-100%);
-      transition: none;
-    }
-
-    #result-img.eject-active {
-      transform: translateY(0);
-      transition: transform 4.5s cubic-bezier(0.15, 0.85, 0.35, 1);
-    }
-
-    .app-footer {
-      margin-top: 20px;
-      font-size: 0.68rem;
-      color: #B39B9B;
-      font-weight: 500;
-      letter-spacing: 0.5px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
       text-align: center;
     }
 
+    .stylish-underline-input {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(212, 175, 55, 0.5);
+      border-radius: 30px;
+      color: #FFFFFF;
+      font-size: 0.95rem;
+      text-align: center;
+      padding: 12px 16px;
+      outline: none;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      transition: all 0.3s ease;
+      margin: 16px 0 4px;
+    }
+
+    .stylish-underline-input::placeholder { color: rgba(255, 255, 255, 0.55); font-style: italic; font-size: 0.85rem; }
+    .stylish-underline-input:focus { border-color: var(--gold-accent); box-shadow: 0 0 12px rgba(212, 175, 55, 0.3); background: rgba(0, 0, 0, 0.3); }
+
+    .slider-header-box { text-align: center; z-index: 10; width: 100%; max-width: 360px; margin-top: 2px; }
+    .section-label-fullscreen { font-size: 0.68rem; font-weight: 700; color: var(--gold-accent); text-transform: uppercase; letter-spacing: 2.5px; margin-bottom: 2px; }
+    .slider-main-title { font-family: 'Cormorant Garamond', serif; font-size: 1.35rem; font-weight: 700; color: #FFFFFF; line-height: 1.2; margin-bottom: 2px; }
+
+    .slider-cards-viewport {
+      position: relative; width: 100%; max-width: 340px; height: 46dvh; min-height: 270px;
+      display: flex; align-items: center; justify-content: center; margin: 4px 0;
+    }
+
+    .figma-card-item {
+      position: absolute; width: 170px; height: 100%; max-height: 340px;
+      border-radius: 18px; background: rgba(255, 255, 255, 0.12); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.25); display: flex; align-items: center; justify-content: center;
+      padding: 8px; box-shadow: 0 12px 25px rgba(0, 0, 0, 0.25); transition: all 0.45s cubic-bezier(0.25, 1, 0.5, 1); cursor: pointer; user-select: none;
+    }
+
+    .figma-card-item img { width: 100%; height: 100%; max-height: 320px; object-fit: contain; }
+
+    .figma-card-item.active { transform: translateX(0) scale(1) rotate(0deg); opacity: 1; z-index: 10; }
+    .figma-card-item.next { transform: translateX(62%) scale(0.82) rotate(6deg); opacity: 0.55; z-index: 5; }
+    .figma-card-item.prev { transform: translateX(-62%) scale(0.82) rotate(-6deg); opacity: 0.55; z-index: 5; }
+    .figma-card-item.hidden-left { transform: translateX(-115%) scale(0.65) rotate(-12deg); opacity: 0; z-index: 1; }
+    .figma-card-item.hidden-right { transform: translateX(115%) scale(0.65) rotate(12deg); opacity: 0; z-index: 1; }
+    .figma-card-item.card-pressed { transform: scale(0.92) !important; }
+
+    .camera-stage-container {
+      width: 100%;
+      max-width: 380px;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 4px 15px;
+    }
+
+    .camera-top-status {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      padding: 8px 16px;
+      border-radius: 25px;
+      color: #FFF;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .camera-viewfinder-box {
+      position: relative;
+      width: 100%;
+      max-width: 330px;
+      max-height: 48dvh;
+      border-radius: 20px;
+      overflow: hidden;
+      background: #000;
+      border: 2px solid var(--gold-accent);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
+      margin: 8px auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: aspect-ratio 0.3s ease;
+    }
+
+    .camera-video-element {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      background: #000;
+      transition: transform 0.2s ease-out;
+    }
+
+    .cam-photos-preview-strip {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      padding: 8px 16px;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      width: 100%;
+      max-width: 340px;
+      margin-bottom: 8px;
+    }
+
+    .photo-thumb-box {
+      position: relative; 
+      width: 52px; 
+      aspect-ratio: 1 / 1; 
+      border-radius: 12px; 
+      overflow: hidden;
+      border: 1.5px solid rgba(255, 255, 255, 0.4); 
+      background: rgba(255, 255, 255, 0.1); 
+      display: flex; 
+      align-items: center; 
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+
+    .photo-thumb-box img { width: 100%; height: 100%; object-fit: cover; object-position: center; }
+    .photo-thumb-box.empty-slot { border: 1.5px dashed rgba(255, 255, 255, 0.35); color: rgba(255, 255, 255, 0.6); font-size: 0.8rem; font-weight: 600; }
+
+    .cam-floating-tools {
+      display: flex;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      padding: 6px 12px;
+      border-radius: 25px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      margin-bottom: 8px;
+      width: 100%;
+      max-width: 340px;
+      justify-content: space-around;
+      align-items: center;
+    }
+
+    .cam-tool-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #FFF;
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+      flex: 1;
+      justify-content: center;
+      transition: transform 0.15s ease, background 0.2s ease;
+    }
+
+    .cam-tool-btn:active { transform: scale(0.92); }
+
+    .cam-bottom-action-row {
+      width: 100%;
+      max-width: 340px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+
+    .cam-snap-trigger {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: #FFF;
+      border: 4px solid var(--gold-accent);
+      box-shadow: 0 0 18px rgba(0, 0, 0, 0.35);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.15s ease;
+    }
+    
+    .cam-snap-trigger-inner {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--primary-crimson);
+    }
+
+    .cam-snap-trigger:active { transform: scale(0.88); }
+
+    .countdown-overlay {
+      position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.45); color: #FFF; font-size: 3.5rem; font-weight: 700; display: flex; align-items: center; justify-content: center; z-index: 20;
+    }
+
+    .flash-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: #FFF; opacity: 0; pointer-events: none; transition: opacity 0.1s; z-index: 30; }
+    .flash-overlay.active { opacity: 1; }
+
+    .review-grid-box {
+      display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; align-items: center; width: 100%; max-width: 340px; margin: 15px auto;
+    }
+
+    .review-photo-card {
+      position: relative; 
+      width: 120px;
+      max-width: 120px;
+      border-radius: 16px; 
+      overflow: hidden; 
+      border: 2px solid var(--gold-accent); 
+      box-shadow: 0 10px 22px rgba(0,0,0,0.3); 
+      background: #000;
+    }
+
+    .review-photo-card img { 
+      width: 100%; 
+      height: 100%; 
+      object-fit: cover; 
+      object-position: center; 
+      display: block;
+    }
+
+    .review-delete-btn {
+      position: absolute; top: 6px; right: 6px; background: rgba(122, 61, 68, 0.95); color: #FFF; border: 1px solid var(--gold-accent); width: 24px; height: 24px; border-radius: 50%; font-weight: 700; font-size: 0.75rem; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.4); z-index: 10;
+    }
+
+    .printer-lottie-stage {
+      width: 100vw; min-height: 100dvh; background: linear-gradient(180deg, #7A3D44 0%, #5C2B32 100%); color: #FFF; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 16px 14px 20px; position: relative; overflow-y: auto;
+    }
+
+    .vector-printer-wrapper {
+      position: relative; width: 240px; margin-top: 2px; display: flex; flex-direction: column; align-items: center; transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .vector-printer-wrapper.fade-out-printer { opacity: 0; transform: translateY(-30px) scale(0.85); pointer-events: none; height: 0; margin: 0; overflow: hidden; }
+
+    .paper-tray-input {
+      width: 110px; height: 50px; background: #FDFBF7; border: 2px solid var(--gold-accent); border-bottom: none; border-radius: 8px 8px 0 0; margin-bottom: -12px; box-shadow: 0 -3px 8px rgba(0,0,0,0.2); transition: transform 2s cubic-bezier(0.4, 0, 0.2, 1); z-index: 1;
+    }
+
+    .paper-tray-input.pulled-in { transform: translateY(45px); }
+
+    .flat-printer-body {
+      width: 220px; height: 80px; background: #3D1C21; border: 1px solid var(--gold-accent); border-radius: 14px; position: relative; z-index: 10; box-shadow: 0 10px 25px rgba(0,0,0,0.35); display: flex; flex-direction: column; justify-content: space-between; padding: 8px 12px;
+    }
+
+    .printer-panel-top { display: flex; align-items: center; gap: 6px; }
+    .led-dot { width: 8px; height: 8px; border-radius: 50%; transition: all 0.2s ease; }
+    .led-red { background: #E74C3C; }
+    .led-green { background: #2ECC71; }
+    .led-red.blinking { animation: ledBlinkRed 0.3s infinite alternate; }
+    .led-green.blinking { animation: ledBlinkGreen 0.3s infinite alternate; }
+
+    @keyframes ledBlinkRed { 0% { background: #FF7675; } 100% { background: #7F1D1D; } }
+    @keyframes ledBlinkGreen { 0% { background: #55E6C1; } 100% { background: #145A32; } }
+
+    .printer-brand-tag { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.58rem; font-weight: 700; color: var(--gold-accent); letter-spacing: 1.5px; text-transform: uppercase; }
+
+    .printer-door-tray { width: 100%; height: 26px; background: #281115; border-radius: 6px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; }
+    .printer-slot-gap { width: 88%; height: 5px; background: #000; border-radius: 3px; }
+
+    .printer-output-paper-container { position: relative; width: 130px; margin-top: -8px; overflow: hidden; z-index: 5; display: flex; justify-content: center; padding-top: 4px; }
+
+    .ejected-photo-sheet { width: 100%; transform: translateY(-100%); transition: transform 5s cubic-bezier(0.22, 1, 0.36, 1); filter: drop-shadow(0 6px 15px rgba(0,0,0,0.3)); }
+    .ejected-photo-sheet.fully-printed { transform: translateY(0); }
+    .ejected-photo-sheet img { width: 100%; border-radius: 6px; display: block; margin: 0 auto; }
+
+    .popup-photo-container { 
+      width: 100%; max-width: 175px; margin: 2px auto; opacity: 0; transform: scale(0.6); transition: all 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+    }
+    .popup-photo-container.show-popup { opacity: 1; transform: scale(1); }
+    .popup-photo-container img { width: 100%; max-height: 38vh; object-fit: contain; border-radius: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.35); border: 1px solid var(--gold-accent); }
+
+    .printer-status-text-box { margin-top: 4px; text-align: center; z-index: 20; }
+    .status-main-label { font-size: 0.85rem; font-weight: 700; color: var(--gold-accent); letter-spacing: 1px; display: flex; align-items: center; justify-content: center; gap: 5px; }
+    .status-sub-label { font-size: 0.7rem; color: rgba(255,255,255,0.75); margin-top: 2px; font-style: italic; }
+
+    .printer-bottom-actions { 
+      width: 100%; max-width: 320px; margin-top: 6px; display: flex; flex-direction: column; gap: 6px; z-index: 20; opacity: 0; transform: translateY(10px); transition: all 0.5s ease; 
+    }
+    .printer-bottom-actions.visible { opacity: 1; transform: translateY(0); }
+
+    .feed-container { width: 100%; max-width: 420px; margin: 0 auto; }
+    .gallery-intro-box { background: rgba(255, 255, 255, 0.1); border: 1px solid var(--card-border); backdrop-filter: blur(10px); border-radius: 16px; padding: 16px 12px; margin-bottom: 16px; text-align: center; }
+    .ig-grid-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    
+    .ig-grid-item { 
+      background: rgba(255, 255, 255, 0.08); border-radius: 12px; overflow: hidden; border: 1px solid var(--card-border); cursor: pointer; display: flex; flex-direction: column; box-shadow: 0 4px 12px rgba(0,0,0,0.15); transition: transform 0.15s ease; 
+    }
+    .ig-grid-item:active { transform: scale(0.96); }
+
+    .ig-item-header { display: flex; flex-direction: column; align-items: center; padding: 6px 4px; background: rgba(0, 0, 0, 0.2); border-bottom: 1px solid rgba(212,175,55,0.2); }
+    .ig-item-name { font-size: 0.65rem; font-weight: 700; color: var(--gold-accent); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; text-align: center; }
+    .ig-item-date { font-size: 0.52rem; color: rgba(255,255,255,0.6); margin-top: 1px; }
+
+    .ig-item-img-box { width: 100%; aspect-ratio: 1/1; overflow: hidden; background: #1A0D0F; }
+    .ig-item-img-box img { width: 100%; height: 100%; object-fit: cover; }
+    .ig-item-msg { font-size: 0.6rem; color: rgba(255,255,255,0.85); padding: 6px 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; font-style: italic; background: rgba(0, 0, 0, 0.15); }
+
+    .floating-scroll-nav {
+      position: fixed;
+      bottom: 25px;
+      right: 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      z-index: 9999;
+    }
+
+    .btn-scroll-nav {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      background: rgba(122, 61, 68, 0.95);
+      border: 1.5px solid var(--gold-accent);
+      color: var(--gold-accent);
+      font-size: 1.1rem;
+      font-weight: bold;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.5);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      transition: transform 0.15s ease, opacity 0.25s ease;
+    }
+
+    .btn-scroll-nav:active { transform: scale(0.88); background: rgba(212, 175, 55, 0.3); }
+
+    .app-official-footer { text-align: center; padding: 8px 10px 2px; font-size: 0.65rem; color: rgba(255, 255, 255, 0.65); border-top: 1px dashed rgba(255, 255, 255, 0.2); margin-top: 8px; width: 100%; letter-spacing: 0.5px; }
+
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 99999; padding: 15px; }
+    .modal-card { background: linear-gradient(180deg, #7A3D44 0%, #5C2B32 100%); color: #FFF; border-radius: 20px; padding: 20px 16px 16px; max-width: 330px; width: 100%; text-align: center; position: relative; box-shadow: 0 15px 35px rgba(0,0,0,0.5); border: 1px solid var(--gold-accent); max-height: 90vh; display: flex; flex-direction: column; overflow-y: auto; }
+    .modal-close-btn { position: absolute; top: 10px; right: 12px; background: rgba(0,0,0,0.3); color: var(--gold-accent); border: 1px solid var(--gold-accent); width: 28px; height: 28px; border-radius: 50%; font-weight: 700; font-size: 0.8rem; cursor: pointer; z-index: 100; }
+    .modal-user-name { font-size: 0.95rem; font-weight: 700; color: var(--gold-accent); margin-bottom: 1px; padding-right: 25px; letter-spacing: 1px; }
+    .modal-user-date { font-size: 0.65rem; color: rgba(255,255,255,0.65); margin-bottom: 6px; }
+    .modal-img { width: 100%; max-height: 52vh; object-fit: contain; border-radius: 10px; margin: 6px 0; background: rgba(0,0,0,0.2); border: 1px solid rgba(212,175,55,0.3); }
+    .modal-msg { font-size: 0.78rem; color: #FFF; font-style: italic; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 10px; line-height: 1.4; word-break: break-word; border: 1px solid rgba(255,255,255,0.1); }
+
     canvas { display: none; }
+
+    /* --- RESPONSIVE MEDIA QUERIES UNTUK TABLET, IPAD, & LAPTOP --- */
+    @media (min-width: 768px) {
+      .page-fullscreen {
+        padding: 24px;
+      }
+
+      .hero-pill-frame-pure {
+        max-width: 280px;
+        max-height: 420px;
+      }
+
+      .glass-card-ask {
+        max-width: 480px;
+        padding: 32px 28px;
+      }
+
+      .stylish-underline-input {
+        max-width: 380px;
+      }
+
+      .slider-header-box {
+        max-width: 500px;
+      }
+
+      .slider-cards-viewport {
+        max-width: 550px;
+        height: 52dvh;
+      }
+
+      .figma-card-item {
+        width: 210px;
+        max-height: 400px;
+      }
+
+      .camera-stage-container {
+        max-width: 650px;
+      }
+
+      .camera-viewfinder-box {
+        max-width: 500px;
+        max-height: 55dvh;
+      }
+
+      .cam-photos-preview-strip,
+      .cam-floating-tools,
+      .cam-bottom-action-row {
+        max-width: 500px;
+      }
+
+      .photo-thumb-box {
+        width: 65px;
+      }
+
+      .review-grid-box {
+        max-width: 600px;
+        gap: 16px;
+      }
+
+      .review-photo-card {
+        width: 150px;
+        max-width: 150px;
+      }
+
+      .printer-bottom-actions {
+        max-width: 450px;
+      }
+
+      .feed-container {
+        max-width: 720px;
+      }
+
+      .ig-grid-container {
+        gap: 12px;
+      }
+
+      .modal-card {
+        max-width: 420px;
+        padding: 24px 20px;
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .camera-stage-container {
+        max-width: 800px;
+      }
+
+      .camera-viewfinder-box {
+        max-width: 560px;
+      }
+
+      .feed-container {
+        max-width: 860px;
+      }
+
+      .ig-grid-container {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
   </style>
 </head>
 <body>
 
-<div class="app-card">
+<div id="envelope-screen" class="envelope-screen" onclick="openEnvelopeAnimation()">
+  <div style="text-align:center; color:#FFF; margin-bottom:10px;">
+    <div style="font-size:0.7rem; letter-spacing:3px; color:var(--gold-accent); font-weight:700; margin-bottom:4px; text-transform:uppercase;">Virtual Photobooth</div>
+    <div class="font-script" style="font-size:2.8rem; color:#FFF; line-height:1;" id="envelope-names">Riyan & Amelia</div>
+  </div>
 
-  <!-- HALAMAN 1: WELCOME SCREEN -->
-  <div id="step-welcome">
-    <div class="welcome-container">
-      <p class="welcome-badge">Virtual Photobooth</p>
-      <h1 class="font-serif welcome-title">Capture Your Moment</h1>
-      
-      <p class="welcome-subtitle">
-        Selamat datang di Photobooth Pernikahan Kami.<br>Abadikan momen indah kamu bersama
-      </p>
-      <div class="welcome-names" id="display-event-title">Riyan & Amelia</div>
+  <div class="envelope-wrapper" id="envelope-wrapper">
+    <div class="envelope-flap-top"></div>
+    <div class="envelope-gold-seal"></div>
 
-      <button class="btn-primary" onclick="goToStep(2)">
-        Ambil Foto Kenangan <i class="fa-solid fa-arrow-right"></i>
+    <div class="envelope-card-inside">
+      <div style="font-size:0.62rem; color:var(--gold-accent); font-weight:700; letter-spacing:2px; text-transform:uppercase;">Pernikahan Kami</div>
+      <div class="font-script" style="font-size:2.2rem; color:var(--primary-crimson); line-height:1.1; margin:4px 0;" id="inside-card-names">Riyan & Amelia</div>
+      <div style="font-size:0.7rem; color:#666; font-style:italic;">Virtual Photobooth & Guestbook</div>
+    </div>
+  </div>
+
+  <div style="font-size:0.75rem; color:rgba(255,255,255,0.85); font-style:italic; letter-spacing:1px; margin-top:12px;">
+    Ketuk amplop untuk membuka
+  </div>
+</div>
+
+<div id="step-welcome" class="page-fullscreen">
+  <div style="width:100%; text-align:center; display:flex; flex-direction:column; align-items:center;">
+    <p style="font-size:0.7rem; color:var(--gold-accent); letter-spacing:2.5px; font-weight:700; margin-bottom:1px;">VIRTUAL PHOTOBOOTH</p>
+    <h1 class="font-script" style="font-size:2.6rem; color:#FFF; line-height:1.05;" id="display-event-title">Riyan & Amelia</h1>
+    <p style="font-size:0.72rem; color:rgba(255,255,255,0.8); letter-spacing:1px; margin-bottom:4px;">06 DESEMBER 2026</p>
+
+    <div class="hero-pill-frame-pure">
+      <img src="./assets/v2/hero.png" alt="Hero Pengantin" id="welcome-couple-img" onerror="this.src='./assets/v2/dsg1.png'">
+    </div>
+
+    <p style="font-size:0.75rem; color:rgba(255,255,255,0.85); font-style:italic; line-height:1.35; max-width:310px; margin:4px 0 10px;">
+      "Satu foto menyimpan sejuta kenangan. Terima kasih telah menjadi bagian dari hari bahagia kami!"
+    </p>
+
+    <button class="btn-gold-v2" onclick="goToStep('step-ask-name')">
+      TAMBAHKAN MOMEN
+    </button>
+
+    <button class="btn-secondary-v2" onclick="goToStep('step-gallery-page')">
+      JELAJAHI KENANGAN
+    </button>
+  </div>
+
+  <div class="app-official-footer">
+    © 2026 Votura Studio by Riyan. All rights reserved.
+  </div>
+</div>
+
+<div id="step-ask-name" class="page-fullscreen hidden">
+  <div style="width:100%; text-align:center; padding-top:4px;">
+    <p style="font-size:0.68rem; color:var(--gold-accent); letter-spacing:2.5px; font-weight:700; margin-bottom:2px;">VIRTUAL PHOTOBOOTH</p>
+    <h2 class="font-script" style="font-size:2.4rem; color:#FFF;" id="ask-event-title">Riyan & Amelia</h2>
+    <p style="font-size:0.72rem; color:rgba(255,255,255,0.75); letter-spacing:1px;">06 DESEMBER 2026</p>
+  </div>
+
+  <div class="ask-page-center-wrapper">
+    <div class="glass-card-ask">
+      <h3 class="font-serif" style="font-size:1.45rem; letter-spacing:1.5px; font-weight:600; color:#FFF; line-height:1.2;">
+        DARI SIAPA<br>KENANGAN INI?
+      </h3>
+      <p style="font-size:0.72rem; color:rgba(255,255,255,0.8); margin-top:6px;">Tuliskan nama/panggilanmu untuk dicantumkan pada foto kenangan</p>
+
+      <input type="text" id="guest-initial-name" class="stylish-underline-input" placeholder="Misal: Budi & Sarah" autocomplete="off">
+    </div>
+  </div>
+
+  <div style="width:100%; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+    <button class="btn-gold-v2" onclick="submitGuestNameAndNext()">
+      LANJUTKAN
+    </button>
+    
+    <button class="btn-outline-v2" style="margin-top:6px;" onclick="goToStep('step-welcome')">
+      Kembali
+    </button>
+
+    <div class="app-official-footer">
+      © 2026 Votura Studio by Riyan. All rights reserved.
+    </div>
+  </div>
+</div>
+
+<div id="step-template" class="page-fullscreen hidden">
+  <div class="slider-header-box">
+    <div class="section-label-fullscreen" id="card-theme-tag">ROYAL EDITION</div>
+    <div class="slider-main-title" id="card-theme-name">Classic Royal (3 Foto)</div>
+    <div style="font-size:0.72rem; color:rgba(255,255,255,0.85); font-style:italic;">Ketuk bingkai untuk memilih &amp; memulai</div>
+  </div>
+
+  <div class="slider-cards-viewport" id="slider-stack-box">
+    <div class="figma-card-item" data-path="./assets/v2/dsg3.png" data-count="3" data-name="Classic Royal (3 Foto)" data-tag="ROYAL EDITION">
+      <img src="./assets/v2/dsg3.png" alt="Desain 3">
+    </div>
+    <div class="figma-card-item" data-path="./assets/v2/dsg2.png" data-count="2" data-name="Classic Royal (2 Foto)" data-tag="ROYAL EDITION">
+      <img src="./assets/v2/dsg2.png" alt="Desain 2">
+    </div>
+    <div class="figma-card-item" data-path="./assets/v2/dsg1.png" data-count="1" data-name="Classic Royal (1 Foto)" data-tag="ROYAL EDITION">
+      <img src="./assets/v2/dsg1.png" alt="Desain 1">
+    </div>
+    <div class="figma-card-item" data-path="./assets/v2/flower3.png" data-count="3" data-name="Floral Romance (3 Foto)" data-tag="FLORAL COLLECTION">
+      <img src="./assets/v2/flower3.png" alt="Flower 3">
+    </div>
+    <div class="figma-card-item" data-path="./assets/v2/flower2.png" data-count="2" data-name="Floral Romance (2 Foto)" data-tag="FLORAL COLLECTION">
+      <img src="./assets/v2/flower2.png" alt="Flower 2">
+    </div>
+    <div class="figma-card-item" data-path="./assets/v2/flower1.png" data-count="1" data-name="Floral Romance (1 Foto)" data-tag="FLORAL COLLECTION">
+      <img src="./assets/v2/flower1.png" alt="Flower 1">
+    </div>
+    <div class="figma-card-item" data-path="./assets/v2/line 3.png" data-count="3" data-name="Minimalist Modern (3 Foto)" data-tag="MINIMALIST STYLE">
+      <img src="./assets/v2/line 3.png" alt="Line 3">
+    </div>
+    <div class="figma-card-item" data-path="./assets/v2/line 2.png" data-count="2" data-name="Minimalist Modern (2 Foto)" data-tag="MINIMALIST STYLE">
+      <img src="./assets/v2/line 2.png" alt="Line 2">
+    </div>
+    <div class="figma-card-item" data-path="./assets/v2/line 1.png" data-count="1" data-name="Minimalist Modern (1 Foto)" data-tag="MINIMALIST STYLE">
+      <img src="./assets/v2/line 1.png" alt="Line 1">
+    </div>
+  </div>
+
+  <div style="width:100%; display:flex; flex-direction:column; align-items:center;">
+    <button class="btn-back-styled" onclick="goToStep('step-ask-name')">
+      Kembali
+    </button>
+    <div class="app-official-footer">
+      © 2026 Votura Studio by Riyan. All rights reserved.
+    </div>
+  </div>
+</div>
+
+<div id="step-camera" class="page-fullscreen hidden">
+  <div class="camera-stage-container">
+    <div class="camera-top-status">
+      <span style="font-size:0.75rem; font-weight:700;" id="cam-progress-text">Foto 1 dari 3</span>
+      <button class="btn-outline-v2" style="width:auto; margin:0; padding:4px 12px; border:1px solid rgba(212,175,55,0.6); border-radius:15px; background:rgba(0,0,0,0.3); color:var(--gold-accent);" onclick="stopCameraAndGoBack()">
+        PILIH FRAME
       </button>
     </div>
-  </div>
 
-  <!-- HALAMAN 2: PILIH STYLE -->
-  <div id="step-template" class="hidden">
-    <h2 class="font-serif" style="color: var(--dusty-rose); font-size: 1.85rem;">Pilih Style Photobooth</h2>
-    <p style="font-size: 0.82rem; color: #735757;">Lihat contoh gambar dan pilih style favorit kamu</p>
-
-    <!-- Pilihan 1: Jumlah Foto -->
-    <p class="option-title">1. JUMLAH FOTO</p>
-    <div class="option-grid">
-      <div class="option-card active" onclick="selectPhotoCount(3, this)">
-        <i class="fa-solid fa-layer-group" style="font-size: 1.1rem; display:block; margin-bottom:2px;"></i>
-        3 Foto (Strip)
-      </div>
-      <div class="option-card" onclick="selectPhotoCount(2, this)">
-        <i class="fa-solid fa-clone" style="font-size: 1.1rem; display:block; margin-bottom:2px;"></i>
-        2 Foto (Duo)
-      </div>
-      <div class="option-card" onclick="selectPhotoCount(1, this)">
-        <i class="fa-solid fa-square" style="font-size: 1.1rem; display:block; margin-bottom:2px;"></i>
-        1 Foto (Single)
-      </div>
-    </div>
-
-    <!-- Pilihan 2: Visual Card Desain -->
-    <p class="option-title">2. PILIH DESAIN</p>
-    <div class="design-grid">
-      <div class="design-card active" onclick="selectDesignStyle('floral', this)">
-        <div class="preview-box design1">
-          <img src="./assets/calla-lily-corner.png" class="preview-img-corner" alt="Lily" onerror="this.style.display='none'">
-          <div class="preview-photo"></div>
-          <div class="preview-photo"></div>
-        </div>
-        <strong style="font-size:0.75rem; color:var(--text-dark);">1. Calla Lily</strong>
-      </div>
-
-      <div class="design-card" onclick="selectDesignStyle('receipt', this)">
-        <div class="preview-box design2">
-          <i class="fa-solid fa-receipt" style="font-size: 1.1rem; color: #333;"></i>
-          <div class="preview-photo"></div>
-        </div>
-        <strong style="font-size:0.75rem; color:var(--text-dark);">2. Recipe</strong>
-      </div>
-
-      <div class="design-card" onclick="selectDesignStyle('wavy_red', this)">
-        <div class="preview-box design3">
-          <div class="preview-photo"></div>
-          <div class="preview-photo"></div>
-        </div>
-        <strong style="font-size:0.75rem; color:var(--text-dark);">3. Wavy Red</strong>
-      </div>
-
-      <div class="design-card" onclick="selectDesignStyle('fotome_brand', this)">
-        <div class="preview-box design4">
-          <div class="preview-photo"></div>
-          <div class="preview-photo"></div>
-        </div>
-        <strong style="font-size:0.75rem; color:var(--text-dark);">4. Basic</strong>
-      </div>
-
-      <div class="design-card" onclick="selectDesignStyle('engagement', this)">
-        <div class="preview-box design5">
-          <div class="preview-photo"></div>
-          <div class="preview-photo"></div>
-        </div>
-        <strong style="font-size:0.75rem; color:var(--text-dark);">5. Engagement</strong>
-      </div>
-    </div>
-
-    <!-- Pilihan 3: Warna Background Soft -->
-    <div id="color-section-wrapper" class="color-section-wrapper">
-      <p class="option-title">3. PILIH WARNA</p>
-      <div class="color-grid">
-        <div class="color-card active" onclick="selectBgColor('dusty', this)">
-          <div class="color-dot" style="background-color: #8C6262;"></div>
-          Dusty Rose
-        </div>
-        <div class="color-card" onclick="selectBgColor('mocha', this)">
-          <div class="color-dot" style="background-color: #B3927A;"></div>
-          Soft Mocha
-        </div>
-        <div class="color-card" onclick="selectBgColor('blue', this)">
-          <div class="color-dot" style="background-color: #83A398;"></div>
-          Soft Sage/Blue
-        </div>
-        <div class="color-card" onclick="selectBgColor('lavender', this)">
-          <div class="color-dot" style="background-color: #A283A2;"></div>
-          Soft Lavender
-        </div>
-        <div class="color-card" onclick="selectBgColor('vanilla', this)">
-          <div class="color-dot" style="background-color: #D6C7BC;"></div>
-          Vanilla Cream
-        </div>
-        <div class="color-card" onclick="selectBgColor('dark', this)">
-          <div class="color-dot" style="background-color: #2B1E1E;"></div>
-          Charcoal Dark
-        </div>
-      </div>
-    </div>
-
-    <button class="btn-primary" onclick="startCameraProcess()">
-      <i class="fa-solid fa-camera"></i> Lanjut Ke Kamera
-    </button>
-    <button class="btn-secondary" onclick="goToStep(1)">
-      <i class="fa-solid fa-arrow-left"></i> Kembali ke Depan
-    </button>
-  </div>
-
-  <!-- HALAMAN 3: AREA KAMERA -->
-  <div id="step-camera" class="hidden">
-    <div class="camera-header-info">
-      <span class="photo-progress" id="photo-count-text">Foto 1 dari 3</span>
-
-      <div class="cam-controls-row">
-        <button id="btn-toggle-timer" class="btn-switch-cam" onclick="toggleTimerMode()">
-          <i class="fa-solid fa-stopwatch"></i> <span id="timer-toggle-text">Timer: ON</span>
-        </button>
-
-        <button id="btn-toggle-flash" class="btn-switch-cam" onclick="toggleFlashMode()">
-          <i class="fa-solid fa-bolt"></i> <span id="flash-toggle-text">Flash: ON</span>
-        </button>
-
-        <select id="camera-select" class="camera-select-dropdown" onchange="onCameraDeviceChange(this.value)">
-          <option value="">Memuat Kamera...</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="camera-wrapper">
-      <video id="video" class="mirror" autoplay playsinline></video>
+    <div class="camera-viewfinder-box" id="cam-viewfinder-box">
+      <video id="video" class="camera-video-element" autoplay playsinline webkit-playsinline muted></video>
       <div id="countdown-overlay" class="countdown-overlay hidden">3</div>
       <div id="flash-overlay" class="flash-overlay"></div>
     </div>
 
-    <div class="slider-adjust-wrapper">
-      <div class="slider-item">
-        <label for="zoom-slider"><i class="fa-solid fa-magnifying-glass-plus"></i> Zoom:</label>
-        <input type="range" id="zoom-slider" min="1" max="2.5" step="0.1" value="1" oninput="updateCameraAdjustments()">
-        <span id="zoom-val" class="slider-val">1.0x</span>
-      </div>
+    <div class="cam-photos-preview-strip" id="cam-photos-strip"></div>
 
-      <div class="slider-item">
-        <label for="brightness-slider"><i class="fa-solid fa-sun"></i> Cahaya:</label>
-        <input type="range" id="brightness-slider" min="0.7" max="1.5" step="0.05" value="1" oninput="updateCameraAdjustments()">
-        <span id="brightness-val" class="slider-val">100%</span>
-      </div>
-    </div>
-
-    <button id="btn-snap" class="btn-primary" onclick="handleSnapButtonClick()">
-      <i class="fa-solid fa-camera"></i> <span id="btn-snap-label">Ambil Foto Sekarang</span>
-    </button>
-    <button class="btn-secondary" onclick="goToStep(2)">
-      <i class="fa-solid fa-arrow-left"></i> Batal / Ubah Style
-    </button>
-  </div>
-
-  <!-- HALAMAN 4: HASIL FOTO -->
-  <div id="step-result" class="hidden">
-    <h2 class="font-serif" style="color: var(--dusty-rose); font-size: 1.85rem;">Hasil Photobooth Kamu</h2>
-    <p style="font-size: 0.82rem; color: #735757;">Terima kasih telah berbagi kebahagiaan!</p>
-
-    <div class="polaroid-container">
-      <div class="polaroid-camera-body">
-        <div class="camera-flash"></div>
-        <div class="camera-lens"></div>
-        <div class="camera-stripe"></div>
-      </div>
-      <div class="camera-slot"></div>
-
-      <div class="photo-eject-wrapper">
-        <img id="result-img" alt="Hasil Photobooth">
-      </div>
-    </div>
-
-    <a id="download-link" download="Photobooth-FOTOME.png">
-      <button class="btn-primary">
-        <i class="fa-solid fa-download"></i> Unduh Foto
+    <div class="cam-floating-tools" id="cam-tools-box">
+      <button class="cam-tool-btn" id="btn-timer" onclick="toggleTimerSetting()">
+        Timer: <span id="label-timer">3s</span>
       </button>
-    </a>
-    
-    <button class="btn-secondary" onclick="goToStep(2)">
-      <i class="fa-solid fa-palette"></i> Pilih Style Lain
-    </button>
+      <button class="cam-tool-btn" id="btn-zoom" onclick="toggleZoomSetting()">
+        Zoom: <span id="label-zoom">1x</span>
+      </button>
+      <button class="cam-tool-btn" id="btn-mirror" onclick="toggleMirror()">
+        Mirror: <span id="label-mirror">OFF</span>
+      </button>
+    </div>
 
-    <button class="btn-secondary" style="border:none; color: #735757; font-size:0.8rem;" onclick="startCameraProcess()">
-      <i class="fa-solid fa-rotate-right"></i> Foto Ulang (Style Sama)
-    </button>
+    <div class="cam-bottom-action-row">
+      <div style="width: 100%; max-width: 280px; position: relative;">
+        <select id="camera-select-dropdown" onchange="onCameraSelectChange(this.value)" style="width: 100%; background: rgba(0,0,0,0.4); color: #FFF; border: 1px solid var(--gold-accent); padding: 8px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; text-align: center; outline: none; backdrop-filter: blur(8px); cursor: pointer;">
+          <option value="">Memindai Kamera...</option>
+        </select>
+      </div>
+
+      <div class="cam-snap-trigger" id="btn-snap" onclick="takePhotoSnap()">
+        <div class="cam-snap-trigger-inner"></div>
+      </div>
+    </div>
   </div>
-
 </div>
 
-<div class="app-footer">
-  FOTOME by Riyan Ardiansyah
+<div id="step-review-photos" class="page-fullscreen hidden">
+  <div style="width:100%; text-align:center; padding-top:10px;">
+    <p style="font-size:0.68rem; color:var(--gold-accent); letter-spacing:2.5px; font-weight:700; margin-bottom:2px;">REVIEW HASIL FOTO</p>
+    <h2 class="font-serif" style="font-size:1.4rem; color:#FFF;">Apakah foto kamu sudah pas?</h2>
+    <p style="font-size:0.72rem; color:rgba(255,255,255,0.75); margin-top:2px;">Tekan tombol ✕ pada foto jika ingin mengambil foto ulang</p>
+  </div>
+
+  <div class="review-grid-box" id="review-grid-box"></div>
+
+  <div style="width:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; margin-bottom:10px;">
+    <button class="btn-gold-v2" onclick="proceedToRenderStrip()">
+      LANJUTKAN KE CETAK
+    </button>
+    
+    <button class="btn-outline-v2" style="margin-top:8px;" onclick="goToCameraToRetakeAll()">
+      Foto Ulang Semua
+    </button>
+
+    <div class="app-official-footer">
+      © 2026 Votura Studio by Riyan. All rights reserved.
+    </div>
+  </div>
+</div>
+
+<div id="step-result" class="printer-lottie-stage hidden">
+  <div class="vector-printer-wrapper" id="main-printer-unit">
+    <div class="paper-tray-input" id="paper-input-sheet"></div>
+    <div class="flat-printer-body">
+      <div class="printer-panel-top">
+        <div class="led-dot led-red" id="led-red"></div>
+        <div class="led-dot led-green" id="led-green"></div>
+        <div class="printer-brand-tag">Votura Studio</div>
+      </div>
+      <div class="printer-door-tray">
+        <div class="printer-slot-gap"></div>
+      </div>
+    </div>
+    <div class="printer-output-paper-container">
+      <div id="ejected-photo-sheet" class="ejected-photo-sheet">
+        <img class="result-img-target" alt="Hasil Photobooth">
+      </div>
+    </div>
+  </div>
+
+  <div class="popup-photo-container" id="popup-photo-box">
+    <img class="result-img-target" alt="Hasil Photobooth Pop Up">
+  </div>
+
+  <div class="printer-status-text-box">
+    <div class="status-main-label" id="printer-status-main">
+      <span id="printer-status-text">Memproses foto kamu...</span>
+    </div>
+    <div class="status-sub-label" id="printer-status-sub">Harap tunggu sebentar</div>
+  </div>
+
+  <div class="printer-bottom-actions" id="printer-bottom-actions">
+    <div style="background: rgba(255, 255, 255, 0.1); border: 1px solid var(--gold-accent); border-radius: 14px; padding: 12px; text-align: left; box-shadow: 0 8px 20px rgba(0,0,0,0.2); backdrop-filter: blur(8px);">
+      <label style="display:block; font-size:0.68rem; font-weight:700; color:var(--gold-accent); margin-bottom:3px; letter-spacing:1px; text-transform:uppercase;">Dari (Pengirim)</label>
+      <input type="text" id="input-sender-name" style="width:100%; padding:8px 10px; border:1px solid rgba(212,175,55,0.4); border-radius:8px; font-size:0.8rem; outline:none; margin-bottom:8px; background:rgba(0,0,0,0.25); font-family:'Plus Jakarta Sans', sans-serif; font-weight:600; color:#FFF;" readonly>
+
+      <label style="display:block; font-size:0.68rem; font-weight:700; color:var(--gold-accent); margin-bottom:3px; letter-spacing:1px; text-transform:uppercase;">Pesan / Ucapan Doa Kamu</label>
+      <textarea id="input-sender-message" rows="2" style="width:100%; padding:8px 10px; border:1px solid rgba(212,175,55,0.4); border-radius:8px; font-size:0.8rem; outline:none; background:rgba(0,0,0,0.25); color:#FFF; font-family:'Plus Jakarta Sans', sans-serif;" placeholder="Tuliskan ucapan manismu di sini..."></textarea>
+    </div>
+
+    <button class="btn-gold-v2" style="max-width:100%; margin-top:4px;" onclick="saveAndShareToFeed()">
+      UNDUH &amp; POSTING KE GALERI
+    </button>
+
+    <button class="btn-secondary-v2" style="max-width:100%;" onclick="savePrivateOnly()">
+      SIMPAN PRIVAT KE HP
+    </button>
+
+    <button class="btn-outline-v2" style="color:rgba(255,255,255,0.7); max-width:100%; padding:4px;" onclick="goToStep('step-template')">
+      Foto Ulang Semua
+    </button>
+
+    <div class="app-official-footer" style="max-width: 100%;">
+      © 2026 Votura Studio by Riyan. All rights reserved.
+    </div>
+  </div>
+</div>
+
+<!-- GALERI KENANGAN -->
+<div id="step-gallery-page" class="page-fullscreen-scrollable hidden">
+  <div class="feed-container">
+    <div style="text-align:center; margin-bottom:12px;">
+      <p style="font-size:0.68rem; color:var(--gold-accent); letter-spacing:2.5px; font-weight:700; margin-bottom:2px;">GALERI KENANGAN</p>
+      <h2 class="font-script" style="font-size:2.6rem; color:#FFF; line-height:1;">Jejak Kebahagiaan</h2>
+    </div>
+
+    <div class="gallery-intro-box">
+      <p class="font-serif" style="font-size:0.92rem; color:#FFF; line-height:1.5; font-style:italic;">
+        "Terima kasih telah melangkah bersama kami dan mengukir kehangatan dalam setiap senyuman. Setiap foto dan doa yang tertulis di sini adalah hadiah terindah yang akan selalu kami kenang sepanjang masa."
+      </p>
+      <div style="font-size:0.7rem; font-weight:700; color:var(--gold-accent); margin-top:8px; letter-spacing:1.5px;" id="gallery-couple-sub">
+        — RIYAN &amp; AMELIA
+      </div>
+    </div>
+
+    <div style="font-size:0.85rem; font-weight:700; color:var(--gold-accent); margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; letter-spacing:1px;">
+      <span>KIRIMAN TAMU</span>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <button class="btn-refresh-feed-custom" onclick="manualRefreshFeed()" title="Segarkan Foto">
+          <span id="refresh-icon-elm" style="display:inline-flex; align-items:center; justify-content:center;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M23 4v6h-6"></path>
+              <path d="M1 20v-6h6"></path>
+              <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+            </svg>
+          </span> Refresh
+        </button>
+        <span style="font-size:0.7rem; color:rgba(255,255,255,0.7);" id="total-posts-count">... Kiriman</span>
+      </div>
+    </div>
+
+    <div id="ig-grid-box" class="ig-grid-container">
+      <p style="font-size: 0.8rem; color: rgba(255,255,255,0.6); grid-column: span 3; text-align: center;">Memuat ucapan &amp; foto tamu...</p>
+    </div>
+
+    <div style="text-align: center; margin-top: 15px;">
+      <button id="btn-load-more" class="btn-secondary-v2 hidden" style="max-width: 260px; margin: 0 auto;" onclick="loadMorePosts()">
+        MUAT LEBIH BANYAK
+      </button>
+    </div>
+
+    <div style="margin-top:20px;">
+      <button class="btn-gold-v2" style="max-width:100%;" onclick="goToStep('step-welcome')">
+        KEMBALI KE BERANDA
+      </button>
+    </div>
+  </div>
+
+  <div class="app-official-footer">
+    © 2026 Votura Studio by Riyan. All rights reserved.
+  </div>
+</div>
+
+<div id="gallery-scroll-nav" class="floating-scroll-nav">
+  <button id="btn-scroll-top" onclick="scrollToTop()" title="Ke Atas" class="btn-scroll-nav hidden">▲</button>
+  <button id="btn-scroll-bottom" onclick="scrollToBottom()" title="Ke Bawah" class="btn-scroll-nav hidden">▼</button>
+</div>
+
+<div id="photo-modal" class="modal-overlay hidden">
+  <div class="modal-card">
+    <button class="modal-close-btn" onclick="closeModal()">✕</button>
+    <div class="modal-user-name" id="modal-name">Nama Tamu</div>
+    <div class="modal-user-date" id="modal-date">06 Des 2026 • 12:00</div>
+    <img id="modal-img" class="modal-img" src="" alt="Foto Perbesar">
+    <div class="modal-msg" id="modal-msg">"Ucapan doa tamu..."</div>
+  </div>
+</div>
+
+<div id="alert-modal" class="modal-overlay hidden">
+  <div class="modal-card">
+    <div style="font-size: 0.95rem; font-weight: 700; color: var(--gold-accent); margin-bottom: 8px; letter-spacing: 1px;" id="alert-title">PEMBERITAHUAN</div>
+    <div style="font-size: 0.82rem; color: rgba(255,255,255,0.9); line-height: 1.4; margin-bottom: 18px;" id="alert-text">Pesan...</div>
+    <button class="btn-gold-v2" style="margin-top:0;" onclick="closeAlertModal()">OK</button>
+  </div>
 </div>
 
 <canvas id="canvas"></canvas>
 
-<!-- 1. SISTEM SAKLAR ON/OFF FIREBASE REALTIME -->
 <script>
-  // UBAH ID DOKUMEN INI UNTUK KLIENT LAIN (misal: 'clien1_event')
-  const EVENT_DOC_ID = 'wedding_event'; 
+  const EVENT_DOC_ID = 'v2_event'; 
 
-  let dynamicTitle = "Riyan & Amelia";
+  let eventTitle = "Riyan & Amelia";
+  let currentGuestName = "";
+  let selectedFramePath = './assets/v2/dsg3.png';
+  let requiredPhotoCount = 3; 
+  let capturedPhotos = [];
+  let videoStream = null;
+  
+  // DUA URL DATA UNTUK MEMISAHKAN UNDUHAN DAN FIRESTORE
+  let generatedHighResUrl = ""; // Full High-Res untuk unduh langsung HP tamu
+  let generatedLowResUrl = "";  // Mid-High 900px ~300KB untuk Firestore / Admin / Galeri
+
+  let activeDeviceId = null;
+  let isSwitchingCamera = false;
+  let isMirror = false; 
+  let timerDuration = 3;
+  let zoomLevel = 1;      
+  let onAlertCloseCallback = null;
+  let isTakingPhoto = false;
+
+  let cardItems = [];
+  let currentCardIndex = 0;
+
+  let globalPostsMap = {};
+  let lastVisibleDoc = null;
+  let totalPostsInDb = 0;
+  let loadedPostsCount = 0;
+  const PAGE_SIZE = 12;
+  let feedUnsubscribe = null;
+  let isInitialLoad = true;
+
+  document.addEventListener("DOMContentLoaded", () => {
+    initFigmaSlider();
+
+    const galleryPage = document.getElementById('step-gallery-page');
+    if (galleryPage) {
+      galleryPage.addEventListener('scroll', handleGalleryScroll, { passive: true });
+    }
+  });
+
+  function openEnvelopeAnimation() {
+    const envelopeWrapper = document.getElementById('envelope-wrapper');
+    const envelopeScreen = document.getElementById('envelope-screen');
+
+    envelopeWrapper.classList.add('step-open-flap');
+    setTimeout(() => envelopeWrapper.classList.add('step-lift-up'), 600);
+    setTimeout(() => envelopeWrapper.classList.add('step-zoom-center'), 1300);
+    setTimeout(() => {
+      envelopeScreen.style.opacity = '0';
+      setTimeout(() => envelopeScreen.style.display = 'none', 750);
+    }, 2200);
+  }
+
+  function resetGuestInfo() {
+    currentGuestName = "";
+    const nameInput = document.getElementById('guest-initial-name');
+    if (nameInput) nameInput.value = "";
+    const senderInput = document.getElementById('input-sender-name');
+    if (senderInput) senderInput.value = "";
+  }
+
+  function goToStep(targetId) {
+    if (targetId === 'step-welcome') {
+      resetGuestInfo();
+    }
+
+    const steps = ['step-welcome', 'step-ask-name', 'step-template', 'step-camera', 'step-review-photos', 'step-result', 'step-gallery-page'];
+    steps.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.classList.add('hidden');
+    });
+
+    const targetEl = document.getElementById(targetId);
+    if (targetEl) targetEl.classList.remove('hidden');
+
+    if (targetId === 'step-gallery-page') {
+      if (targetEl) targetEl.scrollTop = 0;
+      setTimeout(handleGalleryScroll, 200);
+    } else {
+      const btnTop = document.getElementById('btn-scroll-top');
+      const btnBottom = document.getElementById('btn-scroll-bottom');
+      if (btnTop) btnTop.classList.add('hidden');
+      if (btnBottom) btnBottom.classList.add('hidden');
+    }
+
+    if (targetId === 'step-template') {
+      updateFigmaSliderPositions();
+    }
+
+    if (targetId === 'step-review-photos') {
+      renderReviewPhotosUI();
+    }
+
+    if (targetId === 'step-result') {
+      const printerUnit = document.getElementById('main-printer-unit');
+      const popupBox = document.getElementById('popup-photo-box');
+      const inputPaper = document.getElementById('paper-input-sheet');
+      const ejectedPhoto = document.getElementById('ejected-photo-sheet');
+      const ledRed = document.getElementById('led-red');
+      const ledGreen = document.getElementById('led-green');
+      const statusText = document.getElementById('printer-status-text');
+      const statusSub = document.getElementById('printer-status-sub');
+      const actionsBox = document.getElementById('printer-bottom-actions');
+
+      printerUnit.classList.remove('fade-out-printer');
+      popupBox.classList.remove('show-popup');
+      inputPaper.classList.remove('pulled-in');
+      ejectedPhoto.classList.remove('fully-printed');
+      actionsBox.classList.remove('visible');
+      ledRed.classList.add('blinking');
+      ledGreen.classList.add('blinking');
+      statusText.innerText = "Memproses foto kamu...";
+      statusSub.innerText = "Kertas ditarik masuk ke mesin...";
+
+      setTimeout(() => {
+        inputPaper.classList.add('pulled-in');
+        statusText.innerText = "Mencetak foto kenangan...";
+        statusSub.innerText = "Sedang dicetak...";
+      }, 500);
+
+      setTimeout(() => {
+        ejectedPhoto.classList.add('fully-printed');
+      }, 2000);
+
+      setTimeout(() => {
+        ledRed.classList.remove('blinking');
+        ledGreen.classList.remove('blinking');
+        printerUnit.classList.add('fade-out-printer');
+
+        setTimeout(() => {
+          popupBox.classList.add('show-popup');
+          statusText.innerHTML = 'Cetak Selesai!';
+          statusSub.innerText = "Foto kamu sudah siap disimpan!";
+          actionsBox.classList.add('visible');
+
+          const stepResultPage = document.getElementById('step-result');
+          if (stepResultPage) {
+            stepResultPage.scrollTo({ top: 160, behavior: 'smooth' });
+          }
+        }, 400);
+      }, 6800);
+    }
+  }
+
+  function handleGalleryScroll() {
+    const galleryPage = document.getElementById('step-gallery-page');
+    const btnTop = document.getElementById('btn-scroll-top');
+    const btnBottom = document.getElementById('btn-scroll-bottom');
+
+    if (!galleryPage || galleryPage.classList.contains('hidden') || !btnTop || !btnBottom) return;
+
+    const scrollTop = galleryPage.scrollTop;
+    const scrollHeight = galleryPage.scrollHeight;
+    const clientHeight = galleryPage.clientHeight;
+
+    if (scrollHeight <= clientHeight + 50) {
+      btnTop.classList.add('hidden');
+      btnBottom.classList.add('hidden');
+      return;
+    }
+
+    const isAtTop = scrollTop < 80;
+    const isAtBottom = (scrollTop + clientHeight) >= (scrollHeight - 80);
+
+    if (isAtTop) {
+      btnTop.classList.add('hidden');
+      btnBottom.classList.remove('hidden');
+    } else if (isAtBottom) {
+      btnTop.classList.remove('hidden');
+      btnBottom.classList.add('hidden');
+    } else {
+      btnTop.classList.remove('hidden');
+      btnBottom.classList.remove('hidden');
+    }
+  }
+
+  function scrollToTop() {
+    const galleryPage = document.getElementById('step-gallery-page');
+    if (galleryPage) galleryPage.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function scrollToBottom() {
+    const galleryPage = document.getElementById('step-gallery-page');
+    if (galleryPage) galleryPage.scrollTo({ top: galleryPage.scrollHeight, behavior: 'smooth' });
+  }
+
+  function submitGuestNameAndNext() {
+    const inputName = document.getElementById('guest-initial-name').value.trim();
+    if (!inputName) {
+      showAlert("Harap isi nama kamu terlebih dahulu!", "NAMA MASIH KOSONG");
+      return;
+    }
+    currentGuestName = inputName;
+    document.getElementById('input-sender-name').value = inputName;
+    goToStep('step-template');
+  }
+
+  function initFigmaSlider() {
+    cardItems = Array.from(document.querySelectorAll('.figma-card-item'));
+    
+    cardItems.forEach((card, index) => {
+      let isDragging = false;
+      let startX = 0;
+
+      card.addEventListener('mousedown', (e) => {
+        isDragging = false;
+        startX = e.clientX;
+      });
+
+      card.addEventListener('mousemove', (e) => {
+        if (Math.abs(e.clientX - startX) > 5) isDragging = true;
+      });
+
+      card.addEventListener('touchstart', (e) => {
+        isDragging = false;
+        startX = e.touches[0].clientX;
+      }, { passive: true });
+
+      card.addEventListener('touchmove', (e) => {
+        if (Math.abs(e.touches[0].clientX - startX) > 5) isDragging = true;
+      }, { passive: true });
+
+      card.addEventListener('click', (e) => {
+        if (isDragging) return;
+
+        if (index === currentCardIndex) {
+          card.classList.add('card-pressed');
+          const countAttr = card.getAttribute('data-count');
+          requiredPhotoCount = parseInt(countAttr, 10) || 3;
+          selectedFramePath = card.getAttribute('data-path');
+
+          capturedPhotos = [];
+          initCameraStream();
+
+          setTimeout(() => {
+            card.classList.remove('card-pressed');
+            startCameraProcess();
+          }, 200);
+        } else {
+          currentCardIndex = index;
+          updateFigmaSliderPositions();
+        }
+      });
+    });
+
+    updateFigmaSliderPositions();
+
+    const container = document.getElementById('slider-stack-box');
+    let touchStartX = 0;
+    container.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
+    container.addEventListener('touchend', e => {
+      let touchEndX = e.changedTouches[0].clientX;
+      if (touchStartX - touchEndX > 35) moveFigmaSlider(1);
+      else if (touchEndX - touchStartX > 35) moveFigmaSlider(-1);
+    }, { passive: true });
+  }
+
+  function moveFigmaSlider(dir) {
+    currentCardIndex += dir;
+    if (currentCardIndex < 0) currentCardIndex = cardItems.length - 1;
+    if (currentCardIndex >= cardItems.length) currentCardIndex = 0;
+    updateFigmaSliderPositions();
+  }
+
+  function updateFigmaSliderPositions() {
+    cardItems.forEach((card, i) => {
+      card.className = 'figma-card-item';
+
+      if (i === currentCardIndex) {
+        card.classList.add('active');
+        selectedFramePath = card.getAttribute('data-path');
+        requiredPhotoCount = parseInt(card.getAttribute('data-count'), 10) || 3;
+
+        document.getElementById('card-theme-tag').innerText = card.getAttribute('data-tag');
+        document.getElementById('card-theme-name').innerText = card.getAttribute('data-name');
+      } else if (i === (currentCardIndex + 1) % cardItems.length) {
+        card.classList.add('next');
+      } else if (i === (currentCardIndex - 1 + cardItems.length) % cardItems.length) {
+        card.classList.add('prev');
+      } else if (i < currentCardIndex) {
+        card.classList.add('hidden-left');
+      } else {
+        card.classList.add('hidden-right');
+      }
+    });
+  }
+
+  function showAlert(message, title = "PEMBERITAHUAN", callback = null) {
+    document.getElementById('alert-title').innerText = title;
+    document.getElementById('alert-text').innerText = message;
+    onAlertCloseCallback = callback;
+    document.getElementById('alert-modal').classList.remove('hidden');
+  }
+
+  function closeAlertModal() {
+    document.getElementById('alert-modal').classList.add('hidden');
+    if (onAlertCloseCallback) {
+      onAlertCloseCallback();
+      onAlertCloseCallback = null;
+    }
+  }
 
   if (typeof db !== 'undefined') {
     db.collection('settings').doc(EVENT_DOC_ID).onSnapshot(doc => {
       if (doc.exists) {
         const data = doc.data();
         if (data.title) {
-          dynamicTitle = data.title;
-          const titleElem = document.getElementById('display-event-title');
-          if (titleElem) titleElem.innerText = data.title;
+          eventTitle = data.title;
+          const t1 = document.getElementById('display-event-title');
+          const t2 = document.getElementById('ask-event-title');
+          const t3 = document.getElementById('envelope-names');
+          const t4 = document.getElementById('inside-card-names');
+          const t5 = document.getElementById('gallery-couple-sub');
+          if (t1) t1.innerText = data.title;
+          if (t2) t2.innerText = data.title;
+          if (t3) t3.innerText = data.title;
+          if (t4) t4.innerText = data.title;
+          if (t5) t5.innerText = `— ${data.title.toUpperCase()}`;
         }
 
         let lockOverlay = document.getElementById('lock-overlay');
-
         if (data.isActive === false) {
           if (!lockOverlay) {
             lockOverlay = document.createElement('div');
             lockOverlay.id = 'lock-overlay';
             lockOverlay.innerHTML = `
-              <div style="min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; font-family: 'Plus Jakarta Sans', sans-serif; background-color: #FDFBF7; color: #3D2B2B;">
-                <div style="background: #FFF; padding: 40px 25px; border-radius: 24px; box-shadow: 0 15px 35px rgba(140, 98, 98, 0.1); border: 1px solid rgba(216, 180, 180, 0.3); max-width: 400px; width: 100%;">
-                  <div style="font-size: 3rem; margin-bottom: 10px;">🔒</div>
-                  <h2 style="font-family: 'Cormorant Garamond', serif; color: #8C6262; font-size: 2rem; margin-bottom: 10px;">Photobooth Ditutup</h2>
-                  <p style="color: #6E5353; font-size: 0.9rem; line-height: 1.6; margin-bottom: 20px;">
-                    Sesi virtual photobooth untuk acara saat ini sedang tidak aktif atau telah selesai.
-                  </p>
-                  <div style="font-family: 'Great Vibes', cursive; font-size: 1.8rem; color: #8C6262;">${dynamicTitle}</div>
+              <div style="min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; font-family: 'Plus Jakarta Sans', sans-serif; background: linear-gradient(180deg, #7A3D44 0%, #5C2B32 100%); color: #FFF;">
+                <div style="background: rgba(255,255,255,0.1); padding: 40px 25px; border-radius: 24px; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4); border: 1px solid var(--gold-accent); max-width: 400px; width: 100%;">
+                  <h2 style="font-family: 'Cormorant Garamond', serif; color: var(--gold-accent); font-size: 2rem; margin-bottom: 10px;">Photobooth Ditutup</h2>
+                  <p style="color: rgba(255,255,255,0.8); font-size: 0.9rem; line-height: 1.6; margin-bottom: 20px;">Sesi virtual photobooth saat ini sedang tidak aktif.</p>
+                  <div style="font-family: 'Alex Brush', cursive; font-size: 2.4rem; color: #FFF;">${eventTitle}</div>
                 </div>
-                <p style="margin-top: 25px; font-size: 0.7rem; color: #B39B9B;">FOTOME by Riyan Ardiansyah</p>
               </div>
             `;
             lockOverlay.style.position = 'fixed';
-            lockOverlay.style.top = '0';
-            lockOverlay.style.left = '0';
-            lockOverlay.style.width = '100%';
-            lockOverlay.style.height = '100%';
-            lockOverlay.style.zIndex = '999999';
+            lockOverlay.style.top = '0'; lockOverlay.style.left = '0'; lockOverlay.style.width = '100%'; lockOverlay.style.height = '100%'; lockOverlay.style.zIndex = '999999';
             document.body.appendChild(lockOverlay);
-            document.body.style.overflow = 'hidden';
           }
         } else {
-          if (lockOverlay) {
-            lockOverlay.remove();
-            document.body.style.overflow = 'auto';
-          }
+          if (lockOverlay) lockOverlay.remove();
         }
       }
-    }, err => {
-      console.error("Firestore Error:", err);
     });
-  }
-</script>
 
-<!-- 2. LOGIKA MURNI PHOTOBOOTH (TERFILTER MAKSIMAL 2 KAMERA) -->
-<script>
-  let targetPhotoCount = 3;
-  let selectedDesignStyle = 'floral'; 
-  let selectedBgColor = 'dusty';
-  let capturedPhotos = [];
-  
-  let currentSelectedDeviceId = null;
-  let currentStream = null;
-
-  let isTimerEnabled = true;
-  let isFlashEnabled = true;
-  let manualPhotoIndex = 0;
-
-  const lilyAsset = new Image();
-  lilyAsset.src = './assets/calla-lily-corner.png';
-
-  const video = document.getElementById('video');
-  const canvas = document.getElementById('canvas');
-  const countdownOverlay = document.getElementById('countdown-overlay');
-  const flashOverlay = document.getElementById('flash-overlay');
-
-  function resetEjectAnimation() {
-    const resultImg = document.getElementById('result-img');
-    if (resultImg) {
-      resultImg.classList.remove('eject-active');
-    }
+    loadRealtimeFeedIG();
   }
 
-  function goToStep(stepNumber) {
-    resetEjectAnimation();
-    turnOffHardwareTorch();
-
-    document.getElementById('step-welcome').classList.add('hidden');
-    document.getElementById('step-template').classList.add('hidden');
-    document.getElementById('step-camera').classList.add('hidden');
-    document.getElementById('step-result').classList.add('hidden');
-
-    if (stepNumber === 1) document.getElementById('step-welcome').classList.remove('hidden');
-    if (stepNumber === 2) document.getElementById('step-template').classList.remove('hidden');
-    if (stepNumber === 3) document.getElementById('step-camera').classList.remove('hidden');
-    if (stepNumber === 4) document.getElementById('step-result').classList.remove('hidden');
+  function getFrameTargetAspect() {
+    return 456 / 360; 
   }
 
-  function selectPhotoCount(count, element) {
-    targetPhotoCount = count;
-    element.parentElement.querySelectorAll('.option-card').forEach(el => el.classList.remove('active'));
-    element.classList.add('active');
+  function updateViewfinderAspectRatio() {
+    const viewfinderBox = document.getElementById('cam-viewfinder-box');
+    if (!viewfinderBox) return;
+
+    const targetAspect = getFrameTargetAspect();
+    viewfinderBox.style.aspectRatio = `${targetAspect}`;
   }
 
-  function selectDesignStyle(styleName, element) {
-    selectedDesignStyle = styleName;
-    document.querySelectorAll('.design-card').forEach(el => el.classList.remove('active'));
-    element.classList.add('active');
-
-    const colorWrapper = document.getElementById('color-section-wrapper');
-    if (styleName === 'receipt' || styleName === 'wavy_red' || styleName === 'fotome_brand') {
-      colorWrapper.classList.add('disabled');
-    } else {
-      colorWrapper.classList.remove('disabled');
-    }
-  }
-
-  function selectBgColor(colorTheme, element) {
-    selectedBgColor = colorTheme;
-    element.parentElement.querySelectorAll('.color-card').forEach(el => el.classList.remove('active'));
-    element.classList.add('active');
-  }
-
-  function toggleTimerMode() {
-    isTimerEnabled = !isTimerEnabled;
-    document.getElementById('timer-toggle-text').innerText = isTimerEnabled ? "Timer: ON" : "Timer: OFF";
-    updateSnapButtonUI();
-  }
-
-  function toggleFlashMode() {
-    isFlashEnabled = !isFlashEnabled;
-    document.getElementById('flash-toggle-text').innerText = isFlashEnabled ? "Flash: ON" : "Flash: OFF";
-  }
-
-  function updateCameraAdjustments() {
-    const zoomVal = parseFloat(document.getElementById('zoom-slider').value);
-    const brightnessVal = parseFloat(document.getElementById('brightness-slider').value);
-
-    document.getElementById('zoom-val').innerText = zoomVal.toFixed(1) + 'x';
-    document.getElementById('brightness-val').innerText = Math.round(brightnessVal * 100) + '%';
-
-    const isFrontCamera = video.classList.contains('mirror');
-    const mirrorScale = isFrontCamera ? -1 : 1;
-    video.style.transform = `scaleX(${mirrorScale}) scale(${zoomVal})`;
-    video.style.filter = `brightness(${brightnessVal})`;
-  }
-
-  function startCameraProcess() {
-    goToStep(3);
-    capturedPhotos = [];
-    manualPhotoIndex = 0;
-
-    document.getElementById('zoom-slider').value = 1;
-    document.getElementById('brightness-slider').value = 1;
-
-    updateSnapButtonUI();
-    openCameraStream();
-  }
-
-  function updateSnapButtonUI() {
-    const snapLabel = document.getElementById('btn-snap-label');
-    const photoCountText = document.getElementById('photo-count-text');
-
-    if (isTimerEnabled) {
-      photoCountText.innerText = `Foto 1 dari ${targetPhotoCount}`;
-      snapLabel.innerText = "Mulai Foto Otomatis (3s)";
-    } else {
-      photoCountText.innerText = `Foto ${manualPhotoIndex + 1} dari ${targetPhotoCount}`;
-      snapLabel.innerText = `Jepret Foto (${manualPhotoIndex + 1}/${targetPhotoCount})`;
-    }
-  }
-
-  // POPULATE CAMERA DENGAN FILTER RINGKAS (MAKS 2 OPERASI KAMERA)
   async function populateCameraDevices() {
-    const cameraSelect = document.getElementById('camera-select');
+    const selectEl = document.getElementById('camera-select-dropdown');
+    if (!selectEl) return;
+
     try {
       const devices = await navigator.mediaDevices.enumerateDevices();
       const videoDevices = devices.filter(d => d.kind === 'videoinput');
 
-      cameraSelect.innerHTML = '';
+      let filteredCameras = [];
+      let backCameras = [];
+      let frontCameras = [];
+      let externalCameras = [];
 
-      if (videoDevices.length === 0) {
-        cameraSelect.innerHTML = '<option value="">Kamera Tidak Ditemukan</option>';
-        return;
-      }
-
-      let frontCam = videoDevices.find(d => {
-        const label = (d.label || '').toLowerCase();
-        return label.includes('front') || label.includes('user') || label.includes('depan');
-      });
-
-      let backCam = videoDevices.find(d => {
-        const label = (d.label || '').toLowerCase();
-        return label.includes('back') || label.includes('environment') || label.includes('belakang');
-      });
-
-      if (!frontCam && videoDevices.length > 0) frontCam = videoDevices[0];
-      if (!backCam && videoDevices.length > 1) backCam = videoDevices[1];
-
-      let filteredDevices = [];
-      if (frontCam) {
-        filteredDevices.push({ deviceId: frontCam.deviceId, label: '📷 Kamera Depan' });
-      }
-      if (backCam && backCam.deviceId !== frontCam?.deviceId) {
-        filteredDevices.push({ deviceId: backCam.deviceId, label: '📸 Kamera Belakang' });
-      }
-
-      if (filteredDevices.length === 0) {
-        videoDevices.slice(0, 2).forEach((device, index) => {
-          filteredDevices.push({
-            deviceId: device.deviceId,
-            label: index === 0 ? '📷 Kamera Depan' : '📸 Kamera Belakang'
-          });
-        });
-      }
-
-      filteredDevices.forEach(item => {
-        const option = document.createElement('option');
-        option.value = item.deviceId;
-        option.text = item.label;
-
-        if (currentSelectedDeviceId && item.deviceId === currentSelectedDeviceId) {
-          option.selected = true;
-        }
-        cameraSelect.appendChild(option);
-      });
-
-      if (!currentSelectedDeviceId && filteredDevices.length > 0) {
-        currentSelectedDeviceId = filteredDevices[0].deviceId;
-      }
-    } catch (e) {
-      console.log("Error enumerateDevices:", e);
-    }
-  }
-
-  function openCameraStream() {
-    if (currentStream) {
-      currentStream.getTracks().forEach(track => track.stop());
-    }
-
-    const videoConstraints = {
-      width: { ideal: 1080 },
-      height: { ideal: 1440 }
-    };
-
-    if (currentSelectedDeviceId) {
-      videoConstraints.deviceId = { exact: currentSelectedDeviceId };
-    } else {
-      videoConstraints.facingMode = "user";
-    }
-
-    navigator.mediaDevices.getUserMedia({ video: videoConstraints, audio: false })
-    .then(async stream => { 
-      currentStream = stream;
-      video.srcObject = stream;
-
-      const track = stream.getVideoTracks()[0];
-      const settings = track.getSettings ? track.getSettings() : {};
-      const label = (track.label || '').toLowerCase();
-
-      if (settings.facingMode === 'user' || label.includes('front') || label.includes('user')) {
-        video.classList.add('mirror');
-      } else {
-        video.classList.remove('mirror');
-      }
-
-      await populateCameraDevices();
-      updateCameraAdjustments();
-    })
-    .catch(err => {
-      alert("Tidak dapat mengakses kamera. Pastikan memberikan izin kamera di browser kamu.");
-      goToStep(2);
-    });
-  }
-
-  function onCameraDeviceChange(deviceId) {
-    if (!deviceId) return;
-    currentSelectedDeviceId = deviceId;
-    openCameraStream();
-  }
-
-  function turnHardwareTorch(state) {
-    if (!currentStream) return;
-    const track = currentStream.getVideoTracks()[0];
-    if (!track) return;
-
-    const capabilities = track.getCapabilities ? track.getCapabilities() : {};
-    if (capabilities.torch) {
-      track.applyConstraints({ advanced: [{ torch: state }] }).catch(e => console.log(e));
-    }
-  }
-
-  function turnOffHardwareTorch() {
-    turnHardwareTorch(false);
-  }
-
-  async function triggerDoubleFlashSequence() {
-    flashOverlay.style.opacity = '0.4';
-    turnHardwareTorch(true);
-    await delay(80);
-
-    flashOverlay.style.opacity = '0';
-    turnHardwareTorch(false);
-    await delay(120);
-
-    flashOverlay.style.opacity = '1';
-    turnHardwareTorch(true);
-  }
-
-  function stopFlashSequence() {
-    flashOverlay.style.opacity = '0';
-    turnHardwareTorch(false);
-  }
-
-  async function handleSnapButtonClick() {
-    if (isTimerEnabled) {
-      startAutoPhotoSequence();
-    } else {
-      captureManualSinglePhoto();
-    }
-  }
-
-  async function startAutoPhotoSequence() {
-    document.getElementById('btn-snap').disabled = true;
-    document.getElementById('btn-snap').style.opacity = '0.5';
-    capturedPhotos = [];
-
-    for (let i = 1; i <= targetPhotoCount; i++) {
-      document.getElementById('photo-count-text').innerText = `Foto ${i} dari ${targetPhotoCount}`;
-      await runCountdown(3);
-      
-      if (isFlashEnabled) {
-        await triggerDoubleFlashSequence();
-        await delay(100);
-      }
-      
-      captureSingleFrame();
-
-      if (isFlashEnabled) {
-        stopFlashSequence();
-      }
-
-      await delay(1000);
-    }
-
-    renderPhotostrip();
-    goToStep(4);
-
-    document.getElementById('btn-snap').disabled = false;
-    document.getElementById('btn-snap').style.opacity = '1';
-  }
-
-  async function captureManualSinglePhoto() {
-    if (isFlashEnabled) {
-      await triggerDoubleFlashSequence();
-      await delay(100);
-    }
-
-    captureSingleFrame();
-
-    if (isFlashEnabled) {
-      stopFlashSequence();
-    }
-
-    manualPhotoIndex++;
-
-    if (manualPhotoIndex < targetPhotoCount) {
-      updateSnapButtonUI();
-    } else {
-      renderPhotostrip();
-      goToStep(4);
-    }
-  }
-
-  function runCountdown(seconds) {
-    return new Promise(resolve => {
-      countdownOverlay.classList.remove('hidden');
-      let count = seconds;
-      countdownOverlay.innerText = count;
-
-      const timer = setInterval(() => {
-        count--;
-        if (count > 0) {
-          countdownOverlay.innerText = count;
+      videoDevices.forEach((dev, idx) => {
+        const label = (dev.label || `Kamera ${idx + 1}`).toLowerCase();
+        
+        if (label.includes('external') || label.includes('usb') || label.includes('webcam')) {
+          externalCameras.push({ deviceId: dev.deviceId, label: dev.label || `Kamera Eksternal ${externalCameras.length + 1}` });
+        } else if (label.includes('front') || label.includes('user') || label.includes('facing front')) {
+          frontCameras.push({ deviceId: dev.deviceId, label: 'Kamera Depan' });
+        } else if (label.includes('back') || label.includes('rear') || label.includes('environment')) {
+          backCameras.push({ deviceId: dev.deviceId, label: dev.label });
         } else {
-          clearInterval(timer);
-          countdownOverlay.classList.add('hidden');
-          resolve();
+          backCameras.push({ deviceId: dev.deviceId, label: dev.label || `Kamera ${idx + 1}` });
         }
-      }, 1000);
-    });
+      });
+
+      if (frontCameras.length > 0) {
+        filteredCameras.push(frontCameras[0]);
+      } else {
+        filteredCameras.push({ deviceId: 'user_default', label: 'Kamera Depan' });
+      }
+
+      if (backCameras.length > 0) {
+        const mainBack = backCameras.find(c => c.label.toLowerCase().includes('0') || c.label.toLowerCase().includes('main')) || backCameras[0];
+        filteredCameras.push({ deviceId: mainBack.deviceId, label: 'Kamera Belakang' });
+      } else {
+        filteredCameras.push({ deviceId: 'environment_default', label: 'Kamera Belakang' });
+      }
+
+      externalCameras.forEach(ext => filteredCameras.push(ext));
+
+      selectEl.innerHTML = '';
+      filteredCameras.forEach(cam => {
+        const opt = document.createElement('option');
+        opt.value = cam.deviceId;
+        opt.innerText = cam.label;
+        selectEl.appendChild(opt);
+      });
+
+      if (!activeDeviceId && filteredCameras.length > 0) {
+        activeDeviceId = filteredCameras[0].deviceId;
+      }
+      selectEl.value = activeDeviceId;
+
+    } catch (err) {
+      console.warn("Gagal memindai perangkat kamera:", err);
+      selectEl.innerHTML = `
+        <option value="user_default">Kamera Depan</option>
+        <option value="environment_default">Kamera Belakang</option>
+      `;
+    }
   }
 
-  function delay(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+  async function stopCurrentStream() {
+    if (videoStream) {
+      try {
+        videoStream.getTracks().forEach(track => track.stop());
+      } catch (e) { console.warn(e); }
+      videoStream = null;
+    }
+    const video = document.getElementById('video');
+    if (video) {
+      video.pause();
+      video.srcObject = null;
+    }
+    await new Promise(resolve => setTimeout(resolve, 300));
   }
 
-  function captureSingleFrame() {
+  async function initCameraStream() {
+    const video = document.getElementById('video');
+    if (!video) return;
+
+    await stopCurrentStream();
+
+    let videoConstraints = {};
+
+    if (activeDeviceId === 'user_default') {
+      videoConstraints = { facingMode: "user" };
+    } else if (activeDeviceId === 'environment_default') {
+      videoConstraints = { facingMode: { ideal: "environment" } };
+    } else if (activeDeviceId) {
+      videoConstraints = { deviceId: { exact: activeDeviceId } };
+    } else {
+      videoConstraints = { facingMode: "user" };
+    }
+
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: false,
+        video: videoConstraints
+      });
+      videoStream = stream;
+      video.srcObject = stream;
+      await video.play().catch(e => console.warn(e));
+      applyZoomTransform();
+      await populateCameraDevices();
+    } catch (err) {
+      console.warn("Mencoba fallback mode fleksibel...", err);
+      try {
+        const fallbackStream = await navigator.mediaDevices.getUserMedia({
+          audio: false,
+          video: true
+        });
+        videoStream = fallbackStream;
+        video.srcObject = fallbackStream;
+        await video.play().catch(e => console.warn(e));
+        applyZoomTransform();
+        await populateCameraDevices();
+      } catch (finalErr) {
+        console.error("Kamera gagal dibuka:", finalErr);
+        showAlert("Gagal membuka kamera. Pastikan izin akses kamera sudah diberikan.", "KAMERA ERROR");
+      }
+    }
+  }
+
+  async function onCameraSelectChange(deviceId) {
+    if (!deviceId || isSwitchingCamera) return;
+    isSwitchingCamera = true;
+    activeDeviceId = deviceId;
+
+    await initCameraStream();
+    isSwitchingCamera = false;
+  }
+
+  function startCameraProcess() {
+    goToStep('step-camera');
+    isTakingPhoto = false;
+
+    const btnSnap = document.getElementById('btn-snap');
+    if (btnSnap) btnSnap.style.opacity = '1';
+
+    const activeCard = cardItems[currentCardIndex];
+    if (activeCard) {
+      requiredPhotoCount = parseInt(activeCard.getAttribute('data-count'), 10) || 3;
+      selectedFramePath = activeCard.getAttribute('data-path');
+    }
+
+    updateViewfinderAspectRatio();
+    updatePhotosStripUI();
+
+    if (!videoStream || !videoStream.active) {
+      initCameraStream();
+    }
+  }
+
+  function updatePhotosStripUI() {
+    const stripBox = document.getElementById('cam-photos-strip');
+    const progressText = document.getElementById('cam-progress-text');
+
+    const totalNeeded = parseInt(requiredPhotoCount, 10) || 3;
+    const currentCapturedCount = capturedPhotos.length;
+
+    stripBox.innerHTML = '';
+
+    for (let i = 0; i < totalNeeded; i++) {
+      const thumbBox = document.createElement('div');
+      
+      if (capturedPhotos[i]) {
+        thumbBox.className = 'photo-thumb-box';
+        thumbBox.innerHTML = `<img src="${capturedPhotos[i]}" alt="Foto ${i+1}">`;
+      } else {
+        thumbBox.className = 'photo-thumb-box empty-slot';
+        thumbBox.innerText = `#${i + 1}`;
+      }
+      stripBox.appendChild(thumbBox);
+    }
+
+    const currentDisplayNum = Math.min(currentCapturedCount + 1, totalNeeded);
+    progressText.innerText = `Foto ${currentDisplayNum} dari ${totalNeeded}`;
+  }
+
+  function toggleMirror() {
+    isMirror = !isMirror;
+    applyZoomTransform();
+    document.getElementById('label-mirror').innerText = isMirror ? 'ON' : 'OFF';
+  }
+
+  function toggleTimerSetting() {
+    if (timerDuration === 3) timerDuration = 5;
+    else if (timerDuration === 5) timerDuration = 0;
+    else timerDuration = 3;
+
+    document.getElementById('label-timer').innerText = timerDuration === 0 ? 'OFF' : timerDuration + 's';
+  }
+
+  function toggleZoomSetting() {
+    if (zoomLevel === 1) zoomLevel = 1.5;
+    else if (zoomLevel === 1.5) zoomLevel = 2;
+    else if (zoomLevel === 2) zoomLevel = 0.5;
+    else zoomLevel = 1;
+
+    applyZoomTransform();
+    document.getElementById('label-zoom').innerText = `${zoomLevel}x`;
+  }
+
+  function applyZoomTransform() {
+    const video = document.getElementById('video');
+    if (!video) return;
+    let transformStr = `scale(${zoomLevel})`;
+    if (isMirror) transformStr += ` scaleX(-1)`;
+    video.style.transform = transformStr;
+  }
+
+  async function stopCameraAndGoBack() {
+    capturedPhotos = [];
+    isTakingPhoto = false;
+    await stopCurrentStream();
+    goToStep('step-template');
+  }
+
+  function takePhotoSnap() {
+    if (isTakingPhoto) return;
+    
+    const totalNeeded = parseInt(requiredPhotoCount, 10) || 3;
+    if (capturedPhotos.length >= totalNeeded) return;
+
+    isTakingPhoto = true;
+
+    const btnSnap = document.getElementById('btn-snap');
+    if (btnSnap) btnSnap.style.opacity = '0.5';
+
+    if (timerDuration === 0) {
+      executeSnapCapture();
+      return;
+    }
+
+    let count = timerDuration;
+    const overlay = document.getElementById('countdown-overlay');
+    overlay.innerText = count;
+    overlay.classList.remove('hidden');
+
+    const timer = setInterval(() => {
+      count--;
+      if (count > 0) {
+        overlay.innerText = count;
+      } else {
+        clearInterval(timer);
+        overlay.classList.add('hidden');
+        executeSnapCapture();
+      }
+    }, 1000);
+  }
+
+  function executeSnapCapture() {
+    const flash = document.getElementById('flash-overlay');
+    flash.classList.add('active');
+    setTimeout(() => flash.classList.remove('active'), 200);
+
+    const video = document.getElementById('video');
+    
+    const vWidth = video.videoWidth || 640;
+    const vHeight = video.videoHeight || 480;
+
+    const targetAspect = getFrameTargetAspect();
+
+    // 1. Hitung area crop berdasarkan aspect ratio bingkai
+    let cropW = vWidth;
+    let cropH = vWidth / targetAspect;
+
+    if (cropH > vHeight) {
+      cropH = vHeight;
+      cropW = vHeight * targetAspect;
+    }
+
+    // 2. Potong area gambar sesuai tingkat zoom (zoomLevel)
+    const currentZoom = zoomLevel || 1;
+    cropW = cropW / currentZoom;
+    cropH = cropH / currentZoom;
+
+    // 3. Tentukan koordinat tengah (center) pemotongan
+    const cropX = (vWidth - cropW) / 2;
+    const cropY = (vHeight - cropH) / 2;
+
     const tempCanvas = document.createElement('canvas');
-    const w = video.videoWidth || 640;
-    const h = video.videoHeight || 480;
-    tempCanvas.width = w;
-    tempCanvas.height = h;
+    tempCanvas.width = 600;
+    tempCanvas.height = Math.round(600 / targetAspect);
     const ctx = tempCanvas.getContext('2d');
 
-    const zoomVal = parseFloat(document.getElementById('zoom-slider').value);
-    const brightnessVal = parseFloat(document.getElementById('brightness-slider').value);
-
     ctx.save();
-
-    let totalBrightness = brightnessVal;
-    if (isFlashEnabled) {
-      totalBrightness *= 1.22;
-    }
-    ctx.filter = `brightness(${totalBrightness}) contrast(1.05)`;
-
-    if (video.classList.contains('mirror')) {
-      ctx.translate(w, 0);
+    if (isMirror) {
+      ctx.translate(tempCanvas.width, 0);
       ctx.scale(-1, 1);
     }
 
-    const cropW = w / zoomVal;
-    const cropH = h / zoomVal;
-    const cropX = (w - cropW) / 2;
-    const cropY = (h - cropH) / 2;
-
-    ctx.drawImage(video, cropX, cropY, cropW, cropH, 0, 0, w, h);
+    // 4. Gambar area terzoom ke canvas
+    ctx.drawImage(video, cropX, cropY, cropW, cropH, 0, 0, tempCanvas.width, tempCanvas.height);
     ctx.restore();
 
-    capturedPhotos.push(tempCanvas.toDataURL('image/png'));
-  }
+    capturedPhotos.push(tempCanvas.toDataURL('image/jpeg', 0.85));
 
-  function drawWavyRect(ctx, x, y, width, height, waveCountX, waveCountY, waveDepth) {
-    ctx.beginPath();
-    const stepX = width / waveCountX;
-    const stepY = height / waveCountY;
+    const totalNeeded = parseInt(requiredPhotoCount, 10) || 3;
 
-    ctx.moveTo(x, y);
-    for (let i = 0; i < waveCountX; i++) {
-      ctx.quadraticCurveTo(x + (i + 0.5) * stepX, y - waveDepth, x + (i + 1) * stepX, y);
-    }
-    for (let i = 0; i < waveCountY; i++) {
-      ctx.quadraticCurveTo(x + width + waveDepth, y + (i + 0.5) * stepY, x + width, y + (i + 1) * stepY);
-    }
-    for (let i = waveCountX; i > 0; i--) {
-      ctx.quadraticCurveTo(x + (i - 0.5) * stepX, y + height + waveDepth, x + (i - 1) * stepX, y + height);
-    }
-    for (let i = waveCountY; i > 0; i--) {
-      ctx.quadraticCurveTo(x - waveDepth, y + (i - 0.5) * stepY, x, y + (i - 1) * stepY);
-    }
-    ctx.closePath();
-  }
+    isTakingPhoto = false;
 
-  function applyGrayscaleToImage(ctx, x, y, width, height) {
-    const imgData = ctx.getImageData(x, y, width, height);
-    const data = imgData.data;
-    for (let i = 0; i < data.length; i += 4) {
-      const avg = 0.3 * data[i] + 0.59 * data[i + 1] + 0.11 * data[i + 2];
-      data[i]     = avg;
-      data[i + 1] = avg;
-      data[i + 2] = avg;
-    }
-    ctx.putImageData(imgData, x, y);
-  }
+    const btnSnap = document.getElementById('btn-snap');
+    if (btnSnap) btnSnap.style.opacity = '1';
 
-  function drawMaskedImage(ctx, img, x, y, size, designStyle, index = 0) {
-    ctx.save();
+    updatePhotosStripUI();
 
-    if (designStyle === 'wavy_red') {
-      ctx.fillStyle = "#A82B2B";
-      drawWavyRect(ctx, x - 12, y - 12, size + 24, size + 24, 8, 8, 12);
-      ctx.fill();
-
-      ctx.beginPath();
-      drawWavyRect(ctx, x, y, size, size, 8, 8, 10);
-      ctx.clip();
-    } else if (designStyle === 'engagement') {
-      const photoDisplaySize = 400;
-      const topPad = 22;
-      const sidePadLeft = (index % 2 === 0) ? 35 : 18;
-      const sidePadRight = (index % 2 === 0) ? 18 : 35;
-      const bottomPad = 26;
-
-      const customX = (600 - photoDisplaySize) / 2;
-      const frameX = customX - sidePadLeft;
-      const frameY = y - topPad;
-      const frameW = photoDisplaySize + sidePadLeft + sidePadRight;
-      const frameH = photoDisplaySize + topPad + bottomPad;
-
-      ctx.fillStyle = "#FFFFFF";
-      ctx.fillRect(frameX, frameY, frameW, frameH);
-
-      ctx.beginPath();
-      ctx.rect(customX, y, photoDisplaySize, photoDisplaySize);
-      ctx.clip();
-
-      x = customX;
-      size = photoDisplaySize;
-    } else if (designStyle === 'fotome_brand') {
-      ctx.shadowColor = "rgba(140, 43, 56, 0.25)";
-      ctx.shadowBlur = 24;
-      ctx.shadowOffsetX = 0;
-      ctx.shadowOffsetY = 10;
-
-      ctx.fillStyle = "#FFFFFF";
-      ctx.beginPath();
-      ctx.roundRect(x - 10, y - 10, size + 20, size + 20, 16);
-      ctx.fill();
-
-      ctx.shadowColor = "transparent";
-
-      ctx.beginPath();
-      ctx.roundRect(x, y, size, size, 12);
-      ctx.clip();
-    } else {
-      ctx.beginPath();
-      ctx.roundRect(x, y, size, size, 6);
-      ctx.clip();
-    }
-
-    const imgAspect = img.width / img.height;
-    let drawW, drawH, offsetX, offsetY;
-
-    if (imgAspect > 1) { 
-      drawH = size; drawW = size * imgAspect;
-      offsetX = x - (drawW - size) / 2; offsetY = y;
-    } else { 
-      drawW = size; drawH = size / imgAspect;
-      offsetX = x; offsetY = y - (drawH - size) / 2;
-    }
-
-    ctx.drawImage(img, offsetX, offsetY, drawW, drawH);
-
-    if (designStyle === 'receipt') {
-      applyGrayscaleToImage(ctx, x, y, size, size);
-    }
-
-    ctx.restore();
-
-    if (designStyle === 'floral') {
-      ctx.save();
-      ctx.strokeStyle = "rgba(0,0,0,0.18)";
-      ctx.lineWidth = 1.5;
-      ctx.beginPath();
-      ctx.roundRect(x, y, size, size, 6);
-      ctx.stroke();
-      ctx.restore();
-    } else if (designStyle === 'fotome_brand') {
-      ctx.save();
-      ctx.strokeStyle = "rgba(140, 43, 56, 0.35)";
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.roundRect(x - 10, y - 10, size + 20, size + 20, 16);
-      ctx.stroke();
-      ctx.restore();
+    if (capturedPhotos.length >= totalNeeded) {
+      stopCurrentStream();
+      setTimeout(() => {
+        goToStep('step-review-photos');
+      }, 200);
     }
   }
 
-  function drawCallaLilyOuterCorner(ctx, x, y, width, height, flipX = false, flipY = false) {
-    ctx.save();
-    ctx.translate(x, y);
-    if (flipX) ctx.scale(-1, 1);
-    if (flipY) ctx.scale(1, -1);
+  function renderReviewPhotosUI() {
+    const gridBox = document.getElementById('review-grid-box');
+    gridBox.innerHTML = '';
 
-    if (lilyAsset.complete && lilyAsset.naturalWidth !== 0) {
-      ctx.drawImage(lilyAsset, 0, 0, width, height);
-    } else {
-      ctx.strokeStyle = "#C5A059"; ctx.lineWidth = 3;
-      ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(200, 200); ctx.stroke();
+    const targetAspect = getFrameTargetAspect();
 
-      ctx.fillStyle = "#3F5E4D";
-      ctx.beginPath(); ctx.ellipse(80, 80, 100, 55, Math.PI / 4, 0, 2 * Math.PI); ctx.fill();
-
-      ctx.fillStyle = "#FFFFFF"; ctx.strokeStyle = "#D2C9BD"; ctx.lineWidth = 2.5;
-      ctx.beginPath(); ctx.ellipse(50, 50, 50, 75, Math.PI / 6, 0, 2 * Math.PI); ctx.fill(); ctx.stroke();
+    capturedPhotos.forEach((src, idx) => {
+      const card = document.createElement('div');
+      card.className = 'review-photo-card';
       
-      ctx.fillStyle = "#D4AF37";
-      ctx.beginPath(); ctx.ellipse(50, 50, 9, 32, 0, 0, 2 * Math.PI); ctx.fill();
-    }
-
-    ctx.restore();
-  }
-
-  function drawDummyBarcode(ctx, centerX, centerY, width, height) {
-    ctx.save();
-    ctx.fillStyle = "#111111";
-    const startX = centerX - width / 2;
-    let currX = startX;
-
-    while (currX < startX + width) {
-      const barW = Math.floor(Math.random() * 4) + 2;
-      const spaceW = Math.floor(Math.random() * 3) + 2;
-      ctx.fillRect(currX, centerY - height / 2, barW, height);
-      currX += barW + spaceW;
-    }
-    ctx.restore();
-  }
-
-  function drawChatHeaderBar(ctx, width, textColor) {
-    ctx.save();
-    ctx.fillStyle = "#8C2B38";
-    ctx.font = "italic 700 42px 'Playfair Display', serif";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText("Catch The Moment", width / 2, 58);
-    ctx.restore();
-  }
-
-  function drawChatMenuBox(ctx, x, y, width, height) {
-    ctx.save();
-    ctx.fillStyle = "rgba(255, 255, 255, 0.92)";
-    ctx.strokeStyle = "rgba(0, 0, 0, 0.06)";
-    ctx.lineWidth = 1;
-
-    ctx.beginPath();
-    ctx.roundRect(x, y, width, height, 16);
-    ctx.fill();
-    ctx.stroke();
-
-    ctx.fillStyle = "#111111";
-    ctx.font = "500 16px 'Plus Jakarta Sans', sans-serif";
-    ctx.textAlign = "left";
-
-    const items = [
-      { text: "Reply", icon: "↩" },
-      { text: "Save", icon: "↓" },
-      { text: "Forward", icon: "➢" }
-    ];
-
-    items.forEach((item, idx) => {
-      const itemY = y + 26 + idx * 36;
-      ctx.fillText(item.text, x + 20, itemY);
-      ctx.textAlign = "right";
-      ctx.fillText(item.icon, x + width - 20, itemY);
-      ctx.textAlign = "left";
-
-      ctx.strokeStyle = "rgba(0, 0, 0, 0.05)";
-      ctx.beginPath();
-      ctx.moveTo(x + 15, itemY + 12);
-      ctx.lineTo(x + width - 15, itemY + 12);
-      ctx.stroke();
+      card.style.aspectRatio = `${targetAspect}`;
+      card.innerHTML = `
+        <img src="${src}" alt="Foto ${idx + 1}">
+        <button class="review-delete-btn" onclick="deletePhotoInReview(${idx})">✕</button>
+      `;
+      gridBox.appendChild(card);
     });
-
-    ctx.fillStyle = "#D93838";
-    ctx.fillText("Unsend", x + 20, y + 134);
-    ctx.textAlign = "right";
-    ctx.fillText("⊘", x + width - 20, y + 134);
-
-    ctx.restore();
   }
 
-  function renderPhotostrip() {
-    const stripWidth = 600;
-    const photoBoxSize = 420;
-    
-    let headerHeight = 100;
-    let footerHeight = 220;
+  function deletePhotoInReview(index) {
+    capturedPhotos.splice(index, 1);
+    startCameraProcess();
+  }
 
-    if (selectedDesignStyle === 'receipt') { headerHeight = 260; footerHeight = 310; }
-    else if (selectedDesignStyle === 'wavy_red') { headerHeight = 150; footerHeight = 250; }
-    else if (selectedDesignStyle === 'fotome_brand') { headerHeight = 110; footerHeight = 260; }
-    else if (selectedDesignStyle === 'engagement') { headerHeight = 110; footerHeight = 300; }
+  function goToCameraToRetakeAll() {
+    capturedPhotos = [];
+    startCameraProcess();
+  }
 
-    const gapY = selectedDesignStyle === 'wavy_red' ? 60 : (selectedDesignStyle === 'engagement' ? 55 : 45);
-    const totalPhotoHeight = targetPhotoCount * (photoBoxSize + gapY);
-    const stripHeight = headerHeight + totalPhotoHeight + footerHeight;
+  function proceedToRenderStrip() {
+    renderPhotostripWithFigmaFrame();
+  }
 
-    canvas.width = stripWidth;
-    canvas.height = stripHeight;
+  /* RENDER DUA KANVAS: HIGH-RES UNTUK DOWNLOAD HP TAMU, MID-HIGH (900px ~300KB) UNTUK FIRESTORE/ADMIN */
+  function renderPhotostripWithFigmaFrame() {
+    const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
 
-    let cardInnerColor = "#F9F1F1";
-    let textColor = "#8C6262";
-    let badgeBgColor = "#FFFFFF";
+    const loadImageSafe = (src) => {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+        img.onload = () => resolve(img);
+        img.onerror = () => {
+          const fallbackImg = new Image();
+          fallbackImg.onload = () => resolve(fallbackImg);
+          fallbackImg.src = src;
+        };
+        img.src = src;
+      });
+    };
 
-    if (selectedBgColor === 'mocha') { cardInnerColor = "#B3927A"; textColor = "#FFFFFF"; badgeBgColor = "#FFFFFF"; }
-    else if (selectedBgColor === 'blue') { cardInnerColor = "#83A398"; textColor = "#FFFFFF"; badgeBgColor = "#FFFFFF"; }
-    else if (selectedBgColor === 'lavender') { cardInnerColor = "#A283A2"; textColor = "#FFFFFF"; badgeBgColor = "#FFFFFF"; }
-    else if (selectedBgColor === 'vanilla') { cardInnerColor = "#D6C7BC"; textColor = "#3D2B2B"; badgeBgColor = "#FFFFFF"; }
-    else if (selectedBgColor === 'dark') { cardInnerColor = "#2B1E1E"; textColor = "#D8B4B4"; badgeBgColor = "#FFFFFF"; }
-    else if (selectedBgColor === 'dusty') { cardInnerColor = "#8C6262"; textColor = "#FFFFFF"; badgeBgColor = "#FFFFFF"; }
+    const loadFramePromise = loadImageSafe(selectedFramePath);
+    const loadPhotosPromises = Promise.all(capturedPhotos.map(src => loadImageSafe(src)));
 
-    if (selectedDesignStyle === 'wavy_red') { cardInnerColor = "#FAF6EE"; textColor = "#A82B2B"; }
-    else if (selectedDesignStyle === 'receipt') { cardInnerColor = "#F5F4F0"; textColor = "#111111"; }
-    else if (selectedDesignStyle === 'fotome_brand') { cardInnerColor = "#FAFAFA"; textColor = "#111111"; }
+    Promise.all([loadFramePromise, loadPhotosPromises]).then(([frameImg, userImages]) => {
+      const origW = frameImg.naturalWidth || frameImg.width || 600;
+      const origH = frameImg.naturalHeight || frameImg.height || 1800;
 
-    ctx.fillStyle = cardInnerColor;
-    ctx.fillRect(0, 0, stripWidth, stripHeight);
+      // 1. RENDER FULL HIGH-RES (Untuk Download Langsung di Perangkat Tamu)
+      canvas.width = origW;
+      canvas.height = origH;
 
-    if (selectedDesignStyle === 'floral') {
-      drawCallaLilyOuterCorner(ctx, 0, 0, 420, 320, false, false);
-      drawCallaLilyOuterCorner(ctx, stripWidth, stripHeight, 440, 340, true, true);
-    } else if (selectedDesignStyle === 'receipt') {
-      ctx.fillStyle = textColor;
-      ctx.textAlign = "center";
-      ctx.font = "bold 38px 'Courier Prime', monospace";
-      ctx.fillText("RIYAN & AMELIA", stripWidth / 2, 70);
+      ctx.clearRect(0, 0, origW, origH);
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = 'high';
 
-      ctx.font = "bold 18px 'Courier Prime', monospace";
-      ctx.fillText("TRACK ORDER / WEDDING VIBES", stripWidth / 2, 105);
-      ctx.font = "16px 'Courier Prime', monospace";
-      ctx.fillText("DEC 06, 2026 • 10:00 AM", stripWidth / 2, 130);
+      ctx.drawImage(frameImg, 0, 0, origW, origH);
 
-      ctx.strokeStyle = "#111111";
-      ctx.lineWidth = 2;
-      ctx.setLineDash([8, 6]);
-      ctx.beginPath();
-      ctx.moveTo(50, 150); ctx.lineTo(stripWidth - 50, 150);
-      ctx.stroke();
+      const totalPhotos = userImages.length;
+      const targetAspect = getFrameTargetAspect();
 
-      ctx.textAlign = "left";
-      ctx.font = "16px 'Courier Prime', monospace";
-      ctx.fillText("LADY LOVE - THE SACRED SOUL", 60, 180);
-      ctx.fillText("FOREVER & ALWAYS - WAVE TO EARTH", 60, 205);
-      ctx.fillText("TOTAL HAPPINESS", 60, 230);
+      const slotW = Math.round(origW * 0.76); 
+      const slotH = Math.round(slotW / targetAspect);
+      const startX = Math.round((origW - slotW) / 2);
 
-      ctx.textAlign = "right";
-      ctx.font = "16px 'Courier Prime', monospace";
-      ctx.fillText("03:31", stripWidth - 60, 180);
-      ctx.fillText("04:00", stripWidth - 60, 205);
+      const gapY = Math.round(origH * 0.022); 
+      const totalBlockHeight = (totalPhotos * slotH) + ((totalPhotos - 1) * gapY);
+      const startY = Math.round((origH - totalBlockHeight) / 2);
 
-      ctx.font = "bold 32px 'Courier Prime', monospace";
-      ctx.textBaseline = "middle";
-      ctx.fillText("∞", stripWidth - 60, 228);
-      ctx.textBaseline = "alphabetic";
+      userImages.forEach((photo, i) => {
+        const currentY = startY + (i * (slotH + gapY));
 
-      ctx.beginPath();
-      ctx.moveTo(50, 245); ctx.lineTo(stripWidth - 50, 245);
-      ctx.stroke();
-      ctx.setLineDash([]);
-    } else if (selectedDesignStyle === 'wavy_red') {
-      ctx.fillStyle = "#A82B2B";
-      ctx.textAlign = "center";
-      ctx.font = "46px 'Great Vibes', cursive";
-      ctx.fillText("The Wedding of", stripWidth / 2, 70);
+        ctx.save();
+        ctx.shadowColor = "rgba(0, 0, 0, 0.15)";
+        ctx.shadowBlur = 10;
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 4;
 
-      ctx.font = "18px 'Cormorant Garamond', serif";
-      ctx.fillText("— ♡ —", stripWidth / 2, 105);
-    } else if (selectedDesignStyle === 'fotome_brand') {
-      drawChatHeaderBar(ctx, stripWidth, textColor);
-    } else if (selectedDesignStyle === 'engagement') {
-      ctx.fillStyle = textColor;
-      ctx.textAlign = "center";
-      ctx.font = "bold 32px 'Plus Jakarta Sans', sans-serif";
-      ctx.letterSpacing = "18px";
-      ctx.fillText("F O T O M E", stripWidth / 2, 60);
+        ctx.drawImage(photo, 0, 0, photo.width, photo.height, startX, currentY, slotW, slotH);
+        ctx.restore();
+      });
+
+      // Data URL Full High-Res untuk unduh instan
+      generatedHighResUrl = canvas.toDataURL('image/jpeg', 0.95);
+
+      // 2. RENDER MID-HIGH (Lebar 900px, Kualitas 0.78 ~300KB untuk Firestore, Admin, & Galeri)
+      const TARGET_W = 900;
+      const scaleRatio = origW > TARGET_W ? (TARGET_W / origW) : 1;
+      const midW = Math.round(origW * scaleRatio);
+      const midH = Math.round(origH * scaleRatio);
+
+      const tempCanvas = document.createElement('canvas');
+      tempCanvas.width = midW;
+      tempCanvas.height = midH;
+      const tempCtx = tempCanvas.getContext('2d');
+      tempCtx.imageSmoothingEnabled = true;
+      tempCtx.imageSmoothingQuality = 'high';
+      tempCtx.drawImage(canvas, 0, 0, midW, midH);
+
+      // Data URL Mid-High untuk disimpan di database
+      generatedLowResUrl = tempCanvas.toDataURL('image/jpeg', 0.78);
+
+      document.querySelectorAll('.result-img-target').forEach(img => {
+        img.src = generatedHighResUrl;
+      });
+
+      goToStep('step-result');
+    }).catch(err => {
+      console.error("Render error:", err);
+      goToStep('step-result');
+    });
+  }
+
+  function downloadImageToPhone(senderName) {
+    const nameGuest = senderName ? senderName.replace(/[^\w\s-]/gi, '').trim() : "Tamu";
+    const nameClient = eventTitle ? eventTitle.replace(/[^\w\s-]/gi, '').trim() : "FOTOME";
+    const fileName = `${nameGuest} - ${nameClient}.jpg`;
+
+    const a = document.createElement('a');
+    a.href = generatedHighResUrl; // Mengunduh file High-Res
+    a.download = fileName;
+    a.click();
+  }
+
+  function saveAndShareToFeed() {
+    const senderName = document.getElementById('input-sender-name').value.trim() || currentGuestName || "Tamu Undangan";
+    const senderMessage = document.getElementById('input-sender-message').value.trim() || "Selamat untuk kebahagiaan kalian!";
+
+    // Langsung unduh file High-Res ke perangkat tamu
+    downloadImageToPhone(senderName);
+
+    const tempPostId = 'local_' + Date.now();
+    const newPostData = {
+      id: tempPostId,
+      eventId: EVENT_DOC_ID,
+      name: senderName,
+      message: senderMessage,
+      photoData: generatedLowResUrl, // Simpan versi Mid-High di memori lokal
+      createdAt: new Date()
+    };
+
+    globalPostsMap[tempPostId] = newPostData;
+    
+    const gridBox = document.getElementById('ig-grid-box');
+    if (gridBox) {
+      if (gridBox.innerText.includes('Belum ada foto')) {
+        gridBox.innerHTML = '';
+      }
+      gridBox.insertAdjacentHTML('afterbegin', renderPostCardHTML(newPostData));
     }
 
-    const startY = headerHeight;
+    totalPostsInDb++;
+    loadedPostsCount++;
+    const countSpan = document.getElementById('total-posts-count');
+    if (countSpan) countSpan.innerText = `${totalPostsInDb} Kiriman`;
 
-    let loadedCount = 0;
-    capturedPhotos.forEach((photoSrc, index) => {
-      const img = new Image();
-      img.onload = () => {
-        const photoY = startY + index * (photoBoxSize + gapY);
+    if (typeof db !== 'undefined') {
+      db.collection('posts').add({
+        eventId: EVENT_DOC_ID,
+        name: senderName,
+        message: senderMessage,
+        photoData: generatedLowResUrl, // Kirim versi Mid-High (~300KB) ke Firestore
+        createdAt: firebase.firestore.Timestamp.now()
+      }).then(() => {
+        showAlert("Foto berhasil diunduh dan diposting ke Galeri!", "BERHASIL DITAMBAHKAN", () => {
+          document.getElementById('input-sender-message').value = '';
+          resetGuestInfo();
+          goToStep('step-gallery-page');
+        });
+      }).catch(err => {
+        console.error("Gagal simpan ke database:", err);
+        showAlert("Foto berhasil diunduh ke HP!", "TERSIMPAN PRIVAT", () => {
+          resetGuestInfo();
+          goToStep('step-gallery-page');
+        });
+      });
+    } else {
+      resetGuestInfo();
+      goToStep('step-gallery-page');
+    }
+  }
 
-        drawMaskedImage(ctx, img, (stripWidth - photoBoxSize) / 2, photoY, photoBoxSize, selectedDesignStyle, index);
+  function savePrivateOnly() {
+    const senderName = document.getElementById('input-sender-name').value.trim() || currentGuestName || "Tamu";
+    downloadImageToPhone(senderName);
+    showAlert("Foto berhasil disimpan secara privat ke HP kamu!", "TERSIMPAN PRIVAT", () => {
+      resetGuestInfo();
+      goToStep('step-welcome');
+    });
+  }
 
-        loadedCount++;
-        if (loadedCount === targetPhotoCount) {
-          const footerY = startY + targetPhotoCount * (photoBoxSize + gapY) + 20;
+  function formatTimestamp(timestamp) {
+    if (!timestamp) return 'Baru saja';
+    let dateObj;
+    if (timestamp.toDate) {
+      dateObj = timestamp.toDate();
+    } else if (timestamp.seconds) {
+      dateObj = new Date(timestamp.seconds * 1000);
+    } else if (timestamp instanceof Date) {
+      dateObj = timestamp;
+    } else {
+      dateObj = new Date();
+    }
+    
+    const day = String(dateObj.getDate()).padStart(2, '0');
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agt', 'Sep', 'Okt', 'Nov', 'Des'];
+    const month = months[dateObj.getMonth()];
+    const year = dateObj.getFullYear();
+    const hours = String(dateObj.getHours()).padStart(2, '0');
+    const minutes = String(dateObj.getMinutes()).padStart(2, '0');
 
-          if (selectedDesignStyle === 'floral') {
-            ctx.fillStyle = textColor;
-            ctx.font = "bold 42px 'Cormorant Garamond', serif";
-            ctx.textAlign = "left";
-            ctx.fillText("RIYAN & AMELIA", 60, footerY + 30);
+    return `${day} ${month} ${year} • ${hours}:${minutes}`;
+  }
 
-            ctx.font = "600 20px 'Plus Jakarta Sans', sans-serif";
-            ctx.fillText("06 Desember 2026", 60, footerY + 65);
+  function updateLoadMoreButtonState() {
+    const loadMoreBtn = document.getElementById('btn-load-more');
+    if (!loadMoreBtn) return;
 
-            ctx.font = "500 12px 'Plus Jakarta Sans', sans-serif";
-            ctx.fillText("FOTOME by Riyan Ardiansyah", 60, footerY + 105);
+    if (loadedPostsCount >= totalPostsInDb) {
+      loadMoreBtn.innerText = `SEMUA TERMUAT (${totalPostsInDb}/${totalPostsInDb})`;
+      loadMoreBtn.disabled = true;
+      loadMoreBtn.style.opacity = '0.6';
+      loadMoreBtn.classList.remove('hidden');
+    } else {
+      loadMoreBtn.innerHTML = `MUAT LEBIH BANYAK (${loadedPostsCount}/${totalPostsInDb})`;
+      loadMoreBtn.disabled = false;
+      loadMoreBtn.style.opacity = '1';
+      loadMoreBtn.classList.remove('hidden');
+    }
+  }
 
-          } else if (selectedDesignStyle === 'receipt') {
-            ctx.fillStyle = "#111111";
-            ctx.textAlign = "center";
-            ctx.font = "italic 16px 'Courier Prime', monospace";
-            ctx.fillText("Crafted for the moment made for what matters most.", stripWidth / 2, footerY + 40);
-            ctx.fillText("Every detail designed to capture timeless love.", stripWidth / 2, 65 + footerY);
+  /* REFRESH KHUSUS GALERI (TANPA REFRESH HALAMAN WEB) */
+  function manualRefreshFeed() {
+    const iconElm = document.getElementById('refresh-icon-elm');
+    if (iconElm) iconElm.classList.add('spin-icon');
 
-            ctx.font = "bold 16px 'Courier Prime', monospace";
-            ctx.fillText("ALL RIGHTS RESERVED • 2026", stripWidth / 2, footerY + 110);
+    lastVisibleDoc = null;
+    isInitialLoad = true;
 
-            drawDummyBarcode(ctx, stripWidth / 2, footerY + 160, 280, 50);
+    loadRealtimeFeedIG();
 
-            ctx.font = "14px 'Courier Prime', monospace";
-            ctx.fillText("THE ART OF THE MOMENT", stripWidth / 2, footerY + 225);
+    setTimeout(() => {
+      if (iconElm) iconElm.classList.remove('spin-icon');
+    }, 700);
+  }
 
-            ctx.save();
-            ctx.fillStyle = "rgba(0, 0, 0, 0.45)";
-            ctx.font = "500 12px 'Plus Jakarta Sans', sans-serif";
-            ctx.textAlign = "center";
-            ctx.fillText("FOTOME by Riyan Ardiansyah", stripWidth / 2, footerY + 255);
-            ctx.restore();
+  /* REALTIME SYNC UNTUK SEMUA DEVICE TAMU */
+  function loadRealtimeFeedIG() {
+    if (feedUnsubscribe) feedUnsubscribe();
 
-          } else if (selectedDesignStyle === 'wavy_red') {
-            ctx.fillStyle = "#A82B2B";
-            ctx.font = "700 58px 'Great Vibes', cursive";
-            ctx.textAlign = "center";
-            ctx.fillText("Riyan & Amelia", stripWidth / 2, footerY + 50);
+    const gridBox = document.getElementById('ig-grid-box');
 
-            ctx.font = "600 22px 'Cormorant Garamond', serif";
-            ctx.fillText("— 06 Desember 2026 —", stripWidth / 2, footerY + 95);
+    // 1. Ambil total kiriman
+    db.collection('posts')
+      .where('eventId', '==', EVENT_DOC_ID)
+      .get()
+      .then(snap => {
+        totalPostsInDb = snap.size;
+        const countSpan = document.getElementById('total-posts-count');
+        if (countSpan) countSpan.innerText = `${totalPostsInDb} Kiriman`;
+        updateLoadMoreButtonState();
+      })
+      .catch(err => console.warn(err));
 
-            ctx.save();
-            ctx.fillStyle = "rgba(168, 43, 43, 0.55)";
-            ctx.font = "500 12px 'Plus Jakarta Sans', sans-serif";
-            ctx.textAlign = "center";
-            ctx.fillText("FOTOME by Riyan Ardiansyah", stripWidth / 2, footerY + 150);
-            ctx.restore();
-
-          } else if (selectedDesignStyle === 'fotome_brand') {
-            ctx.fillStyle = "#8C2B38";
-            ctx.textAlign = "left";
-            
-            ctx.font = "italic 700 56px 'Playfair Display', serif";
-            ctx.fillText("FOTOME", 60, footerY + 65);
-
-            ctx.font = "600 22px 'Plus Jakarta Sans', sans-serif";
-            ctx.fillStyle = "#333333";
-            ctx.fillText("by Riyan Ardiansyah", 60, footerY + 105);
-
-            drawChatMenuBox(ctx, 310, footerY + 15, 230, 160);
-
-          } else if (selectedDesignStyle === 'engagement') {
-            ctx.save();
-            ctx.fillStyle = textColor;
-            ctx.textAlign = "center";
-            
-            ctx.letterSpacing = "0px";
-            ctx.font = "italic 700 60px 'Bodoni Moda', serif";
-            ctx.fillText("Vira & Wahyu", stripWidth / 2, footerY + 60);
-
-            ctx.font = "600 22px 'Plus Jakarta Sans', sans-serif";
-            ctx.letterSpacing = "3px";
-            ctx.fillText("THE ENGAGEMENT DAY", stripWidth / 2, footerY + 105);
-
-            ctx.font = "500 18px 'Plus Jakarta Sans', sans-serif";
-            ctx.letterSpacing = "2px";
-            ctx.fillText("04 OKTOBER 2026", stripWidth / 2, footerY + 138);
-
-            ctx.font = "500 10.5px 'Plus Jakarta Sans', sans-serif";
-            ctx.letterSpacing = "1.5px";
-            ctx.globalAlpha = 0.75;
-            ctx.fillText("FOTOME by Riyan Ardiansyah", stripWidth / 2, footerY + 182);
-
-            ctx.restore();
+    // 2. Realtime listener aktif
+    feedUnsubscribe = db.collection('posts')
+      .where('eventId', '==', EVENT_DOC_ID)
+      .orderBy('createdAt', 'desc')
+      .limit(PAGE_SIZE)
+      .onSnapshot(snapshot => {
+        if (!snapshot || snapshot.empty) {
+          if (gridBox && gridBox.children.length === 0) {
+            gridBox.innerHTML = '<p style="font-size: 0.8rem; color: rgba(255,255,255,0.6); grid-column: span 3; text-align: center;">Belum ada foto di galeri. Tampil pertama di sini!</p>';
           }
+          return;
+        }
 
-          const dataUrl = canvas.toDataURL('image/png');
-          const resultImg = document.getElementById('result-img');
-          
-          resultImg.classList.remove('eject-active');
-          resultImg.src = dataUrl;
-          document.getElementById('download-link').href = dataUrl;
+        if (isInitialLoad) {
+          isInitialLoad = false;
+          lastVisibleDoc = snapshot.docs[snapshot.docs.length - 1];
+          loadedPostsCount = snapshot.docs.length;
 
-          requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-              resultImg.classList.add('eject-active');
-            });
+          let html = '';
+          snapshot.docs.forEach(doc => {
+            const data = { id: doc.id, ...doc.data() };
+            globalPostsMap[doc.id] = data;
+            html += renderPostCardHTML(data);
+          });
+          gridBox.innerHTML = html;
+          updateLoadMoreButtonState();
+        } else {
+          // Deteksi kiriman baru dari HP orang lain secara otomatis
+          snapshot.docChanges().forEach(change => {
+            if (change.type === 'added') {
+              const data = { id: change.doc.id, ...change.doc.data() };
+              
+              if (!globalPostsMap[data.id]) {
+                globalPostsMap[data.id] = data;
+                
+                if (gridBox.innerText.includes('Belum ada foto')) {
+                  gridBox.innerHTML = '';
+                }
+                
+                gridBox.insertAdjacentHTML('afterbegin', renderPostCardHTML(data));
+                
+                totalPostsInDb++;
+                loadedPostsCount++;
+                const countSpan = document.getElementById('total-posts-count');
+                if (countSpan) countSpan.innerText = `${totalPostsInDb} Kiriman`;
+                updateLoadMoreButtonState();
+              }
+            }
           });
         }
-      };
-      img.src = photoSrc;
-    });
+      }, error => {
+        console.warn("Realtime listener error:", error);
+        fallbackClientSideLoad();
+      });
+  }
+
+  /* AMBIL BATCH BERIKUTNYA DENGAN SPINNER RING EMAS */
+  function loadMorePosts() {
+    const loadMoreBtn = document.getElementById('btn-load-more');
+    if (loadMoreBtn) {
+      loadMoreBtn.disabled = true;
+      loadMoreBtn.innerHTML = '<span class="custom-spinner"></span> MEMUAT FOTO...';
+    }
+
+    if (!lastVisibleDoc) {
+      fallbackClientSideLoad();
+      return;
+    }
+
+    db.collection('posts')
+      .where('eventId', '==', EVENT_DOC_ID)
+      .orderBy('createdAt', 'desc')
+      .startAfter(lastVisibleDoc)
+      .limit(PAGE_SIZE)
+      .get()
+      .then(snapshot => {
+        if (snapshot.empty) {
+          updateLoadMoreButtonState();
+          return;
+        }
+
+        lastVisibleDoc = snapshot.docs[snapshot.docs.length - 1];
+        loadedPostsCount += snapshot.docs.length;
+        const gridBox = document.getElementById('ig-grid-box');
+
+        snapshot.docs.forEach(doc => {
+          const data = { id: doc.id, ...doc.data() };
+          if (!globalPostsMap[data.id]) {
+            globalPostsMap[data.id] = data;
+            if (gridBox) {
+              gridBox.insertAdjacentHTML('beforeend', renderPostCardHTML(data));
+            }
+          }
+        });
+
+        updateLoadMoreButtonState();
+      })
+      .catch(err => {
+        console.warn("Cursor Error, fallback...", err);
+        fallbackClientSideLoad();
+      });
+  }
+
+  function fallbackClientSideLoad() {
+    db.collection('posts')
+      .where('eventId', '==', EVENT_DOC_ID)
+      .get()
+      .then(snapshot => {
+        const gridBox = document.getElementById('ig-grid-box');
+        if (snapshot.empty) return;
+
+        let posts = [];
+        snapshot.docs.forEach(doc => {
+          const data = { id: doc.id, ...doc.data() };
+          posts.push(data);
+          globalPostsMap[doc.id] = data;
+        });
+
+        posts.sort((a, b) => {
+          const timeA = a.createdAt ? (a.createdAt.toMillis ? a.createdAt.toMillis() : (a.createdAt.seconds ? a.createdAt.seconds * 1000 : 0)) : 0;
+          const timeB = b.createdAt ? (b.createdAt.toMillis ? b.createdAt.toMillis() : (b.createdAt.seconds ? b.createdAt.seconds * 1000 : 0)) : 0;
+          return timeB - timeA;
+        });
+
+        totalPostsInDb = posts.length;
+        loadedPostsCount = Math.min(loadedPostsCount + PAGE_SIZE, totalPostsInDb);
+
+        let html = '';
+        const displayBatch = posts.slice(0, loadedPostsCount);
+        displayBatch.forEach(data => {
+          html += renderPostCardHTML(data);
+        });
+
+        if (gridBox) gridBox.innerHTML = html;
+        updateLoadMoreButtonState();
+      });
+  }
+
+  function renderPostCardHTML(data) {
+    const timeFormatted = formatTimestamp(data.createdAt);
+    return `
+      <div class="ig-grid-item" onclick="openModal('${data.id}')">
+        <div class="ig-item-header">
+          <div class="ig-item-name">${data.name || 'Tamu'}</div>
+          <div class="ig-item-date">${timeFormatted}</div>
+        </div>
+        <div class="ig-item-img-box">
+          <img src="${data.photoData}" alt="Foto Strip" loading="lazy">
+        </div>
+        <div class="ig-item-msg">"${data.message || ''}"</div>
+      </div>
+    `;
+  }
+
+  function openModal(postId) {
+    const data = globalPostsMap[postId];
+    if (!data) return;
+
+    const timeFormatted = formatTimestamp(data.createdAt);
+
+    document.getElementById('modal-name').innerText = data.name || 'Tamu Undangan';
+    document.getElementById('modal-date').innerText = timeFormatted;
+    document.getElementById('modal-msg').innerText = `"${data.message || ''}"`;
+    document.getElementById('modal-img').src = data.photoData;
+
+    document.getElementById('photo-modal').classList.remove('hidden');
+  }
+
+  function closeModal() {
+    document.getElementById('photo-modal').classList.add('hidden');
   }
 </script>
 
