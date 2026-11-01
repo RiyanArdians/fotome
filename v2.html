@@ -1657,60 +1657,68 @@ f      width: 100vw;
   }
 
   function executeSnapCapture() {
-    const flash = document.getElementById('flash-overlay');
-    flash.classList.add('active');
-    setTimeout(() => flash.classList.remove('active'), 200);
+  const flash = document.getElementById('flash-overlay');
+  flash.classList.add('active');
+  setTimeout(() => flash.classList.remove('active'), 200);
 
-    const video = document.getElementById('video');
-    
-    const vWidth = video.videoWidth || 640;
-    const vHeight = video.videoHeight || 480;
+  const video = document.getElementById('video');
+  
+  const vWidth = video.videoWidth || 640;
+  const vHeight = video.videoHeight || 480;
 
-    const targetAspect = getFrameTargetAspect();
+  const targetAspect = getFrameTargetAspect();
 
-    let cropW = vWidth;
-    let cropH = vWidth / targetAspect;
+  // 1. Hitung area crop berdasarkan aspect ratio bingkai
+  let cropW = vWidth;
+  let cropH = vWidth / targetAspect;
 
-    if (cropH > vHeight) {
-      cropH = vHeight;
-      cropW = vHeight * targetAspect;
-    }
-
-    const cropX = (vWidth - cropW) / 2;
-    const cropY = (vHeight - cropH) / 2;
-
-    const tempCanvas = document.createElement('canvas');
-    tempCanvas.width = 600;
-    tempCanvas.height = Math.round(600 / targetAspect);
-    const ctx = tempCanvas.getContext('2d');
-
-    ctx.save();
-    if (isMirror) {
-      ctx.translate(tempCanvas.width, 0);
-      ctx.scale(-1, 1);
-    }
-
-    ctx.drawImage(video, cropX, cropY, cropW, cropH, 0, 0, tempCanvas.width, tempCanvas.height);
-    ctx.restore();
-
-    capturedPhotos.push(tempCanvas.toDataURL('image/jpeg', 0.85));
-
-    const totalNeeded = parseInt(requiredPhotoCount, 10) || 3;
-
-    isTakingPhoto = false;
-
-    const btnSnap = document.getElementById('btn-snap');
-    if (btnSnap) btnSnap.style.opacity = '1';
-
-    updatePhotosStripUI();
-
-    if (capturedPhotos.length >= totalNeeded) {
-      stopCurrentStream();
-      setTimeout(() => {
-        goToStep('step-review-photos');
-      }, 200);
-    }
+  if (cropH > vHeight) {
+    cropH = vHeight;
+    cropW = vHeight * targetAspect;
   }
+
+  // 2. PERBAIKAN: Potong area gambar sesuai tingkat zoom (zoomLevel)
+  const currentZoom = zoomLevel || 1;
+  cropW = cropW / currentZoom;
+  cropH = cropH / currentZoom;
+
+  // 3. Tentukan koordinat tengah (center) pemotongan
+  const cropX = (vWidth - cropW) / 2;
+  const cropY = (vHeight - cropH) / 2;
+
+  const tempCanvas = document.createElement('canvas');
+  tempCanvas.width = 600;
+  tempCanvas.height = Math.round(600 / targetAspect);
+  const ctx = tempCanvas.getContext('2d');
+
+  ctx.save();
+  if (isMirror) {
+    ctx.translate(tempCanvas.width, 0);
+    ctx.scale(-1, 1);
+  }
+
+  // 4. Gambar area terserot/terzoom ke canvas
+  ctx.drawImage(video, cropX, cropY, cropW, cropH, 0, 0, tempCanvas.width, tempCanvas.height);
+  ctx.restore();
+
+  capturedPhotos.push(tempCanvas.toDataURL('image/jpeg', 0.85));
+
+  const totalNeeded = parseInt(requiredPhotoCount, 10) || 3;
+
+  isTakingPhoto = false;
+
+  const btnSnap = document.getElementById('btn-snap');
+  if (btnSnap) btnSnap.style.opacity = '1';
+
+  updatePhotosStripUI();
+
+  if (capturedPhotos.length >= totalNeeded) {
+    stopCurrentStream();
+    setTimeout(() => {
+      goToStep('step-review-photos');
+    }, 200);
+  }
+}
 
   function renderReviewPhotosUI() {
     const gridBox = document.getElementById('review-grid-box');
