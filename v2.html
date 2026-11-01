@@ -28,7 +28,7 @@
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
     html, body {
-f      width: 100vw;
+      width: 100vw;
       height: 100%;
       overflow-x: hidden;
       font-family: 'Plus Jakarta Sans', sans-serif;
@@ -563,26 +563,26 @@ f      width: 100vw;
     .flash-overlay.active { opacity: 1; }
 
     .review-grid-box {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  max-width: 720px;
-  margin: auto;
-  padding: 10px;
-}
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      max-width: 720px;
+      margin: auto;
+      padding: 10px;
+    }
 
-.review-photo-card {
-  position: relative; 
-  width: clamp(200px, 35vw, 320px);
-  border-radius: 16px; 
-  overflow: hidden; 
-  border: 2px solid var(--gold-accent); 
-  box-shadow: 0 10px 22px rgba(0,0,0,0.3); 
-  background: #000;
-}
+    .review-photo-card {
+      position: relative; 
+      width: clamp(200px, 35vw, 320px);
+      border-radius: 16px; 
+      overflow: hidden; 
+      border: 2px solid var(--gold-accent); 
+      box-shadow: 0 10px 22px rgba(0,0,0,0.3); 
+      background: #000;
+    }
 
     .review-photo-card img { 
       width: 100%; 
@@ -1666,70 +1666,71 @@ f      width: 100vw;
   }
 
   function executeSnapCapture() {
-  const flash = document.getElementById('flash-overlay');
-  flash.classList.add('active');
-  setTimeout(() => flash.classList.remove('active'), 200);
+    const flash = document.getElementById('flash-overlay');
+    flash.classList.add('active');
+    setTimeout(() => flash.classList.remove('active'), 200);
 
-  const video = document.getElementById('video');
-  
-  const vWidth = video.videoWidth || 640;
-  const vHeight = video.videoHeight || 480;
+    const video = document.getElementById('video');
+    
+    const vWidth = video.videoWidth || 640;
+    const vHeight = video.videoHeight || 480;
 
-  const targetAspect = getFrameTargetAspect();
+    const targetAspect = getFrameTargetAspect();
 
-  // 1. Hitung area crop berdasarkan aspect ratio bingkai
-  let cropW = vWidth;
-  let cropH = vWidth / targetAspect;
+    // 1. Hitung area crop berdasarkan aspect ratio bingkai
+    let cropW = vWidth;
+    let cropH = vWidth / targetAspect;
 
-  if (cropH > vHeight) {
-    cropH = vHeight;
-    cropW = vHeight * targetAspect;
+    if (cropH > vHeight) {
+      cropH = vHeight;
+      cropW = vHeight * targetAspect;
+    }
+
+    // 2. Potong area gambar sesuai tingkat zoom (zoomLevel)
+    const currentZoom = zoomLevel || 1;
+    cropW = cropW / currentZoom;
+    cropH = cropH / currentZoom;
+
+    // 3. Tentukan koordinat tengah (center) pemotongan
+    const cropX = (vWidth - cropW) / 2;
+    const cropY = (vHeight - cropH) / 2;
+
+    const tempCanvas = document.createElement('canvas');
+    tempCanvas.width = 600;
+    tempCanvas.height = Math.round(600 / targetAspect);
+    const ctx = tempCanvas.getContext('2d');
+
+    ctx.save();
+    if (isMirror) {
+      ctx.translate(tempCanvas.width, 0);
+      ctx.scale(-1, 1);
+    }
+
+    // 4. Gambar area terpotong/terzoom ke canvas
+    ctx.drawImage(video, cropX, cropY, cropW, cropH, 0, 0, tempCanvas.width, tempCanvas.height);
+    ctx.restore();
+
+    capturedPhotos.push(tempCanvas.toDataURL('image/jpeg', 0.85));
+
+    const totalNeeded = parseInt(requiredPhotoCount, 10) || 3;
+
+    isTakingPhoto = false;
+
+    const btnSnap = document.getElementById('btn-snap');
+    if (btnSnap) btnSnap.style.opacity = '1';
+
+    updatePhotosStripUI();
+
+    if (capturedPhotos.length >= totalNeeded) {
+      stopCurrentStream();
+      setTimeout(() => {
+        goToStep('step-review-photos');
+      }, 200);
+    }
   }
 
-  // 2. PERBAIKAN: Potong area gambar sesuai tingkat zoom (zoomLevel)
-  const currentZoom = zoomLevel || 1;
-  cropW = cropW / currentZoom;
-  cropH = cropH / currentZoom;
-
-  // 3. Tentukan koordinat tengah (center) pemotongan
-  const cropX = (vWidth - cropW) / 2;
-  const cropY = (vHeight - cropH) / 2;
-
-  const tempCanvas = document.createElement('canvas');
-  tempCanvas.width = 600;
-  tempCanvas.height = Math.round(600 / targetAspect);
-  const ctx = tempCanvas.getContext('2d');
-
-  ctx.save();
-  if (isMirror) {
-    ctx.translate(tempCanvas.width, 0);
-    ctx.scale(-1, 1);
-  }
-
-  // 4. Gambar area terserot/terzoom ke canvas
-  ctx.drawImage(video, cropX, cropY, cropW, cropH, 0, 0, tempCanvas.width, tempCanvas.height);
-  ctx.restore();
-
-  capturedPhotos.push(tempCanvas.toDataURL('image/jpeg', 0.85));
-
-  const totalNeeded = parseInt(requiredPhotoCount, 10) || 3;
-
-  isTakingPhoto = false;
-
-  const btnSnap = document.getElementById('btn-snap');
-  if (btnSnap) btnSnap.style.opacity = '1';
-
-  updatePhotosStripUI();
-
-  if (capturedPhotos.length >= totalNeeded) {
-    stopCurrentStream();
-    setTimeout(() => {
-      goToStep('step-review-photos');
-    }, 200);
-  }
-}
-
-    function renderReviewPhotosUI() {
+  /* PREVIEW REVIEW: UKURAN OTOMATIS SESUAI LAYAR & JUMLAH FOTO */
+  function renderReviewPhotosUI() {
     const gridBox = document.getElementById('review-grid-box');
     gridBox.innerHTML = '';
 
@@ -1743,6 +1744,7 @@ f      width: 100vw;
     gridBox.style.gap = gap + 'px';
 
     // Hitung ukuran otomatis sesuai tinggi layar & jumlah foto
+    // Kecilkan angka 330 kalau mau lebih besar, naikkan kalau mau lebih kecil
     const availH = Math.max(window.innerHeight - 330, 240);
     const availW = Math.min(window.innerWidth - 48, 360);
     let cardW = ((availH - gap * (total - 1)) / total) * targetAspect;
@@ -1761,7 +1763,7 @@ f      width: 100vw;
       `;
       gridBox.appendChild(card);
     });
-      }
+  }
 
   function deletePhotoInReview(index) {
     capturedPhotos.splice(index, 1);
@@ -1782,47 +1784,65 @@ f      width: 100vw;
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
 
-    const loadImageSafe = (src) => {
+    const btn = document.querySelector('#step-review-photos .btn-gold-v2');
+    if (btn) { btn.disabled = true; btn.innerText = 'MEMPROSES...'; }
+    const resetBtn = () => {
+      if (btn) { btn.disabled = false; btn.innerText = 'LANJUTKAN KE CETAK'; }
+    };
+
+    // Dengan batas waktu supaya tidak menggantung kalau file gagal dimuat
+    const loadImageSafe = (src, timeoutMs = 10000) => {
       return new Promise((resolve) => {
         const img = new Image();
-        img.crossOrigin = "anonymous";
-        img.onload = () => resolve(img);
-        img.onerror = () => {
-          const fallbackImg = new Image();
-          fallbackImg.onload = () => resolve(fallbackImg);
-          fallbackImg.src = src;
-        };
+        const timer = setTimeout(() => resolve(null), timeoutMs);
+        img.onload = () => { clearTimeout(timer); resolve(img); };
+        img.onerror = () => { clearTimeout(timer); resolve(null); };
         img.src = src;
       });
     };
 
-    const loadFramePromise = loadImageSafe(selectedFramePath);
+    const loadFramePromise = loadImageSafe(encodeURI(selectedFramePath));
     const loadPhotosPromises = Promise.all(capturedPhotos.map(src => loadImageSafe(src)));
 
-    Promise.all([loadFramePromise, loadPhotosPromises]).then(([frameImg, userImages]) => {
-      const origW = frameImg.naturalWidth || frameImg.width || 600;
-      const origH = frameImg.naturalHeight || frameImg.height || 1800;
+    Promise.all([loadFramePromise, loadPhotosPromises]).then(([frameImg, userImagesRaw]) => {
+      const userImages = userImagesRaw.filter(Boolean);
+      if (userImages.length === 0) throw new Error("Foto gagal dimuat");
+
+      let origW = frameImg ? (frameImg.naturalWidth || frameImg.width) : 600;
+      let origH = frameImg ? (frameImg.naturalHeight || frameImg.height) : 1800;
+
+      // Batasi ukuran agar tidak melebihi limit canvas di HP
+      const MAX_SIDE = 4096;
+      const cap = Math.min(1, MAX_SIDE / Math.max(origW, origH));
+      const W = Math.round(origW * cap);
+      const H = Math.round(origH * cap);
 
       // 1. RENDER FULL HIGH-RES (Untuk Download Langsung di Perangkat Tamu)
-      canvas.width = origW;
-      canvas.height = origH;
+      canvas.width = W;
+      canvas.height = H;
 
-      ctx.clearRect(0, 0, origW, origH);
+      ctx.clearRect(0, 0, W, H);
       ctx.imageSmoothingEnabled = true;
       ctx.imageSmoothingQuality = 'high';
 
-      ctx.drawImage(frameImg, 0, 0, origW, origH);
+      if (frameImg) {
+        ctx.drawImage(frameImg, 0, 0, W, H);
+      } else {
+        // Bingkai gagal dimuat: pakai latar polos supaya tetap bisa lanjut
+        ctx.fillStyle = '#FDFBF7';
+        ctx.fillRect(0, 0, W, H);
+      }
 
       const totalPhotos = userImages.length;
       const targetAspect = getFrameTargetAspect();
 
-      const slotW = Math.round(origW * 0.76); 
+      const slotW = Math.round(W * 0.76);
       const slotH = Math.round(slotW / targetAspect);
-      const startX = Math.round((origW - slotW) / 2);
+      const startX = Math.round((W - slotW) / 2);
 
-      const gapY = Math.round(origH * 0.022); 
+      const gapY = Math.round(H * 0.022);
       const totalBlockHeight = (totalPhotos * slotH) + ((totalPhotos - 1) * gapY);
-      const startY = Math.round((origH - totalBlockHeight) / 2);
+      const startY = Math.round((H - totalBlockHeight) / 2);
 
       userImages.forEach((photo, i) => {
         const currentY = startY + (i * (slotH + gapY));
@@ -1842,9 +1862,9 @@ f      width: 100vw;
 
       // 2. RENDER MID-HIGH (Lebar 900px, Kualitas 0.78 ~300KB untuk Firestore, Admin, & Galeri)
       const TARGET_W = 900;
-      const scaleRatio = origW > TARGET_W ? (TARGET_W / origW) : 1;
-      const midW = Math.round(origW * scaleRatio);
-      const midH = Math.round(origH * scaleRatio);
+      const scaleRatio = W > TARGET_W ? (TARGET_W / W) : 1;
+      const midW = Math.round(W * scaleRatio);
+      const midH = Math.round(H * scaleRatio);
 
       const tempCanvas = document.createElement('canvas');
       tempCanvas.width = midW;
@@ -1861,10 +1881,12 @@ f      width: 100vw;
         img.src = generatedHighResUrl;
       });
 
+      resetBtn();
       goToStep('step-result');
     }).catch(err => {
       console.error("Render error:", err);
-      goToStep('step-result');
+      resetBtn();
+      showAlert("Gagal memproses foto. Silakan coba lagi.", "TERJADI KESALAHAN");
     });
   }
 
