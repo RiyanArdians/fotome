@@ -28,7 +28,7 @@
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
     html, body {
-      width: 100vw;
+f      width: 100vw;
       height: 100%;
       overflow-x: hidden;
       font-family: 'Plus Jakarta Sans', sans-serif;
@@ -563,19 +563,26 @@
     .flash-overlay.active { opacity: 1; }
 
     .review-grid-box {
-      display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; align-items: center; width: 100%; max-width: 340px; margin: 15px auto;
-    }
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 720px;
+  margin: auto;
+  padding: 10px;
+}
 
-    .review-photo-card {
-      position: relative; 
-      width: 120px;
-      max-width: 120px;
-      border-radius: 16px; 
-      overflow: hidden; 
-      border: 2px solid var(--gold-accent); 
-      box-shadow: 0 10px 22px rgba(0,0,0,0.3); 
-      background: #000;
-    }
+.review-photo-card {
+  position: relative; 
+  width: clamp(200px, 35vw, 320px);
+  border-radius: 16px; 
+  overflow: hidden; 
+  border: 2px solid var(--gold-accent); 
+  box-shadow: 0 10px 22px rgba(0,0,0,0.3); 
+  background: #000;
+}
 
     .review-photo-card img { 
       width: 100%; 
@@ -704,105 +711,6 @@
     .modal-msg { font-size: 0.78rem; color: #FFF; font-style: italic; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 10px; line-height: 1.4; word-break: break-word; border: 1px solid rgba(255,255,255,0.1); }
 
     canvas { display: none; }
-
-    /* --- RESPONSIVE MEDIA QUERIES UNTUK TABLET, IPAD, & LAPTOP --- */
-    @media (min-width: 768px) {
-      .page-fullscreen {
-        padding: 24px;
-      }
-
-      .hero-pill-frame-pure {
-        max-width: 280px;
-        max-height: 420px;
-      }
-
-      .glass-card-ask {
-        max-width: 480px;
-        padding: 32px 28px;
-      }
-
-      .stylish-underline-input {
-        max-width: 380px;
-      }
-
-      .slider-header-box {
-        max-width: 500px;
-      }
-
-      .slider-cards-viewport {
-        max-width: 550px;
-        height: 52dvh;
-      }
-
-      .figma-card-item {
-        width: 210px;
-        max-height: 400px;
-      }
-
-      .camera-stage-container {
-        max-width: 650px;
-      }
-
-      .camera-viewfinder-box {
-        max-width: 500px;
-        max-height: 55dvh;
-      }
-
-      .cam-photos-preview-strip,
-      .cam-floating-tools,
-      .cam-bottom-action-row {
-        max-width: 500px;
-      }
-
-      .photo-thumb-box {
-        width: 65px;
-      }
-
-      .review-grid-box {
-        max-width: 600px;
-        gap: 16px;
-      }
-
-      .review-photo-card {
-        width: 150px;
-        max-width: 150px;
-      }
-
-      .printer-bottom-actions {
-        max-width: 450px;
-      }
-
-      .feed-container {
-        max-width: 720px;
-      }
-
-      .ig-grid-container {
-        gap: 12px;
-      }
-
-      .modal-card {
-        max-width: 420px;
-        padding: 24px 20px;
-      }
-    }
-
-    @media (min-width: 1024px) {
-      .camera-stage-container {
-        max-width: 800px;
-      }
-
-      .camera-viewfinder-box {
-        max-width: 560px;
-      }
-
-      .feed-container {
-        max-width: 860px;
-      }
-
-      .ig-grid-container {
-        grid-template-columns: repeat(4, 1fr);
-      }
-    }
   </style>
 </head>
 <body>
@@ -1758,68 +1666,68 @@
   }
 
   function executeSnapCapture() {
-    const flash = document.getElementById('flash-overlay');
-    flash.classList.add('active');
-    setTimeout(() => flash.classList.remove('active'), 200);
+  const flash = document.getElementById('flash-overlay');
+  flash.classList.add('active');
+  setTimeout(() => flash.classList.remove('active'), 200);
 
-    const video = document.getElementById('video');
-    
-    const vWidth = video.videoWidth || 640;
-    const vHeight = video.videoHeight || 480;
+  const video = document.getElementById('video');
+  
+  const vWidth = video.videoWidth || 640;
+  const vHeight = video.videoHeight || 480;
 
-    const targetAspect = getFrameTargetAspect();
+  const targetAspect = getFrameTargetAspect();
 
-    // 1. Hitung area crop berdasarkan aspect ratio bingkai
-    let cropW = vWidth;
-    let cropH = vWidth / targetAspect;
+  // 1. Hitung area crop berdasarkan aspect ratio bingkai
+  let cropW = vWidth;
+  let cropH = vWidth / targetAspect;
 
-    if (cropH > vHeight) {
-      cropH = vHeight;
-      cropW = vHeight * targetAspect;
-    }
-
-    // 2. Potong area gambar sesuai tingkat zoom (zoomLevel)
-    const currentZoom = zoomLevel || 1;
-    cropW = cropW / currentZoom;
-    cropH = cropH / currentZoom;
-
-    // 3. Tentukan koordinat tengah (center) pemotongan
-    const cropX = (vWidth - cropW) / 2;
-    const cropY = (vHeight - cropH) / 2;
-
-    const tempCanvas = document.createElement('canvas');
-    tempCanvas.width = 600;
-    tempCanvas.height = Math.round(600 / targetAspect);
-    const ctx = tempCanvas.getContext('2d');
-
-    ctx.save();
-    if (isMirror) {
-      ctx.translate(tempCanvas.width, 0);
-      ctx.scale(-1, 1);
-    }
-
-    // 4. Gambar area terzoom ke canvas
-    ctx.drawImage(video, cropX, cropY, cropW, cropH, 0, 0, tempCanvas.width, tempCanvas.height);
-    ctx.restore();
-
-    capturedPhotos.push(tempCanvas.toDataURL('image/jpeg', 0.85));
-
-    const totalNeeded = parseInt(requiredPhotoCount, 10) || 3;
-
-    isTakingPhoto = false;
-
-    const btnSnap = document.getElementById('btn-snap');
-    if (btnSnap) btnSnap.style.opacity = '1';
-
-    updatePhotosStripUI();
-
-    if (capturedPhotos.length >= totalNeeded) {
-      stopCurrentStream();
-      setTimeout(() => {
-        goToStep('step-review-photos');
-      }, 200);
-    }
+  if (cropH > vHeight) {
+    cropH = vHeight;
+    cropW = vHeight * targetAspect;
   }
+
+  // 2. PERBAIKAN: Potong area gambar sesuai tingkat zoom (zoomLevel)
+  const currentZoom = zoomLevel || 1;
+  cropW = cropW / currentZoom;
+  cropH = cropH / currentZoom;
+
+  // 3. Tentukan koordinat tengah (center) pemotongan
+  const cropX = (vWidth - cropW) / 2;
+  const cropY = (vHeight - cropH) / 2;
+
+  const tempCanvas = document.createElement('canvas');
+  tempCanvas.width = 600;
+  tempCanvas.height = Math.round(600 / targetAspect);
+  const ctx = tempCanvas.getContext('2d');
+
+  ctx.save();
+  if (isMirror) {
+    ctx.translate(tempCanvas.width, 0);
+    ctx.scale(-1, 1);
+  }
+
+  // 4. Gambar area terserot/terzoom ke canvas
+  ctx.drawImage(video, cropX, cropY, cropW, cropH, 0, 0, tempCanvas.width, tempCanvas.height);
+  ctx.restore();
+
+  capturedPhotos.push(tempCanvas.toDataURL('image/jpeg', 0.85));
+
+  const totalNeeded = parseInt(requiredPhotoCount, 10) || 3;
+
+  isTakingPhoto = false;
+
+  const btnSnap = document.getElementById('btn-snap');
+  if (btnSnap) btnSnap.style.opacity = '1';
+
+  updatePhotosStripUI();
+
+  if (capturedPhotos.length >= totalNeeded) {
+    stopCurrentStream();
+    setTimeout(() => {
+      goToStep('step-review-photos');
+    }, 200);
+  }
+}
 
   function renderReviewPhotosUI() {
     const gridBox = document.getElementById('review-grid-box');
@@ -1831,6 +1739,8 @@
       const card = document.createElement('div');
       card.className = 'review-photo-card';
       
+      card.style.width = '120px';
+      card.style.maxWidth = '120px';
       card.style.aspectRatio = `${targetAspect}`;
       card.innerHTML = `
         <img src="${src}" alt="Foto ${idx + 1}">
