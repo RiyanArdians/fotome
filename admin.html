@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Photobooth Control & Gallery Manager - FOTOME</title>
+  <title>Photobooth Control & Gallery Manager - Votura Studio</title>
   
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -31,6 +31,7 @@
       min-height: 100vh;
       font-family: 'Plus Jakarta Sans', sans-serif;
       background: linear-gradient(180deg, #7A3D44 0%, #5C2B32 100%);
+      background-attachment: fixed;
       color: #FFFFFF;
       display: flex;
       justify-content: center;
@@ -41,9 +42,26 @@
     .font-serif { font-family: 'Cormorant Garamond', serif; }
     .hidden { display: none !important; }
 
+    @keyframes spinAnim {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .custom-spinner {
+      width: 13px;
+      height: 13px;
+      border: 2px solid rgba(212, 175, 55, 0.25);
+      border-top-color: var(--gold-accent);
+      border-radius: 50%;
+      display: inline-block;
+      animation: spinAnim 0.75s linear infinite;
+      vertical-align: middle;
+      margin-right: 6px;
+    }
+
     .admin-container {
       width: 100%;
-      max-width: 480px;
+      max-width: 1040px;
       background: rgba(255, 255, 255, 0.08);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
@@ -51,8 +69,10 @@
       padding: 22px 16px;
       box-shadow: 0 15px 35px rgba(0, 0, 0, 0.35);
       border: 1px solid var(--card-border);
-      overflow: hidden;
     }
+
+    /* tab yang lebih nyaman dibaca dalam lebar sempit */
+    .tab-narrow { max-width: 560px; margin-left: auto; margin-right: auto; }
 
     .main-title {
       font-family: 'Cormorant Garamond', serif;
@@ -269,7 +289,7 @@
 
     .btn-delete:hover { color: #E74C3C; }
 
-    /* GALERI */
+    /* ================= GALERI ================= */
     .gallery-stats-bar {
       display: flex;
       align-items: center;
@@ -311,6 +331,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 8px;
     }
 
     .batch-select-all {
@@ -337,68 +358,195 @@
       gap: 6px;
     }
 
-    .gallery-grid-admin {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+    /* Bilah pemilih tampilan */
+    .view-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       gap: 8px;
-      width: 100%;
+      margin-bottom: 12px;
     }
 
-    .gallery-grid-card {
+    .view-toolbar-right { display: flex; gap: 6px; align-items: center; position: relative; }
+
+    .view-hint { font-size: 0.7rem; color: rgba(255, 255, 255, 0.65); letter-spacing: 1px; text-transform: uppercase; font-weight: 700; }
+
+    .view-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--card-border);
+      background: rgba(0, 0, 0, 0.3);
+      color: #FFFFFF;
+      font-family: inherit;
+      font-size: 0.72rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .view-btn:hover { background: rgba(0, 0, 0, 0.45); }
+    .view-btn svg { width: 16px; height: 16px; flex: none; }
+
+    .view-menu {
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      min-width: 220px;
+      background: rgba(38, 18, 22, 0.97);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 6px;
+      z-index: 60;
+      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.5);
+      display: none;
+    }
+
+    .view-menu.open { display: block; }
+
+    .view-menu-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.78rem;
+      color: #FFFFFF;
+    }
+
+    .view-menu-item:hover { background: rgba(255, 255, 255, 0.1); }
+    .view-menu-item svg { width: 18px; height: 18px; flex: none; opacity: 0.9; }
+    .view-menu-item .view-dot { width: 6px; height: 6px; border-radius: 50%; background: transparent; flex: none; }
+    .view-menu-item.active .view-dot { background: var(--gold-accent); }
+
+    /* Item galeri (satu struktur, diatur ulang per mode tampilan) */
+    .g-container { width: 100%; }
+
+    .g-item {
+      position: relative;
       background: rgba(0, 0, 0, 0.25);
       border: 1px solid var(--card-border);
       border-radius: 12px;
       padding: 6px;
       cursor: pointer;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
       overflow: hidden;
+      min-width: 0;
+      transition: border-color 0.2s ease, background 0.2s ease;
+    }
+
+    .g-item:hover { border-color: rgba(212, 175, 55, 0.7); }
+    .g-item.selected { border-color: #FFFFFF; background: rgba(212, 175, 55, 0.25); }
+
+    .g-check { position: absolute; top: 9px; left: 9px; z-index: 5; display: flex; grid-area: chk; }
+    .g-check input { accent-color: var(--gold-accent); width: 18px; height: 18px; cursor: pointer; }
+
+    .g-thumb {
       width: 100%;
-      position: relative;
-      transition: border-color 0.2s ease, transform 0.15s ease;
-    }
-
-    .gallery-grid-card:active { transform: scale(0.96); }
-
-    .gallery-grid-card.selected {
-      border-color: #FFFFFF;
-      background: rgba(212, 175, 55, 0.25);
-    }
-
-    .card-checkbox-wrapper {
-      position: absolute;
-      top: 8px;
-      left: 8px;
-      z-index: 5;
-    }
-
-    .card-checkbox {
-      accent-color: var(--gold-accent);
-      width: 18px;
-      height: 18px;
-      cursor: pointer;
-    }
-
-    .gallery-thumb-box {
-      width: 100%;
-      aspect-ratio: 1 / 1;
+      aspect-ratio: 3 / 4;
       border-radius: 8px;
       overflow: hidden;
       background: #1A0D0F;
+      margin-bottom: 5px;
+      grid-area: thumb;
+    }
+
+    .g-thumb img { width: 100%; height: 100%; object-fit: contain; display: block; opacity: 0; transition: opacity 0.25s ease; }
+    .g-thumb img.loaded { opacity: 1; }
+
+    .g-name { font-size: 0.7rem; font-weight: 700; color: var(--gold-accent); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; text-align: center; grid-area: name; }
+    .g-date { font-size: 0.55rem; color: rgba(255, 255, 255, 0.6); margin-top: 1px; width: 100%; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; grid-area: date; }
+    .g-msg { font-size: 0.6rem; color: rgba(255, 255, 255, 0.8); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; text-align: center; font-style: italic; margin-top: 2px; grid-area: msg; }
+
+    .g-details-header { display: none; }
+
+    .g-empty { grid-column: 1 / -1; text-align: center; font-size: 0.78rem; color: rgba(255, 255, 255, 0.65); padding: 24px 8px; }
+
+    .g-skel { border-radius: 12px; aspect-ratio: 3 / 4; border: 1px solid var(--card-border); }
+    .sk-block { background: linear-gradient(90deg, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.16) 50%, rgba(255,255,255,0.05) 75%); background-size: 300% 100%; animation: skShimmer 1.3s infinite linear; }
+    @keyframes skShimmer { 0% { background-position: 100% 0; } 100% { background-position: -100% 0; } }
+
+    /* --- Ikon (xl / lg / md / sm) --- */
+    .view-xl .g-container, .view-lg .g-container, .view-md .g-container, .view-sm .g-container { display: grid; }
+    .view-xl .g-container { grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 12px; }
+    .view-lg .g-container { grid-template-columns: repeat(auto-fill, minmax(min(100%, 200px), 1fr)); gap: 10px; }
+    .view-md .g-container { grid-template-columns: repeat(auto-fill, minmax(min(100%, 140px), 1fr)); gap: 8px; }
+    .view-sm .g-container { grid-template-columns: repeat(auto-fill, minmax(min(100%, 96px), 1fr)); gap: 6px; }
+
+    .view-xl .g-item, .view-lg .g-item, .view-md .g-item, .view-sm .g-item { display: flex; flex-direction: column; align-items: center; }
+    .view-xl .g-name { font-size: 0.9rem; margin-top: 4px; }
+    .view-xl .g-date { font-size: 0.65rem; }
+    .view-xl .g-msg { font-size: 0.75rem; }
+    .view-md .g-msg { display: none; }
+    .view-sm .g-item { padding: 4px; }
+    .view-sm .g-date, .view-sm .g-msg { display: none; }
+    .view-sm .g-name { font-size: 0.58rem; }
+    .view-sm .g-check { top: 6px; left: 6px; }
+    .view-sm .g-check input { width: 15px; height: 15px; }
+
+    /* --- Daftar --- */
+    .view-list .g-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 210px), 1fr)); gap: 6px; }
+    .view-list .g-item { display: flex; align-items: center; gap: 8px; padding: 4px 8px; border-radius: 8px; }
+    .view-list .g-check { position: static; }
+    .view-list .g-thumb { width: 26px; flex: none; margin: 0; border-radius: 4px; }
+    .view-list .g-name { flex: 1; text-align: left; font-size: 0.74rem; }
+    .view-list .g-date, .view-list .g-msg { display: none; }
+
+    /* --- Detail --- */
+    .view-details { --det-cols: 28px 40px minmax(0, 1.1fr) minmax(0, 1fr) minmax(0, 2fr); }
+    .view-details .g-container { display: flex; flex-direction: column; gap: 4px; }
+    .view-details .g-details-header {
+      display: grid;
+      grid-template-columns: var(--det-cols);
+      gap: 10px;
+      align-items: center;
+      padding: 8px 10px;
       margin-bottom: 4px;
+      font-size: 0.66rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--gold-accent);
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 10px;
+    }
+    .view-details .g-item { display: grid; grid-template-columns: var(--det-cols); gap: 10px; align-items: center; padding: 5px 10px; border-radius: 8px; }
+    .view-details .g-check { position: static; }
+    .view-details .g-thumb { width: 34px; margin: 0; border-radius: 4px; }
+    .view-details .g-name, .view-details .g-date, .view-details .g-msg { text-align: left; margin: 0; font-size: 0.72rem; }
+    .view-details .g-date { font-size: 0.68rem; }
+
+    /* --- Ubin & Konten --- */
+    .view-tiles .g-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); gap: 8px; }
+    .view-content .g-container { display: flex; flex-direction: column; gap: 8px; }
+
+    .view-tiles .g-item, .view-content .g-item {
+      display: grid;
+      grid-template-columns: 28px auto minmax(0, 1fr);
+      grid-template-areas: "chk thumb name" "chk thumb date" "chk thumb msg";
+      grid-template-rows: auto auto auto;
+      align-content: center;
+      align-items: center;
+      column-gap: 10px;
+      padding: 8px 10px;
     }
 
-    .gallery-thumb-grid {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
+    .view-tiles .g-check, .view-content .g-check { position: static; }
+    .view-tiles .g-thumb { width: 60px; margin: 0; grid-row: 1 / span 3; }
+    .view-content .g-thumb { width: 96px; margin: 0; grid-row: 1 / span 3; }
+    .view-tiles .g-name, .view-tiles .g-date, .view-tiles .g-msg,
+    .view-content .g-name, .view-content .g-date, .view-content .g-msg { text-align: left; margin: 1px 0; }
+    .view-tiles .g-name, .view-content .g-name { font-size: 0.82rem; }
+    .view-content .g-msg { white-space: normal; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; font-size: 0.74rem; line-height: 1.4; }
 
-    .gallery-grid-name { font-size: 0.65rem; font-weight: 700; color: var(--gold-accent); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; text-align: center; }
-    .gallery-grid-date { font-size: 0.52rem; color: rgba(255, 255, 255, 0.6); margin-top: 1px; width: 100%; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .gallery-grid-msg { font-size: 0.58rem; color: rgba(255, 255, 255, 0.8); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; text-align: center; font-style: italic; margin-top: 2px; }
+    @media (max-width: 560px) {
+      .view-details { --det-cols: 28px 40px minmax(0, 1fr) minmax(0, 1fr); }
+      .view-details .g-msg { display: none; }
+      .view-details .g-details-header span:nth-child(5) { display: none; }
+      .view-hint { display: none; }
+    }
 
     /* STYLE MODUL KELOLA TAMU UNDANGAN */
     .guest-tools-grid {
@@ -582,7 +730,7 @@
     .modal-user-name { font-size: 1rem; font-weight: 700; color: var(--gold-accent); margin-bottom: 2px; letter-spacing: 1px; }
     .modal-user-date { font-size: 0.65rem; color: rgba(255, 255, 255, 0.65); margin-bottom: 8px; }
     .modal-img { width: 100%; border-radius: 10px; margin: 6px 0 10px; border: 1px solid rgba(212, 175, 55, 0.3); }
-    .modal-msg { font-size: 0.78rem; color: #FFFFFF; font-style: italic; background: rgba(0, 0, 0, 0.25); padding: 10px; border-radius: 10px; line-height: 1.4; margin-bottom: 12px; border: 1px solid rgba(255, 255, 255, 0.1); }
+    .modal-msg { font-size: 0.78rem; color: #FFFFFF; font-style: italic; background: rgba(0, 0, 0, 0.25); padding: 10px; border-radius: 10px; line-height: 1.4; margin-bottom: 12px; border: 1px solid rgba(255, 255, 255, 0.1); word-break: break-word; }
     .modal-actions-col { display: flex; flex-direction: column; gap: 8px; }
 
     /* CUSTOM DIALOG POPUP ALERT & CONFIRM */
@@ -668,7 +816,7 @@
 <body>
 
 <div class="admin-container">
-  <h2 class="main-title font-serif">FOTOME Control Panel</h2>
+  <h2 class="main-title font-serif">Votura Studio Control Panel</h2>
   <p class="sub-title">Kelola saklar event, galeri foto, dan daftar tamu undangan.</p>
 
   <!-- TAB NAVIGASI UTAMA -->
@@ -685,7 +833,7 @@
   </div>
 
   <!-- TAB 1: SAKLAR EVENT -->
-  <div id="tab-projects" class="tab-content active">
+  <div id="tab-projects" class="tab-content tab-narrow active">
     <div class="form-card">
       <div class="form-title">Tambah Projek Baru</div>
       <div class="form-group">
@@ -718,6 +866,9 @@
           <input type="checkbox" id="check-select-all" onchange="toggleSelectAll(this)">
           <span>PILIH SEMUA</span>
         </label>
+        <button id="btn-load-all" class="btn-secondary-v2 hidden" style="font-size:0.62rem; padding:6px 12px;" onclick="loadAllGallery()">
+          Muat Semua Foto
+        </button>
       </div>
 
       <div class="batch-buttons-grid">
@@ -733,18 +884,45 @@
       </div>
     </div>
 
-    <div id="gallery-grid-container" class="gallery-grid-admin">
-      <p style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.6); grid-column: span 3; text-align: center;">Memuat kiriman galeri...</p>
+    <!-- PEMILIH TAMPILAN -->
+    <div class="view-toolbar">
+      <span class="view-hint">Tampilan galeri</span>
+      <div class="view-toolbar-right">
+        <button class="view-btn" id="btn-refresh-gallery" onclick="refreshGallery()" title="Muat ulang galeri">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6"></path><path d="M1 20v-6h6"></path><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+          <span>Segarkan</span>
+        </button>
+        <button class="view-btn" id="btn-view-menu" onclick="toggleViewMenu(event)">
+          <span id="view-btn-icon" style="display:flex;"></span>
+          <span id="view-btn-label">Ikon besar</span>
+          <span style="font-size:0.6rem;">▾</span>
+        </button>
+        <div id="view-menu" class="view-menu"></div>
+      </div>
+    </div>
+
+    <div id="gallery-wrap" class="view-lg">
+      <div class="g-details-header"><span></span><span></span><span>Nama</span><span>Tanggal</span><span>Pesan</span></div>
+      <div id="gallery-grid-container" class="g-container">
+        <p class="g-empty">Memuat kiriman galeri...</p>
+      </div>
+    </div>
+
+    <div id="gallery-sentinel" style="height: 2px;"></div>
+    <div style="text-align: center; margin-top: 14px;">
+      <button id="btn-gallery-more" class="btn-secondary-v2 hidden" style="margin: 0 auto; min-width: 220px;" onclick="loadMoreGallery()">
+        MUAT LEBIH BANYAK
+      </button>
     </div>
   </div>
 
   <!-- TAB 3: KELOLA TAMU UNDANGAN -->
-  <div id="tab-guests" class="tab-content">
+  <div id="tab-guests" class="tab-content tab-narrow">
     <div style="font-size: 0.8rem; font-weight: 700; color: var(--gold-accent); margin-bottom: 10px; text-align: left; letter-spacing: 1px; text-transform: uppercase;" id="guest-count-label">
       Bagikan Undangan (0 Tamu)
     </div>
 
-    <!-- TOMBOL FITUR TAMU BERSIH -->
+    <!-- TOMBOL FITUR TAMU -->
     <div class="guest-tools-grid">
       <button class="btn-gold-v2" style="font-size: 0.68rem; padding: 10px 4px;" onclick="openAddGuestModal()">
         Tambah Tamu
@@ -759,7 +937,7 @@
         Hapus Semua
       </button>
     </div>
-    <input type="file" id="csv-file-input" accept=".csv" style="display: none;" onchange="handleImportCSV(this)">
+    <input type="file" id="csv-file-input" accept=".csv,text/csv" style="display: none;" onchange="handleImportCSV(this)">
 
     <!-- SEARCH BAR -->
     <div class="search-box-wrapper">
@@ -779,7 +957,7 @@
   </div>
 
   <div class="app-official-footer">
-    © 2026 FOTOME by Riyan. All rights reserved.
+    © 2026 Votura Studio by Riyan. All rights reserved.
   </div>
 
 </div>
@@ -921,15 +1099,37 @@
 <canvas id="exportCanvas"></canvas>
 
 <script>
-  let allGalleryPosts = []; 
+  /* ====================== STATE UMUM ====================== */
   let allGuests = [];
   let editingGuestId = null;
   let guestViewMode = 'card';
   let onDialogCallback = null;
+  let guestsInitDone = false;
   
   // DEFAULT LINK UTAMA UNDANGAN & TEMPLATE WA
   let baseInvitationUrl = "https://riyanardians.github.io/";
   let defaultWaTemplate = "Kepada Yth. Bapak/Ibu/Saudara/i {nama},\n\nTanpa mengurangi rasa hormat, perkenankan kami mengundang Anda untuk menghadiri acara pernikahan kami.\n\nBerikut link undangan digital kami:\n{link}\n\nMerupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu.\n\nTerima kasih,\nRiyan & Amelia";
+
+  // Dokumen khusus di koleksi "settings" yang bukan projek event
+  const NON_PROJECT_DOCS = ['wa_template'];
+
+  function escapeHtml(str) {
+    return String(str == null ? '' : str).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+  }
+
+  function withTimeout(promise, ms = 30000) {
+    let timer;
+    const timeout = new Promise((_, reject) => { timer = setTimeout(() => reject(new Error('timeout')), ms); });
+    return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
+  }
+
+  function tsToMillis(ts) {
+    if (!ts) return 0;
+    if (ts.toMillis) return ts.toMillis();
+    if (ts.seconds) return ts.seconds * 1000;
+    const d = new Date(ts).getTime();
+    return isNaN(d) ? 0 : d;
+  }
 
   function formatTimestamp(timestamp) {
     if (!timestamp) return 'Baru saja';
@@ -1103,7 +1303,17 @@
       const finalDataUrl = canvas.toDataURL('image/jpeg', 1.0);
       callback(finalDataUrl);
     };
+    img.onerror = () => showAdminAlert("Gagal", "Foto tidak bisa diproses. Coba lagi.");
     img.src = photoUrl;
+  }
+
+  function triggerDownload(href, fileName) {
+    const a = document.createElement('a');
+    a.href = href;
+    a.download = fileName;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
   }
 
   function switchTab(tabId, btnElem) {
@@ -1111,25 +1321,26 @@
     document.querySelectorAll('.tab-btn').forEach(tb => tb.classList.remove('active'));
     document.getElementById(tabId).classList.add('active');
     btnElem.classList.add('active');
+    closeViewMenu();
 
     if (tabId === 'tab-gallery') {
-      loadGalleryAdmin();
+      initGallery();
+      setTimeout(checkGallerySentinel, 100);
     } else if (tabId === 'tab-guests') {
-      loadGuestsAdmin();
+      initGuests();
     }
   }
 
-  // 1. KONTROL SAKLAR EVENT
+  /* ====================== 1. SAKLAR EVENT ====================== */
   db.collection('settings').onSnapshot(snapshot => {
     const container = document.getElementById('project-list-container');
     container.innerHTML = '';
 
-    if (snapshot.empty) {
-      container.innerHTML = '<p style="font-size: 0.75rem; color: rgba(255,255,255,0.6);">Belum ada projek.</p>';
-      return;
-    }
-
+    let shown = 0;
     snapshot.forEach(doc => {
+      if (NON_PROJECT_DOCS.includes(doc.id)) return;
+      shown++;
+
       const data = doc.data();
       const docId = doc.id;
       const fileName = data.fileName || docId;
@@ -1139,21 +1350,36 @@
       card.className = 'event-card';
       card.innerHTML = `
         <div class="info-left">
-          <div class="project-name">${fileName}</div>
-          <div class="project-id">ID: ${docId}</div>
+          <div class="project-name">${escapeHtml(fileName)}</div>
+          <div class="project-id">ID: ${escapeHtml(docId)}</div>
           <span class="badge ${isActive ? 'badge-on' : 'badge-off'}">
             ${isActive ? 'AKTIF (ON)' : 'NONAKTIF (OFF)'}
           </span>
         </div>
         <div style="display:flex; align-items:center;">
-          <button class="btn-toggle ${isActive ? 'btn-on' : 'btn-off'}" onclick="toggleEventStatus('${docId}', ${isActive})">
+          <button class="btn-toggle ${isActive ? 'btn-on' : 'btn-off'}" data-act="toggle" data-id="${escapeHtml(docId)}" data-active="${isActive}">
             ${isActive ? 'MATIKAN' : 'AKTIFKAN'}
           </button>
-          <button class="btn-delete" title="Hapus Projek" onclick="deleteProject('${docId}')">✕</button>
+          <button class="btn-delete" title="Hapus Projek" data-act="delete" data-id="${escapeHtml(docId)}">✕</button>
         </div>
       `;
       container.appendChild(card);
     });
+
+    if (shown === 0) {
+      container.innerHTML = '<p style="font-size: 0.75rem; color: rgba(255,255,255,0.6);">Belum ada projek.</p>';
+    }
+  }, err => {
+    console.warn('Gagal memuat projek:', err);
+    document.getElementById('project-list-container').innerHTML = '<p style="font-size: 0.75rem; color: rgba(255,255,255,0.6);">Gagal memuat daftar projek. Periksa koneksi.</p>';
+  });
+
+  document.getElementById('project-list-container').addEventListener('click', e => {
+    const btn = e.target.closest('[data-act]');
+    if (!btn) return;
+    const docId = btn.dataset.id;
+    if (btn.dataset.act === 'toggle') toggleEventStatus(docId, btn.dataset.active === 'true');
+    else if (btn.dataset.act === 'delete') deleteProject(docId);
   });
 
   function addNewProject() {
@@ -1165,213 +1391,504 @@
       return;
     }
 
-    db.collection('settings').doc(docId).set({
-      fileName: fileName,
-      isActive: true,
-      title: "Riyan & Amelia",
-      createdAt: firebase.firestore.FieldValue.serverTimestamp()
-    }, { merge: true })
+    const ref = db.collection('settings').doc(docId);
+    ref.get().then(doc => {
+      const payload = doc.exists
+        ? { fileName: fileName }
+        : { fileName: fileName, isActive: true, title: "Riyan & Amelia", createdAt: firebase.firestore.FieldValue.serverTimestamp() };
+      return ref.set(payload, { merge: true });
+    })
     .then(() => {
       document.getElementById('input-filename').value = '';
       document.getElementById('input-docid').value = '';
       showAdminAlert("Berhasil", `Projek "${docId}" telah ditambahkan.`);
-    });
+    })
+    .catch(err => showAdminAlert("Gagal", "Gagal menambahkan projek: " + err.message));
   }
 
   function toggleEventStatus(docId, currentStatus) {
-    db.collection('settings').doc(docId).set({ isActive: !currentStatus }, { merge: true });
+    db.collection('settings').doc(docId).set({ isActive: !currentStatus }, { merge: true })
+      .catch(err => showAdminAlert("Gagal", "Gagal mengubah status: " + err.message));
   }
 
   function deleteProject(docId) {
     showAdminConfirm("Hapus Projek", `Hapus projek "${docId}" dari database?`, (confirmed) => {
       if (confirmed) {
-        db.collection('settings').doc(docId).delete();
+        db.collection('settings').doc(docId).delete()
+          .catch(err => showAdminAlert("Gagal", "Gagal menghapus projek: " + err.message));
       }
     }, true);
   }
 
-  // 2. KELOLA GALERI
-  function loadGalleryAdmin() {
+  /* ====================== 2. KELOLA GALERI (CEPAT) ====================== */
+  const GALLERY_PAGE = 18;
+  const VIEW_STORAGE_KEY = 'votura_admin_gallery_view';
+
+  let postsMap = new Map();
+  let selectedIds = new Set();
+  let galleryLast = null;
+  let galleryHasMore = false;
+  let galleryLoading = false;
+  let galleryLoadedOnce = false;
+  let galleryInitDone = false;
+  let galleryLiveUnsub = null;
+  let totalPosts = null;
+  let galleryView = 'lg';
+  let thumbObserver = null;
+
+  const ICONS = {
+    xl: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="3" width="16" height="18" rx="2"/></svg>',
+    lg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="4" width="14" height="13" rx="2"/><path d="M8 21h8"/></svg>',
+    md: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="6" y="5" width="12" height="10" rx="2"/><path d="M9 19h6"/></svg>',
+    sm: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/></svg>',
+    list: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h3M10 6h10M4 12h3M10 12h10M4 18h3M10 18h10"/></svg>',
+    details: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>',
+    tiles: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="5" height="5" rx="1"/><path d="M11 5h10M11 8h7"/><rect x="3" y="14" width="5" height="5" rx="1"/><path d="M11 15h10M11 18h7"/></svg>',
+    content: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="6" height="7" rx="1"/><path d="M12 5h9M12 9h6"/><rect x="3" y="14" width="6" height="7" rx="1"/><path d="M12 16h9M12 20h6"/></svg>'
+  };
+
+  const VIEW_MODES = [
+    { key: 'xl', label: 'Ikon ekstra besar' },
+    { key: 'lg', label: 'Ikon besar' },
+    { key: 'md', label: 'Ikon sedang' },
+    { key: 'sm', label: 'Ikon kecil' },
+    { key: 'list', label: 'Daftar' },
+    { key: 'details', label: 'Detail' },
+    { key: 'tiles', label: 'Ubin' },
+    { key: 'content', label: 'Konten' }
+  ];
+
+  function renderViewMenu() {
+    const menu = document.getElementById('view-menu');
+    menu.innerHTML = VIEW_MODES.map(v => `
+      <div class="view-menu-item ${v.key === galleryView ? 'active' : ''}" data-view="${v.key}">
+        <span class="view-dot"></span>${ICONS[v.key]}<span>${v.label}</span>
+      </div>`).join('');
+
+    const current = VIEW_MODES.find(v => v.key === galleryView) || VIEW_MODES[1];
+    document.getElementById('view-btn-label').innerText = current.label;
+    document.getElementById('view-btn-icon').innerHTML = ICONS[current.key];
+  }
+
+  function setGalleryView(key) {
+    if (!VIEW_MODES.some(v => v.key === key)) key = 'lg';
+    galleryView = key;
+    const wrap = document.getElementById('gallery-wrap');
+    VIEW_MODES.forEach(v => wrap.classList.remove('view-' + v.key));
+    wrap.classList.add('view-' + key);
+    try { localStorage.setItem(VIEW_STORAGE_KEY, key); } catch (e) {}
+    renderViewMenu();
+    setTimeout(checkGallerySentinel, 100);
+  }
+
+  function toggleViewMenu(e) {
+    e.stopPropagation();
+    document.getElementById('view-menu').classList.toggle('open');
+  }
+
+  function closeViewMenu() {
+    const m = document.getElementById('view-menu');
+    if (m) m.classList.remove('open');
+  }
+
+  document.getElementById('view-menu').addEventListener('click', e => {
+    const item = e.target.closest('.view-menu-item');
+    if (!item) return;
+    setGalleryView(item.dataset.view);
+    closeViewMenu();
+  });
+
+  document.addEventListener('click', e => {
+    if (!e.target.closest('#view-menu') && !e.target.closest('#btn-view-menu')) closeViewMenu();
+  });
+
+  function isGalleryActive() {
+    return document.getElementById('tab-gallery').classList.contains('active');
+  }
+
+  function initGallery() {
+    if (galleryInitDone) return;
+    galleryInitDone = true;
+
+    let saved = null;
+    try { saved = localStorage.getItem(VIEW_STORAGE_KEY); } catch (e) {}
+    setGalleryView(saved || 'lg');
+
+    // Pemuat gambar malas: gambar baru diisi saat hampir terlihat di layar
+    thumbObserver = new IntersectionObserver(entries => {
+      entries.forEach(en => {
+        if (!en.isIntersecting) return;
+        loadThumb(en.target);
+        thumbObserver.unobserve(en.target);
+      });
+    }, { rootMargin: '700px 0px' });
+
     const container = document.getElementById('gallery-grid-container');
 
-    db.collection('posts').onSnapshot(snapshot => {
-      container.innerHTML = '';
-      allGalleryPosts = [];
-      document.getElementById('check-select-all').checked = false;
+    container.addEventListener('click', e => {
+      if (e.target.closest('.g-check')) return;
+      const item = e.target.closest('.g-item');
+      if (item) openAdminModal(item.dataset.id);
+    });
 
-      if (snapshot.empty) {
-        container.innerHTML = '<p style="font-size: 0.75rem; color: rgba(255,255,255,0.6); grid-column: span 3; text-align: center;">Belum ada foto yang masuk di galeri.</p>';
-        updateCounters();
-        return;
+    container.addEventListener('change', e => {
+      if (e.target.classList.contains('post-select-cb')) {
+        setSelected(e.target.value, e.target.checked);
       }
+    });
 
-      snapshot.forEach(doc => {
-        allGalleryPosts.push({ id: doc.id, ...doc.data() });
-      });
+    window.addEventListener('scroll', checkGallerySentinel, { passive: true });
+    window.addEventListener('resize', checkGallerySentinel);
 
-      allGalleryPosts.sort((a, b) => {
-        const timeA = a.createdAt ? a.createdAt.toMillis() : 0;
-        const timeB = b.createdAt ? b.createdAt.toMillis() : 0;
-        return timeB - timeA;
-      });
+    loadGalleryPage();
+  }
 
-      allGalleryPosts.forEach(data => {
-        const postId = data.id;
-        const name = data.name || 'Tamu';
-        const msg = data.message || '-';
-        const timeFormatted = formatTimestamp(data.createdAt);
+  function loadThumb(img) {
+    const post = postsMap.get(img.dataset.id);
+    if (!post || !post.photoData) { img.classList.add('loaded'); return; }
+    img.onload = () => img.classList.add('loaded');
+    img.onerror = () => img.classList.add('loaded');
+    img.src = post.photoData;
+  }
 
-        const card = document.createElement('div');
-        card.className = 'gallery-grid-card';
-        card.id = `card-${postId}`;
-
-        card.innerHTML = `
-          <div class="card-checkbox-wrapper" onclick="event.stopPropagation()">
-            <input type="checkbox" class="card-checkbox post-select-cb" value="${postId}" onchange="updateCardStyle(this, '${postId}')">
-          </div>
-          <div class="gallery-thumb-box" onclick="openAdminModal('${postId}', '${name.replace(/'/g, "\\'")}', '${msg.replace(/'/g, "\\'")}', '${data.photoData}', '${timeFormatted}')">
-            <img src="${data.photoData}" class="gallery-thumb-grid" alt="Thumb">
-          </div>
-          <div class="gallery-grid-name" onclick="openAdminModal('${postId}', '${name.replace(/'/g, "\\'")}', '${msg.replace(/'/g, "\\'")}', '${data.photoData}', '${timeFormatted}')">${name}</div>
-          <div class="gallery-grid-date" onclick="openAdminModal('${postId}', '${name.replace(/'/g, "\\'")}', '${msg.replace(/'/g, "\\'")}', '${data.photoData}', '${timeFormatted}')">${timeFormatted}</div>
-          <div class="gallery-grid-msg" onclick="openAdminModal('${postId}', '${name.replace(/'/g, "\\'")}', '${msg.replace(/'/g, "\\'")}', '${data.photoData}', '${timeFormatted}')">"${msg}"</div>
-        `;
-        container.appendChild(card);
-      });
-
-      updateCounters();
+  function observeThumbs(root) {
+    if (!thumbObserver) return;
+    root.querySelectorAll('.g-thumb img:not([data-observed])').forEach(img => {
+      img.dataset.observed = '1';
+      thumbObserver.observe(img);
     });
   }
 
-  function updateCardStyle(cb, postId) {
-    const card = document.getElementById(`card-${postId}`);
-    if (cb.checked) card.classList.add('selected');
-    else card.classList.remove('selected');
+  function buildGalleryItem(post) {
+    const name = post.name || 'Tamu';
+    const msg = post.message || '-';
+    const time = formatTimestamp(post.createdAt);
+    const isSel = selectedIds.has(post.id);
 
+    const el = document.createElement('div');
+    el.className = 'g-item' + (isSel ? ' selected' : '');
+    el.id = 'card-' + post.id;
+    el.dataset.id = post.id;
+    el.innerHTML = `
+      <label class="g-check"><input type="checkbox" class="post-select-cb" value="${post.id}"${isSel ? ' checked' : ''}></label>
+      <div class="g-thumb"><img alt="Foto ${escapeHtml(name)}" data-id="${post.id}" decoding="async"></div>
+      <div class="g-name" title="${escapeHtml(name)}">${escapeHtml(name)}</div>
+      <div class="g-date">${escapeHtml(time)}</div>
+      <div class="g-msg" title="${escapeHtml(msg)}">"${escapeHtml(msg)}"</div>
+    `;
+    return el;
+  }
+
+  function showGallerySkeleton() {
+    const container = document.getElementById('gallery-grid-container');
+    let html = '';
+    for (let i = 0; i < 6; i++) html += '<div class="g-skel sk-block"></div>';
+    container.innerHTML = html;
+  }
+
+  async function loadGalleryPage() {
+    if (galleryLoading) return;
+    galleryLoading = true;
+
+    const container = document.getElementById('gallery-grid-container');
+    const moreBtn = document.getElementById('btn-gallery-more');
+    const firstLoad = !galleryLoadedOnce && postsMap.size === 0;
+
+    if (firstLoad) showGallerySkeleton();
+    if (moreBtn) {
+      moreBtn.disabled = true;
+      moreBtn.innerHTML = '<span class="custom-spinner"></span> MEMUAT FOTO...';
+    }
+
+    try {
+      let q = db.collection('posts').orderBy('createdAt', 'desc');
+      if (galleryLast) q = q.startAfter(galleryLast);
+      const snap = await withTimeout(q.limit(GALLERY_PAGE).get());
+
+      if (firstLoad) container.innerHTML = '';
+      galleryLoadedOnce = true;
+      if (snap.docs.length) galleryLast = snap.docs[snap.docs.length - 1];
+      galleryHasMore = snap.docs.length >= GALLERY_PAGE;
+
+      const frag = document.createDocumentFragment();
+      snap.docs.forEach(doc => {
+        if (postsMap.has(doc.id)) return;
+        const post = { id: doc.id, ...doc.data() };
+        postsMap.set(doc.id, post);
+        frag.appendChild(buildGalleryItem(post));
+      });
+      container.appendChild(frag);
+      observeThumbs(container);
+
+      if (!galleryLiveUnsub) startGalleryLive();
+      if (totalPosts === null) refreshGalleryTotal();
+    } catch (err) {
+      console.warn('Gagal memuat galeri:', err);
+      if (postsMap.size === 0) {
+        container.innerHTML = '<div class="g-empty">Foto belum bisa dimuat. Periksa koneksi lalu tekan <b>Segarkan</b>.</div>';
+      } else {
+        showAdminAlert("Gagal Memuat", "Foto berikutnya belum bisa dimuat. Coba lagi sebentar.");
+      }
+    } finally {
+      galleryLoading = false;
+      updateGalleryUI();
+      setTimeout(checkGallerySentinel, 150);
+    }
+  }
+
+  function loadMoreGallery() {
+    if (galleryHasMore) loadGalleryPage();
+  }
+
+  // Muat otomatis saat pengguna menggulir mendekati bagian bawah
+  function checkGallerySentinel() {
+    if (!galleryInitDone || !isGalleryActive() || galleryLoading || !galleryHasMore) return;
+    const s = document.getElementById('gallery-sentinel');
+    if (!s) return;
+    const rect = s.getBoundingClientRect();
+    if (rect.top < window.innerHeight + 500) loadGalleryPage();
+  }
+
+  async function loadAllGallery() {
+    const btn = document.getElementById('btn-load-all');
+    if (btn) btn.disabled = true;
+    let guard = 0;
+    while (galleryHasMore && guard < 200) {
+      guard++;
+      if (btn) btn.innerHTML = `<span class="custom-spinner"></span> Memuat ${postsMap.size}${totalPosts ? '/' + totalPosts : ''}...`;
+      const before = postsMap.size;
+      while (galleryLoading) await new Promise(r => setTimeout(r, 120));
+      await loadGalleryPage();
+      if (postsMap.size === before && galleryHasMore) break; // gagal memuat, hentikan
+    }
+    if (btn) { btn.disabled = false; btn.innerText = 'Muat Semua Foto'; }
+    updateGalleryUI();
+  }
+
+  async function refreshGalleryTotal() {
+    try {
+      const q = db.collection('posts');
+      if (typeof q.count !== 'function') return;
+      const s = await q.count().get();
+      totalPosts = s.data().count;
+      updateGalleryUI();
+    } catch (err) {
+      console.info('Hitung total foto tidak tersedia:', err && err.message);
+    }
+  }
+
+  // Hanya mendengarkan 2 kiriman terbaru supaya foto baru muncul otomatis tanpa mengunduh semuanya
+  function startGalleryLive() {
+    if (galleryLiveUnsub) return;
+    galleryLiveUnsub = db.collection('posts').orderBy('createdAt', 'desc').limit(2).onSnapshot(snap => {
+      const container = document.getElementById('gallery-grid-container');
+      snap.docChanges().forEach(ch => {
+        if (ch.type !== 'added') return;
+        const id = ch.doc.id;
+        if (postsMap.has(id)) return;
+
+        const data = ch.doc.data();
+        let newest = 0;
+        postsMap.forEach(p => { newest = Math.max(newest, tsToMillis(p.createdAt)); });
+        if (postsMap.size && tsToMillis(data.createdAt) < newest) return; // bukan kiriman baru
+
+        const post = { id, ...data };
+        postsMap.set(id, post);
+        const empty = container.querySelector('.g-empty');
+        if (empty) empty.remove();
+        const el = buildGalleryItem(post);
+        container.insertBefore(el, container.firstChild);
+        observeThumbs(el);
+        if (totalPosts !== null) totalPosts++;
+      });
+      updateGalleryUI();
+    }, err => console.warn('Listener galeri error:', err));
+  }
+
+  function refreshGallery() {
+    if (galleryLoading) return;
+    postsMap.clear();
+    selectedIds.clear();
+    galleryLast = null;
+    galleryHasMore = false;
+    galleryLoadedOnce = false;
+    totalPosts = null;
+    document.getElementById('gallery-grid-container').innerHTML = '';
+    updateGalleryUI();
+    loadGalleryPage();
+  }
+
+  function updateGalleryUI() {
+    const container = document.getElementById('gallery-grid-container');
+    const moreBtn = document.getElementById('btn-gallery-more');
+    const loadAllBtn = document.getElementById('btn-load-all');
+
+    if (galleryLoadedOnce && postsMap.size === 0 && !container.querySelector('.g-empty')) {
+      container.innerHTML = '<p class="g-empty">Belum ada foto yang masuk di galeri.</p>';
+    }
+
+    if (moreBtn) {
+      if (galleryHasMore) {
+        moreBtn.classList.remove('hidden');
+        if (!galleryLoading) { moreBtn.disabled = false; moreBtn.innerText = 'MUAT LEBIH BANYAK'; }
+      } else {
+        moreBtn.classList.add('hidden');
+      }
+    }
+    if (loadAllBtn) loadAllBtn.classList.toggle('hidden', !galleryHasMore);
+
+    updateCounters();
+  }
+
+  function setSelected(id, on) {
+    if (on) selectedIds.add(id); else selectedIds.delete(id);
+    const card = document.getElementById('card-' + id);
+    if (card) card.classList.toggle('selected', on);
     updateCounters();
   }
 
   function updateCounters() {
-    const totalCount = allGalleryPosts.length;
-    const selectedCount = document.querySelectorAll('.post-select-cb:checked').length;
+    const loaded = postsMap.size;
+    const totalLabel = totalPosts !== null ? totalPosts : `${loaded}${galleryHasMore ? '+' : ''}`;
+    document.getElementById('stat-total-photos').innerText = `Total Foto: ${totalLabel}`;
+    document.getElementById('stat-selected-photos').innerText = `Terpilih: ${selectedIds.size}`;
 
-    document.getElementById('stat-total-photos').innerText = `Total Foto: ${totalCount}`;
-    document.getElementById('stat-selected-photos').innerText = `Terpilih: ${selectedCount}`;
+    const allCb = document.getElementById('check-select-all');
+    allCb.checked = loaded > 0 && selectedIds.size >= loaded && !galleryHasMore;
   }
 
-  function toggleSelectAll(mainCb) {
-    const checkboxes = document.querySelectorAll('.post-select-cb');
-    checkboxes.forEach(cb => {
-      cb.checked = mainCb.checked;
-      const card = document.getElementById(`card-${cb.value}`);
-      if (card) {
-        if (mainCb.checked) card.classList.add('selected');
-        else card.classList.remove('selected');
-      }
+  function selectAllLoaded(on) {
+    postsMap.forEach((p, id) => {
+      if (on) selectedIds.add(id); else selectedIds.delete(id);
     });
-
+    document.querySelectorAll('#gallery-grid-container .g-item').forEach(card => {
+      const on_ = selectedIds.has(card.dataset.id);
+      card.classList.toggle('selected', on_);
+      const cb = card.querySelector('.post-select-cb');
+      if (cb) cb.checked = on_;
+    });
     updateCounters();
   }
 
+  function toggleSelectAll(mainCb) {
+    if (!mainCb.checked) {
+      selectedIds.clear();
+      selectAllLoaded(false);
+      return;
+    }
+
+    if (galleryHasMore) {
+      mainCb.checked = false;
+      showAdminConfirm(
+        "Muat Semua Foto?",
+        `Baru ${postsMap.size} foto yang dimuat. Muat semua foto dulu agar semuanya ikut terpilih? (Pilih BATAL untuk memilih foto yang sudah tampil saja.)`,
+        async (ok) => {
+          if (ok) await loadAllGallery();
+          selectAllLoaded(true);
+        }
+      );
+      return;
+    }
+
+    selectAllLoaded(true);
+  }
+
   function downloadSelectedPosts(withMessage) {
-    const selectedCbs = document.querySelectorAll('.post-select-cb:checked');
-    if (selectedCbs.length === 0) {
+    const ids = Array.from(selectedIds).filter(id => postsMap.has(id));
+    if (ids.length === 0) {
       showAdminAlert("Pilih Foto", "Harap pilih/centang minimal 1 foto untuk diunduh!");
       return;
     }
 
-    showAdminAlert("Memproses Unduhan", `Mulai memproses dan mengunduh ${selectedCbs.length} foto terpilih...`);
+    showAdminAlert("Memproses Unduhan", `Mulai memproses dan mengunduh ${ids.length} foto terpilih...`);
 
-    selectedCbs.forEach((cb, idx) => {
-      const postId = cb.value;
-      const postData = allGalleryPosts.find(p => p.id === postId);
-      if (postData) {
-        setTimeout(() => {
-          if (withMessage) {
-            generateImageWithText(postData.photoData, postData.name, postData.message, (finalDataUrl) => {
-              const fileName = formatFileName(postData.name, postData.message, true);
-              const a = document.createElement('a');
-              a.href = finalDataUrl;
-              a.download = fileName;
-              a.click();
-            });
-          } else {
-            const fileName = formatFileName(postData.name, postData.message, false);
-            const a = document.createElement('a');
-            a.href = postData.photoData;
-            a.download = fileName;
-            a.click();
-          }
-        }, idx * 350);
-      }
+    ids.forEach((id, idx) => {
+      const postData = postsMap.get(id);
+      setTimeout(() => {
+        if (withMessage) {
+          generateImageWithText(postData.photoData, postData.name, postData.message, (finalDataUrl) => {
+            triggerDownload(finalDataUrl, formatFileName(postData.name, postData.message, true));
+          });
+        } else {
+          triggerDownload(postData.photoData, formatFileName(postData.name, postData.message, false));
+        }
+      }, idx * 350);
     });
   }
 
+  async function deletePostIds(ids) {
+    for (let i = 0; i < ids.length; i += 400) {
+      const batch = db.batch();
+      ids.slice(i, i + 400).forEach(id => batch.delete(db.collection('posts').doc(id)));
+      await batch.commit();
+    }
+  }
+
+  function removeLocalPosts(ids) {
+    ids.forEach(id => {
+      postsMap.delete(id);
+      selectedIds.delete(id);
+      const el = document.getElementById('card-' + id);
+      if (el) el.remove();
+    });
+    if (totalPosts !== null) totalPosts = Math.max(0, totalPosts - ids.length);
+    updateGalleryUI();
+  }
+
   function deleteSelectedPosts() {
-    const selectedCbs = document.querySelectorAll('.post-select-cb:checked');
-    if (selectedCbs.length === 0) {
+    const ids = Array.from(selectedIds);
+    if (ids.length === 0) {
       showAdminAlert("Pilih Foto", "Harap pilih/centang minimal 1 foto untuk dihapus!");
       return;
     }
 
-    showAdminConfirm("Hapus Foto Terpilih", `Apakah kamu yakin ingin menghapus ${selectedCbs.length} foto terpilih sekaligus dari galeri?`, (confirmed) => {
-      if (confirmed) {
-        const batch = db.batch();
-        selectedCbs.forEach(cb => {
-          const docRef = db.collection('posts').doc(cb.value);
-          batch.delete(docRef);
-        });
-
-        batch.commit()
-          .then(() => showAdminAlert("Berhasil", `${selectedCbs.length} foto berhasil dihapus!`))
-          .catch(err => showAdminAlert("Gagal", "Gagal menghapus: " + err.message));
+    showAdminConfirm("Hapus Foto Terpilih", `Apakah kamu yakin ingin menghapus ${ids.length} foto terpilih sekaligus dari galeri?`, async (confirmed) => {
+      if (!confirmed) return;
+      try {
+        await deletePostIds(ids);
+        removeLocalPosts(ids);
+        showAdminAlert("Berhasil", `${ids.length} foto berhasil dihapus!`);
+      } catch (err) {
+        showAdminAlert("Gagal", "Gagal menghapus: " + err.message);
       }
     }, true);
   }
 
   let activePostId = null;
-  let activePhotoUrl = "";
-  let activeSenderName = "";
-  let activeSenderMsg = "";
 
-  function openAdminModal(postId, name, message, photoData, dateFormatted) {
+  function openAdminModal(postId) {
+    const post = postsMap.get(postId);
+    if (!post) return;
     activePostId = postId;
-    activePhotoUrl = photoData;
-    activeSenderName = name;
-    activeSenderMsg = message;
+
+    const name = post.name || 'Tamu';
+    const message = post.message || '-';
 
     document.getElementById('modal-sender-name').innerText = name;
-    document.getElementById('modal-sender-date').innerText = dateFormatted || '';
+    document.getElementById('modal-sender-date').innerText = formatTimestamp(post.createdAt) || '';
     document.getElementById('modal-sender-msg').innerText = `"${message}"`;
-    document.getElementById('modal-img-src').src = photoData;
+    document.getElementById('modal-img-src').src = post.photoData;
 
     document.getElementById('btn-modal-dl-plain').onclick = () => {
-      const fileName = formatFileName(activeSenderName, activeSenderMsg, false);
-      const a = document.createElement('a');
-      a.href = activePhotoUrl;
-      a.download = fileName;
-      a.click();
+      triggerDownload(post.photoData, formatFileName(name, message, false));
     };
 
     document.getElementById('btn-modal-dl-msg').onclick = () => {
-      generateImageWithText(activePhotoUrl, activeSenderName, activeSenderMsg, (finalDataUrl) => {
-        const fileName = formatFileName(activeSenderName, activeSenderMsg, true);
-        const a = document.createElement('a');
-        a.href = finalDataUrl;
-        a.download = fileName;
-        a.click();
+      generateImageWithText(post.photoData, name, message, (finalDataUrl) => {
+        triggerDownload(finalDataUrl, formatFileName(name, message, true));
       });
     };
 
     document.getElementById('btn-modal-delete').onclick = () => {
-      showAdminConfirm("Hapus Foto", `Apakah kamu yakin ingin menghapus foto ucapan dari "${activeSenderName}" ini?`, (confirmed) => {
-        if (confirmed) {
-          db.collection('posts').doc(activePostId).delete()
-            .then(() => {
-              showAdminAlert("Berhasil", "Foto berhasil dihapus!");
-              closeAdminModal();
-            })
-            .catch(err => showAdminAlert("Gagal", "Gagal menghapus: " + err.message));
+      showAdminConfirm("Hapus Foto", `Apakah kamu yakin ingin menghapus foto ucapan dari "${name}" ini?`, async (confirmed) => {
+        if (!confirmed) return;
+        try {
+          await db.collection('posts').doc(postId).delete();
+          removeLocalPosts([postId]);
+          closeAdminModal();
+          showAdminAlert("Berhasil", "Foto berhasil dihapus!");
+        } catch (err) {
+          showAdminAlert("Gagal", "Gagal menghapus: " + err.message);
         }
       }, true);
     };
@@ -1381,25 +1898,50 @@
 
   function closeAdminModal() {
     document.getElementById('admin-modal').classList.add('hidden');
+    document.getElementById('modal-img-src').src = '';
   }
 
-  // 3. LOGIKA KELOLA TAMU UNDANGAN
-  function loadGuestsAdmin() {
+  /* ====================== 3. TAMU UNDANGAN ====================== */
+  function initGuests() {
+    if (guestsInitDone) return;
+    guestsInitDone = true;
+
     db.collection('settings').doc('wa_template').get().then(doc => {
       if (doc.exists) {
         if (doc.data().text) defaultWaTemplate = doc.data().text;
         if (doc.data().baseUrl) baseInvitationUrl = doc.data().baseUrl;
+        renderGuestList();
       }
-    });
+    }).catch(err => console.warn('Gagal memuat template WA:', err));
 
     db.collection('guests').onSnapshot(snapshot => {
       allGuests = [];
       snapshot.forEach(doc => {
         allGuests.push({ id: doc.id, ...doc.data() });
       });
+      allGuests.sort((a, b) => tsToMillis(a.createdAt) - tsToMillis(b.createdAt));
 
       document.getElementById('guest-count-label').innerText = `Bagikan Undangan (${allGuests.length} Tamu)`;
       renderGuestList();
+    }, err => {
+      console.warn('Gagal memuat tamu:', err);
+      document.getElementById('guest-list-container').innerHTML = '<p style="font-size: 0.75rem; color: rgba(255,255,255,0.6); text-align: center;">Gagal memuat daftar tamu. Periksa koneksi.</p>';
+    });
+
+    document.getElementById('guest-list-container').addEventListener('click', e => {
+      const btn = e.target.closest('[data-act]');
+      if (!btn) return;
+      const guest = allGuests.find(g => g.id === btn.dataset.id);
+      if (!guest) return;
+
+      switch (btn.dataset.act) {
+        case 'wa': sendWhatsApp(guest.name, guest.phone); break;
+        case 'share': shareInvitation(guest.name); break;
+        case 'open': window.open(getInvitationLink(guest.name), '_blank'); break;
+        case 'copy': copyWaText(guest.name); break;
+        case 'edit': openEditGuestModal(guest.id); break;
+        case 'del': deleteGuest(guest.id); break;
+      }
     });
   }
 
@@ -1435,34 +1977,21 @@
     if (guestViewMode === 'card') {
       let html = '';
       filtered.forEach((guest, index) => {
-        const link = getInvitationLink(guest.name);
         html += `
           <div class="guest-card">
             <div class="guest-card-header">
               <div>
-                <div class="guest-name">${index + 1}. ${guest.name}</div>
-                ${guest.phone ? `<div class="guest-phone">WA: ${guest.phone}</div>` : ''}
+                <div class="guest-name">${index + 1}. ${escapeHtml(guest.name)}</div>
+                ${guest.phone ? `<div class="guest-phone">WA: ${escapeHtml(guest.phone)}</div>` : ''}
               </div>
             </div>
             <div class="guest-actions-row">
-              <button class="btn-action-icon btn-act-wa" onclick="sendWhatsApp('${guest.name}', '${guest.phone}')">
-                Kirim WA
-              </button>
-              <button class="btn-action-icon btn-act-share" onclick="shareInvitation('${guest.name}')">
-                Bagikan
-              </button>
-              <button class="btn-action-icon" onclick="window.open('${link}', '_blank')">
-                Buka Link
-              </button>
-              <button class="btn-action-icon" onclick="copyWaText('${guest.name}')">
-                Salin
-              </button>
-              <button class="btn-action-icon" onclick="openEditGuestModal('${guest.id}', '${guest.name}', '${guest.phone || ''}')">
-                Edit
-              </button>
-              <button class="btn-action-icon btn-act-del" onclick="deleteGuest('${guest.id}')">
-                Hapus
-              </button>
+              <button class="btn-action-icon btn-act-wa" data-act="wa" data-id="${guest.id}">Kirim WA</button>
+              <button class="btn-action-icon btn-act-share" data-act="share" data-id="${guest.id}">Bagikan</button>
+              <button class="btn-action-icon" data-act="open" data-id="${guest.id}">Buka Link</button>
+              <button class="btn-action-icon" data-act="copy" data-id="${guest.id}">Salin</button>
+              <button class="btn-action-icon" data-act="edit" data-id="${guest.id}">Edit</button>
+              <button class="btn-action-icon btn-act-del" data-act="del" data-id="${guest.id}">Hapus</button>
             </div>
           </div>
         `;
@@ -1481,19 +2010,18 @@
           <tbody>
       `;
       filtered.forEach((guest, index) => {
-        const link = getInvitationLink(guest.name);
         html += `
           <tr>
             <td>${index + 1}</td>
             <td>
-              <b>${guest.name}</b>
-              ${guest.phone ? `<br><span style="font-size:0.65rem; color:rgba(255,255,255,0.6);">${guest.phone}</span>` : ''}
+              <b>${escapeHtml(guest.name)}</b>
+              ${guest.phone ? `<br><span style="font-size:0.65rem; color:rgba(255,255,255,0.6);">${escapeHtml(guest.phone)}</span>` : ''}
             </td>
             <td style="text-align: right;">
               <div style="display:flex; gap:4px; justify-content:flex-end;">
-                <button class="btn-action-icon btn-act-wa" style="padding:4px 8px;" onclick="sendWhatsApp('${guest.name}', '${guest.phone}')">WA</button>
-                <button class="btn-action-icon" style="padding:4px 8px;" onclick="window.open('${link}', '_blank')">Link</button>
-                <button class="btn-action-icon btn-act-del" style="padding:4px 8px;" onclick="deleteGuest('${guest.id}')">Hapus</button>
+                <button class="btn-action-icon btn-act-wa" style="padding:4px 8px;" data-act="wa" data-id="${guest.id}">WA</button>
+                <button class="btn-action-icon" style="padding:4px 8px;" data-act="open" data-id="${guest.id}">Link</button>
+                <button class="btn-action-icon btn-act-del" style="padding:4px 8px;" data-act="del" data-id="${guest.id}">Hapus</button>
               </div>
             </td>
           </tr>
@@ -1513,11 +2041,13 @@
     document.getElementById('guest-modal').classList.remove('hidden');
   }
 
-  function openEditGuestModal(id, name, phone) {
+  function openEditGuestModal(id) {
+    const guest = allGuests.find(g => g.id === id);
+    if (!guest) return;
     editingGuestId = id;
     document.getElementById('guest-modal-title').innerText = 'Edit Data Tamu';
-    document.getElementById('input-guest-name').value = name;
-    document.getElementById('input-guest-phone').value = phone;
+    document.getElementById('input-guest-name').value = guest.name || '';
+    document.getElementById('input-guest-phone').value = guest.phone || '';
     document.getElementById('guest-modal').classList.remove('hidden');
   }
 
@@ -1544,13 +2074,13 @@
       db.collection('guests').doc(editingGuestId).update(payload).then(() => {
         closeGuestModal();
         showAdminAlert("Berhasil", "Data tamu telah diperbarui.");
-      });
+      }).catch(err => showAdminAlert("Gagal", "Gagal menyimpan: " + err.message));
     } else {
       payload.createdAt = firebase.firestore.FieldValue.serverTimestamp();
       db.collection('guests').add(payload).then(() => {
         closeGuestModal();
         showAdminAlert("Berhasil", "Tamu baru telah ditambahkan.");
-      });
+      }).catch(err => showAdminAlert("Gagal", "Gagal menyimpan: " + err.message));
     }
   }
 
@@ -1559,7 +2089,7 @@
       if (confirmed) {
         db.collection('guests').doc(id).delete().then(() => {
           showAdminAlert("Berhasil", "Tamu telah dihapus.");
-        });
+        }).catch(err => showAdminAlert("Gagal", "Gagal menghapus: " + err.message));
       }
     }, true);
   }
@@ -1570,13 +2100,18 @@
       return;
     }
 
-    showAdminConfirm("Hapus Semua Tamu", `Apakah kamu yakin ingin menghapus SELURUH (${allGuests.length}) data tamu?`, (confirmed) => {
-      if (confirmed) {
-        const batch = db.batch();
-        allGuests.forEach(g => {
-          batch.delete(db.collection('guests').doc(g.id));
-        });
-        batch.commit().then(() => showAdminAlert("Berhasil", "Semua tamu berhasil dihapus!"));
+    showAdminConfirm("Hapus Semua Tamu", `Apakah kamu yakin ingin menghapus SELURUH (${allGuests.length}) data tamu?`, async (confirmed) => {
+      if (!confirmed) return;
+      try {
+        const ids = allGuests.map(g => g.id);
+        for (let i = 0; i < ids.length; i += 400) {
+          const batch = db.batch();
+          ids.slice(i, i + 400).forEach(id => batch.delete(db.collection('guests').doc(id)));
+          await batch.commit();
+        }
+        showAdminAlert("Berhasil", "Semua tamu berhasil dihapus!");
+      } catch (err) {
+        showAdminAlert("Gagal", "Gagal menghapus: " + err.message);
       }
     }, true);
   }
@@ -1591,19 +2126,15 @@
   }
 
   function downloadSampleCSV() {
-    const csvContent = "data:text/csv;charset=utf-8," 
-      + "Budi & Sarah,081234567890\n"
+    const csvContent = "Budi & Sarah,081234567890\n"
       + "Kiki & Pasangan,085712345678\n"
       + "Ayu & Dani,\n"
       + "Upil & Dirga,081399887766";
 
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", "contoh_daftar_tamu.csv");
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    triggerDownload(url, "contoh_daftar_tamu.csv");
+    setTimeout(() => URL.revokeObjectURL(url), 2000);
   }
 
   function triggerImportCSV() {
@@ -1611,38 +2142,70 @@
     document.getElementById('csv-file-input').click();
   }
 
+  function parseCsvLine(line) {
+    const out = [];
+    let cur = '';
+    let inQuotes = false;
+    for (let i = 0; i < line.length; i++) {
+      const ch = line[i];
+      if (ch === '"') {
+        if (inQuotes && line[i + 1] === '"') { cur += '"'; i++; }
+        else inQuotes = !inQuotes;
+      } else if ((ch === ',' || ch === ';') && !inQuotes) {
+        out.push(cur);
+        cur = '';
+      } else {
+        cur += ch;
+      }
+    }
+    out.push(cur);
+    return out.map(s => s.trim());
+  }
+
   function handleImportCSV(input) {
     const file = input.files[0];
     if (!file) return;
 
     const reader = new FileReader();
-    reader.onload = function(e) {
-      const lines = e.target.result.split('\n');
-      const batch = db.batch();
-      let count = 0;
+    reader.onload = async function(e) {
+      let text = String(e.target.result || '').replace(/^\uFEFF/, '');
+      const lines = text.split(/\r?\n/);
+      const rows = [];
 
-      lines.forEach(line => {
-        const cols = line.split(',');
-        if (cols[0] && cols[0].trim()) {
-          const name = cols[0].trim();
-          const phone = cols[1] ? cols[1].trim() : "";
-          const docRef = db.collection('guests').doc();
-          batch.set(docRef, {
-            name: name,
-            phone: phone,
-            createdAt: firebase.firestore.FieldValue.serverTimestamp()
-          });
-          count++;
-        }
+      lines.forEach((line, idx) => {
+        if (!line.trim()) return;
+        const cols = parseCsvLine(line);
+        const name = (cols[0] || '').trim();
+        if (!name) return;
+        if (idx === 0 && /^(nama|name)/i.test(name)) return; // lewati baris judul
+        rows.push({ name: name, phone: (cols[1] || '').trim() });
       });
 
-      if (count > 0) {
-        batch.commit().then(() => {
-          showAdminAlert("Berhasil", `Berhasil mengimpor ${count} data tamu!`);
-          input.value = '';
-        });
+      if (rows.length === 0) {
+        showAdminAlert("Gagal", "Tidak ada data tamu yang terbaca dari file CSV.");
+        input.value = '';
+        return;
       }
+
+      try {
+        for (let i = 0; i < rows.length; i += 400) {
+          const batch = db.batch();
+          rows.slice(i, i + 400).forEach(r => {
+            batch.set(db.collection('guests').doc(), {
+              name: r.name,
+              phone: r.phone,
+              createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+          });
+          await batch.commit();
+        }
+        showAdminAlert("Berhasil", `Berhasil mengimpor ${rows.length} data tamu!`);
+      } catch (err) {
+        showAdminAlert("Gagal", "Gagal mengimpor: " + err.message);
+      }
+      input.value = '';
     };
+    reader.onerror = () => showAdminAlert("Gagal", "File tidak bisa dibaca.");
     reader.readAsText(file);
   }
 
@@ -1672,7 +2235,8 @@
       showAdminAlert("Berhasil", "Pengaturan link & template WhatsApp berhasil disimpan!");
       closeTextTemplateModal();
       renderGuestList();
-    });
+    })
+    .catch(err => showAdminAlert("Gagal", "Gagal menyimpan pengaturan: " + err.message));
   }
 
   function formatWaMessage(guestName) {
@@ -1698,7 +2262,7 @@
       navigator.share({
         title: 'Wedding Invitation Riyan & Amelia',
         text: message
-      });
+      }).catch(() => {});
     } else {
       copyToClipboard(message);
       showAdminAlert("Teks Disalin", "Teks undangan berhasil disalin ke clipboard!");
@@ -1712,16 +2276,22 @@
   }
 
   function copyToClipboard(text) {
-    if (navigator.clipboard) {
-      navigator.clipboard.writeText(text);
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).catch(() => fallbackCopy(text));
     } else {
-      const ta = document.createElement('textarea');
-      ta.value = text;
-      document.body.appendChild(ta);
-      ta.select();
-      document.execCommand('copy');
-      document.body.removeChild(ta);
+      fallbackCopy(text);
     }
+  }
+
+  function fallbackCopy(text) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); } catch (e) {}
+    document.body.removeChild(ta);
   }
 </script>
 
