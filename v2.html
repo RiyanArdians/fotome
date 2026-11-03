@@ -4,6 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Virtual Photobooth & Guestbook - FOTOME</title>
+
+  <!-- Favicon Votura Studio -->
+  <link rel="icon" type="image/png" href="./assets/v2/votura-icon.png?v=1">
+  <link rel="apple-touch-icon" href="./assets/v2/votura-icon.png?v=1">
+  <meta name="theme-color" content="#5C2B32">
   
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -669,6 +674,14 @@
     .ig-item-img-box img { width: 100%; height: 100%; object-fit: cover; }
     .ig-item-msg { font-size: 0.6rem; color: rgba(255,255,255,0.85); padding: 6px 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; font-style: italic; background: rgba(0, 0, 0, 0.15); }
 
+    /* KERANGKA LOADING GALERI */
+    .ig-skeleton { border-radius: 12px; overflow: hidden; border: 1px solid var(--card-border); background: rgba(255,255,255,0.06); display: flex; flex-direction: column; }
+    .sk-block { background: linear-gradient(90deg, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.16) 50%, rgba(255,255,255,0.05) 75%); background-size: 300% 100%; animation: skShimmer 1.3s infinite linear; }
+    .sk-head { height: 32px; }
+    .sk-img { width: 100%; aspect-ratio: 1 / 1; }
+    .sk-msg { height: 24px; }
+    @keyframes skShimmer { 0% { background-position: 100% 0; } 100% { background-position: -100% 0; } }
+
     .floating-scroll-nav {
       position: fixed;
       bottom: 25px;
@@ -1078,10 +1091,17 @@
   let globalPostsMap = {};
   let lastVisibleDoc = null;
   let totalPostsInDb = 0;
+  let totalKnown = false;
   let loadedPostsCount = 0;
-  const PAGE_SIZE = 12;
-  let feedUnsubscribe = null;
-  let isInitialLoad = true;
+  let hasMore = false;
+  const PAGE_SIZE = 9;
+  const FEED_TIMEOUT_MS = 25000;
+  let useIndexedQuery = true;
+  let feedLoaded = false;
+  let feedLoading = false;
+  let feedPromise = null;
+  let newPostsUnsub = null;
+  let isPosting = false;
 
   document.addEventListener("DOMContentLoaded", () => {
     initFigmaSlider();
@@ -1130,6 +1150,7 @@
     if (targetId === 'step-gallery-page') {
       if (targetEl) targetEl.scrollTop = 0;
       setTimeout(handleGalleryScroll, 200);
+      ensureFeedLoaded();
     } else {
       const btnTop = document.getElementById('btn-scroll-top');
       const btnBottom = document.getElementById('btn-scroll-bottom');
@@ -1396,7 +1417,6 @@
       }
     });
 
-    loadRealtimeFeedIG();
   }
 
   function getFrameTargetAspect() {
@@ -1902,61 +1922,49 @@
   }
 
   function saveAndShareToFeed() {
+    if (isPosting) return;
+
     const senderName = document.getElementById('input-sender-name').value.trim() || currentGuestName || "Tamu Undangan";
     const senderMessage = document.getElementById('input-sender-message').value.trim() || "Selamat untuk kebahagiaan kalian!";
 
     // Langsung unduh file High-Res ke perangkat tamu
     downloadImageToPhone(senderName);
 
-    const tempPostId = 'local_' + Date.now();
-    const newPostData = {
-      id: tempPostId,
+    if (typeof db === 'undefined') {
+      resetGuestInfo();
+      goToStep('step-gallery-page');
+      return;
+    }
+
+    const btn = document.querySelector('#printer-bottom-actions .btn-gold-v2');
+    isPosting = true;
+    if (btn) { btn.disabled = true; btn.innerText = 'MENGUNGGAH...'; }
+    const done = () => {
+      isPosting = false;
+      if (btn) { btn.disabled = false; btn.innerText = 'UNDUH & POSTING KE GALERI'; }
+    };
+
+    db.collection('posts').add({
       eventId: EVENT_DOC_ID,
       name: senderName,
       message: senderMessage,
-      photoData: generatedLowResUrl, // Simpan versi Mid-High di memori lokal
-      createdAt: new Date()
-    };
-
-    globalPostsMap[tempPostId] = newPostData;
-    
-    const gridBox = document.getElementById('ig-grid-box');
-    if (gridBox) {
-      if (gridBox.innerText.includes('Belum ada foto')) {
-        gridBox.innerHTML = '';
-      }
-      gridBox.insertAdjacentHTML('afterbegin', renderPostCardHTML(newPostData));
-    }
-
-    totalPostsInDb++;
-    loadedPostsCount++;
-    const countSpan = document.getElementById('total-posts-count');
-    if (countSpan) countSpan.innerText = `${totalPostsInDb} Kiriman`;
-
-    if (typeof db !== 'undefined') {
-      db.collection('posts').add({
-        eventId: EVENT_DOC_ID,
-        name: senderName,
-        message: senderMessage,
-        photoData: generatedLowResUrl, // Kirim versi Mid-High (~300KB) ke Firestore
-        createdAt: firebase.firestore.Timestamp.now()
-      }).then(() => {
-        showAlert("Foto berhasil diunduh dan diposting ke Galeri!", "BERHASIL DITAMBAHKAN", () => {
-          document.getElementById('input-sender-message').value = '';
-          resetGuestInfo();
-          goToStep('step-gallery-page');
-        });
-      }).catch(err => {
-        console.error("Gagal simpan ke database:", err);
-        showAlert("Foto berhasil diunduh ke HP!", "TERSIMPAN PRIVAT", () => {
-          resetGuestInfo();
-          goToStep('step-gallery-page');
-        });
+      photoData: generatedLowResUrl, // Versi Mid-High (~300KB) ke Firestore
+      createdAt: firebase.firestore.Timestamp.now()
+    }).then(() => {
+      done();
+      showAlert("Foto berhasil diunduh dan diposting ke Galeri!", "BERHASIL DITAMBAHKAN", () => {
+        document.getElementById('input-sender-message').value = '';
+        resetGuestInfo();
+        goToStep('step-gallery-page');
       });
-    } else {
-      resetGuestInfo();
-      goToStep('step-gallery-page');
-    }
+    }).catch(err => {
+      done();
+      console.error("Gagal simpan ke database:", err);
+      showAlert("Foto berhasil diunduh ke HP!", "TERSIMPAN PRIVAT", () => {
+        resetGuestInfo();
+        goToStep('step-gallery-page');
+      });
+    });
   }
 
   function savePrivateOnly() {
@@ -1991,192 +1999,250 @@
     return `${day} ${month} ${year} • ${hours}:${minutes}`;
   }
 
+  /* ============ GALERI: PEMUATAN FOTO RINGAN & ANTI MACET ============ */
+  const EMPTY_FEED_HTML = '<p class="feed-empty" style="font-size: 0.8rem; color: rgba(255,255,255,0.6); grid-column: span 3; text-align: center;">Belum ada foto di galeri. Tampil pertama di sini!</p>';
+
+  function escapeHtml(str) {
+    return String(str == null ? '' : str).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+  }
+
+  function withTimeout(promise, ms = FEED_TIMEOUT_MS) {
+    let timer;
+    const timeout = new Promise((_, reject) => { timer = setTimeout(() => reject(new Error('timeout')), ms); });
+    return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
+  }
+
+  function isIndexError(err) {
+    return !!err && (err.code === 'failed-precondition' || /index/i.test(err.message || ''));
+  }
+
+  function postsQuery() {
+    let q = db.collection('posts');
+    if (useIndexedQuery) q = q.where('eventId', '==', EVENT_DOC_ID);
+    return q.orderBy('createdAt', 'desc');
+  }
+
+  function matchesEvent(data) {
+    return !!data && data.eventId === EVENT_DOC_ID;
+  }
+
+  function showFeedSkeleton() {
+    const gridBox = document.getElementById('ig-grid-box');
+    if (!gridBox) return;
+    let html = '';
+    for (let i = 0; i < 6; i++) {
+      html += '<div class="ig-skeleton"><div class="sk-block sk-head"></div><div class="sk-block sk-img"></div><div class="sk-block sk-msg"></div></div>';
+    }
+    gridBox.innerHTML = html;
+  }
+
+  function showFeedError() {
+    const gridBox = document.getElementById('ig-grid-box');
+    if (!gridBox) return;
+    gridBox.innerHTML = '<div style="grid-column: span 3; text-align: center; padding: 18px 8px;"><p style="font-size: 0.8rem; color: rgba(255,255,255,0.75); margin-bottom: 10px;">Foto belum bisa dimuat. Periksa koneksi internet kamu.</p><button class="btn-secondary-v2" style="max-width: 200px;" onclick="manualRefreshFeed()">COBA LAGI</button></div>';
+  }
+
+  function updateCountLabel() {
+    const el = document.getElementById('total-posts-count');
+    if (!el) return;
+    el.innerText = totalKnown ? `${totalPostsInDb} Kiriman` : `${loadedPostsCount}${hasMore ? '+' : ''} Kiriman`;
+  }
+
   function updateLoadMoreButtonState() {
     const loadMoreBtn = document.getElementById('btn-load-more');
     if (!loadMoreBtn) return;
 
-    if (loadedPostsCount >= totalPostsInDb) {
-      loadMoreBtn.innerText = `SEMUA TERMUAT (${totalPostsInDb}/${totalPostsInDb})`;
-      loadMoreBtn.disabled = true;
-      loadMoreBtn.style.opacity = '0.6';
-      loadMoreBtn.classList.remove('hidden');
-    } else {
-      loadMoreBtn.innerHTML = `MUAT LEBIH BANYAK (${loadedPostsCount}/${totalPostsInDb})`;
+    if (loadedPostsCount === 0) {
+      loadMoreBtn.classList.add('hidden');
+      return;
+    }
+
+    if (hasMore) {
+      loadMoreBtn.innerText = totalKnown ? `MUAT LEBIH BANYAK (${loadedPostsCount}/${totalPostsInDb})` : 'MUAT LEBIH BANYAK';
       loadMoreBtn.disabled = false;
       loadMoreBtn.style.opacity = '1';
-      loadMoreBtn.classList.remove('hidden');
+    } else {
+      loadMoreBtn.innerText = `SEMUA TERMUAT (${loadedPostsCount})`;
+      loadMoreBtn.disabled = true;
+      loadMoreBtn.style.opacity = '0.6';
+    }
+    loadMoreBtn.classList.remove('hidden');
+  }
+
+  async function fetchFeedPage(cursor, forceServer) {
+    let q = postsQuery();
+    if (cursor) q = q.startAfter(cursor);
+    q = q.limit(PAGE_SIZE);
+
+    if (forceServer) {
+      try { return await q.get({ source: 'server' }); }
+      catch (e) { return await q.get(); }
+    }
+    return await q.get();
+  }
+
+  function renderFirstPage(snap) {
+    const gridBox = document.getElementById('ig-grid-box');
+
+    globalPostsMap = {};
+    loadedPostsCount = 0;
+    lastVisibleDoc = snap.docs.length ? snap.docs[snap.docs.length - 1] : null;
+    hasMore = snap.docs.length >= PAGE_SIZE;
+
+    let html = '';
+    snap.docs.forEach(doc => {
+      const data = { id: doc.id, ...doc.data() };
+      if (!matchesEvent(data)) return;
+      globalPostsMap[doc.id] = data;
+      loadedPostsCount++;
+      html += renderPostCardHTML(data);
+    });
+
+    if (gridBox) gridBox.innerHTML = html || EMPTY_FEED_HTML;
+    updateCountLabel();
+    updateLoadMoreButtonState();
+    setTimeout(handleGalleryScroll, 100);
+  }
+
+  /* MUAT HALAMAN PERTAMA (SATU QUERY KECIL, TANPA MENGUNDUH SEMUA FOTO) */
+  function loadFirstPage(forceServer = false) {
+    if (feedLoading) return feedPromise;
+    feedLoading = true;
+
+    feedPromise = (async () => {
+      try {
+        if (typeof db === 'undefined') { showFeedError(); return; }
+        if (!feedLoaded) showFeedSkeleton();
+
+        let snap;
+        try {
+          snap = await withTimeout(fetchFeedPage(null, forceServer));
+        } catch (err) {
+          if (useIndexedQuery && isIndexError(err)) {
+            console.warn('Index Firestore belum dibuat, memakai mode cadangan. Buat index lewat link di pesan error:', err);
+            useIndexedQuery = false;
+            snap = await withTimeout(fetchFeedPage(null, forceServer));
+          } else {
+            throw err;
+          }
+        }
+
+        renderFirstPage(snap);
+        feedLoaded = true;
+        startNewPostsListener();
+        refreshTotalCount();
+      } catch (err) {
+        console.warn('Gagal memuat galeri:', err);
+        if (!feedLoaded) {
+          showFeedError();
+        } else {
+          showAlert("Gagal menyegarkan galeri. Periksa koneksi kamu lalu coba lagi.", "GAGAL MEMUAT");
+        }
+      } finally {
+        feedLoading = false;
+      }
+    })();
+
+    return feedPromise;
+  }
+
+  function ensureFeedLoaded() {
+    if (!feedLoaded && !feedLoading) loadFirstPage();
+  }
+
+  /* HITUNG TOTAL KIRIMAN TANPA MENGUNDUH FOTO (JIKA SDK MENDUKUNG) */
+  async function refreshTotalCount() {
+    try {
+      const q = db.collection('posts').where('eventId', '==', EVENT_DOC_ID);
+      if (typeof q.count !== 'function') return;
+      const countSnap = await q.count().get();
+      totalPostsInDb = countSnap.data().count;
+      totalKnown = true;
+      updateCountLabel();
+      updateLoadMoreButtonState();
+    } catch (err) {
+      console.info('Hitung total kiriman tidak tersedia:', err && err.message);
     }
   }
 
-  /* REFRESH KHUSUS GALERI (TANPA REFRESH HALAMAN WEB) */
-  function manualRefreshFeed() {
-    const iconElm = document.getElementById('refresh-icon-elm');
-    if (iconElm) iconElm.classList.add('spin-icon');
+  /* REALTIME HANYA UNTUK KIRIMAN BARU (2 FOTO TERBARU) */
+  function startNewPostsListener() {
+    if (newPostsUnsub || typeof db === 'undefined') return;
 
-    lastVisibleDoc = null;
-    isInitialLoad = true;
+    newPostsUnsub = postsQuery().limit(2).onSnapshot(snapshot => {
+      const gridBox = document.getElementById('ig-grid-box');
+      snapshot.docChanges().forEach(change => {
+        if (change.type !== 'added') return;
+        const data = { id: change.doc.id, ...change.doc.data() };
+        if (!matchesEvent(data) || globalPostsMap[data.id]) return;
 
-    loadRealtimeFeedIG();
+        globalPostsMap[data.id] = data;
+        loadedPostsCount++;
+        if (totalKnown) totalPostsInDb++;
 
-    setTimeout(() => {
-      if (iconElm) iconElm.classList.remove('spin-icon');
-    }, 700);
+        if (gridBox) {
+          const empty = gridBox.querySelector('.feed-empty');
+          if (empty) empty.remove();
+          gridBox.insertAdjacentHTML('afterbegin', renderPostCardHTML(data));
+        }
+        updateCountLabel();
+        updateLoadMoreButtonState();
+      });
+    }, err => {
+      console.warn('Realtime listener error:', err);
+      newPostsUnsub = null;
+      if (useIndexedQuery && isIndexError(err)) {
+        useIndexedQuery = false;
+        startNewPostsListener();
+      }
+    });
   }
 
-  /* REALTIME SYNC UNTUK SEMUA DEVICE TAMU */
-  function loadRealtimeFeedIG() {
-    if (feedUnsubscribe) feedUnsubscribe();
-
-    const gridBox = document.getElementById('ig-grid-box');
-
-    // 1. Ambil total kiriman
-    db.collection('posts')
-      .where('eventId', '==', EVENT_DOC_ID)
-      .get()
-      .then(snap => {
-        totalPostsInDb = snap.size;
-        const countSpan = document.getElementById('total-posts-count');
-        if (countSpan) countSpan.innerText = `${totalPostsInDb} Kiriman`;
-        updateLoadMoreButtonState();
-      })
-      .catch(err => console.warn(err));
-
-    // 2. Realtime listener aktif
-    feedUnsubscribe = db.collection('posts')
-      .where('eventId', '==', EVENT_DOC_ID)
-      .orderBy('createdAt', 'desc')
-      .limit(PAGE_SIZE)
-      .onSnapshot(snapshot => {
-        if (!snapshot || snapshot.empty) {
-          if (gridBox && gridBox.children.length === 0) {
-            gridBox.innerHTML = '<p style="font-size: 0.8rem; color: rgba(255,255,255,0.6); grid-column: span 3; text-align: center;">Belum ada foto di galeri. Tampil pertama di sini!</p>';
-          }
-          return;
-        }
-
-        if (isInitialLoad) {
-          isInitialLoad = false;
-          lastVisibleDoc = snapshot.docs[snapshot.docs.length - 1];
-          loadedPostsCount = snapshot.docs.length;
-
-          let html = '';
-          snapshot.docs.forEach(doc => {
-            const data = { id: doc.id, ...doc.data() };
-            globalPostsMap[doc.id] = data;
-            html += renderPostCardHTML(data);
-          });
-          gridBox.innerHTML = html;
-          updateLoadMoreButtonState();
-        } else {
-          // Deteksi kiriman baru dari HP orang lain secara otomatis
-          snapshot.docChanges().forEach(change => {
-            if (change.type === 'added') {
-              const data = { id: change.doc.id, ...change.doc.data() };
-              
-              if (!globalPostsMap[data.id]) {
-                globalPostsMap[data.id] = data;
-                
-                if (gridBox.innerText.includes('Belum ada foto')) {
-                  gridBox.innerHTML = '';
-                }
-                
-                gridBox.insertAdjacentHTML('afterbegin', renderPostCardHTML(data));
-                
-                totalPostsInDb++;
-                loadedPostsCount++;
-                const countSpan = document.getElementById('total-posts-count');
-                if (countSpan) countSpan.innerText = `${totalPostsInDb} Kiriman`;
-                updateLoadMoreButtonState();
-              }
-            }
-          });
-        }
-      }, error => {
-        console.warn("Realtime listener error:", error);
-        fallbackClientSideLoad();
-      });
+  /* REFRESH GALERI (TANPA REFRESH HALAMAN WEB) */
+  async function manualRefreshFeed() {
+    if (feedLoading) return;
+    const iconElm = document.getElementById('refresh-icon-elm');
+    if (iconElm) iconElm.classList.add('spin-icon');
+    try {
+      await loadFirstPage(true);
+    } finally {
+      if (iconElm) iconElm.classList.remove('spin-icon');
+    }
   }
 
   /* AMBIL BATCH BERIKUTNYA DENGAN SPINNER RING EMAS */
-  function loadMorePosts() {
+  async function loadMorePosts() {
+    if (feedLoading || !lastVisibleDoc || !hasMore) return;
+    feedLoading = true;
+
     const loadMoreBtn = document.getElementById('btn-load-more');
     if (loadMoreBtn) {
       loadMoreBtn.disabled = true;
       loadMoreBtn.innerHTML = '<span class="custom-spinner"></span> MEMUAT FOTO...';
     }
 
-    if (!lastVisibleDoc) {
-      fallbackClientSideLoad();
-      return;
+    try {
+      const snap = await withTimeout(fetchFeedPage(lastVisibleDoc, false));
+      const gridBox = document.getElementById('ig-grid-box');
+
+      if (snap.docs.length) lastVisibleDoc = snap.docs[snap.docs.length - 1];
+      hasMore = snap.docs.length >= PAGE_SIZE;
+
+      snap.docs.forEach(doc => {
+        const data = { id: doc.id, ...doc.data() };
+        if (!matchesEvent(data) || globalPostsMap[data.id]) return;
+        globalPostsMap[data.id] = data;
+        loadedPostsCount++;
+        if (gridBox) gridBox.insertAdjacentHTML('beforeend', renderPostCardHTML(data));
+      });
+    } catch (err) {
+      console.warn('Gagal memuat foto berikutnya:', err);
+      showAlert("Foto berikutnya belum bisa dimuat. Coba lagi sebentar.", "GAGAL MEMUAT");
+    } finally {
+      feedLoading = false;
+      updateCountLabel();
+      updateLoadMoreButtonState();
     }
-
-    db.collection('posts')
-      .where('eventId', '==', EVENT_DOC_ID)
-      .orderBy('createdAt', 'desc')
-      .startAfter(lastVisibleDoc)
-      .limit(PAGE_SIZE)
-      .get()
-      .then(snapshot => {
-        if (snapshot.empty) {
-          updateLoadMoreButtonState();
-          return;
-        }
-
-        lastVisibleDoc = snapshot.docs[snapshot.docs.length - 1];
-        loadedPostsCount += snapshot.docs.length;
-        const gridBox = document.getElementById('ig-grid-box');
-
-        snapshot.docs.forEach(doc => {
-          const data = { id: doc.id, ...doc.data() };
-          if (!globalPostsMap[data.id]) {
-            globalPostsMap[data.id] = data;
-            if (gridBox) {
-              gridBox.insertAdjacentHTML('beforeend', renderPostCardHTML(data));
-            }
-          }
-        });
-
-        updateLoadMoreButtonState();
-      })
-      .catch(err => {
-        console.warn("Cursor Error, fallback...", err);
-        fallbackClientSideLoad();
-      });
-  }
-
-  function fallbackClientSideLoad() {
-    db.collection('posts')
-      .where('eventId', '==', EVENT_DOC_ID)
-      .get()
-      .then(snapshot => {
-        const gridBox = document.getElementById('ig-grid-box');
-        if (snapshot.empty) return;
-
-        let posts = [];
-        snapshot.docs.forEach(doc => {
-          const data = { id: doc.id, ...doc.data() };
-          posts.push(data);
-          globalPostsMap[doc.id] = data;
-        });
-
-        posts.sort((a, b) => {
-          const timeA = a.createdAt ? (a.createdAt.toMillis ? a.createdAt.toMillis() : (a.createdAt.seconds ? a.createdAt.seconds * 1000 : 0)) : 0;
-          const timeB = b.createdAt ? (b.createdAt.toMillis ? b.createdAt.toMillis() : (b.createdAt.seconds ? b.createdAt.seconds * 1000 : 0)) : 0;
-          return timeB - timeA;
-        });
-
-        totalPostsInDb = posts.length;
-        loadedPostsCount = Math.min(loadedPostsCount + PAGE_SIZE, totalPostsInDb);
-
-        let html = '';
-        const displayBatch = posts.slice(0, loadedPostsCount);
-        displayBatch.forEach(data => {
-          html += renderPostCardHTML(data);
-        });
-
-        if (gridBox) gridBox.innerHTML = html;
-        updateLoadMoreButtonState();
-      });
   }
 
   function renderPostCardHTML(data) {
@@ -2184,16 +2250,25 @@
     return `
       <div class="ig-grid-item" onclick="openModal('${data.id}')">
         <div class="ig-item-header">
-          <div class="ig-item-name">${data.name || 'Tamu'}</div>
+          <div class="ig-item-name">${escapeHtml(data.name || 'Tamu')}</div>
           <div class="ig-item-date">${timeFormatted}</div>
         </div>
         <div class="ig-item-img-box">
-          <img src="${data.photoData}" alt="Foto Strip" loading="lazy">
+          <img src="${data.photoData}" alt="Foto Strip" loading="lazy" decoding="async">
         </div>
-        <div class="ig-item-msg">"${data.message || ''}"</div>
+        <div class="ig-item-msg">"${escapeHtml(data.message || '')}"</div>
       </div>
     `;
   }
+
+  /* MUAT GALERI DIAM-DIAM SETELAH HALAMAN SIAP (KECUALI KONEKSI LAMBAT / HEMAT DATA) */
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      const conn = navigator.connection;
+      if (conn && (conn.saveData || /2g|3g/.test(conn.effectiveType || ''))) return;
+      if (typeof db !== 'undefined') ensureFeedLoaded();
+    }, 2500);
+  });
 
   function openModal(postId) {
     const data = globalPostsMap[postId];
